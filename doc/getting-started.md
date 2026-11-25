@@ -11,83 +11,112 @@ If you get stuck, [open an issue](https://github.com/setdef/Proof/issues) with t
 
 ## What you need
 
-- **The computer you work on,** running Linux or macOS, with [Git](https://git-scm.com/) and a project in a Git repository. The examples use a Ruby project called `invoices` whose tests run with `bundle exec rake test`; use your project's test command wherever this page shows that one.
-- **An always-on computer for the server,** running Linux or macOS. It runs no tasks, so an old laptop is enough. The examples call it `proof-server.local`.
-- **A Linux computer for the runner:** Debian 13, Ubuntu 24.04, or Fedora 40 or later. The examples call it `nuc`. You'll need someone who can run `sudo` on it, once.
+- **The computer you work on,** running Linux or macOS, with [Git](https://git-scm.com/) and a project in a Git repository. The examples call it `laptop`, and use a Ruby project called `invoices` whose tests run with `bundle exec rake test`; use your project's test command wherever this page shows that one.
+- **An always-on Linux computer for the server.** It runs no tasks, so an old laptop is enough. The examples call it `server`, at the address `server.home.arpa`. A server on macOS works too; its setup differs, and this tutorial doesn't cover it.
+- **A Linux computer for the runner:** Debian 13, Ubuntu 24.04, or Fedora 40 or later. The examples call it `nuc`.
+- **Someone who can run `sudo`** on the server's computer and on `nuc`, for two commands on each.
 
-The server and the runner can't be the same computer. All three need to reach the server's computer over the network; the server needs to reach neither of the others.
+The server and the runner can't be the same computer. The other two computers need to reach the server's computer over the network; the server needs to reach neither of them.
 
-## Install Proof on each computer
+## How to read the prompts
 
-On each of the three computers, download the archive for that computer from [the releases page](https://github.com/setdef/Proof/releases), check it against the release's `SHA256SUMS` file, unpack it, and put `proof` on your `PATH`. Then check that the shell finds it:
+The commands on this page run on three computers, as two different accounts, so each prompt says which:
+
+| Prompt | Where, and as whom |
+| --- | --- |
+| `you@laptop $` | Your account, on the computer you work on |
+| `you@server $`, `you@nuc $` | Your account, on the server's computer or the runner's |
+| `proof@server $`, `proof@nuc $` | The account Proof runs as, on the server's computer or the runner's |
+
+Type only what follows the `$`. Lines without a prompt are what the command printed.
+
+## Create an account for Proof
+
+The server and each runner run as a separate account, not as the account of whoever uses the computer, so a run's command can't read your files. These examples name that account `proof`; any name works.
+
+On the server's computer, create the account, let its services keep running after it logs out, and switch to it:
 
 ```console
-$ proof --version
+you@server $ sudo useradd --create-home proof
+you@server $ sudo loginctl enable-linger proof
+you@server $ sudo -iu proof
+proof@server $
+```
+
+Do the same on `nuc`:
+
+```console
+you@nuc $ sudo useradd --create-home proof
+you@nuc $ sudo loginctl enable-linger proof
+you@nuc $ sudo -iu proof
+proof@nuc $
+```
+
+These are the only commands on this page that need an administrator.
+
+## Install Proof
+
+As `proof` on the server's computer and on `nuc`, and as yourself on `laptop`, download the archive for that computer from [the releases page](https://github.com/setdef/Proof/releases), check it against the release's `SHA256SUMS` file, unpack it, and put `proof` on the account's `PATH`. Then check that the shell finds it:
+
+```console
+proof@server $ proof --version
 proof 1.0.0
 ```
 
 ## Set up the server
 
-On the server's computer, ask setup what it would change, without changing anything:
+As `proof` on the server's computer, ask setup what it would change, without changing anything:
 
 ```console
-$ proof server setup --dry-run
-proof: setup would make these changes on proof-server.local:
+proof@server $ proof server setup --dry-run
+proof: setup would make these changes on server.home.arpa:
 proof:   create ~/.config/proof/pool.kdl
 proof:   create ~/.local/share/proof for runs, their output, and their artifacts
-proof:   create a certificate for proof-server.local
-proof:   start the Proof server as a service of your account, on port 7443
+proof:   create a certificate for server.home.arpa
+proof:   start the Proof server as a service of this account, on port 7443
 proof: nothing changed, because of --dry-run
 ```
 
-Setup touches only your account's folders and services. When the list looks right, run it for real:
+Setup touches only the `proof` account's folders and services. When the list looks right, run it for real:
 
 ```console
-$ proof server setup
+proof@server $ proof server setup
 proof: created ~/.config/proof/pool.kdl
 proof: created ~/.local/share/proof
-proof: created a certificate for proof-server.local
+proof: created a certificate for server.home.arpa
 proof: started the Proof server on port 7443
-proof: sign in from where you work with `proof login proof-server.local`, and give it this one-time code: Q8M-2RT
+proof: sign in from where you work with `proof login server.home.arpa`, and give it this one-time code: Q8M-2RT
 ```
 
-Keep that code for later; we'll use it to sign in from the computer you work on.
+Keep that code for later; we'll use it to sign in from `laptop`.
 
 ## Set up the runner
 
-On `nuc`, run setup with the server's address:
+As `proof` on `nuc`, run setup with the server's address:
 
 ```console
-$ proof runner setup proof-server.local
+proof@nuc $ proof runner setup server.home.arpa
 proof: checking nuc for a Linux runner
-proof: an administrator must run this command, then run `proof runner setup proof-server.local` again:
-proof:   sudo loginctl enable-linger kerrick
-proof: nothing changed
-```
-
-This is where most people stop and wonder whether something went wrong. Nothing did: the runner runs as an ordinary account, and setup never runs anything as root. It prints the one command it needs an administrator for, here the one that keeps your account's services running after you log out, and changes nothing until it's done. Run the command it printed, or ask someone who can, then run setup again:
-
-```console
-$ sudo loginctl enable-linger kerrick
-$ proof runner setup proof-server.local
-proof: checked: kerrick's services keep running after logout
+proof: checked: proof's services keep running after logout
 proof: installed mise for the runner
-proof: started the runner nuc-linux as a service of your account
-proof: nuc-linux asks to join proof-server.local as code XK7-42P
+proof: started the runner nuc-linux as a service of this account
+proof: nuc-linux asks to join server.home.arpa as code XK7-42P
 proof: approve it from where you work with `proof runner approve XK7-42P`
 ```
 
 The code is short so that you can read it off a text console and type it elsewhere. Nobody types or pastes a token on `nuc`.
 
+If you skipped `loginctl enable-linger`, setup stops before it changes anything, prints the command for an administrator to run, and asks you to run setup again. This is where people most often wonder whether something went wrong. Nothing did: setup never runs anything as root itself. Run the command it printed as yourself, switch back to `proof`, and run setup again.
+
 ## Sign in and approve the runner
 
-On the computer you work on, sign in with the code from the server, then approve the runner with its code:
+On `laptop`, sign in with the code from the server, then approve the runner with its code:
 
 ```console
-$ proof login proof-server.local
+you@laptop $ proof login server.home.arpa
 proof: enter the one-time code from `proof server setup`: Q8M-2RT
-proof: signed in to proof-server.local
-$ proof runner approve XK7-42P
+proof: signed in to server.home.arpa
+you@laptop $ proof runner approve XK7-42P
 proof: approved nuc-linux
 proof: added host nuc to the pool file, with the default budget and share
 ```
@@ -95,12 +124,14 @@ proof: added host nuc to the pool file, with the default budget and share
 Now check that the runner works, by sending it a known run:
 
 ```console
-$ proof verify
+you@laptop $ proof verify
 proof: nuc-linux passed (4s)
 proof: exit=0 runners=1 passed=1 failed=0
 ```
 
 If `proof verify` reports a failure, its message says which step failed and what to do. That message, with the output of `proof status`, is what to put in an issue if it doesn't help.
+
+From here on, every command runs on `laptop`.
 
 ## Run a task
 
@@ -123,7 +154,7 @@ The runner starts from nothing, so a task has to install what it needs, as it wo
 Now let's run the tests. From anywhere in the project, run:
 
 ```console
-$ proof run test
+you@laptop $ proof run test
 proof: refused: no operating system is given for task test
 proof: add `--os linux`, or list the operating systems it works on in .config/proof.kdl:
 proof:   defaults {
@@ -144,7 +175,7 @@ defaults {
 Run the task again:
 
 ```console
-$ proof run test
+you@laptop $ proof run test
 proof: invoices at 9b1e44a (clean), task test
 proof: run k7q2 on nuc-linux (empty workspace)
 Run options: --seed 31877
@@ -161,7 +192,7 @@ proof: exit=0 run=20261124-1402-k7q2 task=test runner=nuc-linux queued=0s ran=1m
 The first run took almost two minutes because the workspace was empty: mise installed Ruby, and the `setup` task installed the project's gems. The `ran=` time in the last line is the whole run, setup included. Run the same command again, and the second run reuses the workspace:
 
 ```console
-$ proof run test
+you@laptop $ proof run test
 proof: invoices at 9b1e44a (clean), task test
 proof: run w3n8 on nuc-linux (reused workspace)
 Run options: --seed 4410
@@ -180,7 +211,7 @@ proof: exit=0 run=20261124-1405-w3n8 task=test runner=nuc-linux queued=0s ran=6s
 Proof sends your working tree as it is, so a change you haven't committed is part of the run. Make a change that breaks one test, without committing it, and run the task:
 
 ```console
-$ proof run test
+you@laptop $ proof run test
 proof: invoices at 9b1e44a with 1 uncommitted change, task test
 proof: run r5c1 on nuc-linux (reused workspace)
 Run options: --seed 52931
@@ -203,7 +234,7 @@ proof: read the whole output with `proof logs r5c1`
 What will the shell say `proof` exited with? Check:
 
 ```console
-$ echo $?
+you@laptop $ echo $?
 1
 ```
 
@@ -212,7 +243,7 @@ $ echo $?
 Now check the last commit instead, without your change:
 
 ```console
-$ proof run test --commit HEAD
+you@laptop $ proof run test --commit HEAD
 proof: invoices at 9b1e44a, task test
 proof: run h2v6 on nuc-linux (reused workspace)
 Run options: --seed 17203

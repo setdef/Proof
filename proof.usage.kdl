@@ -129,9 +129,9 @@ cmd "status" effect="read" help="Show the runners, the queue for each operating 
 
 cmd "login" effect="write" help="Sign in to a pool's server from this computer" {
   long_help "Asks for the one-time code that `proof server setup` printed. Proof never takes a secret as an argument."
-  arg "<server>" help="The server's address, such as proof-server.local"
+  arg "<server>" help="The server's address, such as server.home.arpa"
   flag "--code-file <file>" help="Read the one-time code from this file instead of asking for it"
-  example "proof login proof-server.local"
+  example "proof login server.home.arpa"
 }
 
 cmd "logout" effect="write" help="Sign out of the pool's server from this computer, and delete the token Proof kept" {
@@ -145,7 +145,7 @@ cmd "verify" effect="write" help="Send a known run to every runner, and report e
 
 cmd "server" subcommand_required=#true help="Set up, upgrade, or uninstall the server, on the computer it runs on" {
   cmd "setup" effect="write" help="Set up this computer as the pool's server" {
-    long_help "Checks the computer and lists every change it will make before it makes any. Then starts the server as a service of your account, and prints a one-time code for signing in. Safe to run again."
+    long_help "Run it as the account the server will run as: an account set aside for Proof, not the account of anyone who uses the computer. Checks the computer and lists every change it will make before it makes any. Then starts the server as a service of your account, and prints a one-time code for signing in. Safe to run again."
     flag "-n --dry-run" help="List the changes setup would make, and make none"
     example "proof server setup --dry-run" header="See what setup would change"
     example "proof server setup"
@@ -163,15 +163,16 @@ cmd "server" subcommand_required=#true help="Set up, upgrade, or uninstall the s
 cmd "runner" subcommand_required=#true help="Add, approve, list, and remove runners" {
   cmd "setup" effect="write" help="Set up this computer as a runner of the pool" {
     long_help #"""
-Prints a short code to approve with `proof runner approve`, so you never type a long token at a
+Run it as the account the runner will run as: an account set aside for Proof, not the account of
+anyone who uses the computer. Prints a short code to approve with `proof runner approve`, so you never type a long token at a
 text console. Where a step needs an administrator, such as adding the account to the `kvm` group,
 setup prints the exact commands for you to run, and checks them when you run setup again. On
 Windows, also sets up a runner in WSL. Safe to run again.
 """#
-    arg "<server>" help="The server's address, such as proof-server.local"
+    arg "<server>" help="The server's address, such as server.home.arpa"
     flag "--name <name>" help="Name the runner this, instead of the computer's host name"
     flag "-n --dry-run" help="List the changes setup would make, and make none"
-    example "proof runner setup proof-server.local"
+    example "proof runner setup server.home.arpa"
   }
   cmd "approve" effect="write" help="Let a runner that asked to join into the pool, and add its host to the pool file" {
     arg "[code]" help="The code the runner printed; without it, lists the runners waiting for approval"

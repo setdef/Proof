@@ -30,7 +30,7 @@ A person using one of those computers comes first. While someone is at its keybo
 
 <!-- Placeholder: replace queued= and ran= with those of real runs of Lota's package task. -->
 ```console
-$ proof run package --os linux --os windows --download
+% proof run package --os linux --os windows --download
 proof: Lota at 3f9c2e1 (clean), task package
 proof: run m3d8 on nuc-linux (reused workspace)
 proof: run p9x2 on pc-windows (reused workspace)
@@ -57,7 +57,7 @@ Proof runs a project's named tasks with [mise](https://mise.jdx.dev/), which Pro
 ### Limitations
 
 - Whoever holds a token for running work can run any command, as the runner account, on every computer in the pool. Keep such a token as you would an SSH key.
-- Runs on one computer share one account. Each run gets a separate workspace, home folder, and temporary folder, but a run's command can read another project's files in that account.
+- Runs on one computer share the runner's account. Each run gets a separate workspace, home folder, and temporary folder, but a run's command can read another project's files in that account. Set up each runner as an account set aside for Proof, so no run can read the files of a person who uses the computer.
 - The server is one computer. While it's asleep or off the network, no new run starts.
 
 ## Installation
@@ -68,12 +68,12 @@ To uninstall Proof from a computer, run `proof runner uninstall` or `proof serve
 
 ## Usage
 
-1. **Set up a server.** On the always-on computer, run `proof server setup`. It checks the computer and lists every change it will make before it makes any. With `--dry-run`, it stops after the list. It then starts the server as a service of your account and prints a one-time code for signing in.
-2. **Add each computer that will run tasks.** On it, run `proof runner setup proof-server.local`. It prints a short code, such as `XK7-42P`, so you never type a long token at a text console. Where a step needs an administrator, such as adding the account to the `kvm` group, setup prints the exact commands for you to run, and checks them when you run setup again.
+1. **Set up a server.** On the always-on computer, as an account set aside for Proof (the docs call it `proof`), run `proof server setup`. It checks the computer and lists every change it will make before it makes any. With `--dry-run`, it stops after the list. It then starts the server as a service of your account and prints a one-time code for signing in.
+2. **Add each computer that will run tasks.** On it, as an account set aside for Proof, run `proof runner setup server.home.arpa`. It prints a short code, such as `XK7-42P`, so you never type a long token at a text console. Where a step needs an administrator, such as adding the account to the `kvm` group, setup prints the exact commands for you to run, and checks them when you run setup again.
 3. **Sign in where you work, and let each runner in:**
 
    ```console
-   $ proof login proof-server.local
+   $ proof login server.home.arpa
    $ proof runner approve XK7-42P
    $ proof verify
    ```

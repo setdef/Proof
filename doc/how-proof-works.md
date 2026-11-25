@@ -55,7 +55,7 @@ Proof refuses a run that no host could ever run, such as one that requests more 
 
 ## What a runner gives each run
 
-Each runner runs as one ordinary account on its computer, never as root. Where a task needs hardware, such as `/dev/kvm` or a GPU's render device, the runner's account gets it through a group, which `proof runner setup` tells an administrator how to add.
+Each runner runs as one ordinary account on its computer, set aside for Proof, never as root and never as the account of a person who uses the computer. Where a task needs hardware, such as `/dev/kvm` or a GPU's render device, the runner's account gets it through a group, which `proof runner setup` tells an administrator how to add.
 
 For each run, the runner provides:
 
