@@ -109,18 +109,20 @@ The settings every `host` gets unless its entry has a different value. It takes 
 host NAME {
   runner RUNNER...
   budget "SIZE"
+  keep-free "SIZE"
   share cpus=N memory="SIZE"
   active-for "DURATION"
   withhold LABEL...
 }
 ```
 
-One entry for each physical computer. `proof status` shows the host under `NAME`. `proof runner approve` writes the entry with the host's runners and nothing else, so the host starts with the settings in `defaults`.
+One entry for each physical computer. `proof status` shows the host under `NAME`. `proof runner approve` writes the entry with the host's runners and its budget, so the host starts with the other settings in `defaults`.
 
 | Child | Default | Meaning |
 | --- | --- | --- |
 | `runner` | Written by `proof runner approve` | The runners on this host. The server counts their CPUs, memory, and disk as one host's, so the server never gives a Windows PC and its WSL more runs together than the PC can run. |
-| `budget` | `"50GB"` | The disk space Proof may use on this host for workspaces and caches. When Proof's files exceed it, the host's runners delete the workspaces used least recently, never one in use. |
+| `budget` | Half the host's free disk space when `proof runner approve` adds the host, written into its entry | The disk space Proof may use on this host for workspaces and caches. When Proof's files exceed it, the host's runners delete the workspaces used least recently, never one in use. |
+| `keep-free` | `"25GB"` | The disk space the host's runners always leave free, whatever the budget, so a disk that fills for other reasons never fills completely because of Proof. |
 | `share` | `cpus=2 memory="4GB"` | The CPUs and memory Proof keeps free on this host while a person is active there. Runs go on with the rest, and runs that need the person's display or GPU wait. |
 | `active-for` | `"5m"` | How long after the last use of the host's keyboard, mouse, or trackpad a person still counts as active. |
 | `withhold` | None | Labels this host's runners must not offer, even when they find the hardware. |

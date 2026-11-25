@@ -1,0 +1,56 @@
+<!--
+  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
+  SPDX-License-Identifier: CC-BY-SA-4.0
+-->
+
+# Server design
+
+What the server must guarantee, and the traps known so far. How to meet each requirement is the implementer's choice. The decision to place runs without an external scheduler is [ADR 0002](../decisions/0002-proof-places-runs-itself-with-no-external-scheduler.md); keeping the server to these few rules is part of that decision.
+
+## Placement
+
+- Count CPUs, memory, and disk per **host**, summing every runner on it. Two runners on one host must never be offered the host's resources twice.
+- A run is placed only where its operating system, every label it needs, and its requested resources fit, in the order runs arrived. There are no priorities and no preemption.
+- A host with a person active keeps its share free: no new run is placed into it.
+- Refuse a run no host could ever take before anything is sent, and name the closest host. Keep a run queued when its operating system has no runner at the moment, since hosts come back.
+- `proof status` must say what each queued run waits behind: which runs hold the host it needs, or that a person is active there, or that no runner of its operating system is connected. A run that waits a long time without saying why looks hung.
+
+## Runs and their records
+
+- Proof never runs a run again by itself: not after its command fails or times out, and not after it is `lost`. A lost run's `proof` exits 75, and a lost build of a pushed commit shows as `lost` in `proof status`.
+- A run's record holds its ID, task, commit, runner, state, exit status, resource use, and times. It never holds the command's arguments or environment, which can carry secrets and grow without bound.
+- Records are bounded per run, kept for the pool file's `retention`, and written so that concurrent writers can't interleave or lose them.
+- Times are recorded from the server's clock; clocks on hosts and where `proof` runs can differ.
+- Run IDs are the UTC minute of creation and five random characters from Crockford's Base32. The server refuses a short form that matches more than one of the last 7 days of runs, and lists the matches.
+
+## Output
+
+- Keep each run's whole output as the runner sent it, up to the pool file's `limits output`. Past that, keep the first and last halves, with a line between them saying how much was left out.
+- Stream it to every follower without letting a slow follower hold up the run or other followers. Send output in bounded pieces, so a burst of hundreds of megabytes can't break a deadline.
+- A follow must never silently drop or repeat output. Following picks up from a byte offset, so reattaching continues where it left off.
+
+## Code
+
+- One bare Git repository per project. `proof` pushes each run's commit under a temporary ref; runners fetch it.
+- **A commit object being present doesn't mean the commit is complete.** A fetch cut off part way can leave the commit without its trees. A runner, or the server, counts a commit as present only when `git rev-list --objects --quiet SHA --not --all` succeeds, and deletes leftover temporary pack files before fetching again.
+- Repack and prune each repository, and delete temporary refs of runs past their retention.
+- For builds of pushed commits, the server fetches the listed branches with read-only credentials read from a file, and never passes those credentials to runners.
+
+## Artifacts
+
+- Each file arrives with its SHA-256 and byte count, is written to a temporary name, and is kept only if both match. The run's artifacts are sealed by a sorted manifest once all have arrived; nothing is added after that.
+- Refuse file paths that are absolute or contain `..`, and check names that differ only in case, which collide on Windows and macOS.
+- Enforce `limits artifacts` per run, and keep free space on the server's disk: a run whose artifacts would fill it fails, rather than the server.
+- Before a run starts, it must already be known whether the server will accept its artifacts, so a run never does all its work to fail at the end.
+
+## Tokens and codes
+
+- Tokens are issued to one person, agent, or runner each, stored by Proof in files only their owner can read, and never accepted from a command-line argument or an environment variable.
+- One-time codes (approval and sign-in) are 8 characters of Crockford's Base32, grouped 4-4, valid once for 15 minutes, and void after 5 wrong attempts. Input is accepted in either case, with or without the hyphen, with `O` read as `0` and `I` or `L` as `1`.
+- The server makes its certificate itself. Its fingerprint travels inside the codes, so the command and runners pin it on first contact.
+
+## Versions
+
+- The server, every runner, and the command run one version. A runner that finds the server at a newer version upgrades between runs, from builds the server holds for each platform.
+- The command checks the server's version on each call. When they differ in a way that matters, it says which one to upgrade, before sending anything.
+- Nothing about a version is pinned in the source code: a new pool works from its first install.

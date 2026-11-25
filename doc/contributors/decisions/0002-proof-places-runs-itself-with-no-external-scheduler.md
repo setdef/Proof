@@ -28,7 +28,7 @@ A pool is a few hosts that people also use, on Linux, Windows, and macOS. Each r
 
 Chosen: option 1, because each of the others fails a driver that defines the product. Option 2 lost because HTCondor builds for macOS only on Intel, installs on Windows only as an administrator, can only suspend or stop work while a person is at a host, and can't count two runners on one host against one budget except at the moment a job is matched; its documentation alone runs to about 454,000 words. Option 3 lost because Nomad treats each runner as a separate node, has no notion of a person at a host, and its documentation says its `raw_exec` driver, which runs tasks as the same account as Nomad, runs them "with no resource isolation". Option 4 lost because Concourse's Linux tasks reach a GPU or KVM only when they run as root on the worker.
 
-How placement works is in [How Proof works](../../how-proof-works.md#how-the-server-places-a-run).
+How placement works is in [How Proof works](../../how-proof-works.md#how-the-server-places-a-run), and what it must guarantee is in [the server design](../design/server.md#placement).
 
 Confidence: the reasons against options 2 to 4 come from their documentation, and for HTCondor also from running it unprivileged in a Debian 13 virtual machine. Nothing yet shows that option 1 places runs correctly; it is unbuilt.
 

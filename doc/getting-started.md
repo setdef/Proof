@@ -118,7 +118,7 @@ proof: enter the one-time code from `proof server setup`: Q8MR-2T4W
 proof: signed in to server.home.arpa
 you@laptop $ proof runner approve XK7P-42MQ
 proof: approved nuc-linux
-proof: added host nuc to the pool file, with the default budget and share
+proof: added host nuc to the pool file, with a budget of 230GB, half its free disk space
 ```
 
 Now check that the runner works, by sending it a known run:
