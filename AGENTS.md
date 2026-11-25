@@ -20,6 +20,8 @@ Why these pull against each other, and how Proof balances them: `doc/how-proof-w
 
 For working on Proof itself. To use Proof on another project, read `skills/proof/SKILL.md`.
 
+What to build next, what 1.0 leaves out, and what is undecided: `doc/contributors/plan.md`.
+
 ## Commands
 
 - Lint the CLI spec: `usage lint proof.usage.kdl`

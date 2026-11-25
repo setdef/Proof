@@ -7,6 +7,10 @@
 
 What the runner must guarantee, and the traps between a design that looks right and one that is. How to meet each requirement is the implementer's choice. [How Proof works](../../how-proof-works.md) describes the behavior people see; this page is for the people building it. Each requirement here becomes an acceptance test.
 
+## Time limits
+
+- A run's time limit starts when its command starts. Time spent queued, setting up the workspace, or waiting for a desktop or for a person to leave doesn't count against it, and `proof` shows that waiting as it happens.
+
 ## A run's end
 
 - **Nothing a run starts may outlive it.** This includes grandchildren, processes that left the command's process group, and daemons that forked themselves away.

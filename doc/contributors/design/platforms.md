@@ -32,6 +32,7 @@ What each operating system needs from a runner, and its traps. Where an item has
 ## macOS
 
 - **Supported:** Apple silicon only.
+- **The server on macOS** must run as a launchd service set up by `proof server setup`, never through a crontab: a crontab written over SSH waits on a consent dialog nobody sees, so the server never starts.
 - **No window server for a daemon:** a launchd daemon can make a window but never show it, and macOS XCTest fails there (`testmanagerd` unreachable). Offscreen Metal and OpenGL work, and the iOS Simulator boots and runs XCTest. A runner that opens windows has to run as a launchd agent in a signed-in session of its account.
 - **A signed-in session that isn't on the screen presents no frames:** windows open and look active to the program, but nothing is drawn to a display. Benchmarks of presented frames need the session on the screen.
 - **FileVault turns off automatic login,** so someone must sign the runner's account in after every restart. `proof status` must say a host needs signing in, not that it's busy.
