@@ -45,7 +45,7 @@ proof: downloaded pkg/lota-0.0.1.dev-x86_64-linux-gnu.gem from run m3d8q to ./pk
 `--output DIR` puts them in another folder. Give patterns after the ID to download only some:
 
 ```console
-$ proof download m3d8q 'pkg/*-linux.gem' --output dist
+$ proof download m3d8q 'pkg/*-linux-gnu.gem' --output dist
 ```
 
 Proof checks each file against the SHA-256 the runner recorded, and refuses a file that doesn't match. It never overwrites a file you have without saying which.
