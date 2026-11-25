@@ -43,7 +43,7 @@ The project's forge never sees any of this. A runner needs no credentials for Gi
 
 A run waits in the queue until the server can place it on a runner, in the order runs arrived. The server places a run on a runner when all of these hold:
 
-- the runner's operating system is one the task works on, or the one you named with `--os`;
+- the runner's operating system is one the project file lists for the task, any operating system when it lists none, or the one you named with `--os`;
 - the runner has every label the task needs;
 - the runner's host has the CPUs and memory the run requests free, counting every runner on that host together.
 

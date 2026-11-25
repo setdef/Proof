@@ -100,7 +100,7 @@ To ask for **resources**: a task requests 2 CPUs and 4 GB. Also the amount asked
 
 ### run
 
-One execution of a **task** or a **script** on one runner, with an ID, its output, and its exit status. A run ID looks like `20261124-2136-k7q2`.
+One execution of a **task** or a **script** on one runner, with an ID, its output, and its exit status. A run ID is the minute the run was created, in UTC, then five random characters: `20261125-0336-k7q2w`. Wherever Proof asks for a run's ID, the five characters alone work, matched against the last 7 days of runs. They come from [Crockford's Base32](https://www.crockford.com/base32.html), which has no `i`, `l`, `o`, or `u`, so Proof reads a typed `o` as `0` and an `i` or `l` as `1`.
 
 - Elsewhere: called a run in GitHub Actions, and a build in Jenkins, Buildkite, and Concourse.
 - Don't say: build, which suggests compiling; job; execution; allocation; check.

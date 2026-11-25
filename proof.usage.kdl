@@ -32,7 +32,7 @@ unknown_env prefix="PROOF_"
 example "proof run test" header="Run the test task" help="Sends the working tree and runs the project's test task on a runner of an operating system the task works on."
 example "proof run package --os linux --os windows --download" header="Build on two operating systems at once" help="Runs the package task on a Linux runner and a Windows runner in parallel, then downloads both runs' artifacts."
 example "proof run --script bench.sh --os linux" header="Run a script without defining a task"
-example "proof watch m3d8" header="Come back to a run" help="Streams run m3d8's output and exits with its status."
+example "proof watch m3d8q" header="Come back to a run" help="Streams run m3d8q's output and exits with its status."
 
 exit_code 0 "The run succeeded, or the command did what it was asked."
 exit_code 2 "Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests."
@@ -47,21 +47,26 @@ flag "--no-input" global=#true help="Never prompt; fail and name the flag to use
 flag "-q --quiet" global=#true help="Print only the task's output and the result lines"
 flag "-d --debug" global=#true help="Print what Proof does at each step, to standard error"
 
-cmd "run" effect="write" help="Run a task or a script on one or more runners" {
+cmd "run" effect="write" unknown_flags="value" help="Run a task or a script on one or more runners" {
   long_help #"""
 Sends your working tree as it is, with uncommitted changes and untracked files that Git doesn't
 ignore, or the commit you name with --commit, and runs a task or a script there. Streams the
 output while it runs and exits with the run's status. With several --os flags, runs one run per
 operating system in parallel and exits with the worst status.
 
+The words after the task go to `mise run` on the runner as they are, so they mean what they mean
+to mise: arguments for the task, and `:::` to start another task. A flag Proof doesn't have goes to
+the task; to give the task a flag Proof also has, put it after `--`.
+
 Press Ctrl-C to cancel the run. To start a run without waiting for it, use --detach.
 """#
   arg "[task]" help="The task to run, from the project's mise.toml or .config/proof.kdl"
+  arg "[args]..." help="Arguments for the task, and `:::` to start another task, as for `mise run`"
   flag "--script <file>" help="Run this script file instead of a task; give - to read it from standard input"
   group "what" "task" "--script" required=#true
 
   flag "--os <os>" var=#true help="Run on this operating system; repeat to run on several in parallel" {
-    long_help "Without --os, Proof places the run on whichever of the task's operating systems has a runner free. \"any\" means the same, and \"all\" runs once on every operating system the task works on."
+    long_help "Without --os, Proof places the run on any operating system with a runner free, or only on those the project file lists for the task. \"any\" means the same, and \"all\" runs once on every one of them."
     choices "linux" "macos" "windows" "any" "all"
   }
   flag "--label <label>" var=#true help="Run only on a runner that has this label, in addition to the task's labels" {
@@ -87,38 +92,40 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
   example "proof run test" header="Run a task"
   example "proof run test --commit HEAD" header="Check the last commit, with its history"
   example "proof run test --os all" header="Run on every operating system the task works on"
+  example "proof run test --seed 1234" header="Give the task an argument"
+  example "proof run lint ::: test" header="Run two tasks in one run, as mise runs them"
   example "proof run build --os linux --keep 'pkg/*.gem' --download" header="Build on Linux and download what it built"
   example "proof run --script - --os macos" header="Run a script from standard input"
 }
 
 cmd "watch" effect="read" help="Stream a run's output until it ends, and exit with its status" {
   long_help "Picks up a run that is still going, from any terminal. Press Ctrl-C to stop watching; the run goes on."
-  arg "<run>" help="The run's ID, or its last four characters while they're unique"
+  arg "<run>" help="The run's ID, or its last five characters"
   flag "--json" help="Print the run's result as JSON when it ends"
-  example "proof watch m3d8"
+  example "proof watch m3d8q"
 }
 
 cmd "logs" effect="read" help="Print a run's whole output" {
   long_help "Works for any run Proof still keeps, finished or not. On a terminal, Proof shows the output in a pager."
-  arg "<run>" help="The run's ID, or its last four characters while they're unique"
+  arg "<run>" help="The run's ID, or its last five characters"
   flag "--tail <lines>" help="Print only the last this many lines"
   flag "--no-pager" help="Print to standard output without a pager"
-  example "proof logs m3d8"
-  example "proof logs m3d8 --tail 100" header="Print the end of the output"
+  example "proof logs m3d8q"
+  example "proof logs m3d8q --tail 100" header="Print the end of the output"
 }
 
 cmd "cancel" effect="write" help="Cancel runs, and end everything their commands started" {
-  arg "<run>..." help="The runs' IDs, or their last four characters while they're unique"
-  example "proof cancel m3d8"
+  arg "<run>..." help="The runs' IDs, or their last five characters"
+  example "proof cancel m3d8q"
 }
 
 cmd "download" effect="write" help="Download a run's artifacts" {
-  arg "<run>" help="The run's ID, or its last four characters while they're unique"
+  arg "<run>" help="The run's ID, or its last five characters"
   arg "[pattern]..." help="Download only the artifacts matching these patterns"
   flag "-o --output <dir>" help="Download into this folder instead of the current one"
   flag "--json" help="Print each downloaded file's path and size as JSON"
-  example "proof download m3d8"
-  example "proof download m3d8 'pkg/*.gem' --output dist" header="Download some artifacts into another folder"
+  example "proof download m3d8q"
+  example "proof download m3d8q 'pkg/*.gem' --output dist" header="Download some artifacts into another folder"
 }
 
 cmd "status" effect="read" help="Show the runners, the queue for each operating system, and your recent runs" {
@@ -128,7 +135,7 @@ cmd "status" effect="read" help="Show the runners, the queue for each operating 
 }
 
 cmd "login" effect="write" help="Sign in to a pool's server from this computer" {
-  long_help "Asks for the one-time code that `proof server setup` printed. Proof never takes a secret as an argument."
+  long_help "Asks for the one-time code that `proof server setup` printed, such as Q8MR-2T4W. Proof never takes a secret as an argument. The code works once, for 15 minutes, and stops working after 5 wrong attempts. Proof accepts it in either case, with or without the hyphen, and reads O as 0 and I or L as 1."
   arg "<server>" help="The server's address, such as server.home.arpa"
   flag "--code-file <file>" help="Read the one-time code from this file instead of asking for it"
   example "proof login server.home.arpa"
@@ -175,8 +182,9 @@ Windows, also sets up a runner in WSL. Safe to run again.
     example "proof runner setup server.home.arpa"
   }
   cmd "approve" effect="write" help="Let a runner that asked to join into the pool, and add its host to the pool file" {
-    arg "[code]" help="The code the runner printed; without it, lists the runners waiting for approval"
-    example "proof runner approve XK7-42P"
+    long_help "The code works once, for 15 minutes, and stops working after 5 wrong attempts. Proof accepts it in either case, with or without the hyphen, and reads O as 0 and I or L as 1."
+    arg "[code]" help="The code the runner printed, such as XK7P-42MQ; without it, lists the runners waiting for approval"
+    example "proof runner approve XK7P-42MQ"
   }
   cmd "list" effect="read" help="List the runners, with their labels and resources" {
     flag "--json" help="Print the runners as JSON"

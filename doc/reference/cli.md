@@ -39,10 +39,10 @@ proof run --script bench.sh --os linux
 
 **Come back to a run**
 
-Streams run m3d8's output and exits with its status.
+Streams run m3d8q's output and exits with its status.
 
 ```
-proof watch m3d8
+proof watch m3d8q
 ```
 
 - **Usage:** `proof [FLAGS] [SUBCOMMAND]`
@@ -67,7 +67,7 @@ proof watch m3d8
 
 ## `proof run`
 
-- **Usage:** `proof run [FLAGS] [task]`
+- **Usage:** `proof run [FLAGS] [task] [args]…`
 - **Effect:** modifies state
 
 Sends your working tree as it is, with uncommitted changes and untracked files that Git doesn't
@@ -75,14 +75,19 @@ ignore, or the commit you name with --commit, and runs a task or a script there.
 output while it runs and exits with the run's status. With several --os flags, runs one run per
 operating system in parallel and exits with the worst status.
 
+The words after the task go to `mise run` on the runner as they are, so they mean what they mean
+to mise: arguments for the task, and `:::` to start another task. A flag Proof doesn't have goes to
+the task; to give the task a flag Proof also has, put it after `--`.
+
 Press Ctrl-C to cancel the run. To start a run without waiting for it, use --detach.
 
 ### Arguments
 - **`[task]`** — The task to run, from the project's mise.toml or .config/proof.kdl
+- **`[args]…`** — Arguments for the task, and `:::` to start another task, as for `mise run`
 
 ### Flags
 - **`--script <file>`** — Run this script file instead of a task; give - to read it from standard input
-- **`--os <os>`** — Without --os, Proof places the run on whichever of the task's operating systems has a runner free. "any" means the same, and "all" runs once on every operating system the task works on.
+- **`--os <os>`** — Without --os, Proof places the run on any operating system with a runner free, or only on those the project file lists for the task. "any" means the same, and "all" runs once on every one of them.
 
   **Choices:** `linux`, `macos`, `windows`, `any`, `all`
 - **`--label <label>`** — Run only on a runner that has this label, in addition to the task's labels
@@ -134,6 +139,18 @@ proof run test --commit HEAD
 proof run test --os all
 ```
 
+**Give the task an argument**
+
+```
+proof run test --seed 1234
+```
+
+**Run two tasks in one run, as mise runs them**
+
+```
+proof run lint ::: test
+```
+
 **Build on Linux and download what it built**
 
 ```
@@ -154,7 +171,7 @@ proof run --script - --os macos
 Picks up a run that is still going, from any terminal. Press Ctrl-C to stop watching; the run goes on.
 
 ### Arguments
-- **`<run>`** — The run's ID, or its last four characters while they're unique
+- **`<run>`** — The run's ID, or its last five characters
 
 ### Flags
 - **`--json`** — Print the run's result as JSON when it ends
@@ -174,7 +191,7 @@ Picks up a run that is still going, from any terminal. Press Ctrl-C to stop watc
 ### Examples
 
 ```
-proof watch m3d8
+proof watch m3d8q
 ```
 
 ## `proof logs`
@@ -185,7 +202,7 @@ proof watch m3d8
 Works for any run Proof still keeps, finished or not. On a terminal, Proof shows the output in a pager.
 
 ### Arguments
-- **`<run>`** — The run's ID, or its last four characters while they're unique
+- **`<run>`** — The run's ID, or its last five characters
 
 ### Flags
 - **`--tail <lines>`** — Print only the last this many lines
@@ -206,13 +223,13 @@ Works for any run Proof still keeps, finished or not. On a terminal, Proof shows
 ### Examples
 
 ```
-proof logs m3d8
+proof logs m3d8q
 ```
 
 **Print the end of the output**
 
 ```
-proof logs m3d8 --tail 100
+proof logs m3d8q --tail 100
 ```
 
 ## `proof cancel`
@@ -223,7 +240,7 @@ proof logs m3d8 --tail 100
 Cancel runs, and end everything their commands started
 
 ### Arguments
-- **`<run>…`** — The runs' IDs, or their last four characters while they're unique
+- **`<run>…`** — The runs' IDs, or their last five characters
 
 ### Exit Status
 
@@ -240,7 +257,7 @@ Cancel runs, and end everything their commands started
 ### Examples
 
 ```
-proof cancel m3d8
+proof cancel m3d8q
 ```
 
 ## `proof download`
@@ -251,7 +268,7 @@ proof cancel m3d8
 Download a run's artifacts
 
 ### Arguments
-- **`<run>`** — The run's ID, or its last four characters while they're unique
+- **`<run>`** — The run's ID, or its last five characters
 - **`[pattern]…`** — Download only the artifacts matching these patterns
 
 ### Flags
@@ -273,13 +290,13 @@ Download a run's artifacts
 ### Examples
 
 ```
-proof download m3d8
+proof download m3d8q
 ```
 
 **Download some artifacts into another folder**
 
 ```
-proof download m3d8 'pkg/*.gem' --output dist
+proof download m3d8q 'pkg/*.gem' --output dist
 ```
 
 ## `proof status`
@@ -315,7 +332,7 @@ proof status
 - **Usage:** `proof login [--code-file <file>] <server>`
 - **Effect:** modifies state
 
-Asks for the one-time code that `proof server setup` printed. Proof never takes a secret as an argument.
+Asks for the one-time code that `proof server setup` printed, such as Q8MR-2T4W. Proof never takes a secret as an argument. The code works once, for 15 minutes, and stops working after 5 wrong attempts. Proof accepts it in either case, with or without the hyphen, and reads O as 0 and I or L as 1.
 
 ### Arguments
 - **`<server>`** — The server's address, such as server.home.arpa
@@ -561,10 +578,10 @@ proof runner setup server.home.arpa
 - **Usage:** `proof runner approve [code]`
 - **Effect:** modifies state
 
-Let a runner that asked to join into the pool, and add its host to the pool file
+The code works once, for 15 minutes, and stops working after 5 wrong attempts. Proof accepts it in either case, with or without the hyphen, and reads O as 0 and I or L as 1.
 
 ### Arguments
-- **`[code]`** — The code the runner printed; without it, lists the runners waiting for approval
+- **`[code]`** — The code the runner printed, such as XK7P-42MQ; without it, lists the runners waiting for approval
 
 ### Exit Status
 
@@ -581,7 +598,7 @@ Let a runner that asked to join into the pool, and add its host to the pool file
 ### Examples
 
 ```
-proof runner approve XK7-42P
+proof runner approve XK7P-42MQ
 ```
 
 ## `proof runner list`

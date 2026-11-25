@@ -85,7 +85,7 @@ proof: created ~/.config/proof/pool.kdl
 proof: created ~/.local/share/proof
 proof: created a certificate for server.home.arpa
 proof: started the Proof server on port 7443
-proof: sign in from where you work with `proof login server.home.arpa`, and give it this one-time code: Q8M-2RT
+proof: sign in from where you work with `proof login server.home.arpa`, and give it this one-time code: Q8MR-2T4W
 ```
 
 Keep that code for later; we'll use it to sign in from `laptop`.
@@ -100,8 +100,8 @@ proof: checking nuc for a Linux runner
 proof: checked: proof's services keep running after logout
 proof: installed mise for the runner
 proof: started the runner nuc-linux as a service of this account
-proof: nuc-linux asks to join server.home.arpa as code XK7-42P
-proof: approve it from where you work with `proof runner approve XK7-42P`
+proof: nuc-linux asks to join server.home.arpa as code XK7P-42MQ
+proof: approve it from where you work with `proof runner approve XK7P-42MQ`
 ```
 
 The code is short so that you can read it off a text console and type it elsewhere. Nobody types or pastes a token on `nuc`.
@@ -114,9 +114,9 @@ On `laptop`, sign in with the code from the server, then approve the runner with
 
 ```console
 you@laptop $ proof login server.home.arpa
-proof: enter the one-time code from `proof server setup`: Q8M-2RT
+proof: enter the one-time code from `proof server setup`: Q8MR-2T4W
 proof: signed in to server.home.arpa
-you@laptop $ proof runner approve XK7-42P
+you@laptop $ proof runner approve XK7P-42MQ
 proof: approved nuc-linux
 proof: added host nuc to the pool file, with the default budget and share
 ```
@@ -155,29 +155,8 @@ Now let's run the tests. From anywhere in the project, run:
 
 ```console
 you@laptop $ proof run test
-proof: refused: no operating system is given for task test
-proof: add `--os linux`, or list the operating systems it works on in .config/proof.kdl:
-proof:   defaults {
-proof:     os linux
-proof:   }
-```
-
-`proof` exits with 2, and sends nothing. Proof doesn't guess where a task works: plenty of projects run only on Linux, and a run sent to Windows to find out would fail in its setup. Before you run it again, think about which of the two fixes in the message you'd use for a task you'll run every day.
-
-The flag works for one run. The project file says it once for every run. Create `.config/proof.kdl` at the project's root:
-
-```kdl
-defaults {
-  os linux
-}
-```
-
-Run the task again:
-
-```console
-you@laptop $ proof run test
 proof: invoices at 9b1e44a (clean), task test
-proof: run k7q2 on nuc-linux (empty workspace)
+proof: run k7q2w on nuc-linux (empty workspace, any operating system)
 Run options: --seed 31877
 
 # Running:
@@ -186,15 +165,17 @@ Run options: --seed 31877
 
 Finished in 2.413771s, 18.2289 runs/s, 41.4291 assertions/s.
 44 runs, 100 assertions, 0 failures, 0 errors, 0 skips
-proof: exit=0 run=20261124-2136-k7q2 task=test runner=nuc-linux queued=0s ran=1m52s
+proof: exit=0 run=20261125-0336-k7q2w task=test runner=nuc-linux queued=0s ran=1m52s
 ```
+
+Proof sent the run to `nuc-linux` because it was free, and it is the only runner in this pool. Nothing in the project says which operating systems the task works on, so any of them will do; when you add a Mac or a Windows PC, the [project file](reference/project-file.md) is where to say otherwise.
 
 The first run took almost two minutes because the workspace was empty: mise installed Ruby, and the `setup` task installed the project's gems. The `ran=` time in the last line is the whole run, setup included. Run the same command again, and the second run reuses the workspace:
 
 ```console
 you@laptop $ proof run test
 proof: invoices at 9b1e44a (clean), task test
-proof: run w3n8 on nuc-linux (reused workspace)
+proof: run w3n8r on nuc-linux (reused workspace)
 Run options: --seed 4410
 
 # Running:
@@ -203,7 +184,7 @@ Run options: --seed 4410
 
 Finished in 2.388152s, 18.4243 runs/s, 41.8734 assertions/s.
 44 runs, 100 assertions, 0 failures, 0 errors, 0 skips
-proof: exit=0 run=20261124-2136-w3n8 task=test runner=nuc-linux queued=0s ran=6s
+proof: exit=0 run=20261125-0336-w3n8r task=test runner=nuc-linux queued=0s ran=6s
 ```
 
 ## See a run fail
@@ -213,7 +194,7 @@ Proof sends your working tree as it is, so a change you haven't committed is par
 ```console
 you@laptop $ proof run test
 proof: invoices at 9b1e44a with 1 uncommitted change, task test
-proof: run r5c1 on nuc-linux (reused workspace)
+proof: run r5c6t on nuc-linux (reused workspace)
 Run options: --seed 52931
 
 # Running:
@@ -227,8 +208,8 @@ Expected: 107.0
 
 44 runs, 100 assertions, 1 failures, 0 errors, 0 skips
 rake aborted!
-proof: exit=1 run=20261124-2136-r5c1 task=test runner=nuc-linux queued=0s ran=6s
-proof: read the whole output with `proof logs r5c1`
+proof: exit=1 run=20261125-0336-r5c6t task=test runner=nuc-linux queued=0s ran=6s
+proof: read the whole output with `proof logs r5c6t`
 ```
 
 What will the shell say `proof` exited with? Check:
@@ -245,7 +226,7 @@ Now check the last commit instead, without your change:
 ```console
 you@laptop $ proof run test --commit HEAD
 proof: invoices at 9b1e44a, task test
-proof: run h2v6 on nuc-linux (reused workspace)
+proof: run h2v6y on nuc-linux (reused workspace)
 Run options: --seed 17203
 
 # Running:
@@ -254,7 +235,7 @@ Run options: --seed 17203
 
 Finished in 2.402215s, 18.3165 runs/s, 41.6283 assertions/s.
 44 runs, 100 assertions, 0 failures, 0 errors, 0 skips
-proof: exit=0 run=20261124-2136-h2v6 task=test runner=nuc-linux queued=0s ran=7s
+proof: exit=0 run=20261125-0336-h2v6y task=test runner=nuc-linux queued=0s ran=7s
 ```
 
 The run passes, because `--commit HEAD` sends the commit with its history and leaves out what you haven't committed. Undo the change that broke the test before you go on.
@@ -265,6 +246,6 @@ You've finished when all of these are true:
 
 - `proof status` lists `nuc-linux`, with nothing in the queue.
 - `proof run test` in your project exits with 0.
-- `proof logs r5c1`, with your failing run's ID in place of `r5c1`, prints the failing run's whole output again.
+- `proof logs r5c6t`, with your failing run's ID in place of `r5c6t`, prints the failing run's whole output again.
 
 You should now be comfortable setting up a server and a runner, running a project's task on it, and telling a failing run from a pool problem by its exit status. To add a Mac or a Windows PC, or to check every push before it leaves your computer, continue with the [guides](guides/index.md).

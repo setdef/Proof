@@ -32,17 +32,17 @@ A person using one of those hosts comes first. While someone is at its keyboard,
 ```console
 % proof run package --os linux --os windows --download
 proof: Lota at 3f9c2e1 (clean), task package
-proof: run m3d8 on nuc-linux (reused workspace)
-proof: run p9x2 on pc-windows (reused workspace)
+proof: run m3d8q on nuc-linux (reused workspace)
+proof: run p9x2k on pc-windows (reused workspace)
 [nuc-linux] Built pkg/lota-0.0.1.dev-x86_64-linux.gem
 [pc-windows] Built pkg/lota-0.0.1.dev-x64-mingw-ucrt.gem
-proof: downloaded pkg/lota-0.0.1.dev-x86_64-linux.gem from run m3d8 to ./pkg/
-proof: downloaded pkg/lota-0.0.1.dev-x64-mingw-ucrt.gem from run p9x2 to ./pkg/
-proof: exit=0 run=20261124-2136-m3d8 task=package runner=nuc-linux queued=0s ran=0s artifacts=1
-proof: exit=0 run=20261124-2136-p9x2 task=package runner=pc-windows queued=0s ran=0s artifacts=1
+proof: downloaded pkg/lota-0.0.1.dev-x86_64-linux.gem from run m3d8q to ./pkg/
+proof: downloaded pkg/lota-0.0.1.dev-x64-mingw-ucrt.gem from run p9x2k to ./pkg/
+proof: exit=0 run=20261125-0336-m3d8q task=package runner=nuc-linux queued=0s ran=0s artifacts=1
+proof: exit=0 run=20261125-0336-p9x2k task=package runner=pc-windows queued=0s ran=0s artifacts=1
 ```
 
-Lines that start with `proof:` are Proof's, written to standard error. The task's output goes to standard output, each line marked with the runner it came from when more than one run is going. Each run ends with one result line, with its exit status and its full ID, for an agent to read. `proof` exits with the worst of the runs' statuses, here 0. Anywhere Proof asks for a run's ID, the last four characters are enough while they're unique: `proof logs m3d8`. A script that needs more than the result lines can pass `--json`, and Proof then prints one JSON object per run in their place.
+Lines that start with `proof:` are Proof's, written to standard error. The task's output goes to standard output, each line marked with the runner it came from when more than one run is going. Each run ends with one result line, with its exit status and its full ID, for an agent to read. `proof` exits with the worst of the runs' statuses, here 0. Anywhere Proof asks for a run's ID, its last five characters are enough: `proof logs m3d8q`. A script that needs more than the result lines can pass `--json`, and Proof then prints one JSON object per run in their place.
 
 ## Compatibility
 
@@ -69,18 +69,18 @@ To uninstall Proof from a computer, run `proof runner uninstall` or `proof serve
 ## Usage
 
 1. **Set up a server.** On the always-on computer, as an account set aside for Proof (the docs call it `proof`), run `proof server setup`. It checks the computer and lists every change it will make before it makes any. With `--dry-run`, it stops after the list. It then starts the server as a service of your account and prints a one-time code for signing in.
-2. **Add each host,** each computer that will run tasks. On it, as an account set aside for Proof, run `proof runner setup server.home.arpa`. It prints a short code, such as `XK7-42P`, so you never type a long token at a text console. Where a step needs an administrator, such as adding the account to the `kvm` group, setup prints the exact commands for you to run, and checks them when you run setup again.
+2. **Add each host,** each computer that will run tasks. On it, as an account set aside for Proof, run `proof runner setup server.home.arpa`. It prints a short code, such as `XK7P-42MQ`, so you never type a long token at a text console. Where a step needs an administrator, such as adding the account to the `kvm` group, setup prints the exact commands for you to run, and checks them when you run setup again.
 3. **Sign in where you work, and let each runner in:**
 
    ```console
    $ proof login server.home.arpa
-   $ proof runner approve XK7-42P
+   $ proof runner approve XK7P-42MQ
    $ proof verify
    ```
 
    `proof login` asks for the code from step 1, and never takes a secret as an argument. `proof verify` sends a known run to every runner and reports each result.
-4. **Run a task** from anywhere in the project: `proof run test`. `test` can be a task in the project's `mise.toml` or a task defined in `.config/proof.kdl`. In that optional file, you say which operating systems each task works on, what hardware it needs, the CPUs and memory it requests, and which files to keep from its runs. Without `--os`, Proof places the run on whichever of the task's operating systems has a runner free. To try something without a task, run a script: `proof run --script bench.sh --os linux`.
-5. **Come back to a run** by its ID from any terminal. `proof watch m3d8` streams it and exits with its status, `proof logs m3d8` prints its whole output, and `proof cancel m3d8` stops it. In `proof run`, press Ctrl-C to cancel the run. In `proof watch`, press Ctrl-C to stop watching without canceling it. `proof run --detach` starts a run and exits at once with its ID. `proof status` shows every runner, and what each queued run is waiting behind.
+4. **Run a task** from anywhere in the project: `proof run test`. `test` can be a task in the project's `mise.toml` or a task defined in `.config/proof.kdl`. In that optional file, you say which operating systems each task works on, what hardware it needs, the CPUs and memory it requests, and which files to keep from its runs. Without `--os`, Proof places the run on any operating system with a runner free, or only on those the project file lists for the task. Words after the task go to it, as with `mise run`: `proof run test --seed 1234` gives the task an argument, and `proof run lint ::: test` runs two tasks. To try something without a task, run a script: `proof run --script bench.sh --os linux`.
+5. **Come back to a run** by its ID from any terminal. `proof watch m3d8q` streams it and exits with its status, `proof logs m3d8q` prints its whole output, and `proof cancel m3d8q` stops it. In `proof run`, press Ctrl-C to cancel the run. In `proof watch`, press Ctrl-C to stop watching without canceling it. `proof run --detach` starts a run and exits at once with its ID. `proof status` shows every runner, and what each queued run is waiting behind.
 6. **Check before each push.** `proof hook install test` adds a Git pre-push hook to your clone, and Git stops the push when the `test` run fails.
 7. **Build every pushed commit** by listing a repository, its branches, and its tasks in the server's pool file.
 8. **Upgrade** by running `proof server upgrade` on the server. The runners upgrade themselves to match.

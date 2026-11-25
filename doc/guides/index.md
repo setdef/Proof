@@ -11,6 +11,7 @@ Each guide does one job, from a pool that already has a server and one runner. I
 
 - [Add a Mac](add-a-mac.md): set up a runner on macOS, including one that can open windows in a signed-in session.
 - [Add a Windows PC](add-a-windows-pc.md): set up a runner on Windows and another in its WSL, counted as one host.
+- [Run a task on several operating systems](several-operating-systems.md): write setup that works on Linux, macOS, and Windows, and list in the project file where each task works.
 - [Give runs a GPU, KVM, or a desktop](labels.md): which hardware each runner offers as a label, and how a task asks for it.
 
 ## Work with coding agents

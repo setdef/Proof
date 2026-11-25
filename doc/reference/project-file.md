@@ -7,7 +7,7 @@
 
 The project file is `.config/proof.kdl`, at the root of a project's Git repository. It contains what only Proof needs to know about the project's **tasks**: which operating systems each one works on, which **labels** it needs a runner to have, the **resources** it requests, its time limit, the files to keep from its runs as **artifacts**, and the folders to keep between its runs as **caches**. It can also define tasks that the project's `mise.toml` doesn't have. Words in bold are defined in the [glossary](../glossary.md).
 
-The file is optional. Without it, `proof run NAME` runs `mise run NAME` with Proof's built-in defaults, and you name the operating system with `--os`. Someone who doesn't use Proof can leave the file alone: no other tool reads it.
+The file is optional. Without it, `proof run NAME` runs `mise run NAME` with Proof's built-in defaults, on any operating system with a runner free. Someone who doesn't use Proof can leave the file alone: no other tool reads it.
 
 The examples on this page are from [Lota](https://github.com/setdef/Lota), a Ruby library for 2D games, which has two tasks in its `mise.toml`: `test`, which runs `bundle exec rake test`, and `package`, which runs `bundle exec rake package:native`.
 
@@ -52,7 +52,7 @@ For each value of a run, Proof uses the first of these that has it:
 | A flag on `proof run` | `--memory 16GB` |
 | The task's entry in the project file | `task test memory="12GB"` |
 | The `defaults` node | `defaults memory="8GB"` |
-| Proof's built-in defaults | 2 CPUs, 4 GB, 60 minutes |
+| Proof's built-in defaults | Any operating system, 2 CPUs, 4 GB, 60 minutes |
 
 Lists combine differently from single values:
 
@@ -103,7 +103,7 @@ A size counts 1 GB as 1,024 MB. A request larger than every host in the pool has
 
 | Child | Arguments | Meaning |
 | --- | --- | --- |
-| `os` | One or more of `linux`, `macos`, `windows` | The operating systems the task works on. `proof run NAME` with no `--os`, and with `--os any`, places the run on whichever of these has a runner free; `--os all` runs once on each. |
+| `os` | One or more of `linux`, `macos`, `windows` | The operating systems the task works on. Without `os`, a task can run on any of them. `proof run NAME` with no `--os`, and with `--os any`, places the run on whichever of these has a runner free; `--os all` runs once on each. |
 | `label` | One or more labels, such as `gpu`, `kvm`, or `desktop` | The labels a runner must have to run the task. The [pool file](pool-file.md) can withhold a label from a host. |
 | `artifact` | One or more file patterns, relative to the workspace's root | The files to keep after a run succeeds. `*` matches within a folder and `**` matches across folders. A pattern that matches no file makes the run fail with exit status 78. |
 | `cache` | One or more folders, relative to the workspace's root | Folders to keep between the project's runs on a runner, saved only after a run succeeds. |
@@ -141,11 +141,24 @@ task package memory=8GB
 task package memory="8GB"
 ```
 
+## Several tasks on one command line
+
+The words after a task's name go to `mise run` on the runner as they are, so `proof run lint ::: test` runs both tasks in one run, as `mise run lint ::: test` would: in parallel, unless one task lists another in its `depends` in `mise.toml`. When a command line names several tasks, the run gets settings that suit all of them:
+
+| Setting | For several tasks |
+| --- | --- |
+| `os` | The operating systems every one of them works on |
+| `label` | Every label any of them needs |
+| `cpus`, `memory`, `timeout` | The largest of their values |
+| `artifact`, `cache` | All of them |
+
+When the tasks have no operating system in common, Proof refuses the run before sending anything, and lists each task's operating systems.
+
 ## Tasks without a project file
 
 | You run | Without a project file | With the complete example on this page |
 | --- | --- | --- |
-| `proof run test` | Refused: no operating system is given for the task. The message says to add `--os` or an `os` node. | Runs `mise run test` on whichever operating system has a runner free that can open windows. |
+| `proof run test` | Runs `mise run test` on any operating system with a runner free, with 2 CPUs, 4 GB, and 60 minutes. | Runs `mise run test` on whichever operating system has a runner free that can open windows. |
 | `proof run test --os linux` | Runs `mise run test` on Linux, with 2 CPUs, 4 GB, and 60 minutes. | Runs `mise run test` on Linux, with 4 CPUs, 8 GB, and 45 minutes, on a runner that can open windows. |
 | `proof run docs --os linux` | Fails on the runner: mise has no `docs` task. | Runs `bundle exec rake rdoc` on Linux and keeps `doc/api/**`. |
 
