@@ -92,7 +92,7 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
   **Choices:** `linux`, `macos`, `windows`, `any`, `all`
 - **`--label <label>`** — Run only on a runner that has this label, in addition to the task's labels
 
-  **Choices:** `gpu`, `kvm`, `desktop`
+  **Choices:** `gpu`, `kvm`, `desktop`, `podman`, `xcode`
 - **`--commit <rev>`** — Send this commit, with its history, instead of the working tree
 - **`-C --project <dir>`** — Use the project whose Git repository contains this folder
 - **`--cpus <count>`** — Request this many CPUs, in place of the task's request
@@ -100,8 +100,8 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
 - **`--timeout <duration>`** — End the run after this long, such as 30m, in place of the task's time limit
 - **`--empty`** — Start in an empty workspace, with nothing reused from earlier runs
 - **`--keep <pattern>`** — Keep the files matching this pattern as artifacts, in addition to the task's
-- **`--input <run>`** — Give this run the artifacts of an earlier run
-- **`--input-file <path>`** — Give this run a file or folder from this computer
+- **`--input <run>`** — Give this run the artifacts of an earlier run, in $PROOF_INPUTS/RUN_ID
+- **`--input-file <path>`** — Give this run a file or folder from this computer, in $PROOF_INPUTS/files
 - **`--download`** — Download the run's artifacts when it succeeds
 - **`-o --output <dir>`** — Download artifacts into this folder instead of the project's folder
 - **`--detach`** — Start the run, print its ID, and exit without waiting for it
@@ -411,6 +411,58 @@ Send a known run to every runner, and report each result
 proof verify
 ```
 
+## `proof skill`
+
+- **Usage:** `proof skill <SUBCOMMAND>`
+
+Install Proof's Agent Skill, which teaches coding agents to use Proof
+
+### Exit Status
+
+| Code | Meaning |
+| ---- | ------- |
+| `0` | The run succeeded, or the command did what it was asked. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
+| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
+| `78` | A --keep pattern matched no file. |
+| `124` | The run reached its time limit, and the runner ended it. |
+| `130` | You interrupted Proof with Ctrl-C. |
+| `137` | The run held more memory than it requested while its host ran short, or was killed. |
+
+## `proof skill install`
+
+- **Usage:** `proof skill install [--to <dir>]`
+- **Effect:** modifies state
+
+Install the Agent Skill that matches this version of Proof
+
+### Flags
+- **`--to <dir>`** — Install it into this skills folder, instead of ~/.agents/skills
+
+### Exit Status
+
+| Code | Meaning |
+| ---- | ------- |
+| `0` | The run succeeded, or the command did what it was asked. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
+| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
+| `78` | A --keep pattern matched no file. |
+| `124` | The run reached its time limit, and the runner ended it. |
+| `130` | You interrupted Proof with Ctrl-C. |
+| `137` | The run held more memory than it requested while its host ran short, or was killed. |
+
+### Examples
+
+```
+proof skill install
+```
+
+**Install it where one agent tool reads skills**
+
+```
+proof skill install --to ~/.claude/skills
+```
+
 ## `proof server`
 
 - **Usage:** `proof server <SUBCOMMAND>`
@@ -539,7 +591,7 @@ Add, approve, list, and remove runners
 
 ## `proof runner setup`
 
-- **Usage:** `proof runner setup [--name <name>] [-n --dry-run] <server>`
+- **Usage:** `proof runner setup [FLAGS] <server>`
 - **Effect:** modifies state
 
 Run it as the account the runner will run as: an account set aside for Proof, not the account of
@@ -553,6 +605,8 @@ Windows, also sets up a runner in WSL. Safe to run again.
 
 ### Flags
 - **`--name <name>`** — Name the runner this, instead of the computer's network name
+- **`--desktop`** — On macOS, run the runner in this account's signed-in session, so runs can open windows
+- **`--no-wsl`** — On Windows, set up the Windows runner only, without one in WSL
 - **`-n --dry-run`** — List the changes setup would make, and make none
 
 ### Exit Status
@@ -601,12 +655,65 @@ The code works once, for 15 minutes, and stops working after 5 wrong attempts. P
 proof runner approve XK7P-42MQ
 ```
 
+## `proof runner start`
+
+- **Usage:** `proof runner start`
+- **Effect:** modifies state
+
+Start this computer's runner again after `proof runner stop`
+
+### Exit Status
+
+| Code | Meaning |
+| ---- | ------- |
+| `0` | The run succeeded, or the command did what it was asked. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
+| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
+| `78` | A --keep pattern matched no file. |
+| `124` | The run reached its time limit, and the runner ended it. |
+| `130` | You interrupted Proof with Ctrl-C. |
+| `137` | The run held more memory than it requested while its host ran short, or was killed. |
+
+### Examples
+
+```
+proof runner start
+```
+
+## `proof runner stop`
+
+- **Usage:** `proof runner stop [-f --force]`
+- **Effect:** modifies state
+
+Stop this computer's runner, and cancel its runs, until `proof runner start`
+
+### Flags
+- **`-f --force`** — Stop without asking first
+
+### Exit Status
+
+| Code | Meaning |
+| ---- | ------- |
+| `0` | The run succeeded, or the command did what it was asked. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
+| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
+| `78` | A --keep pattern matched no file. |
+| `124` | The run reached its time limit, and the runner ended it. |
+| `130` | You interrupted Proof with Ctrl-C. |
+| `137` | The run held more memory than it requested while its host ran short, or was killed. |
+
+### Examples
+
+```
+proof runner stop
+```
+
 ## `proof runner list`
 
 - **Usage:** `proof runner list [--json]`
 - **Effect:** read-only
 
-List the runners, with their labels and resources
+List the runners, with their versions, labels, and resources
 
 ### Flags
 - **`--json`** — Print the runners as JSON

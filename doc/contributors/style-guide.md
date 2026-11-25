@@ -46,6 +46,7 @@ On a page whose commands all run as one account on one computer, use a bare prom
 | The server's computer and its address | `server`, at `server.home.arpa`. [RFC 8375](https://www.rfc-editor.org/rfc/rfc8375) reserves `home.arpa` for home networks. |
 | A Linux host and its runner | `nuc`, with the runner `nuc-linux` |
 | A Windows host and its runners | `pc`, with the runners `pc-windows` and `pc-wsl` |
+| A Mac host and its runner | `mac`, with the runner `mac-macos` |
 | A run ID | `20261125-0336-m3d8q`, shortened to `m3d8q` where the page has shown the full form |
 | A runner's approval code, and a sign-in code | `XK7P-42MQ` and `Q8MR-2T4W` |
 

@@ -70,7 +70,7 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
     choices "linux" "macos" "windows" "any" "all"
   }
   flag "--label <label>" var=#true help="Run only on a runner that has this label, in addition to the task's labels" {
-    choices strict=#false "gpu" "kvm" "desktop"
+    choices strict=#false "gpu" "kvm" "desktop" "podman" "xcode"
   }
   flag "--commit <rev>" help="Send this commit, with its history, instead of the working tree"
   flag "-C --project <dir>" help="Use the project whose Git repository contains this folder"
@@ -81,8 +81,8 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
   flag "--empty" help="Start in an empty workspace, with nothing reused from earlier runs"
 
   flag "--keep <pattern>" var=#true help="Keep the files matching this pattern as artifacts, in addition to the task's"
-  flag "--input <run>" var=#true help="Give this run the artifacts of an earlier run"
-  flag "--input-file <path>" var=#true help="Give this run a file or folder from this computer"
+  flag "--input <run>" var=#true help="Give this run the artifacts of an earlier run, in $PROOF_INPUTS/RUN_ID"
+  flag "--input-file <path>" var=#true help="Give this run a file or folder from this computer, in $PROOF_INPUTS/files"
   flag "--download" help="Download the run's artifacts when it succeeds"
   flag "-o --output <dir>" requires="--download" help="Download artifacts into this folder instead of the project's folder"
 
@@ -150,6 +150,14 @@ cmd "verify" effect="write" help="Send a known run to every runner, and report e
   example "proof verify"
 }
 
+cmd "skill" subcommand_required=#true help="Install Proof's Agent Skill, which teaches coding agents to use Proof" {
+  cmd "install" effect="write" help="Install the Agent Skill that matches this version of Proof" {
+    flag "--to <dir>" help="Install it into this skills folder, instead of ~/.agents/skills"
+    example "proof skill install"
+    example "proof skill install --to ~/.claude/skills" header="Install it where one agent tool reads skills"
+  }
+}
+
 cmd "server" subcommand_required=#true help="Set up, upgrade, or uninstall the server, on the computer it runs on" {
   cmd "setup" effect="write" help="Set up this computer as the pool's server" {
     long_help "Run it as the account the server will run as: an account set aside for Proof, not the account of anyone who uses the computer, and never root; setup refuses to run as root. Checks the computer and lists every change it will make before it makes any. Then starts the server as a service of your account, and prints a one-time code for signing in. Safe to run again."
@@ -178,6 +186,8 @@ Windows, also sets up a runner in WSL. Safe to run again.
 """#
     arg "<server>" help="The server's address, such as server.home.arpa"
     flag "--name <name>" help="Name the runner this, instead of the computer's network name"
+    flag "--desktop" help="On macOS, run the runner in this account's signed-in session, so runs can open windows"
+    flag "--no-wsl" help="On Windows, set up the Windows runner only, without one in WSL"
     flag "-n --dry-run" help="List the changes setup would make, and make none"
     example "proof runner setup server.home.arpa"
   }
@@ -186,7 +196,14 @@ Windows, also sets up a runner in WSL. Safe to run again.
     arg "[code]" help="The code the runner printed, such as XK7P-42MQ; without it, lists the runners waiting for approval"
     example "proof runner approve XK7P-42MQ"
   }
-  cmd "list" effect="read" help="List the runners, with their labels and resources" {
+  cmd "start" effect="write" help="Start this computer's runner again after `proof runner stop`" {
+    example "proof runner start"
+  }
+  cmd "stop" effect="write" help="Stop this computer's runner, and cancel its runs, until `proof runner start`" {
+    flag "-f --force" help="Stop without asking first"
+    example "proof runner stop"
+  }
+  cmd "list" effect="read" help="List the runners, with their versions, labels, and resources" {
     flag "--json" help="Print the runners as JSON"
     example "proof runner list"
   }

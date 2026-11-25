@@ -29,7 +29,7 @@ Most invocations come from coding agents, inside agent harnesses. That shapes se
 
 - Git gives a pre-push hook one line per ref it will push. For a new branch, the remote's old value is all zeros: use the remote's default branch as the base instead.
 - Git gives the hook no lines at all for a push it is about to refuse, such as a non-fast-forward. No lines doesn't mean nothing to check: refuse, and say what the likely cause is.
-- One run checks the whole push.
+- The hook runs the task once for each ref pushed, on the commit being pushed, in parallel, and any failure stops the whole push.
 
 ## Sending over slow links
 

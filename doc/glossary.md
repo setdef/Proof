@@ -167,7 +167,7 @@ The directory on a runner where a project's code sits while a run's command runs
 
 ### reuse
 
-What survives in a workspace from one run to the next: the git clone, the tools and dependencies the project's setup installed, and the project's **caches**. Before each run, the runner removes every file Git doesn't track, ignored files included. With reuse, most runs are several times faster. It can also hide a fault, such as a setup step that never installs what an earlier run left behind, and it can cause one, such as a file left over from another commit.
+What survives in a workspace from one run to the next: the Git clone, what the project's setup installed in the run's home folder, such as the tools mise installs, and the project's **caches**. Before each run, the runner removes every file Git doesn't track, ignored files included. With reuse, most runs are several times faster. It can also hide a fault, such as a setup step that never installs what an earlier run left behind, and it can cause one, such as a file left over from another commit.
 
 - Don't say: warm, which makes reuse sound better than **empty**; incremental; dirty.
 

@@ -1,0 +1,62 @@
+<!--
+  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
+  SPDX-License-Identifier: CC-BY-SA-4.0
+-->
+
+# Share a host with the person who uses it
+
+Most hosts are someone's computer first. This guide sets how much of a host Proof keeps free for a person using it, and explains what runs do while they're there, so the person can work, or play, without noticing Proof.
+
+## What a person notices, and doesn't
+
+While a person is **active** at a host, using its keyboard, mouse, trackpad, or screen:
+
+- Proof keeps the host's **share** of CPUs and memory free for them, and places no new run that would need it.
+- Runs already going continue at the lowest priority the operating system has, so the person's programs come first.
+- Runs that need the person's display or GPU wait until they stop. On Windows, runs using the display when they arrived are stopped and queued again.
+- On Linux and Windows, runs draw on separate displays and desktops, and never take the person's keyboard focus.
+
+When nobody has used the host for its `active-for` time, five minutes unless the pool file says otherwise, runs get the whole host back.
+
+Any person counts, not only one owner: a family member at the same computer gets the same share. Input from runs never counts as a person.
+
+## Set the share
+
+In the [pool file](../reference/pool-file.md#host), give the host a share large enough for what the person does there. The default share is 2 CPUs and 4 GB. A gaming PC needs much more:
+
+```kdl
+host pc {
+  runner pc-windows
+  runner pc-wsl
+  share cpus=8 memory="32GB"
+  active-for "10m"
+}
+```
+
+> [!WARNING]
+> Memory a run already holds can't be taken back when a person arrives. Proof keeps the share free whenever a person is active, so runs placed while nobody is there can still use it. If the person regularly needs most of the host's memory, set the share large enough for that, and the host runs smaller work while they're away.
+
+## Keep a GPU or a host to yourself
+
+To keep runs off a GPU a person uses for their work, withhold the `gpu` label:
+
+```kdl
+host pc {
+  runner pc-windows
+  runner pc-wsl
+  withhold gpu
+}
+```
+
+To take a host out of the pool for a while, stop its runner on the host itself, and start it again later:
+
+```console
+$ proof runner stop
+$ proof runner start
+```
+
+Runs going on that host when it stops are canceled, and their `proof` exits 75.
+
+## Sound
+
+Proof can't stop a run's program from playing sound through the host's speakers on macOS. Projects whose tests make sound should use a silent audio driver in their tasks, such as SDL's `dummy` driver (`SDL_AUDIODRIVER=dummy`).

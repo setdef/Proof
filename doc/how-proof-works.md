@@ -59,7 +59,7 @@ Each runner runs as one ordinary account on its host, set aside for Proof, never
 
 For each run, the runner provides:
 
-- **A workspace,** kept from earlier runs of the same project. Before the run, the runner updates the workspace to the commit and removes every file Git doesn't track, ignored files included, so leftover build output can't change the result. The tools and dependencies the project's setup installed, and the project's **caches**, stay. `proof run --empty` starts in an empty workspace.
+- **A workspace,** kept from earlier runs of the same project. Before the run, the runner updates the workspace to the commit and removes every file Git doesn't track, ignored files included, so leftover build output can't change the result. What the project's setup installed in the run's home folder, such as the tools mise installs, stays, and so do the project's **caches**. Folders inside the project that Git ignores, such as `node_modules`, go unless the project declares them as caches. `proof run --empty` starts in an empty workspace.
 - **Separate folders:** a home folder kept with the workspace, so tools that install into your home install there, and a temporary folder for the run alone, deleted when the run ends. On Linux, the run also gets a separate runtime folder and session bus.
 - **A download cache per project,** shared by that project's runs on the host, so a large download arrives once per host.
 - **[mise](https://mise.jdx.dev/),** which installs the tools the project's `mise.toml` pins and runs the task. Proof installs nothing of a project's.
