@@ -186,7 +186,7 @@ Run options: --seed 31877
 
 Finished in 2.413771s, 18.2289 runs/s, 41.4291 assertions/s.
 44 runs, 100 assertions, 0 failures, 0 errors, 0 skips
-proof: exit=0 run=20261124-1402-k7q2 task=test runner=nuc-linux queued=0s ran=1m52s
+proof: exit=0 run=20261124-2136-k7q2 task=test runner=nuc-linux queued=0s ran=1m52s
 ```
 
 The first run took almost two minutes because the workspace was empty: mise installed Ruby, and the `setup` task installed the project's gems. The `ran=` time in the last line is the whole run, setup included. Run the same command again, and the second run reuses the workspace:
@@ -203,7 +203,7 @@ Run options: --seed 4410
 
 Finished in 2.388152s, 18.4243 runs/s, 41.8734 assertions/s.
 44 runs, 100 assertions, 0 failures, 0 errors, 0 skips
-proof: exit=0 run=20261124-1405-w3n8 task=test runner=nuc-linux queued=0s ran=6s
+proof: exit=0 run=20261124-2136-w3n8 task=test runner=nuc-linux queued=0s ran=6s
 ```
 
 ## See a run fail
@@ -227,7 +227,7 @@ Expected: 107.0
 
 44 runs, 100 assertions, 1 failures, 0 errors, 0 skips
 rake aborted!
-proof: exit=1 run=20261124-1409-r5c1 task=test runner=nuc-linux queued=0s ran=6s
+proof: exit=1 run=20261124-2136-r5c1 task=test runner=nuc-linux queued=0s ran=6s
 proof: read the whole output with `proof logs r5c1`
 ```
 
@@ -254,7 +254,7 @@ Run options: --seed 17203
 
 Finished in 2.402215s, 18.3165 runs/s, 41.6283 assertions/s.
 44 runs, 100 assertions, 0 failures, 0 errors, 0 skips
-proof: exit=0 run=20261124-1411-h2v6 task=test runner=nuc-linux queued=0s ran=7s
+proof: exit=0 run=20261124-2136-h2v6 task=test runner=nuc-linux queued=0s ran=7s
 ```
 
 The run passes, because `--commit HEAD` sends the commit with its history and leaves out what you haven't committed. Undo the change that broke the test before you go on.

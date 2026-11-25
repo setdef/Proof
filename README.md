@@ -38,8 +38,8 @@ proof: run p9x2 on pc-windows (reused workspace)
 [pc-windows] Built pkg/lota-0.0.1.dev-x64-mingw-ucrt.gem
 proof: downloaded pkg/lota-0.0.1.dev-x86_64-linux.gem from run m3d8 to ./pkg/
 proof: downloaded pkg/lota-0.0.1.dev-x64-mingw-ucrt.gem from run p9x2 to ./pkg/
-proof: exit=0 run=20261124-1431-m3d8 task=package runner=nuc-linux queued=0s ran=0s artifacts=1
-proof: exit=0 run=20261124-1431-p9x2 task=package runner=pc-windows queued=0s ran=0s artifacts=1
+proof: exit=0 run=20261124-2136-m3d8 task=package runner=nuc-linux queued=0s ran=0s artifacts=1
+proof: exit=0 run=20261124-2136-p9x2 task=package runner=pc-windows queued=0s ran=0s artifacts=1
 ```
 
 Lines that start with `proof:` are Proof's, written to standard error. The task's output goes to standard output, each line marked with the runner it came from when more than one run is going. Each run ends with one result line, with its exit status and its full ID, for an agent to read. `proof` exits with the worst of the runs' statuses, here 0. Anywhere Proof asks for a run's ID, the last four characters are enough while they're unique: `proof logs m3d8`. A script that needs more than the result lines can pass `--json`, and Proof then prints one JSON object per run in their place.

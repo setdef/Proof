@@ -100,7 +100,7 @@ To ask for **resources**: a task requests 2 CPUs and 4 GB. Also the amount asked
 
 ### run
 
-One execution of a **task** or a **script** on one runner, with an ID, its output, and its exit status. A run ID looks like `20261124-1402-k7q2`.
+One execution of a **task** or a **script** on one runner, with an ID, its output, and its exit status. A run ID looks like `20261124-2136-k7q2`.
 
 - Elsewhere: called a run in GitHub Actions, and a build in Jenkins, Buildkite, and Concourse.
 - Don't say: build, which suggests compiling; job; execution; allocation; check.

@@ -46,7 +46,7 @@ On a page whose commands all run as one account on one computer, use a bare prom
 | The server's computer and its address | `server`, at `server.home.arpa`. [RFC 8375](https://www.rfc-editor.org/rfc/rfc8375) reserves `home.arpa` for home networks. |
 | A Linux host and its runner | `nuc`, with the runner `nuc-linux` |
 | A Windows host and its runners | `pc`, with the runners `pc-windows` and `pc-wsl` |
-| A run ID | `20261124-1431-m3d8`, shortened to `m3d8` where the page has shown the full form |
+| A run ID | `20261124-2136-m3d8`, shortened to `m3d8` where the page has shown the full form |
 
 Examples of real use come from a real project. Any public repository under [github.com/setdef](https://github.com/setdef) may be named and linked; [Lota](https://github.com/setdef/Lota) is the running example in the README and the references. Tutorials, which need output the reader can reproduce with any project, use a Ruby project called `invoices`.
 
