@@ -81,7 +81,7 @@ The file `.config/proof.kdl` in a project. It contains what only Proof needs: wh
 
 ### defaults
 
-The values in a project file's `defaults` node. They apply to every task whose entry lacks that value. Without a project file, Proof's built-in defaults apply.
+The values in a `defaults` node. In a project file, they apply to every task whose entry lacks that value; in the pool file, to every host. Without a project file, Proof's built-in defaults apply.
 
 ### resources
 
@@ -131,7 +131,7 @@ A run is in exactly one of these states. The first two can change; the rest are 
 | `timed_out` | The run reached its time limit, and the runner ended it. |
 | `out_of_memory` | The run held more memory than it requested while its host ran short, and the runner ended it. |
 | `canceled` | Someone canceled the run, and the runner ended it. |
-| `lost` | The run ended without a status from its command, because its runner or host went away or Proof failed. |
+| `lost` | The run ended without a status from its command, because its runner or host went away or Proof failed, or its command exited but its whole output never reached the server. |
 
 - Elsewhere: `queued` is queued in GitHub Actions and pending in Slurm, GitLab, and Kubernetes. Canceled has one l in GitLab, Buildkite, and Nomad.
 - Don't say: waiting or pending for `queued`; passed or green for `succeeded`; aborted or killed for `canceled`.

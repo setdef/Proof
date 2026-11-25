@@ -58,7 +58,7 @@ proof watch m3d8
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -107,7 +107,7 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -164,7 +164,7 @@ Picks up a run that is still going, from any terminal. Press Ctrl-C to stop watc
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -196,7 +196,7 @@ Works for any run Proof still keeps, finished or not. On a terminal, Proof shows
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -230,7 +230,7 @@ Cancel runs, and end everything their commands started
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -263,7 +263,7 @@ Download a run's artifacts
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -297,7 +297,7 @@ For each queued run, shows what it is waiting behind. For each runner, shows whe
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -328,7 +328,7 @@ Asks for the one-time code that `proof server setup` printed. Proof never takes 
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -353,7 +353,7 @@ Sign out of the pool's server from this computer, and delete the token Proof kep
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -381,7 +381,7 @@ Send a known run to every runner, and report each result
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -405,7 +405,7 @@ Set up, upgrade, or uninstall the server, on the computer it runs on
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -427,7 +427,7 @@ Checks the computer and lists every change it will make before it makes any. The
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -461,7 +461,7 @@ Upgrade the server; its runners upgrade themselves to match
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -489,7 +489,7 @@ Stop the server and delete it, with every run's record, output, and artifacts
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -513,7 +513,7 @@ Add, approve, list, and remove runners
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -542,7 +542,7 @@ Windows, also sets up a runner in WSL. Safe to run again.
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -560,7 +560,7 @@ proof runner setup proof-server.local
 - **Usage:** `proof runner approve [code]`
 - **Effect:** modifies state
 
-Let a runner that asked to join into the pool
+Let a runner that asked to join into the pool, and add its host to the pool file
 
 ### Arguments
 - **`[code]`** — The code the runner printed; without it, lists the runners waiting for approval
@@ -570,7 +570,7 @@ Let a runner that asked to join into the pool
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -598,7 +598,7 @@ List the runners, with their labels and resources
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -629,7 +629,7 @@ Remove a runner from the pool, and revoke its token
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -657,7 +657,7 @@ Stop this computer's runner, and delete its workspaces and caches
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -681,7 +681,7 @@ Install or remove a Git pre-push hook that runs a task
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -706,7 +706,7 @@ Git stops the push when the run fails. Proof doesn't replace a pre-push hook it 
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |
@@ -731,7 +731,7 @@ Remove the pre-push hook that Proof installed in this clone
 | Code | Meaning |
 | ---- | ------- |
 | `0` | The run succeeded, or the command did what it was asked. |
-| `2` | The command line was wrong. Proof sent nothing. |
+| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | A --keep pattern matched no file. |
 | `124` | The run reached its time limit, and the runner ended it. |

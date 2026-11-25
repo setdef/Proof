@@ -35,7 +35,7 @@ example "proof run --script bench.sh --os linux" header="Run a script without de
 example "proof watch m3d8" header="Come back to a run" help="Streams run m3d8's output and exits with its status."
 
 exit_code 0 "The run succeeded, or the command did what it was asked."
-exit_code 2 "The command line was wrong. Proof sent nothing."
+exit_code 2 "Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests."
 exit_code 75 "A runner or its host went away, or Proof couldn't reach the server. Run the same command again."
 exit_code 78 "A --keep pattern matched no file."
 exit_code 124 "The run reached its time limit, and the runner ended it."
@@ -173,7 +173,7 @@ Windows, also sets up a runner in WSL. Safe to run again.
     flag "-n --dry-run" help="List the changes setup would make, and make none"
     example "proof runner setup proof-server.local"
   }
-  cmd "approve" effect="write" help="Let a runner that asked to join into the pool" {
+  cmd "approve" effect="write" help="Let a runner that asked to join into the pool, and add its host to the pool file" {
     arg "[code]" help="The code the runner printed; without it, lists the runners waiting for approval"
     example "proof runner approve XK7-42P"
   }

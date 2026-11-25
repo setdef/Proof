@@ -91,7 +91,7 @@ To uninstall Proof from a computer, run `proof runner uninstall` or `proof serve
 
 - In the terminal: `proof help` lists every command with examples, and `proof help run` explains one command.
 - [Getting started](doc/getting-started.md): set up a server and one Linux runner, and run a first task.
-- [Guides](doc/guides/index.md): adding a Mac or a Windows PC, GPUs and desktops, artifacts and inputs, caches, the pre-push hook, building pushed commits, and sharing a computer with the person who uses it.
+- [Guides](doc/guides/index.md): adding a Mac or a Windows PC, GPUs and desktops, teaching your agents to use Proof, the pre-push hook, artifacts, caches, building pushed commits, sharing a computer with the person who uses it, containers and emulators, upgrading, and troubleshooting.
 - [How Proof works](doc/how-proof-works.md): the server, the runners, how your code reaches them, and why Proof is built that way.
 - [Command reference](doc/reference/cli.md): every command, flag, and exit status.
 - [Project file reference](doc/reference/project-file.md) and [pool file reference](doc/reference/pool-file.md): every setting in `.config/proof.kdl` and in the server's pool file.
