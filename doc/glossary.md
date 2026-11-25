@@ -201,7 +201,7 @@ A human at a host, using its keyboard, mouse, trackpad, or screen. Proof never c
 
 ### active
 
-A person is active at a host while they have used its input devices within the last few minutes. You set how many in the pool file. While a person is active, Proof keeps a **share** of the host for them: runs go on, with less of the host, and runs that need the person's display or GPU wait. When the person stops, runs get the share back.
+A person is active at a host while they have used its input devices within the last few minutes. You set how many in the pool file. While a person is active, Proof keeps a **share** of the host for them: runs go on, with less of the host, and runs that need the person's display, GPU, or speakers wait. When the person stops, runs get the share back.
 
 - Elsewhere: in BOINC, the user is active; in HTCondor, the machine is in its Owner state.
 - Don't say: idle or busy alone, because both also describe how hard a computer's processors work; in use; present; on console.

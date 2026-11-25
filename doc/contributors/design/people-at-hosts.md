@@ -11,7 +11,7 @@ What a runner must do when a person uses its host, what is known about sensing t
 
 - **A person comes first, whoever they are.** Not only one owner: anyone at the host's keyboard, mouse, trackpad, or screen.
 - **Being active is a state, not a setting.** A person is active while their last input is more recent than the host's `active-for`. When they stop, runs get the whole host back.
-- **Runs go on, with less.** While a person is active, the host keeps its share of CPUs and memory free for them, runs already going drop to the lowest priority, and runs that need the person's display or GPU wait. No run is stopped because a person arrived.
+- **Runs go on, with less.** While a person is active, the host keeps its share of CPUs and memory free for them, runs already going drop to the lowest priority, and runs that need the person's display, GPU, or speakers wait. No run is stopped because a person arrived.
 - **Memory can't be taken back.** CPU can be taken back by priority; memory a run already holds can't. Placement must leave the share free before a person arrives, which is why the share is kept whenever a person is active and new runs never use it.
 - **Input from runs never counts as a person.** A run that drives a window or posts input must not keep the host looking busy.
 - **Fail toward the person.** When the runner can't tell whether someone is there, it treats them as present.

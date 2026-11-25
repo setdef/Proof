@@ -70,7 +70,7 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
     choices "linux" "macos" "windows" "any" "all"
   }
   flag "--label <label>" var=#true help="Run only on a runner that has this label, in addition to the task's labels" {
-    choices strict=#false "gpu" "kvm" "desktop" "podman" "xcode"
+    choices strict=#false "gpu" "kvm" "desktop" "sound" "podman" "xcode"
   }
   flag "--commit <rev>" help="Send this commit, with its history, instead of the working tree"
   flag "-C --project <dir>" help="Use the project whose Git repository contains this folder"

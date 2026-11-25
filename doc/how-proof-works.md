@@ -64,6 +64,7 @@ For each run, the runner provides:
 - **A download cache per project,** shared by that project's runs on the host, so a large download arrives once per host.
 - **[mise](https://mise.jdx.dev/),** which installs the tools the project's `mise.toml` pins and runs the task. Proof installs nothing of a project's.
 - **`CI=true`,** so setup steps that skip work on CI skip it here too.
+- **Sound, for a task with the `sound` label.** On Linux, a run gets a separate virtual audio device. On Windows and macOS, the run plays through the host's speakers, and waits while a person is active there.
 - **A display, for a task with the `desktop` label.** On Linux, a run gets a separate virtual display. On Windows, each run gets a private desktop, so its windows never take the focus of the person at the PC. On macOS, the run uses the runner's signed-in session.
 
 Runs on one runner share one account, so the folders keep runs apart only as far as the files go. A run's command can still read another project's files in that account.
@@ -94,7 +95,7 @@ On each host, the runner watches how long it has been since anyone used the keyb
 
 - The server places no new run that would need any of the share.
 - Runs already going continue at the lowest priority the operating system has, so they slow down instead of the person's work.
-- Runs that need the person's display or GPU wait until the person stops.
+- Runs that need the person's display, GPU, or speakers wait until the person stops.
 
 When nobody has used the host for longer than `active-for`, runs get the whole host back.
 

@@ -15,7 +15,7 @@ Proof sends your project from the computer you work on to the other Linux, Windo
 
 Proof sends your working tree as it is, uncommitted changes included, or an exact commit with its history. It runs work that needs a real GPU, a desktop session where it can open windows, or [KVM](https://linux-kvm.org/) for Android emulators, and it never runs anything as root. Proof can also build every commit after it's pushed, on the same hosts, so you pay for no CI minutes for a private repository.
 
-A person using one of those hosts comes first. While someone is at its keyboard, mouse, or screen, Proof keeps part of the host free for them and runs other work in what's left; work that needs their display or GPU waits until they stop.
+A person using one of those hosts comes first. While someone is at its keyboard, mouse, or screen, Proof keeps part of the host free for them and runs other work in what's left; work that needs their display, GPU, or speakers waits until they stop.
 
 ### What Proof replaces
 

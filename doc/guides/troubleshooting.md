@@ -39,7 +39,7 @@ A queued run isn't hung. `proof status` says what each queued run is waiting beh
 | `proof status` says | Why it waits | What to do |
 | --- | --- | --- |
 | behind runs on its hosts | Every host that can run it is busy. | Wait, or add a host. |
-| a person is active at its only host | The host keeps its share free for them, or the run needs their display or GPU. | Wait until they stop, or add a host. |
+| a person is active at its only host | The host keeps its share free for them, or the run needs their display, GPU, or speakers. | Wait until they stop, or add a host. |
 | no runner of its operating system is connected | The hosts are asleep, off, or off the network. | Wake one. |
 | a host needs signing in | A Mac or Windows runner needs its account signed in after a restart. | Sign the account in. |
 | no runner offers a label it needs | No host has the hardware, or the runner hasn't found it. | Run setup on the host again, which says what's missing. |

@@ -15,6 +15,7 @@ What each operating system needs from a runner, and its traps. Where an item has
 - **Displays:** a run that needs one gets a separate Xvfb with a window manager, on a display number from a range people don't use (for example, from `:300` up). Without a window manager, a window that opens over another takes its input, and full-screen requests fail. An ordinary account can run both (tested on Debian 13; packages `xvfb` and `openbox` there). Allocate the display number in the runner; checking for free lock files from the run's shell races.
 - **Vulkan can't present to an Xvfb window,** because Xvfb has no DRI3. Programs that prefer Vulkan fail to find a GPU, or show an error dialog nobody can answer and hang. Hiding the Vulkan ICD folders from such a run (for example, bind-mounting an empty folder over `/usr/share/vulkan/icd.d` and `/etc/vulkan/icd.d` with `bwrap`) makes them fall back to OpenGL.
 - **Software rendering differs between Mesa versions:** Mesa 25's llvmpipe linear rasterizer reads wrong uniform array elements (`LP_PERF=no_rast_linear` avoids it). Output a project compares pixel by pixel depends on the host's Mesa.
+- **Sound:** a run with the `sound` label gets a separate virtual audio device: a null sink in a separate PipeWire or PulseAudio instance, which the run can play into and record from, and nobody hears.
 - **Containers:** rootless Podman, with its storage in the workspace's home, so a workspace's images count against the budget and go with it. Ubuntu 24.04's AppArmor restricts unprivileged user namespaces for unconfined programs; setup must check for this and print the administrator step. Subordinate ID ranges may be missing for the account.
 
 ## Windows
@@ -39,4 +40,4 @@ What each operating system needs from a runner, and its traps. Where an item has
 - **No memory limit** an ordinary account can set (tested). Hold runs to their requests by ending them when the host runs short.
 - **Local Network privacy** can stop a daemon from reaching the server on the local network,, with no entry to allow in System Settings. Setup must check that the runner reaches the server.
 - **Utility QoS:** run the runner at the utility quality-of-service class (`taskpolicy -c utility`), which its children inherit, so a person's typing and scrolling stay smooth while runs keep the processors busy.
-- **Sound:** CoreAudio plays a run's sound on the person's speakers, and an ordinary account can't change the default output. Tell projects to use a null audio driver; Proof can't enforce it.
+- **Sound:** CoreAudio plays a run's sound on the host's default output, and an ordinary account can't change it. A run with the `sound` label waits while a person is active; one without it can still make noise, which Proof can't prevent.

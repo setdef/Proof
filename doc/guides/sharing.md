@@ -13,7 +13,7 @@ While a person is **active** at a host, using its keyboard, mouse, trackpad, or 
 
 - Proof keeps the host's **share** of CPUs and memory free for them, and places no new run that would need it.
 - Runs already going continue at the lowest priority the operating system has, so the person's programs come first.
-- Runs that need the person's display or GPU wait until they stop. On Windows, runs using the display when they arrived are stopped and queued again.
+- Runs that need the person's display, GPU, or speakers wait until they stop. On Windows, runs using the display when they arrived are stopped and queued again.
 - On Linux and Windows, runs draw on separate displays and desktops, and never take the person's keyboard focus.
 
 When nobody has used the host for its `active-for` time, five minutes unless the pool file says otherwise, runs get the whole host back.
@@ -59,4 +59,4 @@ Runs going on that host when it stops are canceled, and their `proof` exits 75.
 
 ## Sound
 
-Proof can't stop a run's program from playing sound through the host's speakers on macOS. Projects whose tests make sound should use a silent audio driver in their tasks, such as SDL's `dummy` driver (`SDL_AUDIODRIVER=dummy`).
+A task whose tests play sound asks for the `sound` label, as [Give runs a GPU, KVM, or a desktop](labels.md) describes. On Linux, such a run plays into a separate virtual audio device, which nobody hears. On Windows and macOS, it plays through the host's speakers, so it waits while a person is active there, as a run that needs the display does. A run that plays sound without asking for the label is heard on Windows and macOS, wherever it runs.

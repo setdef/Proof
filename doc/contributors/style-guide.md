@@ -68,10 +68,11 @@ Examples of real use come from a real project. Any public repository under [gith
 
 ## Generated pages
 
-`doc/reference/cli.md` is generated from [`proof.usage.kdl`](../../proof.usage.kdl). Change the spec, then regenerate the page:
+`doc/reference/cli.md`, and its copy in the Agent Skill, `skills/proof/references/cli.md`, are generated from [`proof.usage.kdl`](../../proof.usage.kdl). Change the spec, then regenerate both:
 
 ```console
 $ usage generate markdown --file proof.usage.kdl --out-file doc/reference/cli.md
+$ usage generate markdown --file proof.usage.kdl --out-file skills/proof/references/cli.md
 ```
 
 Writing guidance applies to the text in the spec, which people and agents write, and not to the wording usage's templates add around it.

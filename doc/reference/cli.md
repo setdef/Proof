@@ -92,7 +92,7 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
   **Choices:** `linux`, `macos`, `windows`, `any`, `all`
 - **`--label <label>`** — Run only on a runner that has this label, in addition to the task's labels
 
-  **Choices:** `gpu`, `kvm`, `desktop`, `podman`, `xcode`
+  **Choices:** `gpu`, `kvm`, `desktop`, `sound`, `podman`, `xcode`
 - **`--commit <rev>`** — Send this commit, with its history, instead of the working tree
 - **`-C --project <dir>`** — Use the project whose Git repository contains this folder
 - **`--cpus <count>`** — Request this many CPUs, in place of the task's request

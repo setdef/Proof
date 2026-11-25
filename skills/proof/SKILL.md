@@ -23,14 +23,14 @@ Proof runs a project's tasks on other computers (hosts) in a pool, and streams t
 4. **Read the last line and the exit status.** The last line is the result, such as `proof: exit=1 run=20261125-0336-r5c6t task=test runner=nuc-linux …`. `proof` exits with that status. Act on it by the table in **Exit statuses**.
 5. **On a failure, read the output.** If the output you saw was cut short, print the end of it with `proof logs r5c6t --tail 200`, using the run's last five characters.
 
-Arguments after the task go to the task, as with `mise run`: `proof run test --seed 1234`. To give the task a flag Proof also has, put it after `--`.
+Arguments after the task go to the task, as with `mise run`: `proof run test --seed 1234`. To give the task a flag Proof also has, put it after `--`. For any command or flag this file doesn't show, read [references/cli.md](references/cli.md), which matches the installed version of `proof`.
 
 ## Choose where it runs
 
 - **Without `--os`, let Proof choose.** It places the run on any operating system the project file allows. This is right for almost every check.
 - **Name an operating system only for work specific to that system:** code that runs only on Windows, a failure seen only on macOS, a package built for Linux. `--os windows`, `--os macos`, `--os linux`.
 - **Don't run a check on every operating system to be sure.** `--os all` is for a release, or for a change to code that differs by system. Each extra run takes a host from someone else.
-- **Ask for hardware with a label:** `--label gpu`, `--label kvm`, `--label desktop` (opens windows), `--label podman` (containers on Linux), `--label xcode` (iOS Simulator on a Mac). If the task needs it every time, the label belongs in `.config/proof.kdl`; say so to the human rather than repeating the flag.
+- **Ask for what a task needs with a label:** `--label desktop` (opens windows), `--label sound` (plays sound), `--label gpu`, `--label kvm`, `--label podman` (containers on Linux), `--label xcode` (iOS Simulator on a Mac). When the task needs it every time, add the label to the task in `.config/proof.kdl`. Read [references/project-file.md](references/project-file.md) before you edit that file.
 
 ## Exit statuses
 
@@ -58,7 +58,11 @@ A run waiting in the queue isn't hung. `proof status` shows what it waits behind
 
 ## Humans at hosts
 
-Hosts are computers that humans use, and a human at a host always comes first. If your run waits because a human is using a host, wait or let Proof place it elsewhere. Never ask the human to stop using their computer, and never write a test that plays sound, listens on an address other than `127.0.0.1`, or takes the real mouse or keyboard.
+Hosts are computers that humans use, and a human at a host comes first. If your run waits because a human is using a host, wait or let Proof place it elsewhere; never ask the human to stop using their computer.
+
+Tests that open windows, go full screen, play sound, or drive a GPU are what Proof is for: they belong on a host, not on the computer the human is working at. Write them, and give their task the labels it needs, so Proof runs it where it can't disturb a human: on a separate display, desktop, or audio device, or, where a system can't separate them, only while no human is active.
+
+On Windows, a test server that listens on any address but `127.0.0.1` makes Windows add a firewall rule that only an administrator can remove. Bind test servers to `127.0.0.1`.
 
 ## Hosts are not yours to fix
 
