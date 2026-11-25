@@ -39,6 +39,6 @@ What each operating system needs from a runner, and its traps. Where an item has
 - **Simulator devices are kept per account,** in `~/Library/Developer/CoreSimulator/Devices` whatever `HOME` says, and a booted device outlives the run that booted it. At a run's end, shut down devices booted before every other running run began; never shut down a device another running run may be using.
 - **A bare `PATH`:** a login shell runs `path_helper`, which adds `/usr/local/bin` and `/opt/homebrew/bin` from the person's installs. Start runs with the system's folders only, then the tools mise provides.
 - **No memory limit** an ordinary account can set (tested). Hold runs to their requests by ending them when the host runs short.
-- **Local Network privacy** can stop a daemon from reaching the server on the local network,, with no entry to allow in System Settings. Setup must check that the runner reaches the server.
+- **Local Network privacy** can stop a daemon from reaching the server on the local network, with no entry to allow in System Settings. Setup must check that the runner reaches the server.
 - **Utility QoS:** run the runner at the utility quality-of-service class (`taskpolicy -c utility`), which its children inherit, so a person's typing and scrolling stay smooth while runs keep the processors busy.
 - **Sound:** CoreAudio plays a run's sound on the host's default output, and an ordinary account can't change it. A run with the `sound` label waits while a person is active; one without it can still make noise, which Proof can't prevent.

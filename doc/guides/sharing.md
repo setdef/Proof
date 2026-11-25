@@ -18,7 +18,7 @@ While a person is **active** at a host, using its keyboard, mouse, trackpad, or 
 
 When nobody has used the host for its `active-for` time, five minutes unless the pool file says otherwise, runs get the whole host back.
 
-Any person counts, not only one owner: a family member at the same computer gets the same share. Input from runs never counts as a person.
+Any person counts, not only one owner: a family member at the same computer gets the same share. On Linux and Windows, input from runs never counts as a person, because runs draw on separate displays and desktops.
 
 ## Set the share
 
@@ -34,7 +34,7 @@ host pc {
 ```
 
 > [!WARNING]
-> Memory a run already holds can't be taken back when a person arrives. Proof keeps the share free whenever a person is active, so runs placed while nobody is there can still use it. If the person regularly needs most of the host's memory, set the share large enough for that, and the host runs smaller work while they're away.
+> Memory a run already holds can't be taken back when a person arrives. Proof keeps the share free only while a person is active, so a run placed while nobody was there can be holding part of it when someone sits down. That run slows to the lowest priority, but its memory stays taken until it ends.
 
 ## Keep a GPU or a host to yourself
 

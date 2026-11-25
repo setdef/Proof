@@ -52,7 +52,7 @@ Publish ports on `127.0.0.1` only, as here, so nothing outside the host reaches 
 - Each workspace has separate Podman storage, in the workspace's home folder, so images stay between the project's runs there and count against the host's budget.
 - Every container a run starts is stopped and removed when the run ends, whether the task stops it or not.
 - Two runs at once on one host can't see each other's containers: each workspace's storage is separate.
-- Files a container writes into a mounted folder are owned by the account's subordinate IDs, not to `proof`. The runner deletes them when it empties the workspace; a workspace it can't empty is never reused.
+- Files a container writes into a mounted folder are owned by the account's subordinate IDs, not by `proof`. The runner deletes them when it empties the workspace; a workspace it can't empty is never reused.
 
 ## What this doesn't do
 

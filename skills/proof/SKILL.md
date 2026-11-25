@@ -39,9 +39,10 @@ Arguments after the task go to the task, as with `mise run`: `proof run test --s
 | 0 | Passed. | Continue. |
 | 2 | Proof refused and sent nothing: a mistake in your command line or the project file, or a request no host can meet. | Read the message, fix the mistake, run again. |
 | 75 | The pool failed, not the task: a host went away or the server couldn't be reached. | Run the same command once more. If it fails with 75 again, stop and tell the human, quoting the output. |
-| 78 | Passed, but an artifact pattern matched no file. | Fix the pattern or the build. |
+| 78 | Passed, but Proof couldn't keep the artifacts: a pattern matched no file, or they exceeded the pool's limit. | Fix the pattern or the build, or keep fewer files. |
 | 124 | The run hit its time limit. | Read the end of the output to see what was slow. Raise the limit only if the work is legitimately long. |
 | 137 | The run held more memory than it requested while its host ran short. | Request what the message says it held: `--memory 12GB` for one run, and tell the human so the task's `memory` in `.config/proof.kdl` can change. |
+| 141, 143 | Proof canceled the run because its output pipe closed (141) or it received `TERM` (143). | Run it again without a pipe, and don't stop it early. |
 | Any other | The task failed. | Fix your change. Never treat it as the pool's fault. |
 
 A run Proof can't vouch for never reports 0: a pass you see happened.
@@ -50,7 +51,7 @@ A run Proof can't vouch for never reports 0: a pass you see happened.
 
 - **Never pipe `proof` into `head`, `tail`, `grep`, or `less`.** A reader that closes early cancels the run, and a pipe hides the exit status. Run `proof` alone, then use `proof logs RUN_ID --tail N` or `proof logs RUN_ID | grep PATTERN` on the finished run.
 - **Never wrap it in `bash -c` or `sh -c`.** Agent harnesses refuse compound commands. A one-off experiment goes in a script file in the project, then `proof run --script path/to/script.sh --os linux`.
-- **If your command is interrupted or you run in the background,** the run goes on, or is canceled if your harness signaled it. The run's ID is in the second line. `proof watch RUN_ID` picks up a run still going and exits with its status. `proof run --detach` starts a run and returns its ID at once, for when you have other work meanwhile.
+- **If your command is interrupted or you run in the background,** the run goes on, or is canceled if your harness signaled it. The run's ID is in the second line, and if you lost it, `proof status` lists your recent runs with their IDs. `proof watch RUN_ID` picks up a run still going and exits with its status. `proof run --detach` starts a run and returns its ID at once, for when you have other work meanwhile.
 
 ## While a run waits
 
@@ -80,3 +81,4 @@ On Windows, a test server that listens on any address but `127.0.0.1` makes Wind
 - When a test fails, running the check again until it passes hides the fault. Fix the test, or report it as flaky with the run IDs of a pass and a failure.
 - A run that passes in a reused workspace and fails with `--empty`, or the other way around, has a real fault: leftover files hid one, or caused one. Report both results.
 - `--commit HEAD` checks only what you committed. After editing, either commit first or drop `--commit`.
+- A task that lists no operating system can land on any of them, and the first line says which. When it fails on one, check whether it also fails there on the commit before your change. If it does, the failure isn't yours: report it to the human, or list where the task works in `.config/proof.kdl`. Don't debug that operating system as part of your change.

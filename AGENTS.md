@@ -42,6 +42,7 @@ What to build next, what 1.0 leaves out, and what is undecided: `doc/contributor
 
 - `doc/reference/cli.md` and `skills/proof/references/cli.md` are generated. Never edit them by hand.
 - A change to the CLI or to what agents should do changes `skills/proof/` in the same commit.
+- `skills/proof/references/project-file.md` is a hand-written summary of `doc/reference/project-file.md`, not a copy. A change to the project file's format changes both in the same commit.
 - Tests never reach the internet. Use local fakes.
 - Never develop or test on a pool people use. Use virtual machines.
 - Prove what a virtual machine can't show, such as a real GPU or a Windows desktop, on one real host only, in a window its owner agreed to beforehand.

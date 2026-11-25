@@ -52,7 +52,7 @@ Proof checks each file against the SHA-256 the runner recorded, and refuses a fi
 
 ## Give them to another run
 
-A run on another operating system can take an earlier run's artifacts as **inputs**. For example, build the Linux gem, then install and test it in a clean environment:
+Another run can take an earlier run's artifacts as **inputs**, on the same operating system or another. For example, build the Linux gem, then install and test it in a clean environment:
 
 ```console
 $ proof run package --os linux

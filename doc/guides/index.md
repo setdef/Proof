@@ -16,7 +16,7 @@ Each guide does one job, from a pool that already has a server and one runner. I
 
 ## Work with coding agents
 
-- [Teach your agents to use Proof](agents.md): install Proof's Agent Skill, so an agent runs tasks with `proof` instead of on your computer.
+- [Teach your agents to use Proof](coding-agents.md): install Proof's Agent Skill, so an agent runs tasks with `proof` instead of on your computer.
 - [Check every push](pre-push-hook.md): add a pre-push hook that runs a task on the commits you push, and stops the push when the run fails.
 
 ## Move files into and out of runs

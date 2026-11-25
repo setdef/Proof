@@ -14,12 +14,14 @@ The last line `proof run` prints is the result, and `proof` exits with the statu
 | Status | What happened | What to do |
 | --- | --- | --- |
 | 0 | The task succeeded. | Nothing. |
-| 2 | Proof refused the run and sent nothing: a mistake on the command line or in the project file, or a request no host can meet. | Read the message, which names the mistake. |
+| 2 | Proof refused the run and sent nothing: a mistake on the command line or in the project file, or a request no host can meet. | Read the message: it says what the mistake is. |
 | 75 | The pool failed: a runner or its host went away, or Proof couldn't reach the server. | Run the same command again. If it keeps happening, check `proof status`. |
-| 78 | The run succeeded, but a `--keep` or `artifact` pattern matched no file. | Fix the pattern, or the build that should have made the file. |
+| 78 | The run succeeded, but Proof couldn't keep its artifacts: a `--keep` or `artifact` pattern matched no file, or the artifacts exceeded the pool's limit. | Fix the pattern, or the build that should have made the file, or keep fewer files. |
 | 124 | The run reached its time limit. | Find what took so long with `proof logs RUN_ID`, or raise the task's `timeout`. |
 | 130 | You pressed Ctrl-C, and Proof canceled the run. | Nothing. |
 | 137 | The run held more memory than it requested while its host ran short, or was killed. | Raise the task's `memory` to what the message says it held. |
+| 141 | Standard output was closed, as by a pipe into `head`, and Proof canceled the run. | Run `proof` without a pipe, and read the output afterward with `proof logs RUN_ID`. |
+| 143 | Proof received `TERM`, as when an agent harness stops it, and canceled the run. | Nothing, unless the harness stopped it by mistake. |
 | Anything else | The task's command exited with it. | Read the output: the failure is the task's. |
 
 When `proof` itself fails, it prints no result line, saves a debug log under `~/.local/state/proof/`, and prints a link to a new issue with the details filled in.
@@ -44,7 +46,7 @@ A queued run isn't hung. `proof status` says what each queued run is waiting beh
 | a host needs signing in | A Mac or Windows runner needs its account signed in after a restart. | Sign the account in. |
 | no runner offers a label it needs | No host has the hardware, or the runner hasn't found it. | Run setup on the host again, which says what's missing. |
 
-`proof watch RUN_ID` picks the run up again from any terminal, and exits with its status when it ends.
+`proof watch RUN_ID` picks the run up again from any terminal, and exits with its status when it ends. If you no longer have the run's ID, `proof status` lists your recent runs with theirs.
 
 ## A run fails in setup
 

@@ -248,4 +248,4 @@ You've finished when all of these are true:
 - `proof run test` in your project exits with 0.
 - `proof logs r5c6t`, with your failing run's ID in place of `r5c6t`, prints the failing run's whole output again.
 
-You should now be comfortable setting up a server and a runner, running a project's task on it, and telling a failing run from a pool problem by its exit status. To add a Mac or a Windows PC, or to check every push before it leaves your computer, continue with the [guides](guides/index.md).
+You should now be comfortable setting up a server and a runner, running a project's task on it, and reading a failing run's exit status. To add a Mac or a Windows PC, or to check every push before it leaves your computer, continue with the [guides](guides/index.md).

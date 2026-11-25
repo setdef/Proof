@@ -54,7 +54,7 @@ A runner whose host is asleep upgrades when it next connects. Runners need nothi
 
 Download the archive of the server's version for your computer from [the releases page](https://github.com/setdef/Proof/releases), check it against `SHA256SUMS`, and replace the old one. Until you do, `proof` says the server is at a newer version, and which commands that affects, before it sends anything.
 
-If you installed [the Agent Skill](agents.md), install it again, so it matches the version you run:
+If you installed [the Agent Skill](coding-agents.md), install it again, so it matches the version you run:
 
 ```console
 you@laptop $ proof skill install

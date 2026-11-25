@@ -37,10 +37,12 @@ example "proof watch m3d8q" header="Come back to a run" help="Streams run m3d8q'
 exit_code 0 "The run succeeded, or the command did what it was asked."
 exit_code 2 "Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests."
 exit_code 75 "A runner or its host went away, or Proof couldn't reach the server. Run the same command again."
-exit_code 78 "A --keep pattern matched no file."
+exit_code 78 "Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit."
 exit_code 124 "The run reached its time limit, and the runner ended it."
 exit_code 130 "You interrupted Proof with Ctrl-C."
 exit_code 137 "The run held more memory than it requested while its host ran short, or was killed."
+exit_code 141 "Standard output was closed, as by a pipe into head, and Proof canceled the run."
+exit_code 143 "Proof received TERM, as when an agent harness stops it, and canceled the run."
 
 flag "--no-color" global=#true help="Print no color, as when NO_COLOR is set or standard error isn't a terminal"
 flag "--no-input" global=#true help="Never prompt; fail and name the flag to use instead"
@@ -66,7 +68,7 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
   group "what" "task" "--script" required=#true
 
   flag "--os <os>" var=#true help="Run on this operating system; repeat to run on several in parallel" {
-    long_help "Without --os, Proof places the run on any operating system with a runner free, or only on those the project file lists for the task. \"any\" means the same, and \"all\" runs once on every one of them."
+    long_help "Runs on this operating system; repeat the flag to run on several in parallel. Without --os, Proof places the run on any operating system with a runner free, or only on those the project file lists for the task. \"any\" means the same, and \"all\" runs once on every one of them."
     choices "linux" "macos" "windows" "any" "all"
   }
   flag "--label <label>" var=#true help="Run only on a runner that has this label, in addition to the task's labels" {
@@ -99,14 +101,14 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
 }
 
 cmd "watch" effect="read" help="Stream a run's output until it ends, and exit with its status" {
-  long_help "Picks up a run that is still going, from any terminal. Press Ctrl-C to stop watching; the run goes on."
+  long_help "Streams a run's output until it ends, and exits with its status. Picks up a run that is still going, from any terminal. Press Ctrl-C to stop watching; the run goes on."
   arg "<run>" help="The run's ID, or its last five characters"
   flag "--json" help="Print the run's result as JSON when it ends"
   example "proof watch m3d8q"
 }
 
 cmd "logs" effect="read" help="Print a run's whole output" {
-  long_help "Works for any run Proof still keeps, finished or not. On a terminal, Proof shows the output in a pager."
+  long_help "Prints a run's whole output. Works for any run Proof still keeps, finished or not. On a terminal, Proof shows the output in a pager."
   arg "<run>" help="The run's ID, or its last five characters"
   flag "--tail <lines>" help="Print only the last this many lines"
   flag "--no-pager" help="Print to standard output without a pager"
@@ -114,7 +116,7 @@ cmd "logs" effect="read" help="Print a run's whole output" {
   example "proof logs m3d8q --tail 100" header="Print the end of the output"
 }
 
-cmd "cancel" effect="write" help="Cancel runs, and end everything their commands started" {
+cmd "cancel" effect="destructive" help="Cancel runs, and end everything their commands started" {
   arg "<run>..." help="The runs' IDs, or their last five characters"
   example "proof cancel m3d8q"
 }
@@ -129,13 +131,13 @@ cmd "download" effect="write" help="Download a run's artifacts" {
 }
 
 cmd "status" effect="read" help="Show the runners, the queue for each operating system, and your recent runs" {
-  long_help "For each queued run, shows what it is waiting behind. For each runner, shows whether a person is active at its host."
+  long_help "Shows the runners, the queue for each operating system, and your recent runs, with their IDs. For each queued run, shows what it is waiting behind. For each runner, shows whether a person is active at its host."
   flag "--json" help="Print the status as JSON"
   example "proof status"
 }
 
 cmd "login" effect="write" help="Sign in to a pool's server from this computer" {
-  long_help "Asks for the one-time code that `proof server setup` printed, such as Q8MR-2T4W. Proof never takes a secret as an argument. The code works once, for 15 minutes, and stops working after 5 wrong attempts. Proof accepts it in either case, with or without the hyphen, and reads O as 0 and I or L as 1."
+  long_help "Signs in to a pool's server from this computer. Asks for the one-time code that `proof server setup` printed, such as Q8MR-2T4W. Proof never takes a secret as an argument. The code works once, for 15 minutes, and stops working after 5 wrong attempts. Proof accepts it in either case, with or without the hyphen, and reads O as 0 and I or L as 1."
   arg "<server>" help="The server's address, such as server.home.arpa"
   flag "--code-file <file>" help="Read the one-time code from this file instead of asking for it"
   example "proof login server.home.arpa"
@@ -160,7 +162,7 @@ cmd "skill" subcommand_required=#true help="Install Proof's Agent Skill, which t
 
 cmd "server" subcommand_required=#true help="Set up, upgrade, or uninstall the server, on the computer it runs on" {
   cmd "setup" effect="write" help="Set up this computer as the pool's server" {
-    long_help "Run it as the account the server will run as: an account set aside for Proof, not the account of anyone who uses the computer, and never root; setup refuses to run as root. Checks the computer and lists every change it will make before it makes any. Then starts the server as a service of your account, and prints a one-time code for signing in. Safe to run again."
+    long_help "Sets up this computer as the pool's server. Run it as the account the server will run as: an account set aside for Proof, not the account of anyone who uses the computer, and never root; setup refuses to run as root. Checks the computer and lists every change it will make before it makes any. Then starts the server as a service of your account, and prints a one-time code for signing in. Safe to run again."
     flag "-n --dry-run" help="List the changes setup would make, and make none"
     example "proof server setup --dry-run" header="See what setup would change"
     example "proof server setup"
@@ -178,11 +180,12 @@ cmd "server" subcommand_required=#true help="Set up, upgrade, or uninstall the s
 cmd "runner" subcommand_required=#true help="Add, approve, list, and remove runners" {
   cmd "setup" effect="write" help="Set up this computer as a runner of the pool" {
     long_help #"""
-Run it as the account the runner will run as: an account set aside for Proof, not the account of
-anyone who uses the computer, and never root; setup refuses to run as root. Prints a short code to approve with `proof runner approve`, so you never type a long token at a
-text console. Where a step needs an administrator, such as adding the account to the `kvm` group,
-setup prints the exact commands for you to run, and checks them when you run setup again. On
-Windows, also sets up a runner in WSL. Safe to run again.
+Sets up this computer as a runner of the pool. Run it as the account the runner will run as: an
+account set aside for Proof, not the account of anyone who uses the computer, and never root;
+setup refuses to run as root. Prints a short code to approve with `proof runner approve`, so you
+never type a long token at a text console. Where a step needs an administrator, such as adding
+the account to the `kvm` group, setup prints the exact commands for you to run, and checks them
+when you run setup again. On Windows, also sets up a runner in WSL. Safe to run again.
 """#
     arg "<server>" help="The server's address, such as server.home.arpa"
     flag "--name <name>" help="Name the runner this, instead of the computer's network name"
@@ -192,14 +195,14 @@ Windows, also sets up a runner in WSL. Safe to run again.
     example "proof runner setup server.home.arpa"
   }
   cmd "approve" effect="write" help="Let a runner that asked to join into the pool, and add its host to the pool file" {
-    long_help "The code works once, for 15 minutes, and stops working after 5 wrong attempts. Proof accepts it in either case, with or without the hyphen, and reads O as 0 and I or L as 1."
+    long_help "Lets a runner that asked to join into the pool, and adds its host to the pool file. The code works once, for 15 minutes, and stops working after 5 wrong attempts. Proof accepts it in either case, with or without the hyphen, and reads O as 0 and I or L as 1."
     arg "[code]" help="The code the runner printed, such as XK7P-42MQ; without it, lists the runners waiting for approval"
     example "proof runner approve XK7P-42MQ"
   }
   cmd "start" effect="write" help="Start this computer's runner again after `proof runner stop`" {
     example "proof runner start"
   }
-  cmd "stop" effect="write" help="Stop this computer's runner, and cancel its runs, until `proof runner start`" {
+  cmd "stop" effect="destructive" help="Stop this computer's runner, and cancel its runs, until `proof runner start`" {
     flag "-f --force" help="Stop without asking first"
     example "proof runner stop"
   }
@@ -220,7 +223,7 @@ Windows, also sets up a runner in WSL. Safe to run again.
 
 cmd "hook" subcommand_required=#true help="Install or remove a Git pre-push hook that runs a task" {
   cmd "install" effect="write" help="Add a pre-push hook to this clone that runs a task on the commits you push" {
-    long_help "Git stops the push when the run fails. Proof doesn't replace a pre-push hook it didn't install, unless you pass --force."
+    long_help "Adds a pre-push hook to this clone that runs a task on the commits you push. Git stops the push when the run fails. Proof doesn't replace a pre-push hook it didn't install, unless you pass --force."
     arg "<task>" help="The task the hook runs"
     flag "-f --force" help="Replace an existing pre-push hook"
     example "proof hook install test"

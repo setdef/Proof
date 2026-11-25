@@ -195,7 +195,7 @@ The disk space Proof may use on a host for workspaces and caches. You set each h
 
 ### person
 
-A human at a host, using its keyboard, mouse, trackpad, or screen. Proof never counts input from runs as a person.
+A human at a host, using its keyboard, mouse, trackpad, or screen. On Linux and Windows, Proof never counts input from runs as a person.
 
 - Don't say: owner, because anyone at the keyboard counts; user, which in Proof's docs means you, the person who runs `proof`; workstation, because a person's presence at a host comes and goes.
 
