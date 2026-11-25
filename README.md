@@ -47,8 +47,8 @@ Proof's first lines say what it sent and where the run went, and its last line i
 | Role | Supported systems |
 | --- | --- |
 | Where you run `proof` | Linux or macOS, with [Git](https://git-scm.com/) |
-| The server, on one always-on computer that takes no runs | Linux or macOS |
-| A runner, on each computer that takes runs | Linux (Debian 13, Ubuntu 24.04, or Fedora 40 and later) on x86-64 or ARM64; Windows on x86-64, with Linux in [WSL](https://learn.microsoft.com/windows/wsl/) (the Windows Subsystem for Linux) as a second runner on the same computer; macOS on Apple silicon |
+| The server, on one always-on computer with no runner | Linux or macOS |
+| A runner, on each computer that runs your tasks and scripts | Linux (Debian 13, Ubuntu 24.04, or Fedora 40 and later) on x86-64 or ARM64; Windows on x86-64, with Linux in [WSL](https://learn.microsoft.com/windows/wsl/) (the Windows Subsystem for Linux) as a second runner on the same computer; macOS on Apple silicon |
 
 Proof runs a project's named tasks with [mise](https://mise.jdx.dev/), which Proof installs on each runner. You don't need mise where you run `proof`.
 
@@ -65,7 +65,7 @@ Download the archive for your computer from [the releases page](https://github.c
 ## Usage
 
 1. **Set up a server.** On the always-on computer, run `proof setup server`. It checks the computer, says what it will change, starts the server as a service of your account, and prints a code for signing in.
-2. **Add each computer that takes runs.** Run `proof setup runner proof-server.local` on it. It prints a short code, such as `XK7-42P`, so you never type a long token at a text console. Where setup needs a change only an administrator can make, such as adding the account to the `kvm` group, it prints the commands for you to run.
+2. **Add each computer that will run tasks.** Run `proof setup runner proof-server.local` on it. It prints a short code, such as `XK7-42P`, so you never type a long token at a text console. Where setup needs a change only an administrator can make, such as adding the account to the `kvm` group, it prints the commands for you to run.
 3. **Sign in where you work,** then let each runner in: `proof login proof-server.local`, then `proof approve XK7-42P`. `proof verify` then sends a known run to every runner and reports each result.
 4. **Run a task** from anywhere in the project: `proof run test`. `test` can be a task in the project's `mise.toml` or a task defined in `.config/proof.kdl`. In that optional file, you say which operating systems each task works on, what hardware it needs, the CPUs and memory it requests, and which files to keep from its runs. To try something without a task, run a script: `proof run --script bench.sh --os linux`.
 5. **Come back to a run** by its ID from any terminal: `proof watch RUN_ID` streams it and exits with its status, `proof logs RUN_ID` prints its whole output, and `proof cancel RUN_ID` stops it. `proof status` shows every runner and what each queued run is waiting behind.

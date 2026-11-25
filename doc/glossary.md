@@ -11,7 +11,7 @@ In Proof's documentation, commands, and messages, each idea has one word. This p
 
 ### pool
 
-Every **host** whose **runners** take **runs** for you, together with the **server** that hands runs to them.
+Every **host** whose **runners** run your tasks and scripts, together with the **server** that places each **run** on a runner.
 
 - Elsewhere: called a pool in HTCondor, and a cluster in Nomad and Slurm.
 - Don't say: cluster, which suggests Kubernetes and racks of servers; fleet; farm.
@@ -25,14 +25,14 @@ One physical computer in the **pool**. A Windows PC that also runs Linux in WSL 
 
 ### runner
 
-One operating system on a **host**, together with the Proof program that takes **runs** there. A Windows PC with WSL has two runners, one for Windows and one for Linux, and they share the host's CPUs, memory, and disk.
+One operating system on a **host**, together with the Proof program there that runs **tasks** and **scripts**. Each execution is a **run**. A Windows PC with WSL has two runners, one for Windows and one for Linux, and they share the host's CPUs, memory, and disk.
 
 - Elsewhere: called a runner in GitHub Actions and GitLab, and an agent in Buildkite and Jenkins.
 - Don't say: agent, which in Proof's docs always means a coding agent; node; worker; client, which in Nomad and BOINC means the program that does the work and elsewhere means the program that asks for it.
 
 ### server
 
-The one Proof program, on an always-on computer, that keeps the **queue**, receives your code, places each **run** on a **runner**, and keeps every run's record, output, and **artifacts**. The server takes no runs.
+The one Proof program, on an always-on computer, that keeps the **queue**, receives your code, places each **run** on a **runner**, and keeps every run's record, output, and **artifacts**. The server's computer has no runner.
 
 - Elsewhere: called a server in Nomad and Woodpecker, and a controller in Jenkins.
 - Don't say: controller; coordinator; master; control host; staging host.
