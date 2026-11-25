@@ -42,7 +42,7 @@ proof: exit=0 run=20261124-1431-m3d8 task=package runner=nuc-linux queued=0s ran
 proof: exit=0 run=20261124-1431-p9x2 task=package runner=pc-windows queued=0s ran=0s artifacts=1
 ```
 
-Lines that start with `proof:` are Proof's, written to standard error. The task's output goes to standard output, each line marked with the computer it came from when more than one run is going. Each run ends with one result line, with its exit status and its full ID, for an agent to read. `proof` exits with the worst of the runs' statuses, here 0. Anywhere Proof asks for a run's ID, the last four characters are enough while they're unique: `proof logs m3d8`.
+Lines that start with `proof:` are Proof's, written to standard error. The task's output goes to standard output, each line marked with the computer it came from when more than one run is going. Each run ends with one result line, with its exit status and its full ID, for an agent to read. `proof` exits with the worst of the runs' statuses, here 0. Anywhere Proof asks for a run's ID, the last four characters are enough while they're unique: `proof logs m3d8`. A script that needs more than the result lines can pass `--json`, and Proof then prints one JSON object per run in their place.
 
 ## Compatibility
 
@@ -62,23 +62,34 @@ Proof runs a project's named tasks with [mise](https://mise.jdx.dev/), which Pro
 
 ## Installation
 
-Download the archive for your computer from [the releases page](https://github.com/setdef/Proof/releases), unpack it anywhere, and put `proof` on your `PATH`. The archive contains everything Proof needs, so you install no Ruby or other runtime.
+Download the archive for your computer from [the releases page](https://github.com/setdef/Proof/releases), check it against the release's `SHA256SUMS` file, unpack it anywhere, and put `proof` on your `PATH`. The archive contains everything Proof needs, so you install no Ruby or other runtime. Proof talks only to your server, and sends no usage data anywhere.
+
+To uninstall Proof from a computer, run `proof runner uninstall` or `proof server uninstall` there if you set one up, which stops Proof's service and deletes its files. Then delete the unpacked folder and `~/.config/proof`.
 
 ## Usage
 
-1. **Set up a server.** On the always-on computer, run `proof setup server`. It checks the computer, says what it will change, starts the server as a service of your account, and prints a code for signing in.
-2. **Add each computer that will run tasks.** Run `proof setup runner proof-server.local` on it. It prints a short code, such as `XK7-42P`, so you never type a long token at a text console. Where setup needs a change only an administrator can make, such as adding the account to the `kvm` group, it prints the commands for you to run.
-3. **Sign in where you work,** then let each runner in: `proof login proof-server.local`, then `proof approve XK7-42P`. `proof verify` then sends a known run to every runner and reports each result.
-4. **Run a task** from anywhere in the project: `proof run test`. `test` can be a task in the project's `mise.toml` or a task defined in `.config/proof.kdl`. In that optional file, you say which operating systems each task works on, what hardware it needs, the CPUs and memory it requests, and which files to keep from its runs. To try something without a task, run a script: `proof run --script bench.sh --os linux`.
-5. **Come back to a run** by its ID from any terminal: `proof watch RUN_ID` streams it and exits with its status, `proof logs RUN_ID` prints its whole output, and `proof cancel RUN_ID` stops it. `proof status` shows every runner and what each queued run is waiting behind.
+1. **Set up a server.** On the always-on computer, run `proof server setup`. It checks the computer and lists every change it will make before it makes any. With `--dry-run`, it stops after the list. It then starts the server as a service of your account and prints a one-time code for signing in.
+2. **Add each computer that will run tasks.** On it, run `proof runner setup proof-server.local`. It prints a short code, such as `XK7-42P`, so you never type a long token at a text console. Where a step needs an administrator, such as adding the account to the `kvm` group, setup prints the exact commands for you to run, and checks them when you run setup again.
+3. **Sign in where you work, and let each runner in:**
+
+   ```console
+   $ proof login proof-server.local
+   $ proof runner approve XK7-42P
+   $ proof verify
+   ```
+
+   `proof login` asks for the code from step 1, and never takes a secret as an argument. `proof verify` sends a known run to every runner and reports each result.
+4. **Run a task** from anywhere in the project: `proof run test`. `test` can be a task in the project's `mise.toml` or a task defined in `.config/proof.kdl`. In that optional file, you say which operating systems each task works on, what hardware it needs, the CPUs and memory it requests, and which files to keep from its runs. Without `--os`, Proof places the run on whichever of the task's operating systems has a runner free. To try something without a task, run a script: `proof run --script bench.sh --os linux`.
+5. **Come back to a run** by its ID from any terminal. `proof watch m3d8` streams it and exits with its status, `proof logs m3d8` prints its whole output, and `proof cancel m3d8` stops it. In `proof run`, press Ctrl-C to cancel the run. In `proof watch`, press Ctrl-C to stop watching without canceling it. `proof run --detach` starts a run and exits at once with its ID. `proof status` shows every runner, and what each queued run is waiting behind.
 6. **Check before each push.** `proof hook install test` adds a Git pre-push hook to your clone, and Git stops the push when the `test` run fails.
 7. **Build every pushed commit** by listing a repository, its branches, and its tasks in the server's pool file.
-8. **Upgrade** by running `proof upgrade` on the server. The runners upgrade themselves to match.
+8. **Upgrade** by running `proof server upgrade` on the server. The runners upgrade themselves to match.
 
 [Getting started](doc/getting-started.md) covers steps 1 to 4 with one Linux runner.
 
 ## Documentation
 
+- In the terminal: `proof help` lists every command with examples, and `proof help run` explains one command.
 - [Getting started](doc/getting-started.md): set up a server and one Linux runner, and run a first task.
 - [Guides](doc/guides/index.md): adding a Mac or a Windows PC, GPUs and desktops, artifacts and inputs, caches, the pre-push hook, building pushed commits, and sharing a computer with the person who uses it.
 - [How Proof works](doc/how-proof-works.md): the server, the runners, how your code reaches them, and why Proof is built that way.
@@ -88,7 +99,7 @@ Download the archive for your computer from [the releases page](https://github.c
 
 ## Reporting problems
 
-Open an issue at [github.com/setdef/Proof/issues](https://github.com/setdef/Proof/issues). Include the output of `proof status`, the run's ID, and `proof logs RUN_ID` for the run that went wrong.
+Open an issue at [github.com/setdef/Proof/issues](https://github.com/setdef/Proof/issues). Include the output of `proof status`, the run's ID, and `proof logs RUN_ID` for the run that went wrong. When Proof hits an error it can't explain, it saves a debug log under `~/.local/state/proof/` and prints a link to a new issue with the details filled in.
 
 ## Contributing
 
