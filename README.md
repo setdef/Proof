@@ -34,9 +34,9 @@ A person using one of those hosts comes first. While someone is at its keyboard,
 proof: Lota at 3f9c2e1 (clean), task package
 proof: run m3d8q on nuc-linux (reused workspace)
 proof: run p9x2k on pc-windows (reused workspace)
-[nuc-linux] Built pkg/lota-0.0.1.dev-x86_64-linux.gem
+[nuc-linux] Built pkg/lota-0.0.1.dev-x86_64-linux-gnu.gem
 [pc-windows] Built pkg/lota-0.0.1.dev-x64-mingw-ucrt.gem
-proof: downloaded pkg/lota-0.0.1.dev-x86_64-linux.gem from run m3d8q to ./pkg/
+proof: downloaded pkg/lota-0.0.1.dev-x86_64-linux-gnu.gem from run m3d8q to ./pkg/
 proof: downloaded pkg/lota-0.0.1.dev-x64-mingw-ucrt.gem from run p9x2k to ./pkg/
 proof: exit=0 run=20261125-0336-m3d8q task=package runner=nuc-linux queued=0s ran=0s artifacts=1
 proof: exit=0 run=20261125-0336-p9x2k task=package runner=pc-windows queued=0s ran=0s artifacts=1

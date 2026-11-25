@@ -39,7 +39,7 @@ Or download them later, by the run's ID:
 
 ```console
 $ proof download m3d8q
-proof: downloaded pkg/lota-0.0.1.dev-x86_64-linux.gem from run m3d8q to ./pkg/
+proof: downloaded pkg/lota-0.0.1.dev-x86_64-linux-gnu.gem from run m3d8q to ./pkg/
 ```
 
 `--output DIR` puts them in another folder. Give patterns after the ID to download only some:
@@ -60,7 +60,7 @@ proof: exit=0 run=20261125-0336-m3d8q task=package runner=nuc-linux queued=0s ra
 $ proof run install-test --os linux --input m3d8q
 ```
 
-The second run finds the first run's artifacts in the folder named by its `PROOF_INPUTS` variable, under the earlier run's ID: `$PROOF_INPUTS/20261125-0336-m3d8q/pkg/lota-0.0.1.dev-x86_64-linux.gem`.
+The second run finds the first run's artifacts in the folder named by its `PROOF_INPUTS` variable, under the earlier run's ID: `$PROOF_INPUTS/20261125-0336-m3d8q/pkg/lota-0.0.1.dev-x86_64-linux-gnu.gem`.
 
 To give a run a file from your computer instead, such as a large data file the tests need, use `--input-file`:
 
