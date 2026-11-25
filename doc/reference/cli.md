@@ -434,7 +434,7 @@ Set up, upgrade, or uninstall the server, on the computer it runs on
 - **Usage:** `proof server setup [-n --dry-run]`
 - **Effect:** modifies state
 
-Run it as the account the server will run as: an account set aside for Proof, not the account of anyone who uses the computer. Checks the computer and lists every change it will make before it makes any. Then starts the server as a service of your account, and prints a one-time code for signing in. Safe to run again.
+Run it as the account the server will run as: an account set aside for Proof, not the account of anyone who uses the computer, and never root; setup refuses to run as root. Checks the computer and lists every change it will make before it makes any. Then starts the server as a service of your account, and prints a one-time code for signing in. Safe to run again.
 
 ### Flags
 - **`-n --dry-run`** — List the changes setup would make, and make none
@@ -543,7 +543,7 @@ Add, approve, list, and remove runners
 - **Effect:** modifies state
 
 Run it as the account the runner will run as: an account set aside for Proof, not the account of
-anyone who uses the computer. Prints a short code to approve with `proof runner approve`, so you never type a long token at a
+anyone who uses the computer, and never root; setup refuses to run as root. Prints a short code to approve with `proof runner approve`, so you never type a long token at a
 text console. Where a step needs an administrator, such as adding the account to the `kvm` group,
 setup prints the exact commands for you to run, and checks them when you run setup again. On
 Windows, also sets up a runner in WSL. Safe to run again.
