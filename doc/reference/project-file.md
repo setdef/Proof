@@ -83,7 +83,7 @@ task NAME [COMMAND] [cpus=N] [memory="SIZE"] [timeout="DURATION"] {
 One entry per task. `NAME` is the name you run with `proof run NAME`.
 
 - **Without `COMMAND`,** the entry adds Proof's settings to the mise task of the same name, and Proof runs `mise run NAME` on the runner.
-- **With `COMMAND`,** the entry defines a task with that command. Proof runs `COMMAND` from the root of the workspace, with `sh -c` on Linux and macOS and with `cmd /c` on Windows, the same shells mise uses for its tasks. A mise task with the same name is then not run.
+- **With `COMMAND`,** the entry defines a task with that command. Proof runs `COMMAND` from the root of the workspace, with `sh -o errexit -c` on Linux and macOS and with `cmd /c` on Windows, the same shells mise uses for its tasks by default. A mise task with the same name is then not run.
 
 A task that's neither in the project file nor in `mise.toml` fails on the runner with mise's error message, and `proof` exits with that run's status.
 

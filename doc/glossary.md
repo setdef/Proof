@@ -21,7 +21,7 @@ Every **host** whose **runners** run your tasks and scripts, together with the *
 One physical computer in the **pool**. A Windows PC that also runs Linux in WSL is one host.
 
 - Elsewhere: called a host in Kamal and BOINC.
-- Don't say: machine, which stays a plain English word in Proof's docs; node, which other tools use for one operating system on a computer; box; workstation, which suggests a fixed role (see **person**).
+- Don't say: computer or machine, which stay plain English words in Proof's docs; node, which other tools use for one operating system on a computer; box; workstation, which suggests a fixed role (see **person**).
 
 ### runner
 
