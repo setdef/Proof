@@ -26,21 +26,23 @@ A person using one of those computers comes first. While someone is at its keybo
 
 ## A first example
 
-[Lota](https://github.com/setdef/Lota) is a Ruby library for 2D games. The compiler that builds its native extension builds only for the operating system it runs on, so building each operating system's gem takes a computer running that system. From a Mac, this command builds Lota's Linux gem on a Linux computer and downloads it:
+[Lota](https://github.com/setdef/Lota) is a Ruby library for 2D games. The compiler that builds its native extension builds only for the operating system it runs on, so building each operating system's gem takes a computer running that system. From a Mac, this command builds Lota's Linux and Windows gems at the same time, on a Linux computer and a Windows computer, and downloads both:
 
-<!-- Placeholder: replace queued= and ran= with those of a real run of Lota's package task on Linux. -->
+<!-- Placeholder: replace queued= and ran= with those of real runs of Lota's package task. -->
 ```console
-$ proof run package --os linux
-proof: project ~/src/Lota at 3f9c2e1, no uncommitted changes
-proof: run 20261124-1431-m3d8, task package, on linux
-proof: running on nuc-linux (workspace reused)
-✅ Built pkg/lota-0.0.1.dev-x86_64-linux.gem
-proof: exit=0 run=20261124-1431-m3d8 runner=nuc-linux queued=0s ran=0s
-$ proof download 20261124-1431-m3d8
-pkg/lota-0.0.1.dev-x86_64-linux.gem
+$ proof run package --os linux --os windows --download
+proof: Lota at 3f9c2e1 (clean), task package
+proof: run m3d8 on nuc-linux (reused workspace)
+proof: run p9x2 on pc-windows (reused workspace)
+[nuc-linux] Built pkg/lota-0.0.1.dev-x86_64-linux.gem
+[pc-windows] Built pkg/lota-0.0.1.dev-x64-mingw-ucrt.gem
+proof: downloaded pkg/lota-0.0.1.dev-x86_64-linux.gem from run m3d8 to ./pkg/
+proof: downloaded pkg/lota-0.0.1.dev-x64-mingw-ucrt.gem from run p9x2 to ./pkg/
+proof: exit=0 run=20261124-1431-m3d8 task=package runner=nuc-linux queued=0s ran=0s artifacts=1
+proof: exit=0 run=20261124-1431-p9x2 task=package runner=pc-windows queued=0s ran=0s artifacts=1
 ```
 
-Proof's first lines say what it sent and where the run went, and its last line is the result: the exit status, the run's ID, the computer it ran on, and how long it waited and ran. Between them is the output of the task's command, as the command printed it. `proof` exits with the command's status, here 0.
+Lines that start with `proof:` are Proof's, written to standard error. The task's output goes to standard output, each line marked with the computer it came from when more than one run is going. Each run ends with one result line, with its exit status and its full ID, for an agent to read. `proof` exits with the worst of the runs' statuses, here 0. Anywhere Proof asks for a run's ID, the last four characters are enough while they're unique: `proof logs m3d8`.
 
 ## Compatibility
 
