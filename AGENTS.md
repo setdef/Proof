@@ -7,15 +7,16 @@
 
 ## The Tao of Proof
 
-Proof does three things for a developer whose coding agents check every change:
+Proof serves three values. Never serve one by spending another.
 
-1. **It gets the work off the computer you work at.** Test suites stop hammering its CPU and memory, and their windows stop flashing across your screen.
-2. **It runs the work where you can't.** A compiler that builds only for the operating system it runs on builds on that system, and a bug that shows only on Windows is tested on Windows.
-3. **It is CI for trunk-based development, before the push as well as after.** An agent learns whether a change works, from the working tree or any commit, in a private or unpushed repository, without paying for minutes, and without pushing to a forge and polling it while waiting for a Mac runner that may never come.
+1. Get the work off the computer the developer works at: no hammered CPU or memory, no windows on their screen.
+2. Run the work where the developer can't: other operating systems, GPUs, desktops, emulators, Simulators.
+3. Be CI for trunk-based development, before and after the push, answering sooner than pushing and polling would.
 
-Each is easy alone, and each pulls against the others. Getting work off your computer puts it on another, where a person may be working or gaming. Running where you can't means waiting for the one Mac you have. Checking every change fills the queue the other two wait in. Proof lives in the balance: a run must leave every computer usable by the person at it, reach the hardware it needs, and still answer sooner than pushing and polling would. A design that serves one of the three by spending another isn't done: freeing your screen by flashing windows on another someone else is actively using, reaching the Mac by making every run wait for it, or answering sooner with a pass nobody saw. The answer is worth having only when it's true, so Proof never reports a pass that didn't happen.
+- Leave every host usable by the person working or gaming at it.
+- Never report a pass that didn't happen.
 
----
+Why these pull against each other, and how Proof balances them: `doc/how-proof-works.md`, "Three values in balance".
 
 For working on Proof itself. To use Proof on another project, read `skills/proof/SKILL.md`.
 

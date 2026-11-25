@@ -111,6 +111,12 @@ The server's address and certificate fingerprint travel inside the codes `proof 
 
 ## Why Proof is built this way
 
+### Three values in balance
+
+Proof does three things for a developer whose coding agents check every change. It gets the work off the computer they work at, so test suites stop hammering its CPU and memory and stop flashing windows across their screen. It runs the work where they can't: a compiler that builds only for the operating system it runs on, or a bug that shows only on Windows. And it is CI for trunk-based development, before the push as well as after: an agent learns whether a change works, from the working tree or any commit, in a private or unpushed repository, without paying for minutes and without pushing to a forge and polling it while a lone Mac runner works through its queue.
+
+Each is easy alone, and each pulls against the others. Getting work off your computer puts it on another, where a person may be working or gaming. Running where you can't means waiting for the one Mac you have. Checking every change fills the queue the other two wait in. So a run must leave every host usable by the person at it, reach the hardware it needs, and still answer sooner than pushing and polling would. A design that serves one of the three by spending another isn't done: freeing your screen by flashing windows on someone else's, reaching the Mac by making every run wait for it, or answering sooner with a pass nobody saw. The answer is worth having only when it's true, so Proof never reports a pass that didn't happen.
+
 ### One server, and runners that connect to it
 
 A pool of a few hosts that people also use has no data center to lean on. One server keeps the queue and the code in one place, and runners that connect to it work from behind any home router. The cost is that the server is one computer: while it's asleep or off the network, no new run starts.
