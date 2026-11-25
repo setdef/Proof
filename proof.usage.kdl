@@ -1,0 +1,205 @@
+// SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
+// SPDX-License-Identifier: MIT
+//
+// The command-line interface of `proof`, as a usage spec (https://usage.jdx.dev).
+// The CLI reference, man pages, and shell completions are generated from this file.
+
+min_usage_version "2.0.0"
+name "Proof"
+bin "proof"
+version "1.0.0"
+author "setdef"
+license "MIT"
+repository "https://github.com/setdef/Proof"
+
+about "Run your project's tests and builds on your spare computers, from your working tree or any commit"
+long_about #"""
+Proof sends your project from the computer you work on to the other Linux, Windows, and macOS
+computers you have, runs its tests and builds there, streams their output back, and exits with
+their status.
+
+The task's output goes to standard output. The lines Proof prints go to standard error, and
+each begins with "proof:".
+"""#
+after_long_help #"""
+Documentation: https://github.com/setdef/Proof/tree/trunk/doc
+Report a problem: https://github.com/setdef/Proof/issues
+"""#
+
+unknown_flags "error"
+unknown_env prefix="PROOF_"
+
+example "proof run test" header="Run the test task" help="Sends the working tree and runs the project's test task on a runner of an operating system the task works on."
+example "proof run package --os linux --os windows --download" header="Build on two operating systems at once" help="Runs the package task on a Linux runner and a Windows runner in parallel, then downloads both runs' artifacts."
+example "proof run --script bench.sh --os linux" header="Run a script without defining a task"
+example "proof watch m3d8" header="Come back to a run" help="Streams run m3d8's output and exits with its status."
+
+exit_code 0 "The run succeeded, or the command did what it was asked."
+exit_code 2 "The command line was wrong. Proof sent nothing."
+exit_code 75 "A runner or its host went away, or Proof couldn't reach the server. Run the same command again."
+exit_code 78 "A --keep pattern matched no file."
+exit_code 124 "The run reached its time limit, and the runner ended it."
+exit_code 130 "You interrupted Proof with Ctrl-C."
+exit_code 137 "The run held more memory than it requested while its host ran short, or was killed."
+
+flag "--no-color" global=#true help="Print no color, as when NO_COLOR is set or standard error isn't a terminal"
+flag "--no-input" global=#true help="Never prompt; fail and name the flag to use instead"
+flag "-q --quiet" global=#true help="Print only the task's output and the result lines"
+flag "-d --debug" global=#true help="Print what Proof does at each step, to standard error"
+
+cmd "run" effect="write" help="Run a task or a script on one or more runners" {
+  long_help #"""
+Sends your working tree as it is, with uncommitted changes and untracked files that Git doesn't
+ignore, or the commit you name with --commit, and runs a task or a script there. Streams the
+output while it runs and exits with the run's status. With several --os flags, runs one run per
+operating system in parallel and exits with the worst status.
+
+Press Ctrl-C to cancel the run. To start a run without waiting for it, use --detach.
+"""#
+  arg "[task]" help="The task to run, from the project's mise.toml or .config/proof.kdl"
+  flag "--script <file>" help="Run this script file instead of a task; give - to read it from standard input"
+  group "what" "task" "--script" required=#true
+
+  flag "--os <os>" var=#true help="Run on this operating system; repeat to run on several in parallel" {
+    long_help "Without --os, Proof places the run on whichever of the task's operating systems has a runner free. \"any\" means the same, and \"all\" runs once on every operating system the task works on."
+    choices "linux" "macos" "windows" "any" "all"
+  }
+  flag "--label <label>" var=#true help="Run only on a runner that has this label, in addition to the task's labels" {
+    choices strict=#false "gpu" "kvm" "desktop"
+  }
+  flag "--commit <rev>" help="Send this commit, with its history, instead of the working tree"
+  flag "-C --project <dir>" help="Use the project whose Git repository contains this folder"
+
+  flag "--cpus <count>" help="Request this many CPUs, in place of the task's request"
+  flag "--memory <size>" help="Request this much memory, such as 8GB, in place of the task's request"
+  flag "--timeout <duration>" help="End the run after this long, such as 30m, in place of the task's time limit"
+  flag "--empty" help="Start in an empty workspace, with nothing reused from earlier runs"
+
+  flag "--keep <pattern>" var=#true help="Keep the files matching this pattern as artifacts, in addition to the task's"
+  flag "--input <run>" var=#true help="Give this run the artifacts of an earlier run"
+  flag "--input-file <path>" var=#true help="Give this run a file or folder from this computer"
+  flag "--download" help="Download the run's artifacts when it succeeds"
+  flag "-o --output <dir>" requires="--download" help="Download artifacts into this folder instead of the project's folder"
+
+  flag "--detach" help="Start the run, print its ID, and exit without waiting for it"
+  flag "--json" help="Print one JSON object per run in place of the result lines"
+
+  example "proof run test" header="Run a task"
+  example "proof run test --commit HEAD" header="Check the last commit, with its history"
+  example "proof run test --os all" header="Run on every operating system the task works on"
+  example "proof run build --os linux --keep 'pkg/*.gem' --download" header="Build on Linux and download what it built"
+  example "proof run --script - --os macos" header="Run a script from standard input"
+}
+
+cmd "watch" effect="read" help="Stream a run's output until it ends, and exit with its status" {
+  long_help "Picks up a run that is still going, from any terminal. Press Ctrl-C to stop watching; the run goes on."
+  arg "<run>" help="The run's ID, or its last four characters while they're unique"
+  flag "--json" help="Print the run's result as JSON when it ends"
+  example "proof watch m3d8"
+}
+
+cmd "logs" effect="read" help="Print a run's whole output" {
+  long_help "Works for any run Proof still keeps, finished or not. On a terminal, Proof shows the output in a pager."
+  arg "<run>" help="The run's ID, or its last four characters while they're unique"
+  flag "--tail <lines>" help="Print only the last this many lines"
+  flag "--no-pager" help="Print to standard output without a pager"
+  example "proof logs m3d8"
+  example "proof logs m3d8 --tail 100" header="Print the end of the output"
+}
+
+cmd "cancel" effect="write" help="Cancel runs, and end everything their commands started" {
+  arg "<run>..." help="The runs' IDs, or their last four characters while they're unique"
+  example "proof cancel m3d8"
+}
+
+cmd "download" effect="write" help="Download a run's artifacts" {
+  arg "<run>" help="The run's ID, or its last four characters while they're unique"
+  arg "[pattern]..." help="Download only the artifacts matching these patterns"
+  flag "-o --output <dir>" help="Download into this folder instead of the current one"
+  flag "--json" help="Print each downloaded file's path and size as JSON"
+  example "proof download m3d8"
+  example "proof download m3d8 'pkg/*.gem' --output dist" header="Download some artifacts into another folder"
+}
+
+cmd "status" effect="read" help="Show the runners, the queue for each operating system, and your recent runs" {
+  long_help "For each queued run, shows what it is waiting behind. For each runner, shows whether a person is active at its host."
+  flag "--json" help="Print the status as JSON"
+  example "proof status"
+}
+
+cmd "login" effect="write" help="Sign in to a pool's server from this computer" {
+  long_help "Asks for the one-time code that `proof server setup` printed. Proof never takes a secret as an argument."
+  arg "<server>" help="The server's address, such as proof-server.local"
+  flag "--code-file <file>" help="Read the one-time code from this file instead of asking for it"
+  example "proof login proof-server.local"
+}
+
+cmd "logout" effect="write" help="Sign out of the pool's server from this computer, and delete the token Proof kept" {
+  example "proof logout"
+}
+
+cmd "verify" effect="write" help="Send a known run to every runner, and report each result" {
+  flag "--json" help="Print each runner's result as JSON"
+  example "proof verify"
+}
+
+cmd "server" subcommand_required=#true help="Set up, upgrade, or uninstall the server, on the computer it runs on" {
+  cmd "setup" effect="write" help="Set up this computer as the pool's server" {
+    long_help "Checks the computer and lists every change it will make before it makes any. Then starts the server as a service of your account, and prints a one-time code for signing in. Safe to run again."
+    flag "-n --dry-run" help="List the changes setup would make, and make none"
+    example "proof server setup --dry-run" header="See what setup would change"
+    example "proof server setup"
+  }
+  cmd "upgrade" effect="write" help="Upgrade the server; its runners upgrade themselves to match" {
+    flag "-n --dry-run" help="Say which version Proof would install, and install nothing"
+    example "proof server upgrade"
+  }
+  cmd "uninstall" effect="destructive" help="Stop the server and delete it, with every run's record, output, and artifacts" {
+    flag "-f --force" help="Uninstall without asking first"
+    example "proof server uninstall"
+  }
+}
+
+cmd "runner" subcommand_required=#true help="Add, approve, list, and remove runners" {
+  cmd "setup" effect="write" help="Set up this computer as a runner of the pool" {
+    long_help #"""
+Prints a short code to approve with `proof runner approve`, so you never type a long token at a
+text console. Where a step needs an administrator, such as adding the account to the `kvm` group,
+setup prints the exact commands for you to run, and checks them when you run setup again. On
+Windows, also sets up a runner in WSL. Safe to run again.
+"""#
+    arg "<server>" help="The server's address, such as proof-server.local"
+    flag "--name <name>" help="Name the runner this, instead of the computer's host name"
+    flag "-n --dry-run" help="List the changes setup would make, and make none"
+    example "proof runner setup proof-server.local"
+  }
+  cmd "approve" effect="write" help="Let a runner that asked to join into the pool" {
+    arg "[code]" help="The code the runner printed; without it, lists the runners waiting for approval"
+    example "proof runner approve XK7-42P"
+  }
+  cmd "list" effect="read" help="List the runners, with their labels and resources" {
+    flag "--json" help="Print the runners as JSON"
+    example "proof runner list"
+  }
+  cmd "revoke" effect="destructive" help="Remove a runner from the pool, and revoke its token" {
+    arg "<name>" help="The runner's name, as `proof runner list` shows it"
+    flag "-f --force" help="Revoke without asking first"
+    example "proof runner revoke nuc-linux"
+  }
+  cmd "uninstall" effect="destructive" help="Stop this computer's runner, and delete its workspaces and caches" {
+    flag "-f --force" help="Uninstall without asking first"
+    example "proof runner uninstall"
+  }
+}
+
+cmd "hook" subcommand_required=#true help="Install or remove a Git pre-push hook that runs a task" {
+  cmd "install" effect="write" help="Add a pre-push hook to this clone that runs a task on the commits you push" {
+    long_help "Git stops the push when the run fails. Proof doesn't replace a pre-push hook it didn't install, unless you pass --force."
+    arg "<task>" help="The task the hook runs"
+    flag "-f --force" help="Replace an existing pre-push hook"
+    example "proof hook install test"
+  }
+  cmd "uninstall" effect="write" help="Remove the pre-push hook that Proof installed in this clone" {
+    example "proof hook uninstall"
+  }
+}
