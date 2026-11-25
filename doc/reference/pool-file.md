@@ -128,7 +128,7 @@ One entry for each physical computer. `proof status` shows the host under `NAME`
 Proof still runs tasks on a host whose budget is smaller than one workspace: the runner deletes the workspace after each run instead of keeping it.
 
 > [!WARNING]
-> With a share of `cpus=0 memory="0GB"`, Proof keeps nothing free, so runs can use the whole computer while someone is using it. Proof accepts it, for a host nobody sits at, but on a computer someone uses, the runs make the computer slow for them.
+> With a share of `cpus=0 memory="0GB"`, Proof keeps nothing free, so runs can use the whole host while someone is using it. Proof accepts it, for a host nobody sits at, but on a host someone uses, the runs make it slow for them.
 
 ## `repository`
 

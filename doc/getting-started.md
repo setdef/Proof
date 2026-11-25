@@ -5,7 +5,7 @@
 
 # Getting started
 
-In this tutorial, we set up a Proof pool of one server and one Linux runner, and run a project's tests on it from the computer you work on. By the end, you'll have run a task on another computer, seen a failing run and what `proof` does with it, and checked a commit apart from your uncommitted changes. It takes about 30 minutes, most of it waiting for downloads.
+In this tutorial, we set up a Proof pool of one server and one Linux runner, and run a project's tests on it from the computer you work on. By the end, you'll have run a task on another host, seen a failing run and what `proof` does with it, and checked a commit apart from your uncommitted changes. It takes about 30 minutes, most of it waiting for downloads.
 
 If you get stuck, [open an issue](https://github.com/setdef/Proof/issues) with the command you ran and everything it printed. Words in bold are defined in the [glossary](glossary.md).
 
@@ -13,10 +13,10 @@ If you get stuck, [open an issue](https://github.com/setdef/Proof/issues) with t
 
 - **The computer you work on,** running Linux or macOS, with [Git](https://git-scm.com/) and a project in a Git repository. The examples call it `laptop`, and use a Ruby project called `invoices` whose tests run with `bundle exec rake test`; use your project's test command wherever this page shows that one.
 - **An always-on Linux computer for the server.** It runs no tasks, so an old laptop is enough. The examples call it `server`, at the address `server.home.arpa`. A server on macOS works too; its setup differs, and this tutorial doesn't cover it.
-- **A Linux computer for the runner:** Debian 13, Ubuntu 24.04, or Fedora 40 or later. The examples call it `nuc`.
+- **A Linux host for the runner:** a computer running Debian 13, Ubuntu 24.04, or Fedora 40 or later. The examples call it `nuc`.
 - **Someone who can run `sudo`** on the server's computer and on `nuc`, for two commands on each.
 
-The server and the runner can't be the same computer. The other two computers need to reach the server's computer over the network; the server needs to reach neither of them.
+The server's computer can't also be a host. The other two computers need to reach the server's computer over the network; the server needs to reach neither of them.
 
 ## How to read the prompts
 
@@ -25,8 +25,8 @@ The commands on this page run on three computers, as two different accounts, so 
 | Prompt | Where, and as whom |
 | --- | --- |
 | `you@laptop $` | Your account, on the computer you work on |
-| `you@server $`, `you@nuc $` | Your account, on the server's computer or the runner's |
-| `proof@server $`, `proof@nuc $` | The account Proof runs as, on the server's computer or the runner's |
+| `you@server $`, `you@nuc $` | Your account, on the server's computer or the runner's host |
+| `proof@server $`, `proof@nuc $` | The account Proof runs as, on the server's computer or the runner's host |
 
 Type only what follows the `$`. Lines without a prompt are what the command printed.
 

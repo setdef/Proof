@@ -170,7 +170,7 @@ setup prints the exact commands for you to run, and checks them when you run set
 Windows, also sets up a runner in WSL. Safe to run again.
 """#
     arg "<server>" help="The server's address, such as server.home.arpa"
-    flag "--name <name>" help="Name the runner this, instead of the computer's host name"
+    flag "--name <name>" help="Name the runner this, instead of the computer's network name"
     flag "-n --dry-run" help="List the changes setup would make, and make none"
     example "proof runner setup server.home.arpa"
   }

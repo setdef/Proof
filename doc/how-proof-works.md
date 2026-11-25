@@ -21,9 +21,9 @@ flowchart LR
 
 - **The `proof` command**, where you or your agents work. It sends code and requests to the server, and prints what comes back.
 - **The server**, on one always-on computer. It keeps the **queue**, a Git repository for each project, every run's record, output, and **artifacts**, and the [pool file](reference/pool-file.md). It places each **run** on a **runner**. The server's computer has no runner, so a long build never slows down the computer every other run depends on.
-- **A runner** on each operating system that runs your tasks: one on a Linux computer, two on a Windows PC with WSL. It runs each run's command and sends its output and status to the server.
+- **A runner** on each operating system that runs your tasks: one on a Linux host, two on a Windows PC with WSL. It runs each run's command and sends its output and status to the server.
 
-Every connection goes from the command or a runner to the server, over HTTPS. Nothing connects to a runner, so a runner can sit behind a home router or on a laptop that changes networks, and its computer needs no open port.
+Every connection goes from the command or a runner to the server, over HTTPS. Nothing connects to a runner, so a runner can sit behind a home router or on a laptop that changes networks, and its host needs no open port.
 
 The server and every runner run the same version. A runner that finds the server at a newer version downloads that version from the server and restarts with it, between runs. The `proof` command checks the server's version on every call, and when the two differ in a way that matters, it says which one to upgrade.
 
@@ -47,7 +47,7 @@ A run waits in the queue until the server can place it on a runner, in the order
 - the runner has every label the task needs;
 - the runner's host has the CPUs and memory the run requests free, counting every runner on that host together.
 
-The server counts resources per **host**, not per runner. A Windows PC with WSL is one computer, and the server never gives its two runners more runs together than the PC can run.
+The server counts resources per **host**, not per runner. A Windows PC with WSL is one host, and the server never gives its two runners more runs together than the PC can run.
 
 The server places each run by these rules alone. It has no priorities, and it never stops one run to make room for another. `proof status` shows what each queued run is waiting behind, so a run that waits a long time says why.
 
@@ -55,7 +55,7 @@ Proof refuses a run that no host could ever run, such as one that requests more 
 
 ## What a runner gives each run
 
-Each runner runs as one ordinary account on its computer, set aside for Proof, never as root and never as the account of a person who uses the computer. Where a task needs hardware, such as `/dev/kvm` or a GPU's render device, the runner's account gets it through a group, which `proof runner setup` tells an administrator how to add.
+Each runner runs as one ordinary account on its host, set aside for Proof, never as root and never as the account of a person who uses the host. Where a task needs hardware, such as `/dev/kvm` or a GPU's render device, the runner's account gets it through a group, which `proof runner setup` tells an administrator how to add.
 
 For each run, the runner provides:
 
@@ -104,7 +104,7 @@ On Windows and Linux, input from runs never counts as a person: runs draw on sep
 
 Each person, agent, or runner that talks to the server holds a **token**. `proof login` gets one for you, and `proof runner approve` gives one to a runner. Proof keeps tokens in files that only their owner can read, never in an environment variable or on a command line.
 
-A token for running work lets its holder run any command, as the runner account, on every runner in the pool: that is what running a task is. Give one only to people and agents you'd give an account on those computers.
+A token for running work lets its holder run any command, as the runner account, on every runner in the pool: that is what running a task is. Give one only to people and agents you'd give an account on those hosts.
 
 The server's address and certificate fingerprint travel inside the codes `proof server setup` and `proof runner setup` print. So the command and the runners know they're talking to your server from their first connection, with no certificate authority involved.
 
@@ -112,7 +112,7 @@ The server's address and certificate fingerprint travel inside the codes `proof 
 
 ### One server, and runners that connect to it
 
-A pool of a few computers people also use has no data center to lean on. One server keeps the queue and the code in one place, and runners that connect to it work from behind any home router. The cost is that the server is one computer: while it's asleep or off the network, no new run starts.
+A pool of a few hosts that people also use has no data center to lean on. One server keeps the queue and the code in one place, and runners that connect to it work from behind any home router. The cost is that the server is one computer: while it's asleep or off the network, no new run starts.
 
 ### No existing scheduler
 
@@ -128,4 +128,4 @@ Most runs are several times faster in a reused workspace, because the tools, dep
 
 ### No root, ever
 
-A runner shares its computer with someone. Running as an ordinary account, with hardware granted through groups, means a run can't change the system it runs on, and setup never needs more than the few administrator commands it prints for you to run yourself.
+A runner shares its host with someone. Running as an ordinary account, with hardware granted through groups, means a run can't change the system it runs on, and setup never needs more than the few administrator commands it prints for you to run yourself.

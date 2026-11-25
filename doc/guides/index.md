@@ -7,7 +7,7 @@
 
 Each guide does one job, from a pool that already has a server and one runner. If you don't have that yet, start with [Getting started](../getting-started.md). For every command and setting, see the [command reference](../reference/cli.md), the [project file reference](../reference/project-file.md), and the [pool file reference](../reference/pool-file.md).
 
-## Add computers to the pool
+## Add hosts to the pool
 
 - [Add a Mac](add-a-mac.md): set up a runner on macOS, including one that can open windows in a signed-in session.
 - [Add a Windows PC](add-a-windows-pc.md): set up a runner on Windows and another in its WSL, counted as one host.
@@ -27,9 +27,9 @@ Each guide does one job, from a pool that already has a server and one runner. I
 
 - [Build every pushed commit](build-pushed-commits.md): list a repository in the pool file, and read each commit's results.
 
-## Share computers with the people who use them
+## Share hosts with the people who use them
 
-- [Share a computer with the person who uses it](sharing.md): set how much of a host to keep free for a person, and what waits while they're there.
+- [Share a host with the person who uses it](sharing.md): set how much of a host to keep free for a person, and what waits while they're there.
 
 ## Run containers and emulators
 

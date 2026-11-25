@@ -535,7 +535,7 @@ Windows, also sets up a runner in WSL. Safe to run again.
 - **`<server>`** — The server's address, such as server.home.arpa
 
 ### Flags
-- **`--name <name>`** — Name the runner this, instead of the computer's host name
+- **`--name <name>`** — Name the runner this, instead of the computer's network name
 - **`-n --dry-run`** — List the changes setup would make, and make none
 
 ### Exit Status
