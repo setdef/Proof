@@ -11,6 +11,8 @@ Once a pool has hosts with more than one operating system, a task can run on any
 
 Without `--os` and without a [project file](../reference/project-file.md), `proof run test` goes to any operating system with a runner free. A project whose tests only work on Linux would then sometimes land on Windows and fail in setup: a `bundle install` that needs a C compiler, or a setup step that calls `bash`. You have two ways to deal with that, and most projects use both: write setup that works everywhere, and list the operating systems each task works on.
 
+Such a failure is a real fault, not bad luck: a collaborator on that operating system would hit it the first time they ran the task. Proof places tasks on any operating system by default so that you find it first.
+
 ## Write setup that works everywhere
 
 mise runs a task's `run` line with `sh` on Linux and macOS and with `cmd` on Windows, so a shell one-liner that works in one fails in the other. Write setup in a language the project already pins in `mise.toml`, and have the task run it through `mise x`, which runs a command with the project's tools on `PATH`:
