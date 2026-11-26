@@ -120,6 +120,12 @@ The file `.config/proof.kdl` in a project. It contains what only Proof needs: wh
 
 The values in a `defaults` node. In a project file, they apply to every task whose entry lacks that value; in the pool file, to every host. Without a project file, Proof's built-in defaults apply.
 
+### setting
+
+One of the values a **run** gets: its **OS**es, **labels**, CPUs, memory, time limit, **artifacts**, and **caches**. Each setting comes from a flag on `proof run`, the **task**'s entry in the **project file**, the **defaults**, or Proof's built-in defaults, in that order of precedence.
+
+- Don't say: option, which most tools use for a flag; property, which in the project file means a `name=value` entry on a node, such as `cpus=4`, where `os` and `label` are children.
+
 ### resources
 
 The CPUs and memory a task requests. The server places a run only where a host has the resources free, and the runner holds the run to its memory request.
