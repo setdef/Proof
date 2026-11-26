@@ -56,45 +56,51 @@ class SqliteRunsRacesTest < Minitest::Test
   end
 
   # Architecture, "Storage": "a busy handler that sleeps make a write waiting on a lock let other fibers run." A
-  # thread that waits for the file's write lock sleeps in Ruby, so another thread keeps running.
+  # thread that waits for the file's write lock sleeps in Ruby, so another thread keeps running. The lock is held until
+  # the other thread has ticked three times, so the test doesn't depend on how fast the computer runs it: a write
+  # that blocks the other thread leaves it with no tick, and the holder gives up after five seconds.
   def test_a_write_that_waits_for_the_lock_lets_other_threads_run
     runs = build_runs
-    held = holding_the_write_lock(runs.path, 0.3)
+    release = Thread::Queue.new
+    held = holding_the_write_lock(runs.path, release)
 
-    assert_operator(ticks_while { runs.add(FIXTURES.run) }, :>, 5)
+    assert_operator(ticks_while(release) { runs.add(FIXTURES.run) }, :>=, 3)
     assert_equal(FIXTURES.run.facts, FIXTURES.facts(runs))
     held.join
   end
 
-  # How many times a thread that sleeps for 10 milliseconds between ticks ran while the block ran.
-  private def ticks_while
+  # How many times a thread that sleeps for 10 milliseconds between ticks ran while the block ran. The third tick
+  # pushes to +release+.
+  private def ticks_while(release)
     ticks = Thread::Queue.new
-    ticker = Thread.new { ticking(ticks) }
+    ticker = Thread.new { ticking(ticks, release) }
     yield
     ticker.kill
     ticks.size
   end
 
-  private def ticking(ticks)
+  private def ticking(ticks, release)
     loop do
       ticks << :tick
+      release << :enough if ticks.size == 3
       sleep(0.01)
     end
   end
 
-  # A thread that holds the file's write lock for `seconds`, and a promise that it holds it when this returns.
-  private def holding_the_write_lock(path, seconds)
+  # A thread that holds the file's write lock until +release+ has something, or for five seconds, and a promise that
+  # it holds it when this returns.
+  private def holding_the_write_lock(path, release)
     locked = Thread::Queue.new
-    holder = Thread.new { hold_the_write_lock(path, locked, seconds) }
+    holder = Thread.new { hold_the_write_lock(path, locked, release) }
     locked.pop
     holder
   end
 
-  private def hold_the_write_lock(path, locked, seconds)
+  private def hold_the_write_lock(path, locked, release)
     Sequel.sqlite(path) do |database|
       database.transaction(mode: :immediate) do
         locked << :locked
-        sleep(seconds)
+        release.pop(timeout: 5)
       end
     end
   end
