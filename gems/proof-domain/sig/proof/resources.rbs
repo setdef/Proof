@@ -22,7 +22,8 @@ module Proof
   # difference below zero would read as room. `minus` never goes below 0, and
   # `least` and `most` pick each resource on its own.
   #
-  # Use it for a task's request, a flag's request, and a host's free amounts.
+  # Use it for a task's request, a flag's request, a host's share, and a host's
+  # free amounts.
   #
   # ## Examples
   #
@@ -84,6 +85,9 @@ module Proof
     # what the memory was.
     MEMORY_MESSAGE: String
 
+    # For each member, the message when its value breaks the rule, and the rule.
+    RULES: Hash[Symbol, [String, MemberCheck::_Rule]]
+
     # The number of CPUs, a whole number from 0.
     attr_reader cpus: Integer
 
@@ -121,6 +125,22 @@ module Proof
     # Proof::Resources.none.to_h # => {cpus: 0, megabytes: 0}
     # ```
     def self.none: () -> Resources
+
+    # Builds a host's share from CPUs and a memory size as the pool file writes
+    # it. It raises `Proof::InvalidSizeError` unless `memory` is a size, as
+    # `Proof::Size.read` reads one, and `Proof::InvalidResourcesError` unless
+    # `cpus` is an Integer from 0. Memory is checked first. A share can keep
+    # nothing free, so `cpus` can be 0. The messages say that the setting is the
+    # share's: `share memory`, and `share cpus`.
+    #
+    # - `cpus`: Integer, a whole number from 0.
+    # - `memory`: String, such as `"4GB"`.
+    #
+    # ```ruby
+    # Proof::Resources.share(cpus: 0, memory: "0GB").to_h # => {cpus: 0, megabytes: 0}
+    # Proof::Resources.share(cpus: 2, memory: "4GB").to_h # => {cpus: 2, megabytes: 4096}
+    # ```
+    def self.share: (cpus: Integer, memory: String) -> Resources
 
     # Builds resources from CPUs and megabytes, and raises
     # `Proof::InvalidResourcesError` unless `cpus` and `megabytes` are each an

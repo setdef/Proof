@@ -8,10 +8,7 @@ module Proof
     BUILDERS = {
       budget: -> (child) { Size.read(child.arguments.first, name: "budget") },
       "keep-free": -> (child) { Size.read(child.arguments.first, name: "keep-free") },
-      share: lambda do |child|
-        memory = Size.read(child.properties["memory"], name: "share memory")
-        Resources.new(cpus: child.properties["cpus"], megabytes: memory.megabytes)
-      end,
+      share: -> (child) { Resources.share(cpus: child.properties["cpus"], memory: child.properties["memory"]) },
       "active-for": -> (child) { Duration.read(child.arguments.first, units: %i[s m h], name: "active-for") },
       withhold: -> (child) { LabelSet.new(labels: child.arguments.map { |name| Label.new(name:) }) },
     }.freeze

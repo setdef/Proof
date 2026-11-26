@@ -93,6 +93,37 @@ class ResourcesTest < Minitest::Test
     assert_equal("megabytes is a whole number from 0, not -1", error.message)
   end
 
+  # Pool file reference, "`host`": `share cpus=N memory="SIZE"`, with the default `cpus=2 memory="4GB"`, so a share
+  # holds the CPUs it is given and its memory in megabytes.
+  def test_a_share_holds_its_cpus_and_its_memory_in_megabytes
+    assert_equal({ cpus: 2, megabytes: 4096 }, Proof::Resources.share(cpus: 2, memory: "4GB").to_h)
+    assert_equal({ cpus: 4, megabytes: 16_384 }, Proof::Resources.share(cpus: 4, memory: "16 GB").to_h)
+  end
+
+  # Pool file reference, "`host`", the warning: "With a share of `cpus=0 memory="0GB"`, Proof keeps nothing free ...
+  # Proof accepts it."
+  def test_a_share_of_nothing_is_accepted
+    assert_equal(Proof::Resources.none, Proof::Resources.share(cpus: 0, memory: "0GB"))
+  end
+
+  # Pool file reference, "What happens when the file has a mistake": `cpus` is "a whole number from 0", so a decimal,
+  # text, `nil`, and a negative number are refused, with a message that names the share's cpus.
+  def test_a_share_with_cpus_that_are_not_a_whole_number_from_zero_is_refused
+    [2.5, -1, "2", nil].each do |cpus|
+      error = assert_raises(Proof::InvalidResourcesError, cpus.inspect) { Proof::Resources.share(cpus:, memory: "4GB") }
+
+      assert_equal("share cpus is a whole number from 0, not #{cpus.inspect}", error.message)
+    end
+  end
+
+  # The same row: a memory that isn't a size is refused with the share's memory named, and it is checked first, as the
+  # pool file reader always did, so a share with both wrong says what is wrong with its memory.
+  def test_a_share_with_memory_that_is_not_a_size_is_refused_before_its_cpus
+    error = assert_raises(Proof::InvalidSizeError) { Proof::Resources.share(cpus: 2.5, memory: "4G") }
+
+    assert_match(/\Ashare memory is a size: /, error.message)
+  end
+
   # Every error the domain raises is a Proof::Error.
   def test_the_error_is_a_proof_error
     assert_operator(Proof::InvalidResourcesError, :<, Proof::Error)

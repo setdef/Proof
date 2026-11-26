@@ -67,9 +67,17 @@ class PoolFileReaderSettingsTest < Minitest::Test
       assert_refused(
         defaults_with("share cpus=#{written} memory=\"4GB\""),
         2,
-        domain_said(Proof::InvalidResourcesError) { Proof::Resources.new(cpus:, megabytes: 4096) }
+        domain_said(Proof::InvalidResourcesError) { Proof::Resources.share(cpus:, memory: "4GB") }
       )
     end
+  end
+
+  # The same row: the message names the share's `cpus`, as the one for the memory names the share's `memory`, so a
+  # person who reads it knows which setting is wrong. The project file's `cpus` is another setting.
+  def test_the_message_for_a_share_with_bad_cpus_names_the_share
+    error = assert_raises(Proof::PoolFileError) { read(defaults_with("share cpus=2.5 memory=\"4GB\"")) }
+
+    assert_equal("pool.kdl:2: share cpus is a whole number from 0, not 2.5", error.message)
   end
 
   # The same row: a memory that isn't a size is refused, with the share's memory named.

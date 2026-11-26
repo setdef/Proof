@@ -29,6 +29,13 @@ class ProjectFileReaderTypesTest < Minitest::Test
     )
   end
 
+  # The same bullet: the message names the project file's `cpus`, which a task requests from 1, and not a share's, which
+  # the pool file keeps free from 0.
+  def test_the_message_for_cpus_names_the_tasks_cpus
+    assert_refused("task a cpus=2.5\n", 1, "cpus is a whole number from 1, not 2.5")
+    assert_refused("defaults cpus=0\n", 1, "cpus is a whole number from 1, not 0")
+  end
+
   # The same bullet, for `cpus` below 1, which the page's table calls "A whole number from 1".
   def test_cpus_of_zero_is_refused
     assert_refused(
