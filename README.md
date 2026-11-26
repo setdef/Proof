@@ -8,7 +8,7 @@ Run your project's tests and builds on your spare computers, from your working t
 
 Proof sends your project from the computer you work on to the other Linux, Windows, and macOS computers you have, which Proof calls hosts, runs its tests and builds there, streams their output back, and exits with their status. It's for developers whose coding agents check every change. When five agents each run a one-minute test suite after every change, the computer they work on is running tests most of the time. With Proof, each agent sends its run to a host with room for it, and no agent has to push to GitHub, or wait for a hosted CI service, to find out whether a change works.
 
-Proof sends your working tree as it is, uncommitted changes included, or an exact commit with its history. It runs work that needs a real GPU, a desktop session where it can open windows, or [KVM](https://linux-kvm.org/) for Android emulators, and it never runs anything as root. Proof can also build every commit after it's pushed, on the same hosts, so you pay for no CI minutes for a private repository.
+Proof sends your working tree as it is, uncommitted changes included, or an exact commit with its history. It runs work that needs a real GPU, a desktop session where it can open windows, or [KVM](https://linux-kvm.org/) for Android emulators, and it never runs anything as root. Proof can also run your tasks on every commit after it's pushed, on the same hosts, so you pay for no CI minutes for a private repository.
 
 A person using one of those hosts comes first. While someone is at its keyboard, mouse, or screen, Proof keeps part of the host free for them and runs other work in what's left; work that needs their display, GPU, or speakers waits until they stop.
 
@@ -77,7 +77,7 @@ To uninstall Proof from a computer, run `proof runner uninstall` or `proof serve
 4. **Run a task** from anywhere in the project: `proof run test`. `test` can be a task in the project's `mise.toml` or a task defined in `.config/proof.kdl`. In that optional file, you say which operating systems each task works on, what hardware it needs, the CPUs and memory it requests, and which files to keep from its runs. Without `--os`, Proof places the run on any operating system with a runner free, or only on those the project file lists for the task. Words for the task follow `--`, as with `cargo run` and `npm run`: `proof run test -- --seed 1234` gives the task a flag. `:::` starts the next task, as with `mise run`: `proof run lint ::: test` runs two tasks, and `proof run lint -- --fix ::: test -- --seed 1234` gives each task different words. Proof's flags go anywhere before `--`, and Proof refuses a flag it doesn't have, such as `--oss`, and suggests the nearest one it has, `--os`. To try something without a task, run a script: `proof run --script bench.sh --os linux`.
 5. **Come back to a run** by its ID from any terminal. `proof watch m3d8q` streams it and exits with its status, `proof logs m3d8q` prints its whole output, and `proof cancel m3d8q` stops it. In `proof run`, press Ctrl-C to cancel the run. In `proof watch`, press Ctrl-C to stop watching without canceling it. `proof run --detach` starts a run and exits at once with its ID. `proof status` shows every runner, and what each queued run is waiting behind.
 6. **Check before each push.** `proof hook install test` adds a Git pre-push hook to your clone, and Git stops the push when the `test` run fails.
-7. **Build every pushed commit** by listing a repository, its branches, and its tasks in the server's pool file.
+7. **Run tasks on every pushed commit** by listing a repository, its branches, and its tasks in the server's pool file.
 8. **Upgrade** by running `proof server upgrade` on the server. The runners upgrade themselves to match.
 
 [Getting started](doc/getting-started.md) covers steps 1 to 4 with one Linux runner.
@@ -86,7 +86,7 @@ To uninstall Proof from a computer, run `proof runner uninstall` or `proof serve
 
 - In the terminal: `proof help` lists every command with examples, and `proof help run` explains one command.
 - [Getting started](doc/getting-started.md): set up a server and one Linux runner, and run a first task.
-- [Guides](doc/guides/index.md): adding a Mac or a Windows PC, GPUs and desktops, teaching your agents to use Proof, the pre-push hook, artifacts, caches, building pushed commits, sharing a host with the person who uses it, containers and emulators, upgrading, and troubleshooting.
+- [Guides](doc/guides/index.md): adding a Mac or a Windows PC, GPUs and desktops, teaching your agents to use Proof, the pre-push hook, artifacts, caches, running tasks on pushed commits, sharing a host with the person who uses it, containers and emulators, upgrading, and troubleshooting.
 - [How Proof works](doc/how-proof-works.md): the server, the runners, how your code reaches them, and why Proof is built that way.
 - [Command reference](doc/reference/cli.md): every command, flag, and exit status.
 - [Project file reference](doc/reference/project-file.md) and [pool file reference](doc/reference/pool-file.md): every setting in `.config/proof.kdl` and in the server's pool file.

@@ -55,7 +55,7 @@ A secret that a person, an agent, or a runner gives the server to act in the poo
 
 ### pool file
 
-The one configuration file for the whole pool, kept on the server. It lists each host with its **budget**, its **share** for a **person**, any **labels** its runners must not offer, and each repository whose pushed commits Proof builds.
+The one configuration file for the whole pool, kept on the server. It lists each host with its **budget**, its **share** for a **person**, any **labels** its runners must not offer, and each repository whose pushed commits Proof runs tasks on.
 
 - Don't say: config, which is ambiguous between the pool file and the **project file**.
 

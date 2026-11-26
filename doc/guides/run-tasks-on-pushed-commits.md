@@ -1,4 +1,4 @@
-# Build every pushed commit
+# Run tasks on every pushed commit
 
 Use your pool in place of hosted CI: the server watches a repository's branches, and runs tasks on every commit pushed to them, by anyone. This catches what the [pre-push hook](pre-push-hook.md) can't: pushes from clones without the hook, merges made on the forge, and commits pushed with `--no-verify`.
 

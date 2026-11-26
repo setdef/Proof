@@ -21,7 +21,7 @@ Each guide does one job, from a pool that already has a server and one runner. I
 
 ## Use the pool in place of hosted CI
 
-- [Build every pushed commit](build-pushed-commits.md): list a repository in the pool file, and read each commit's results.
+- [Run tasks on every pushed commit](run-tasks-on-pushed-commits.md): list a repository in the pool file, and read each commit's results.
 
 ## Share hosts with the people who use them
 

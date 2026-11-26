@@ -1,6 +1,6 @@
 # Pool file reference
 
-The pool file is `~/.config/proof/pool.kdl`, on the computer that runs the **server**. It describes the whole **pool**: each **host**, with its disk **budget**, the **share** Proof keeps free for a **person** who is **active** there, and any **labels** it must not offer; each repository whose pushed commits Proof builds; and how long the server keeps runs. Words in bold are defined in the [glossary](../glossary.md).
+The pool file is `~/.config/proof/pool.kdl`, on the computer that runs the **server**. It describes the whole **pool**: each **host**, with its disk **budget**, the **share** Proof keeps free for a **person** who is **active** there, and any **labels** it must not offer; each repository whose pushed commits Proof runs tasks on; and how long the server keeps runs. Words in bold are defined in the [glossary](../glossary.md).
 
 `proof server setup` writes the file, and `proof runner approve` adds a host to it, saying what it added. Everything else in it is yours to change. The server reads the file again whenever it changes, so a change takes effect for the next run without a restart.
 
@@ -163,17 +163,17 @@ repository NAME url="URL" {
 }
 ```
 
-A repository whose pushed commits Proof builds, in place of hosted CI. `proof status` shows its runs under `NAME`.
+A repository whose pushed commits Proof runs tasks on, in place of hosted CI. `proof status` shows its runs under `NAME`.
 
 | Child or property | Default | Meaning |
 | --- | --- | --- |
 | `url` | Required | The repository's clone URL. The server fetches from it; runners never do. |
 | `credentials-file` | None | A file holding a read-only token for the repository, for a private one. The server reads the token from this file and never from the pool file itself. |
-| `branch` | Required | The branches to build. The server builds each new commit on them. |
+| `branch` | Required | The branches to watch. The server runs the tasks on each new commit on them. |
 | `task` | Required | The tasks to run on each new commit. Each task runs once on every operating system listed for it in the project file, so a task that works on Linux and macOS gets two runs per commit. |
 | `poll` | `"1m"` | How often the server fetches the branches. |
 
-The tasks come from the commit being built: its `mise.toml` and its `.config/proof.kdl`. A commit that changes a task's operating systems changes where that commit's runs go.
+The tasks come from the commit they run on: its `mise.toml` and its `.config/proof.kdl`. A commit that changes a task's operating systems changes where that commit's runs go.
 
 ## Examples
 
@@ -197,7 +197,7 @@ retention output="30d"
 
 `proof logs` works for a run's output for 30 days. The `runs` and `artifacts` values keep their defaults.
 
-### Build two branches of a public repository
+### Run tasks on two branches of a public repository
 
 ```kdl
 repository lota url="https://github.com/setdef/Lota.git" {
