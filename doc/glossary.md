@@ -75,7 +75,7 @@ To choose the **runner** a queued **run** goes to, and hold the CPUs and memory 
 
 ### shortfall
 
-How much less of a resource a **host** could ever have free than a run **requests**: CPUs, or memory. What a host could ever have free is its **capacity**, within the capacity of the runner the run would go to, less the memory of its **share**. Proof refuses a run that every host falls short of, and names the host whose worst shortfall is the smallest.
+How much less of a resource a **host** could ever have free than a run **requests**, as a part of the request: 4 CPUs of the 8 requested is a shortfall of half the CPUs. A host can fall short in CPUs, in memory, or in both. What a host could ever have free is its **capacity** less the memory of its **share**, and no more than the capacity of the runner the run would go to. Proof refuses a run that every host falls short of, and names the host whose worst shortfall is the smallest.
 
 - Don't say: deficit; gap; missing resources.
 
