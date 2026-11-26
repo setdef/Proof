@@ -66,6 +66,15 @@ class SettingsResolverTasksTest < Minitest::Test
     assert_raises(Proof::NoSharedOSError) { resolve(file, "lint", "ios") }
   end
 
+  # Project file reference, "Several tasks on one command line": "no operating
+  # system in common" means none that every task has, so three tasks that pair
+  # up on an operating system, with none in all three, are refused.
+  def test_three_tasks_that_share_a_system_in_pairs_but_not_in_all_are_refused
+    entries = [entry("a", os: %w[linux macos]), entry("b", os: %w[macos windows]), entry("c", os: %w[windows linux])]
+
+    assert_raises(Proof::NoSharedOSError) { resolve(Proof::ProjectFile.new(entries:), "a", "b", "c") }
+  end
+
   # Project file reference, "Several tasks on one command line": Proof "lists
   # each task's operating systems", in the order of the command line.
   def test_the_refusal_lists_each_tasks_operating_systems
