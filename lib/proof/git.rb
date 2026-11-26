@@ -17,10 +17,12 @@ module Proof
     end
 
     private def capture(arguments, env, input)
-      inherited = ENV.keys.grep(/\AGIT_/).to_h { |name| [name, nil] }
-      variables = inherited.merge(env.transform_keys(&:to_s))
-      Open3.capture3(variables, @program, *arguments, chdir: @folder, stdin_data: input)
+      cleared = ENV.keys.grep(/\AGIT_/).to_h { |name| [name, nil] }
+      Open3.capture3(cleared.merge(env.transform_keys(&:to_s)), @program, *arguments, chdir: @folder, stdin_data: input)
     rescue Errno::ENOENT
+      # A missing folder raises the same error as a missing program, so only a folder that exists means no git.
+      raise unless File.directory?(@folder)
+
       raise(GitNotFoundError, "Proof found no program named #{@program}. Install Git, or fix PATH, and run again.")
     end
   end

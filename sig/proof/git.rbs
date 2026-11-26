@@ -35,7 +35,7 @@ module Proof
     # Runs git with `arguments` and returns what it printed to standard
     # output. Raises `Proof::GitFailedError` when git exits with a status
     # other than 0, and `Proof::GitNotFoundError` when the computer has no
-    # such program.
+    # such program. When the folder doesn't exist, raises `Errno::ENOENT`.
     #
     # - `arguments`: each a String, passed to git as one argument.
     # - `env`: Hash, variables to set for this run, named by symbols, such as `GIT_INDEX_FILE`.

@@ -95,6 +95,14 @@ class GitTest < Minitest::Test
     assert_match(/not a git repository/i, error.error_output)
   end
 
+  # A folder that is missing is not a missing git: both make the operating system say "no such file", and
+  # only a missing program may tell the person to install Git.
+  def test_a_folder_that_does_not_exist_is_not_reported_as_a_missing_git
+    folder = File.join(temporary_folder, "missing")
+
+    assert_raises(Errno::ENOENT) { Proof::Git.new(folder:).run("--version") }
+  end
+
   # A git that a signal ends has no exit status, so the message gives the signal.
   def test_a_git_that_a_signal_ends_is_reported_by_the_signal
     program = File.join(temporary_folder, "killed-git")
