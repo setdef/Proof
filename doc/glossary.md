@@ -46,6 +46,12 @@ A name for something a **runner** offers beyond its operating system, such as `g
 - Elsewhere: called a label in GitHub Actions and Jenkins, and a tag in GitLab and Buildkite.
 - Don't say: tag, which in mise means something else; capability; property; feature; attribute; constraint.
 
+### name
+
+The text that a **host**, a **runner**, a **repository**, a branch, or a **task** goes by in the **pool file** and the **project file**: at least one character that isn't white space, such as `nuc`, `nuc-linux`, `lota`, `trunk`, or `test`. Proof compares the names of hosts, runners, and repositories without regard to case, so `nuc` and `NUC` are one host, and shows each as its entry writes it. It compares branch and task names as written. A **label** has a rule of its own.
+
+- Don't say: ID, which in Proof's docs is a **run**'s ID; handle; key.
+
 ### OS
 
 A runner's operating system: `linux`, `macos`, or `windows`. In flags and files, the key is `os`.
