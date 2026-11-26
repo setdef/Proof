@@ -133,7 +133,12 @@ Options weighed:
 
 #### The index a working-tree commit starts from
 
-A working-tree commit starts its temporary index as a copy of the clone's index file, then runs `git add --all`, `git write-tree`, and `git commit-tree`. A project with no index file starts from an empty index. Every Git command that writes the temporary index runs with `core.splitIndex=false`, so the temporary index never refers to a shared index file in the clone's `.git`, and never adds one, whatever the clone's settings are.
+A working-tree commit starts its temporary index as a copy of the clone's index file, then runs `git add --all`, `git write-tree`, and `git commit-tree`. In a linked worktree the copy is of that worktree's own index file. A project with no index file starts from an empty index. A clone whose `index.lock` another Git process holds still gets its commit, because the copy reads only the index file, and Proof never takes that lock.
+
+Every Git command that writes the temporary index runs with two settings, which Proof passes as `GIT_CONFIG_COUNT` and its `GIT_CONFIG_KEY_n` and `GIT_CONFIG_VALUE_n` variables, so they beat every configuration file:
+
+- `core.splitIndex=false`, so the temporary index never refers to a shared index file in the clone's `.git`, and never adds one, whatever the clone's settings are. A copy of a split index adds a shared index file when enough of the index's entries changed, and the setting is what stops it.
+- `core.fsmonitor=false`, so `git add` never starts a file-system monitor. With `core.fsmonitor=true`, Git's built-in monitor adds a socket to the clone's `.git` and keeps a process running after Proof ends, and with a path in `core.fsmonitor`, Git runs that program.
 
 A probe on `rails/rails` at v8.0.2, with 4,762 tracked files, took the median of five runs:
 
@@ -142,13 +147,13 @@ A probe on `rails/rails` at v8.0.2, with 4,762 tracked files, took the median of
 | Nothing changed | 0.39 s | 0.11 to 0.13 s | 0.15 s |
 | One tracked file changed | 0.39 s | 0.11 to 0.12 s | 0.17 s |
 
-Every existing file under `.git` stayed byte for byte the same in every case. With `core.splitIndex=true`, `read-tree HEAD` alone and with `diff-index` and `ls-files -o` each added a `sharedindex` file to the clone's `.git` for each tree state, and the copy added none. `read-tree HEAD` dropped a file the developer staged with `git add -f` that `.gitignore` matches. The copy and the three-command way kept it.
+Every existing file under `.git` stayed byte for byte the same in every case. With `core.splitIndex=true`, `read-tree HEAD` alone and with `diff-index` and `ls-files -o` each added a `sharedindex` file to the clone's `.git` for each tree state, and the copy added none in those two states. `read-tree HEAD` dropped a file the developer staged with `git add -f` that `.gitignore` matches. The copy and the three-command way kept it.
 
 The copy is the fastest, and it sends a staged file the way `git commit` would, which is what "your working tree as it is" means to someone who staged it.
 
 Options weighed:
 
-- `read-tree HEAD`, as Proof first did: it hashes every tracked file on every run, and it drops a file the developer staged that `.gitignore` matches.
+- `read-tree HEAD`: it hashes every tracked file on every run, and it drops a file the developer staged that `.gitignore` matches.
 - `read-tree HEAD` plus `diff-index` and `ls-files -o`: it is slower than the copy, and it is three commands where the copy is one.
 
 ### Requests to the server
