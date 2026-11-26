@@ -43,6 +43,15 @@ Options weighed:
 - A separate gem for use cases: each use case has one front end, so nothing shares them, and a gem boundary would only add a version to keep in step.
 - A gem per role: the shared kernel is used by all three, and the roles never ship apart.
 
+#### Lists in messages
+
+Proof builds each list in a message of the domain or of a file reader with `Proof::ListFormat`, in the domain gem: the units and examples a `Proof::Duration` takes, and the properties and children a `Proof::KdlRefusal` says a node has. It joins items with "and" or with "or", and a serial comma before the last of three or more, as JavaScript's `Intl.ListFormat` does in English. The rule is one of the English of Proof's messages, not of any value, so it is a module apart from every value. It is in the domain because the domain's values and the readers in `lib/proof` both use it, and `lib/proof` depends on the domain, never the reverse.
+
+Options weighed:
+
+- A copy of the list rule in each message: three copies of one rule, and three tests of the comma.
+- ActiveSupport's `Array#to_sentence`: a dependency, which the domain gem can't have.
+
 ### A run as a consistency boundary
 
 A run is stored as an append-only list of facts, each with the server's time. The run's constructor checks every rule about a run, including when the run is rebuilt from storage. A record changed behind Proof's back therefore fails to load, instead of reporting a pass. The list also shows afterwards how a run reached `succeeded`. Which states a run can pass through, and what each ending needs, are in [the server design](design/server.md#runs-and-their-records) and [the runner design](design/runner.md#a-runs-end), and the facts record them.

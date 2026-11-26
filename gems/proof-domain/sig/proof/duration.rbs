@@ -89,7 +89,5 @@ module Proof
     def initialize: (seconds: Integer) -> void
 
     private def self.refusal: (Object? text, Array[Symbol] units, String name) -> String
-
-    private def self.listed: (Array[String] items) -> String
   end
 end

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative("duration_text")
+require_relative("list_format")
 require_relative("member_check")
 
 module Proof
@@ -28,16 +29,8 @@ module Proof
 
     def self.refusal(text, units, name)
       examples = units.map { |unit| EXAMPLES[unit].inspect }
-      format(MESSAGE, name:, units: listed(units), examples: listed(examples), text:)
+      format(MESSAGE, name:, units: ListFormat.disjunction(units), examples: ListFormat.disjunction(examples), text:)
     end
     private_class_method(:refusal)
-
-    def self.listed(items)
-      # Two items take "or" with no comma, and three or more take a serial comma.
-      return items.join(" or ") if items.size < 3
-
-      "#{items[0...-1].join(', ')}, or #{items.last}"
-    end
-    private_class_method(:listed)
   end
 end

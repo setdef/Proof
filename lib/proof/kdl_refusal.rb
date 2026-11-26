@@ -5,12 +5,12 @@ require_relative("file_refusal")
 module Proof
   class KdlRefusal < FileRefusal
     KNOWN = lambda do |names, kind|
-      # One name takes "only" and the singular, two take "and" with no comma, and three or more take a serial comma.
+      # None and one each get a sentence of their own: "Its properties are port" would read as one of several.
       singular, plural = kind
       return "It has no #{plural}" if names.empty?
       return "Its only #{singular} is #{names.first}" if names.one?
 
-      "Its #{plural} are #{names.first(names.size - 1).join(', ')}#{',' if names.size > 2} and #{names.last}"
+      "Its #{plural} are #{ListFormat.conjunction(names)}"
     end
     PROPERTIES = %w[property properties].freeze
     CHILDREN = %w[child children].freeze

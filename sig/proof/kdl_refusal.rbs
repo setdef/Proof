@@ -18,9 +18,10 @@ module Proof
   # path, its error, its messages, and its forms, and adds the refusals of
   # values that only it has.
   class KdlRefusal < FileRefusal
-    # Words what a node has, for a message: none, one with "only", two with
-    # "and", or three or more with a serial comma. `kind` is the singular and
-    # the plural of what they are, such as `["property", "properties"]`.
+    # Words what a node has, for a message: none, one with "only", or two or
+    # more as `Proof::ListFormat.conjunction` lists them. `kind` is the
+    # singular and the plural of what they are, such as
+    # `["property", "properties"]`.
     KNOWN: ^(Array[Symbol] names, Array[String] kind) -> String
 
     # The singular and the plural of a node's properties, for `KNOWN`.

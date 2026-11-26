@@ -1,0 +1,48 @@
+module Proof
+  # Writes a list of items as English, with "and" or "or" before the last and a
+  # serial comma.
+  #
+  # Proof's messages list what a setting takes: the units of a duration, the
+  # properties of a node, the flags a mistyped flag might have meant. Each
+  # list follows one rule of English, `"m or h"` for two and `"s, m, or h"` for
+  # three or more. Written again in each message, the rule can drift: one copy
+  # can lose its serial comma while the others keep theirs.
+  #
+  # This module holds the rule. It follows `Intl.ListFormat`, the list
+  # formatter of JavaScript's Internationalization API, in English: a
+  # conjunction joins with "and", a disjunction with "or", one item is itself,
+  # and no items are an empty string. It writes each item as its text, with
+  # `to_s`, so quote an item before you pass it if the message quotes it.
+  #
+  # Use it for every list in a message Proof prints.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::ListFormat.conjunction(["runs", "output", "artifacts"]) # => "runs, output, and artifacts"
+  # Proof::ListFormat.disjunction([:m, :h]) # => "m or h"
+  # ```
+  module ListFormat
+    # Joins `items` with "and": `"a"`, `"a and b"`, `"a, b, and c"`, and an
+    # empty string for none.
+    #
+    # - `items`: Array of the items, each written with `to_s`.
+    #
+    # ```ruby
+    # Proof::ListFormat.conjunction(["output", "artifacts"]) # => "output and artifacts"
+    # ```
+    def self.conjunction: (Array[String | Symbol] items) -> String
+
+    # Joins `items` with "or": `"a"`, `"a or b"`, `"a, b, or c"`, and an
+    # empty string for none.
+    #
+    # - `items`: Array of the items, each written with `to_s`.
+    #
+    # ```ruby
+    # Proof::ListFormat.disjunction(["\"90s\"", "\"30m\"", "\"2h\""]) # => "\"90s\", \"30m\", or \"2h\""
+    # ```
+    def self.disjunction: (Array[String | Symbol] items) -> String
+
+    private def self.joined: (Array[String | Symbol] items, String word) -> String
+  end
+end
