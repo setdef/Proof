@@ -3,7 +3,7 @@
 require_relative("usage_references")
 
 namespace :usage do
-  desc "Lint the CLI spec, proof.usage.kdl"
+  desc "Lint the CLI spec"
   task :lint do
     sh("usage lint proof.usage.kdl")
   end

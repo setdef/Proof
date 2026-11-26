@@ -7,7 +7,7 @@ require "shellwords"
 # Clear the default test task created by Minitest::TestTask if it exists
 Rake::Task["test"].clear if Rake::Task.task_defined?("test")
 
-desc "Run all tests (the same as test:ruby)"
+desc "Run all tests"
 task test: "test:ruby"
 
 namespace :test do
@@ -18,9 +18,6 @@ namespace :test do
     # a helper of their own, which knows nothing of SimpleCov, so the root helper loads first.
     t.test_prelude = %(require "test/test_helper")
   end
-  # The gate runs test:ruby. This one process is for a debugger, or for TESTOPTS="-n NAME" to run one test.
-  Rake::Task["test:core"].clear_comments
-  Rake::Task["test:core"].comment = "Run all tests in this one process, with no parallel workers"
 
   # One process runs a whole slice of files, so a worker's SimpleCov holds only its slice. SimpleCov merges the
   # slices when the last worker ends, and fails the run below 100% of the lines and branches of the whole suite.
