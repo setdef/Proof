@@ -9,11 +9,17 @@ module Proof
   # runner is one operating system on one host.
   #
   # This class refuses each at the line of the second entry, or of the runner
-  # that repeats, and names the earlier entry. It compares names as written, so
-  # `nuc` and `NUC` are two hosts, and a host and a repository may share a name.
+  # that repeats, and names the earlier entry as it wrote the name. It compares
+  # names without regard to case, as the domain does and as `Proof::Label` does,
+  # so `nuc` and `NUC` are one host, and a host and a repository may share a
+  # name.
   #
   # Use it from `Proof::PoolFileReader`.
   class PoolFileEntries
+    # Whether two names are one, without regard to case, as `Proof::Label`
+    # compares labels. A name that isn't text compares as KDL read it.
+    SAME_NAME: ^(kdl_value, kdl_value) -> bool
+
     # Prepares to check the entries in `by_name`.
     #
     # - `by_name`: Hash from a node's name as a symbol to the nodes of that name,

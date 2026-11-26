@@ -2,6 +2,13 @@
 
 module Proof
   class PoolFileEntries
+    SAME_NAME = lambda do |one, other|
+      # The rule of the domain's PoolNames and of Proof::Label, String#casecmp?. A name that isn't text, which the
+      # domain refuses later, compares as KDL read it. A lambda, so that a name can be curried into the test of a list.
+      (one.is_a?(String) && other.is_a?(String)) ? one.casecmp?(other) : one == other
+    end
+    private_constant(:SAME_NAME)
+
     def initialize(by_name:, refusal:)
       @by_name = by_name
       @refusal = refusal
@@ -22,7 +29,7 @@ module Proof
     end
 
     private def refuse_repeat(entry, kind, index)
-      first = entries(kind).take(index).find { |other| other.arguments.first == entry.arguments.first }
+      first = entries(kind).take(index).find { |other| SAME_NAME.call(other.arguments.first, entry.arguments.first) }
       @refusal.repeated_entry(entry, first) if first
     end
 
@@ -36,7 +43,7 @@ module Proof
 
     private def refuse_listed(child, runner, host)
       earlier = entries(:host).take_while { |other| !other.equal?(host) }
-      first = earlier.find { |other| other.arguments_named("runner").include?(runner) }
+      first = earlier.find { |other| other.arguments_named("runner").any?(&SAME_NAME.curry[runner]) }
       @refusal.shared_runner(child, runner, first) if first
     end
   end
