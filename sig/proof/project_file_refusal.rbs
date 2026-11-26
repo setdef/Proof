@@ -13,20 +13,17 @@ module Proof
   # node it was building.
   #
   # Use it from the classes that read a project file's nodes.
-  class ProjectFileRefusal
+  class ProjectFileRefusal < FileRefusal
     # The messages, by name, for `format` to fill in.
     MESSAGES: Hash[Symbol, String]
 
     # Prepares to refuse as the file at `path`.
     #
     # - `path`: String, the file's path.
-    def initialize: (path: String) -> void
+    def initialize: (path: String, ?messages: Hash[Symbol, String]) -> void
 
-    # Runs the block, which builds domain values, and turns the error the domain
-    # raises into a `Proof::ProjectFileError` at the line of `node`.
-    #
-    # - `node`: `Proof::KdlNode`, the node the block builds from.
-    def checking: [T] (KdlNode node) { () -> T } -> T
+    # - `messages`: Hash from a message's name to its text. Defaults to
+    #   `MESSAGES`, and a subclass with messages of its own passes them.
 
     # Refuses a top-level node that isn't `defaults` or `task`.
     def unknown_node: (KdlNode node) -> bot
@@ -48,15 +45,5 @@ module Proof
 
     # Refuses a command that is empty or only spaces.
     def blank_command: (KdlNode node, kdl_value command) -> bot
-
-    private
-
-    def say: (KdlNode node, Symbol key, *kdl_value values) -> bot
-
-    def messages: () -> Hash[Symbol, String]
-
-    def refuse: (KdlNode node, String reason) -> bot
-
-    @path: String
   end
 end

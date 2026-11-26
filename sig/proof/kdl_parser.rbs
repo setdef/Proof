@@ -1,10 +1,11 @@
 module Proof
   # Reads KDL 2 text into nodes that have their lines.
   #
-  # Proof's project file is KDL 2, and a mistake in it has to name a line. The
-  # `kdl` gem reports a line only for a mistake in the text itself, such as a
-  # stray `=`. It keeps no line on a node, so a mistake in what the text says,
-  # such as a label with a space in it, would have no line to name.
+  # Proof's project file and pool file are KDL 2, and a mistake in one has to
+  # name a line. The `kdl` gem reports a line only for a mistake in the text
+  # itself, such as a stray `=`. It keeps no line on a node, so a mistake in
+  # what the text says, such as a label with a space in it, would have no line
+  # to name.
   #
   # This class gives the gem's parser a node class that keeps the line of its
   # name, and reads the text as KDL 2 only, with no fallback to KDL 1. It finds
@@ -12,8 +13,8 @@ module Proof
   # `kdl` is pinned to patch releases of 2.2, and a test fails when a release
   # changes how a node gets its line.
   #
-  # Use it to read the project file's text before building the project file from
-  # its nodes.
+  # Use it to read a project file's or a pool file's text before building the
+  # file from its nodes.
   #
   # ## Examples
   #
@@ -32,7 +33,8 @@ module Proof
     # Reads `text` as KDL 2 and gives its nodes, in order. Slashdashed nodes
     # (`/-`) are not in the result, and the nodes after one keep their own
     # lines. Type annotations, such as `(i8)5`, change no value. Raises
-    # `Proof::ProjectFileError` for text that isn't KDL 2, with the line and
+    # the `error` class, `Proof::ProjectFileError` unless the caller names
+    # another, for text that isn't KDL 2, with the line and
     # column the gem reports, and with advice to put a value in quotes when the
     # value starts with a digit and continues with letters. The text is read as
     # UTF-8, whatever encoding the string has, and a byte that isn't UTF-8 is a
@@ -43,12 +45,16 @@ module Proof
     #
     # - `text`: String, the file's text.
     # - `path`: String, the file's path, for the error.
-    def self.parse: (String text, path: String) -> Array[KdlNode]
+    # - `error`: the `Proof::FileError` subclass to raise, which is the error of
+    #   the kind of file being read. Defaults to `Proof::ProjectFileError`.
+    def self.parse: (String text, path: String, ?error: singleton(FileError)) -> Array[KdlNode]
 
     # Prepares to read texts as the file at `path`.
     #
     # - `path`: String, the file's path, for the error.
-    def initialize: (path: String) -> void
+    # - `error`: the `Proof::FileError` subclass to raise. Defaults to
+    #   `Proof::ProjectFileError`.
+    def initialize: (path: String, ?error: singleton(FileError)) -> void
 
     # Reads `text` as `Proof::KdlParser.parse` does.
     #
@@ -66,5 +72,6 @@ module Proof
     ENDS_TOO_SOON: String
 
     @path: String
+    @error: singleton(FileError)
   end
 end

@@ -15,23 +15,24 @@ module Proof
     ENDS_TOO_SOON = "this is not valid KDL 2: the text ends in the middle of a string"
     private_constant(:NOT_UTF8, :ENDS_TOO_SOON)
 
-    def self.parse(text, path:)
-      new(path:).parse(text)
+    def self.parse(text, path:, error: ProjectFileError)
+      new(path:, error:).parse(text)
     end
 
-    def initialize(path:)
+    def initialize(path:, error: ProjectFileError)
       @path = path
+      @error = error
     end
 
     def parse(text)
       parser = KdlLines::LinedParser.new(output_module: KdlLines::Output, parse_types: false)
       parser.parse(utf8_of(text)).nodes.map(&:to_kdl_node)
     rescue KDL::Error => e
-      raise(ProjectFileError.new(path: @path, line: e.line, reason: KdlSyntaxReason.new(error: e).to_s))
+      raise(@error.new(path: @path, line: e.line, reason: KdlSyntaxReason.new(error: e).to_s))
     rescue TypeError
       # The gem's tokenizer fails with a TypeError, and not its own error, for a string that a backslash ends the
       # text in, so the mistake is at the end of the text.
-      raise(ProjectFileError.new(path: @path, line: text.lines.size, reason: ENDS_TOO_SOON))
+      raise(@error.new(path: @path, line: text.lines.size, reason: ENDS_TOO_SOON))
     end
 
     private def utf8_of(text)
@@ -39,7 +40,7 @@ module Proof
       # for a byte that isn't UTF-8.
       decoded = text.dup.force_encoding(Encoding::UTF_8)
       broken = decoded.lines.index { |line| !line.valid_encoding? }
-      raise(ProjectFileError.new(path: @path, line: broken + 1, reason: NOT_UTF8)) if broken
+      raise(@error.new(path: @path, line: broken + 1, reason: NOT_UTF8)) if broken
 
       decoded
     end

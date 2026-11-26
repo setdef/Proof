@@ -16,6 +16,10 @@ module Proof
     }.freeze
     private_constant(:MESSAGES)
 
+    def initialize(path:)
+      super(path:, messages: MESSAGES)
+    end
+
     def unknown_property(node, name)
       say(node, :unknown_property, node.name, name)
     end
@@ -38,10 +42,6 @@ module Proof
 
     def child_with_more(child)
       say(child, :child_with_more, child.name)
-    end
-
-    private def messages
-      MESSAGES
     end
   end
 end

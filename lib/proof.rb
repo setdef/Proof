@@ -4,7 +4,9 @@ require "proof/domain"
 
 require_relative("proof/command_line")
 require_relative("proof/committed_file")
+require_relative("proof/file_error")
 require_relative("proof/file_reading")
+require_relative("proof/file_refusal")
 require_relative("proof/git")
 require_relative("proof/git_project")
 require_relative("proof/kdl_node")

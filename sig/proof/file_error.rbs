@@ -1,0 +1,52 @@
+module Proof
+  # Raised when a file Proof reads can't be read, with the file, the line, and
+  # what is wrong.
+  #
+  # A person writes the project file and the pool file, and Proof reads each
+  # before it uses any of it. A mistake that Proof ignored would run a task, or
+  # place a run, with settings the person didn't mean. A message that names no
+  # line leaves them searching the file.
+  #
+  # This class holds what every such error has: the path, the line, and the
+  # reason. Its message is the path, the line, and the reason. Each kind of file
+  # raises a subclass of its own, so a caller can tell which file went wrong.
+  #
+  # Use it to rescue a mistake in any file Proof reads, or as the base of the
+  # error for a new kind of file.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # error = Proof::FileError.new(path: "pool.kdl", line: 7, reason: "a label has no space")
+  # error.message # => "pool.kdl:7: a label has no space"
+  # error.line # => 7
+  # ```
+  #
+  # A mistake with no line leaves the line out of the message:
+  #
+  # ```ruby
+  # Proof::FileError.new(path: "pool.kdl", line: nil, reason: "this is a symbolic link").message
+  # # => "pool.kdl: this is a symbolic link"
+  # ```
+  class FileError < Error
+    # The path of the file, as the caller gave it.
+    attr_reader path: String
+
+    # The line of the mistake, counting from 1. For a node, it is the line of
+    # the node's name. For a value, it is the line of its node. A mistake with no
+    # line, such as a symbolic link in place of the file, has `nil`.
+    attr_reader line: Integer?
+
+    # What is wrong, starting with a lowercase letter and with no period at the
+    # end, as the second part of the message.
+    attr_reader reason: String
+
+    # Builds the error, with the message `PATH:LINE: REASON`, or `PATH: REASON`
+    # when there is no line.
+    #
+    # - `path`: String, such as `"pool.kdl"`.
+    # - `line`: Integer, from 1, or `nil` for a mistake that has no line.
+    # - `reason`: String, what is wrong and what works.
+    def initialize: (path: String, line: Integer?, reason: String) -> void
+  end
+end

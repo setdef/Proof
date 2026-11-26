@@ -8,8 +8,8 @@ module Proof
   # searching the file.
   #
   # This error is the one every mistake in a project file raises, whether KDL
-  # refuses the text or Proof refuses what it says. Its message is the path, the
-  # line, and the reason.
+  # refuses the text or Proof refuses what it says. It is a
+  # `Proof::FileError`, so its message is the path, the line, and the reason.
   #
   # Use it to show a person where the file went wrong, or to answer a refusal
   # with exit status 2.
@@ -28,25 +28,6 @@ module Proof
   # error = Proof::ProjectFileError.new(path: ".config/proof.kdl", line: nil, reason: "this is a symbolic link")
   # error.message # => ".config/proof.kdl: this is a symbolic link"
   # ```
-  class ProjectFileError < Error
-    # The path of the file from the project's root, such as `".config/proof.kdl"`.
-    attr_reader path: String
-
-    # The line of the mistake, counting from 1. For a node, it is the line of
-    # the node's name. For a value, it is the line of its node. A mistake with no
-    # line, such as a symbolic link in place of the file, has `nil`.
-    attr_reader line: Integer?
-
-    # What is wrong, starting with a lowercase letter and with no period at the
-    # end, as the second part of the message.
-    attr_reader reason: String
-
-    # Builds the error, with the message `PATH:LINE: REASON`, or `PATH: REASON`
-    # when there is no line.
-    #
-    # - `path`: String, such as `".config/proof.kdl"`.
-    # - `line`: Integer, from 1, or `nil` for a mistake that has no line.
-    # - `reason`: String, what is wrong and what works.
-    def initialize: (path: String, line: Integer?, reason: String) -> void
+  class ProjectFileError < FileError
   end
 end

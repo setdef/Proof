@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
+require_relative("file_refusal")
+
 module Proof
-  class ProjectFileRefusal
+  class ProjectFileRefusal < FileRefusal
     MESSAGES = {
       unknown_node: "there is no node %p in a project file. A project file has \"defaults\" and \"task\" nodes",
       repeated_defaults: "a project file has at most one \"defaults\" node, and the first is on line %d. " \
@@ -17,15 +19,8 @@ module Proof
     }.freeze
     private_constant(:MESSAGES)
 
-    def initialize(path:)
-      @path = path
-    end
-
-    def checking(node)
-      yield
-    rescue Error => e
-      # The block builds domain values and nothing else, so what it raises is what the domain refuses.
-      refuse(node, e.message)
+    def initialize(path:, messages: MESSAGES)
+      super(path:, error: ProjectFileError, messages:)
     end
 
     def unknown_node(node)
@@ -54,18 +49,6 @@ module Proof
 
     def blank_command(node, command)
       say(node, :blank_command, command)
-    end
-
-    private def say(node, key, *values)
-      refuse(node, format(messages[key], *values))
-    end
-
-    private def messages
-      MESSAGES
-    end
-
-    private def refuse(node, reason)
-      raise(ProjectFileError.new(path: @path, line: node.line, reason:))
     end
   end
 end

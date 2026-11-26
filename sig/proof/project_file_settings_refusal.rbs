@@ -11,6 +11,11 @@ module Proof
     # The messages, by name, for `format` to fill in.
     MESSAGES: Hash[Symbol, String]
 
+    # Prepares to refuse as the file at `path`, with `MESSAGES`.
+    #
+    # - `path`: String, the file's path.
+    def initialize: (path: String) -> void
+
     # Refuses a property that `defaults` and `task` don't have.
     def unknown_property: (KdlNode node, String name) -> bot
 
@@ -28,9 +33,5 @@ module Proof
 
     # Refuses a child that has a property or a block of its own.
     def child_with_more: (KdlNode child) -> bot
-
-    private
-
-    def messages: () -> Hash[Symbol, String]
   end
 end

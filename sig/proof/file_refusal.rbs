@@ -1,0 +1,50 @@
+module Proof
+  # Raises a file's error for each way the file can be wrong, with the message
+  # for it.
+  #
+  # A refusal names a file and a line, and a reader would repeat both at every
+  # place it refuses something. The wording is the person's whole help in fixing
+  # the file, so each kind of file keeps it in one place, where it can be read as
+  # a list.
+  #
+  # This class holds the file's path, the error class its kind of file raises,
+  # and the messages, by name. It formats a message and raises the error at the
+  # line of a node, and it turns what the domain refuses into the same error.
+  # The refusal of a kind of file is a subclass that has one method for each
+  # mistake, and each method raises and never returns.
+  #
+  # Use it as the base of `Proof::ProjectFileRefusal` and
+  # `Proof::PoolFileRefusal`.
+  class FileRefusal
+    # Prepares to refuse as the file at `path`.
+    #
+    # - `path`: String, the file's path.
+    # - `error`: the `Proof::FileError` subclass to raise.
+    # - `messages`: Hash from a message's name to its text, for `format` to
+    #   fill in.
+    def initialize: (path: String, error: singleton(FileError), messages: Hash[Symbol, String]) -> void
+
+    # Runs the block, which builds domain values, and turns the error the domain
+    # raises into this file's error at the line of `node`. It gives the block's
+    # value when the domain refuses nothing.
+    #
+    # - `node`: `Proof::KdlNode`, the node the block builds from.
+    #
+    # ```ruby
+    # refusal = Proof::ProjectFileRefusal.new(path: ".config/proof.kdl")
+    # node = Proof::KdlParser.parse("task test\n", path: ".config/proof.kdl").first
+    # refusal.checking(node) { Proof::Label.new(name: "gpu").name } # => "gpu"
+    # ```
+    def checking: [T] (KdlNode node) { () -> T } -> T
+
+    private
+
+    def say: (KdlNode node, Symbol key, *kdl_value values) -> bot
+
+    def refuse: (KdlNode node, String reason) -> bot
+
+    @path: String
+    @error: singleton(FileError)
+    @messages: Hash[Symbol, String]
+  end
+end
