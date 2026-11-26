@@ -105,7 +105,7 @@ A named command defined in a project, which you run by name with `proof run NAME
 
 ### task words
 
-The words that go to a **task** as they are: the words after `--` on `proof run`, and any plain word before it. `:::` ends one task's words and starts the name of the next task.
+The words that `proof run` gives to a **task** as they are: the plain words after the task's name, and the words after `--`. The word `:::` marks the end of a task's words, and the word after it is the next task's name.
 
 - Elsewhere: called arguments in mise.
 - Don't say: arguments, which in Proof's docs means what a command takes, apart from its flags; params.
@@ -221,7 +221,7 @@ What the **server** keeps of a run apart from its **output** and **artifacts**.
 
 ### invocation
 
-What a **runner** needs to start a run's command that the **record** never keeps: the task's arguments, a script's text, the run's **inputs**.
+What a **runner** needs to start a run's command that the **record** never keeps: the **task words**, a script's text, the run's **inputs**.
 
 - Elsewhere: Bazel's remote execution API calls what a worker needs an action, with a command's arguments and its input files. In Bazel, an invocation is one use of the `bazel` command, which Proof has no word for.
 
