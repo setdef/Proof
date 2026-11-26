@@ -115,4 +115,17 @@ module GitFixtures
   def working_tree_commit(folder)
     Proof::GitProject.find(folder).working_tree_commit_id
   end
+
+  # A project that records a submodule at `vendor/sub`, with the submodule's
+  # clone absorbed into the project's `.git/modules`, as Git makes it. Returns
+  # the project's folder and the commit that the project records for the submodule.
+  def make_project_with_submodule
+    sub = make_repository("sub")
+    recorded = commit_file(sub, "lib.txt", "1")
+    folder = make_repository
+    commit_file(folder)
+    git(folder, "submodule", "--quiet", "add", sub, "vendor/sub")
+    commit_all(folder)
+    [folder, recorded]
+  end
 end

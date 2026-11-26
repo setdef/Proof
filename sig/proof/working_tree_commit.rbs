@@ -10,7 +10,10 @@ module Proof
   # index, branch, and `HEAD` stay exactly as they were. The index starts from
   # `HEAD`'s tree, never empty: `git add --all` leaves out a file that
   # `.gitignore` matches, and an empty index doesn't know that such a file is
-  # tracked, so it would drop it. The commit's one parent is `HEAD`. Its
+  # tracked, so it would drop it. A submodule goes in at the commit that
+  # `HEAD` records for it, not the commit its checkout has moved to, and
+  # changes inside the submodule's checkout are not sent. The commit's one
+  # parent is `HEAD`. Its
   # author and committer are `Proof <proof@proof.invalid>`, so a computer with
   # no Git identity can make it, and its configuration can't sign it.
   #
@@ -51,5 +54,11 @@ module Proof
     @head: String
 
     def commit_tree_of: (String index) -> String
+
+    def stage_working_tree: (Hash[Symbol, String] env) -> void
+
+    def submodules: (Hash[Symbol, String] env) -> Hash[String, String]
+
+    def pin: (Hash[String, String] recorded, Hash[Symbol, String] env) -> void
   end
 end
