@@ -47,6 +47,9 @@ module Proof
   class InvalidTimeLimitError < Error
   end
 
+  class InvalidDurationError < Error
+  end
+
   class InvalidRandomSourceError < Error
   end
 

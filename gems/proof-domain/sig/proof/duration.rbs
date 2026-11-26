@@ -1,0 +1,95 @@
+module Proof
+  # A length of time in whole seconds, as a setting of the pool file writes it.
+  #
+  # The pool file keeps runs for `"90d"`, counts a person as active for `"5m"`,
+  # and fetches a repository every `"1m"`. Left as text, `"1m"` and `"60s"` look
+  # like two settings, and a number of days can't be told from a number of
+  # minutes.
+  #
+  # This class reads a duration into whole seconds. A duration is a whole
+  # number from 1 and one unit, in lowercase, with no space. Each setting names
+  # the units it takes: `d` for days, `h` for hours, `m` for minutes, and `s`
+  # for seconds. A task's `timeout` is a `Proof::TimeLimit`, which reads
+  # seconds, minutes, and hours the same way. Everything else is refused, with
+  # the forms that work: `"1h30m"`, `"1.5h"`, `"5 m"`, `"5M"`, `"0d"`, `"01m"`,
+  # and a number.
+  #
+  # Use it for the pool file's `retention`, `active-for`, and `poll`.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::Duration.read("90d", units: [:d], name: "retention runs").seconds # => 7_776_000
+  # Proof::Duration.read("5m", units: [:s, :m, :h], name: "active-for").seconds # => 300
+  # ```
+  #
+  # A duration in minutes and the same duration in seconds are one duration:
+  #
+  # ```ruby
+  # one_minute = Proof::Duration.read("1m", units: [:s, :m, :h], name: "poll")
+  # one_minute == Proof::Duration.read("60s", units: [:s, :m, :h], name: "poll") # => true
+  # ```
+  #
+  # A unit that the setting doesn't take is refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidDurationError
+  # Proof::Duration.read("90m", units: [:d], name: "retention runs")
+  # ```
+  #
+  # Two units in one duration are refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidDurationError
+  # Proof::Duration.read("1h30m", units: [:s, :m, :h], name: "poll")
+  # ```
+  class Duration < Data
+    # The example of each unit, by the unit's letter as a symbol, for the
+    # message of a refusal.
+    EXAMPLES: Hash[Symbol, String]
+
+    # The message for a duration that isn't in the form, which `format` fills in
+    # with the setting's name, the units, an example of each, and what the
+    # duration was.
+    MESSAGE: String
+
+    # The length of the duration in seconds, a whole number from 1.
+    attr_reader seconds: Integer
+
+    def self.new: (seconds: Integer) -> instance
+                | (Integer seconds) -> instance
+
+    # Reads a duration as the pool file writes it. Raises
+    # `Proof::InvalidDurationError` unless `text` is a whole number from 1,
+    # written without a leading zero, then one of `units` in lowercase, with no
+    # space, such as `"90d"`. `"1h30m"`, `"1.5h"`, `"5 m"`, `"5M"`, `"0d"`,
+    # `"01m"`, `"90"`, a number, `nil`, a unit that isn't in `units`, a string
+    # with a byte that isn't valid text, and a string in an encoding that isn't
+    # ASCII-compatible, such as UTF-16, raise. The message names the setting
+    # and lists the forms that work.
+    #
+    # - `text`: String, such as `"5m"`.
+    # - `units`: Array of Symbol, the units the setting takes, each of `:d`,
+    #   `:h`, `:m`, and `:s`, such as `[:s, :m, :h]`.
+    # - `name`: String, the setting, for the message, such as `"poll"`.
+    #
+    # ```ruby
+    # Proof::Duration.read("7d", units: [:d], name: "retention artifacts").seconds # => 604_800
+    # ```
+    def self.read: (Object text, units: Array[Symbol], name: String) -> Duration
+
+    # Builds a duration from a number of seconds, and raises
+    # `Proof::InvalidDurationError` unless `seconds` is an Integer from 1.
+    #
+    # - `seconds`: Integer, a whole number from 1.
+    #
+    # ```ruby
+    # Proof::Duration.new(seconds: 3600) == Proof::Duration.read("1h", units: [:h], name: "poll") # => true
+    # ```
+    def initialize: (seconds: Integer) -> void
+
+    private def self.refusal: (Object text, Array[Symbol] units, String name) -> String
+
+    private def self.listed: (Array[String] items) -> String
+  end
+end

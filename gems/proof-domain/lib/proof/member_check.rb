@@ -14,6 +14,10 @@ module Proof
       value.is_a?(String) && !value.empty?
     end
 
+    def self.whole?(value, minimum)
+      value.is_a?(Integer) && value >= minimum
+    end
+
     def self.flag?(value)
       [true, false].include?(value)
     end

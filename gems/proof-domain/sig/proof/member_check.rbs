@@ -21,6 +21,12 @@ module Proof
     # Whether `value` is a String of at least one character.
     def self.named?: (Object value) -> bool
 
+    # Whether `value` is an Integer of at least `minimum`.
+    #
+    # - `value`: the value to check.
+    # - `minimum`: Integer, the least it may be.
+    def self.whole?: (Object value, Integer minimum) -> bool
+
     # Whether `value` is `true` or `false`.
     def self.flag?: (Object value) -> bool
   end
