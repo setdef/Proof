@@ -10,7 +10,7 @@ module Proof
       end
 
       def self.name_of(value, message)
-        return -value if value.is_a?(String) && !value.empty?
+        return -value if MemberCheck.named?(value)
 
         raise(InvalidFactError, format(message, value))
       end
