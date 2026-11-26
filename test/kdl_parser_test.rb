@@ -1,21 +1,11 @@
 # frozen_string_literal: true
 
-require_relative("test_helper")
+require_relative("support/kdl_parser_helper")
 
 # Checks the reader of KDL text that finds each node's line. The gem it wraps keeps no line on a node, so Proof finds
 # the lines through the gem's parser, and these tests fail when a release of the gem changes how.
 class KdlParserTest < Minitest::Test
-  PATH = ".config/proof.kdl"
-  private_constant(:PATH)
-
-  # Every node's name and line, parents before their children, in the order the text has them.
-  def lines(text)
-    flatten(Proof::KdlParser.parse(text, path: PATH))
-  end
-
-  def flatten(nodes)
-    nodes.flat_map { |node| [[node.name, node.line]] + flatten(node.children) }
-  end
+  include KdlParserHelper
 
   # Project file reference, "Where Proof reads the file": the refusal names "the line", so a node has the line of its
   # name, one for each node, whatever the lines before it hold.

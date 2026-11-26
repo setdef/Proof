@@ -6,7 +6,7 @@ module Proof
   # stray `=`. It keeps no line on a node, so a mistake in what the text says,
   # such as a label with a space in it, would have no line to name.
   #
-  # This module gives the gem's parser a node class that keeps the line of its
+  # This class gives the gem's parser a node class that keeps the line of its
   # name, and reads the text as KDL 2 only, with no fallback to KDL 1. It finds
   # the line through the parser's private method that reads the next token, so
   # `kdl` is pinned to patch releases of 2.2, and a test fails when a release
@@ -34,7 +34,9 @@ module Proof
     # lines. Type annotations, such as `(i8)5`, change no value. Raises
     # `Proof::ProjectFileError` for text that isn't KDL 2, with the line and
     # column the gem reports, and with advice to put a value in quotes when the
-    # value starts with a digit and continues with letters.
+    # value starts with a digit and continues with letters. A block comment
+    # (`/*`) with no end is text that isn't KDL 2, and is refused as the gem
+    # refuses an unterminated string.
     #
     # - `text`: String, the file's text.
     # - `path`: String, the file's path, for the error.

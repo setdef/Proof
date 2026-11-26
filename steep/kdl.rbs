@@ -18,6 +18,14 @@ module KDL
     class Token
       attr_reader line: Integer
     end
+
+    @str: String
+
+    def []: (Integer index) -> String?
+
+    private
+
+    def raise_error: (String message) -> bot
   end
 
   class Value

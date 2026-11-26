@@ -4,10 +4,16 @@ module Proof
   # The gem reads KDL into nodes that keep no line. The parser knows the line of
   # each token it reads, and builds a node right after it reads the node's name,
   # so a node class that asks for the line of the last token read, and a parser
-  # that says which token that is, put the line on every node.
+  # that says which token that is, put the line on every node. Two more classes
+  # work around faults of the gem: a space the grammar can't read, and a block
+  # comment with no end that the tokenizer never leaves.
   #
   # `Proof::KdlParser` uses these, and nothing else does.
   module KdlLines
+    # What the gem's tokenizer gives the parser for each token: its type and the
+    # token.
+    type token = [Symbol | false, KDL::Tokenizer::Token]
+
     LINE: Symbol
 
     # A node that keeps the line of its name.
@@ -28,11 +34,56 @@ module Proof
     end
 
     # The gem's KDL 2 parser, which notes the line of each token it reads where
-    # a `LocatedNode` can find it.
+    # a `LocatedNode` can find it, and drops a space that the gem's grammar
+    # can't read.
+    #
+    # The grammar reads a space after a block's closing brace as the start of
+    # another block to skip, so a space or a comment between a `}` and the end of
+    # the node, as in `task test { os linux } // the test`, is an error for text
+    # that is valid KDL 2. This parser drops that space when the token after it
+    # ends the node: a line break, the end of the text, or a `;`.
     class LinedParser < KDL::Parser[LocatedNode]
+      # The tokens that end a node, which a space after a closing brace may
+      # precede.
+      ENDS_OF_NODE: Array[Symbol]
+
+      # Prepares the parser, as the gem's does.
+      #
+      # - `output_module`: Module, the module the grammar builds through.
+      # - `parse_types`: bool, whether to convert values with a type annotation.
+      def initialize: (output_module: Module, parse_types: bool) -> void
+
       private
 
-      def next_token: () -> [Symbol | false, KDL::Tokenizer::Token]
+      def next_token: () -> token
+
+      def after_brace_space: (token token) { () -> token } -> token
+
+      @held: Array[token]
+      @after_brace: bool
+    end
+
+    # A check that the gem's tokenizer never reads far past the end of the text.
+    #
+    # The gem's tokenizer loops forever on a block comment that is never closed,
+    # such as the text `/*`, because it reads nothing at the end of the text and
+    # moves on. This module is prepended to the gem's tokenizer, so that it raises
+    # the gem's own error, `KDL::ParseError`, as it does for an unterminated
+    # string. Every tokenizer in a parse needs it, and the gem makes one for each
+    # line that continues with `\`.
+    #
+    # It is loaded with `Proof::KdlLines::LinedParser`, and nothing calls it.
+    module EndOfText : KDL::Tokenizer
+      # Reads the character at `index`, as the tokenizer does, and raises
+      # `KDL::ParseError` when `index` is more than a few characters past the end
+      # of the text.
+      #
+      # - `index`: Integer, the position to read.
+      def []: (Integer index) -> String?
+
+      private
+
+      REACH: Integer
     end
 
     # The module that the grammar builds nodes, values, and a document through:
