@@ -1,0 +1,14 @@
+# The parts of the `sqlite3` gem that Proof calls, which ships no signatures.
+# Steep checks Proof's calls against these, so a call the gem doesn't answer is
+# an error here and not in a run.
+module SQLite3
+  class Database
+    # Calls the block each time SQLite finds the file locked, with the number
+    # of times it has been called for this lock. SQLite tries again while the
+    # block gives `true`, and gives up with a busy error when it gives `false`.
+    def busy_handler: () { (Integer attempts) -> boolish } -> void
+
+    # Sets the journal mode, such as `"wal"`.
+    def journal_mode=: (String mode) -> String
+  end
+end

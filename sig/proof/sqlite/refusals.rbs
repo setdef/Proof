@@ -1,0 +1,75 @@
+module Proof
+  module Sqlite
+    # The errors the store of runs raises when it refuses a write.
+    #
+    # The store checks a fact against the run before it inserts, and SQLite
+    # refuses an insert that a unique index forbids. Each refusal has an error
+    # in the domain, and which error depends on what is stored.
+    #
+    # This module checks a fact against a run, and chooses the error for an
+    # insert that SQLite refused after another writer got in first.
+    #
+    # Use it through `Proof::Sqlite::Runs`.
+    module Refusals
+      # The kind that a placement's rows carry.
+      PLACED: String
+
+      # Raises `Proof::RunAlreadyPlacedError` when `fact` is a placement and
+      # `run` is placed, and `Proof::RunChangedError` when `run` doesn't have
+      # `read` facts. Does nothing otherwise.
+      #
+      # - `run`: Run, as stored.
+      # - `fact`: the fact to add.
+      # - `read`: Integer, the version the caller read.
+      #
+      # ```ruby
+      # queued = Proof::Run::Queued.new(
+      #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+      #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+      # )
+      # run = Proof::Run.new(id: Proof::RunId.parse("20261125-0336-m3d8q"), facts: [queued])
+      # cancel = Proof::Run::CancelAsked.new(at: Time.utc(2026, 11, 25, 3, 37))
+      # Proof::Sqlite::Refusals.append(run, cancel, 1) # => nil
+      # ```
+      #
+      # A version the run doesn't have raises:
+      #
+      # ```ruby
+      # # Wrong: raises Proof::RunChangedError
+      # Proof::Sqlite::Refusals.append(run, cancel, 2)
+      # ```
+      def self.append: (Run run, Run::Fact fact, Integer read) -> void
+
+      # The error for an insert of `fact` that SQLite refused, given the rows
+      # that are stored for `run` now: `Proof::RunAlreadyPlacedError` when
+      # `fact` is a placement and a stored row is one, and
+      # `Proof::RunChangedError` otherwise.
+      #
+      # - `run`: Run, with `fact` added.
+      # - `fact`: the fact that was refused.
+      # - `rows`: the rows stored for the run.
+      #
+      # ```ruby
+      # placed = Proof::Run::Placed.new(at: Time.utc(2026, 11, 25, 3, 36), host: "nuc", runner: "nuc-linux")
+      # stored = Proof::Sqlite::RunRows.rows(run.with_fact(placed))
+      # Proof::Sqlite::Refusals.beaten(run.with_fact(placed), placed, stored).class # => Proof::RunAlreadyPlacedError
+      # ```
+      def self.beaten: (Run run, Run::Fact fact, Array[row] rows) -> (RunAlreadyPlacedError | RunChangedError)
+
+      # The error for a run whose ID is stored: `Proof::RunExistsError`.
+      #
+      # ```ruby
+      # Proof::Sqlite::Refusals.exists(run).class # => Proof::RunExistsError
+      # ```
+      def self.exists: (Run run) -> RunExistsError
+
+      # The error for a run whose queue position is taken:
+      # `Proof::QueuePositionTakenError`.
+      #
+      # ```ruby
+      # Proof::Sqlite::Refusals.position_taken(run).class # => Proof::QueuePositionTakenError
+      # ```
+      def self.position_taken: (Run run) -> QueuePositionTakenError
+    end
+  end
+end

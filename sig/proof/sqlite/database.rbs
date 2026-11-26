@@ -1,0 +1,29 @@
+module Proof
+  module Sqlite
+    # The SQLite file, opened for the store of runs.
+    #
+    # Two fibers of one thread share a connection by default, and so share a
+    # transaction. SQLite's own wait for a lock sleeps in C and holds every
+    # thread and fiber meanwhile.
+    #
+    # This module opens the file with Sequel's `fiber_concurrency` extension, so
+    # each fiber has a connection of its own, and with a busy handler that
+    # sleeps in Ruby, so a thread or fiber that waits for the write lock lets
+    # the others run. It puts the file in write-ahead mode, so a read doesn't
+    # wait for a write. It runs the migrations, and builds the ROM container.
+    #
+    # Use it through `Proof::Sqlite::Runs`.
+    module Database
+      # The folder of the migrations.
+      MIGRATIONS: String
+
+      # What runs on each connection the file opens.
+      ON_CONNECT: ^(SQLite3::Database) -> void
+
+      # A ROM container over the file at `path`, with the schema migrated.
+      #
+      # - `path`: String, the file's path. A file that isn't there is made.
+      def self.open: (String path) -> ROM::Container
+    end
+  end
+end

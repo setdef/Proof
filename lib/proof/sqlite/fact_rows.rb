@@ -20,7 +20,7 @@ module Proof
           **MEMBER_COLUMNS.to_h { |column| [column, nil] },
           run_id: id.to_s,
           version:,
-          kind: kind_of(fact),
+          kind: kind(fact),
           at_seconds: at.tv_sec,
           at_nanoseconds: at.nsec,
           **columns(fact),
@@ -31,7 +31,7 @@ module Proof
         RowReader.fact(row)
       end
 
-      def self.kind_of(fact)
+      def self.kind(fact)
         # Steep gives a value of the module Run::Fact none of Object's methods, so it can't see the class.
         # steep:ignore:start
         fact.class.name.to_s.split("::").last.to_s
@@ -58,7 +58,7 @@ module Proof
         JSON.generate(names.sort)
       end
 
-      private_class_method(:kind_of, :columns, :columns_of, :json)
+      private_class_method(:columns, :columns_of, :json)
     end
   end
 end

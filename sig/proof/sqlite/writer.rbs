@@ -1,0 +1,47 @@
+module Proof
+  module Sqlite
+    # Inserts rows into the `facts` table, one transaction for each write.
+    #
+    # A write that SQLite refuses has to leave no row, and has to raise the
+    # error the domain names for it. Written inside the store, the inserts and
+    # the choice of error make the store too long to keep simple.
+    #
+    # This class inserts a new run's rows, or one fact's row, in one
+    # transaction, and when SQLite refuses the insert because of a unique
+    # index, it reads what is stored and raises the matching error.
+    #
+    # Use it through `Proof::Sqlite::Runs`.
+    class Writer
+      # Prepares to insert into `facts`.
+      #
+      # - `facts`: Proof::Sqlite::Facts, the relation over the table.
+      def initialize: (Facts facts) -> void
+
+      # Inserts every fact of `run` as rows. Raises
+      # `Proof::RunExistsError` when a stored run has its ID, and
+      # `Proof::QueuePositionTakenError` when one has its queue position.
+      # Nothing is stored when it raises.
+      #
+      # - `run`: Run, a new run.
+      def add: (Run run) -> void
+
+      # Inserts the row for the last fact of `run`, which is `fact`, at the
+      # version `run` has. Raises `Proof::RunAlreadyPlacedError` when `fact` is
+      # a placement and another writer stored one, and
+      # `Proof::RunChangedError` when another writer stored a fact at that
+      # version. Nothing is stored when it raises.
+      #
+      # - `run`: Run, with `fact` added to the facts that were read.
+      # - `fact`: the fact to insert.
+      def append: (Run run, Run::Fact fact) -> void
+
+      @facts: Facts
+
+      @create: ROM::Commands::Create
+
+      private
+
+      def insert: (row | Array[row] rows) -> Array[row]
+    end
+  end
+end

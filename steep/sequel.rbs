@@ -1,0 +1,59 @@
+# The parts of the `sequel` gem that Proof calls, which ships no signatures.
+# Steep checks Proof's calls against these, so a call the gem doesn't answer is
+# an error here and not in a run.
+module Sequel
+  # Opens a SQLite database at `path`. The block `after_connect` runs on each
+  # connection the database opens.
+  def self.sqlite: (String path, ?after_connect: ^(SQLite3::Database) -> void) -> Database
+
+  # Loads an extension of Sequel by its name.
+  def self.extension: (Symbol name) -> void
+
+  # Describes a migration for `ROM::SQL.migration`.
+  def self.migration: () { () [self: MigrationDSL] -> void } -> Migration
+
+  # A connection to a database, and the pool of connections behind it.
+  class Database
+    # Creates the table `name`, with the columns and indexes of the block.
+    def create_table: (Symbol name) { () [self: Schema::CreateTableGenerator] -> void } -> void
+
+    # Changes the table `name`, as the block says.
+    def alter_table: (Symbol name) { () [self: Schema::AlterTableGenerator] -> void } -> void
+  end
+
+  # What a migration's block is evaluated against.
+  class MigrationDSL
+    # Gives the changes a migration makes, which Sequel can undo.
+    def change: () { () [self: Database] -> void } -> void
+  end
+
+  # A migration, ready to run.
+  class Migration
+  end
+
+  # An error of a constraint that a database keeps, such as a unique index.
+  class UniqueConstraintViolation < StandardError
+  end
+
+  module Schema
+    # What an `alter_table` block is evaluated against.
+    class AlterTableGenerator
+      # Adds an index, as `CreateTableGenerator#index` does.
+      def add_index: (Symbol | Array[Symbol] columns, ?unique: bool, ?where: Hash[Symbol, String], ?name: Symbol) -> void
+    end
+
+    # What a `create_table` block is evaluated against.
+    class CreateTableGenerator
+      # Adds an integer primary key that the database numbers.
+      def primary_key: (Symbol name) -> void
+
+      # Adds a column. `null: false` refuses a missing value.
+      def column: (Symbol name, Class type, ?null: bool) -> void
+
+      # Adds an index on the column or columns, which refuses two rows with
+      # the same values when `unique` is `true`, and counts only the rows that
+      # match `where` when it is given.
+      def index: (Symbol | Array[Symbol] columns, ?unique: bool, ?where: Hash[Symbol, String], ?name: Symbol) -> void
+    end
+  end
+end

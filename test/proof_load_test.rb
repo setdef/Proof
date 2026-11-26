@@ -44,7 +44,14 @@ class ProofLoadTest < Minitest::Test
     Proof::KdlParser.parse("task test\\n", path: ".config/proof.kdl")
     puts($LOADED_FEATURES - before)
   RUBY
-  private_constant(:LIB, :KDL_GEMS, :STORE_GEMS, :REQUIRE_PROOF, :PARSE)
+  OPEN_STORE = <<~RUBY
+    require("tmpdir")
+    before = $LOADED_FEATURES.dup
+    require("proof")
+    Dir.mktmpdir { |folder| Proof::Sqlite::Runs.new(path: File.join(folder, "runs.db")).close }
+    puts($LOADED_FEATURES - before)
+  RUBY
+  private_constant(:LIB, :KDL_GEMS, :STORE_GEMS, :REQUIRE_PROOF, :PARSE, :OPEN_STORE)
 
   # Architecture, "Command line": "no KDL read at run time and no `kdl` gem, so the command starts on Ruby's standard
   # library alone." Requiring Proof loads none of the gems that `kdl` brings.
@@ -56,6 +63,13 @@ class ProofLoadTest < Minitest::Test
   # store starts on Ruby's standard library alone.
   def test_requiring_proof_loads_no_storage_gem
     assert_empty(storage_gems_in(loaded_by(REQUIRE_PROOF)))
+  end
+
+  # Building a store of runs loads the gems it is made of, and works on a process that hasn't loaded them before.
+  def test_building_a_store_loads_the_storage_gems
+    loaded = storage_gems_in(loaded_by(OPEN_STORE))
+
+    assert_equal(%w[rom rom-sql sequel sqlite3], loaded & %w[rom rom-sql sequel sqlite3])
   end
 
   # Architecture, "KDL": `Proof::KdlParser` is the code that touches the gem, so the first parse loads it, and the

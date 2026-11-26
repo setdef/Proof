@@ -93,3 +93,6 @@ ThreadSafety/NewThread:
   # architecture.md requires of every store, so it starts the threads.
   Exclude:
     - "gems/proof-domain/lib/proof/testing/**/*.rb"
+    # The test of the busy handler holds the file's write lock in one thread, counts the ticks of a second while a
+    # third waits for the lock, and needs the three at once.
+    - "test/sqlite_runs_races_test.rb"

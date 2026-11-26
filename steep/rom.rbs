@@ -1,0 +1,73 @@
+# The parts of ROM and rom-sql that Proof calls, which ship no signatures.
+# Steep checks Proof's calls against these, so a call they don't answer is an
+# error here and not in a run.
+module ROM
+  # Opens a container of relations from `configuration`.
+  def self.container: (Configuration configuration) -> Container
+
+  # What a container is made from: a gateway, the relations to register, and
+  # the options of its migrations.
+  class Configuration
+    def initialize: (Symbol adapter, Sequel::Database connection, ?migrator: Hash[Symbol, String]) -> void
+
+    # Adds the relation class to the container that this makes.
+    def register_relation: (singleton(Proof::Sqlite::Facts) relation) -> void
+
+    # The gateways by name, `:default` for the one given to `initialize`.
+    def gateways: () -> Hash[Symbol, SQL::Gateway]
+  end
+
+  # The relations and gateways of one database.
+  class Container
+    # The relations by name.
+    def relations: () -> Hash[Symbol, Proof::Sqlite::Facts]
+
+    # The gateways by name.
+    def gateways: () -> Hash[Symbol, SQL::Gateway]
+  end
+
+  class Relation
+    # The class that a relation of `adapter` inherits from.
+    def self.[]: (Symbol adapter) -> Class
+  end
+
+  module Commands
+    # A command that inserts rows.
+    class Create
+      # Inserts the row, or each row of the list, in one statement. Raises
+      # `ROM::SQL::UniqueConstraintError` when a unique index refuses a row.
+      def call: (Proof::Sqlite::row | Array[Proof::Sqlite::row] rows) -> Array[Proof::Sqlite::row]
+    end
+  end
+
+  module SQL
+    # Describes a migration, which `Gateway#run_migrations` runs.
+    def self.migration: () { () [self: Sequel::MigrationDSL] -> void } -> Sequel::Migration
+
+    # The error that a unique index raises when it refuses a row.
+    class UniqueConstraintError < StandardError
+    end
+
+    # A connection to a SQL database.
+    class Gateway
+      # Runs each migration of the folder the configuration names that hasn't
+      # run, and no other.
+      def run_migrations: () -> void
+
+      # Closes every connection the gateway has opened.
+      def disconnect: () -> void
+
+      # Gives the logger each statement after it runs.
+      def use_logger: (_Logger logger) -> void
+    end
+
+    # What Sequel tells a logger about a statement, after the statement ran.
+    interface _Logger
+      def info: (String statement) -> void
+
+      def warn: (String statement) -> void
+
+      def error: (String statement) -> void
+    end
+  end
+end

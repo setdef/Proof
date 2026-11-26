@@ -70,6 +70,13 @@ module Proof
       # ```
       def self.row: (RunId id, Integer version, Run::Fact fact) -> row
 
+      # The name of `fact`'s class in `KINDS`, which its rows carry as `kind`.
+      #
+      # ```ruby
+      # Proof::Sqlite::FactRows.kind(Proof::Run::CancelAsked.new(at: Time.utc(2026, 11, 25, 3, 36))) # => "CancelAsked"
+      # ```
+      def self.kind: (Run::Fact fact) -> String
+
       # The fact that `row` holds. Raises `Proof::InvalidFactError` when the
       # row's kind isn't one of `KINDS`, when a column its fact needs is empty
       # or isn't readable, or when the members break the fact's own rules.
@@ -84,9 +91,6 @@ module Proof
       # Proof::Sqlite::FactRows.fact(row).at # => Time.utc(2026, 11, 25, 3, 36)
       # ```
       def self.fact: (row row) -> Run::Fact
-
-      # The name of `fact`'s class in `KINDS`, which its rows carry as `kind`.
-      private def self.kind_of: (Run::Fact fact) -> String
 
       # The columns that hold `fact`'s members.
       private def self.columns: (Run::Fact fact) -> row

@@ -1,0 +1,45 @@
+module Proof
+  module Sqlite
+    # How a run becomes the rows of the `facts` table and back.
+    #
+    # A run is its list of facts, and the table holds one row for each. The
+    # store writes a new run's rows together, and rebuilds a run from the rows
+    # it reads, which checks every rule about a run again.
+    #
+    # This module writes a run as rows and rebuilds it, with
+    # `Proof::Sqlite::FactRows` for each fact.
+    #
+    # Use it through `Proof::Sqlite::Runs`.
+    module RunRows
+      # The rows for every fact of `run`, in order, from version 1.
+      #
+      # ```ruby
+      # queued = Proof::Run::Queued.new(
+      #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+      #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+      # )
+      # run = Proof::Run.new(id: Proof::RunId.parse("20261125-0336-m3d8q"), facts: [queued])
+      # Proof::Sqlite::RunRows.rows(run).map { |row| row[:version] } # => [1]
+      # ```
+      def self.rows: (Run run) -> Array[row]
+
+      # Every run that `rows` hold, earliest queue position first. The rows
+      # of a run are together and in the order of their versions, as
+      # `Proof::Sqlite::Facts#in_order` gives them.
+      #
+      # ```ruby
+      # Proof::Sqlite::RunRows.runs(Proof::Sqlite::RunRows.rows(run)).map(&:id) == [run.id] # => true
+      # ```
+      def self.runs: (Array[row] rows) -> Array[Run]
+
+      # The run `id` with the facts that `rows` hold, in order. Raises what
+      # `Proof::Run.new` and `Proof::Sqlite::FactRows.fact` raise.
+      #
+      # ```ruby
+      # id = Proof::RunId.parse("20261125-0336-m3d8q")
+      # Proof::Sqlite::RunRows.run(id, Proof::Sqlite::RunRows.rows(run)).version # => 1
+      # ```
+      def self.run: (RunId id, Array[row] rows) -> Run
+    end
+  end
+end

@@ -1,0 +1,46 @@
+module Proof
+  module Sqlite
+    # The `facts` table, as a ROM relation.
+    #
+    # The store reads one run's rows in order, and every run's rows in order.
+    # Written in each place, the table's name and the two orders would drift.
+    #
+    # This relation reads the table's columns from the database, and gives the
+    # two orders by name. It is ROM's SQL relation, so it has the methods of
+    # one, and the signature lists the ones the store calls.
+    #
+    # Use it through `Proof::Sqlite::Runs`.
+    class Facts
+      # Declares the table the relation reads, with its columns taken from the
+      # database when `infer` is `true`.
+      def self.schema: (Symbol table, infer: bool) -> void
+
+      # The rows of the run with `run_id`, in the order of their versions.
+      #
+      # - `run_id`: String, the text of a run ID.
+      def of: (String run_id) -> Facts
+
+      # Every row, a run's rows together and in the order of their versions.
+      def in_order: () -> Facts
+
+      # The rows that have the values.
+      def where: (**String | Integer | nil conditions) -> Facts
+
+      # The rows in the order of the columns.
+      def order: (*Symbol columns) -> Facts
+
+      # The rows, each a `Hash` by column name.
+      def to_a: () -> Array[row]
+
+      # The largest value of the column, or `nil` when there is no row.
+      def max: (Symbol column) -> Integer?
+
+      # The command of `name`, such as `:create`.
+      def command: (Symbol name) -> ROM::Commands::Create
+
+      # Runs the block in a transaction, which commits when the block ends and
+      # rolls back when it raises.
+      def transaction: [T] () { () -> T } -> T
+    end
+  end
+end
