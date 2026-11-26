@@ -52,7 +52,7 @@ class DocExamplesExtractorTest < Minitest::Test
   end
 
   def test_a_run_of_backticks_with_more_after_it_on_the_line_is_not_a_fence
-    assert_empty(markdown("```ruby``` is code", "1", "```"))
+    assert_empty(markdown("```ruby `x` is code", "1", "```"))
   end
 
   def test_a_tilde_fence_may_have_backticks_after_its_language
