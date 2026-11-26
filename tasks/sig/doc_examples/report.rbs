@@ -1,0 +1,16 @@
+module DocExamples
+  class Report < Data
+    attr_reader ran: Integer
+    attr_reader skipped: Array[String]
+    attr_reader failures: Array[String]
+
+    def self.new: (Integer ran, Array[String] skipped, Array[String] failures) -> instance
+                | (ran: Integer, skipped: Array[String], failures: Array[String]) -> instance
+
+    def self.combine: (Array[Report] reports) -> Report
+
+    def ok?: () -> bool
+
+    def summary: () -> Array[String]
+  end
+end

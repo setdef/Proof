@@ -1,0 +1,22 @@
+module DocExamples
+  class Child
+    LOCAL: Symbol
+
+    @scope: Binding
+    @failures: Array[String]
+
+    def self.main: (Array[String] arguments, ?scope: Binding) -> Integer
+
+    def initialize: (Binding scope) -> void
+
+    def run: (Array[entry] entries) -> Array[String]
+
+    def check: [T < Object] (T actual, String expected_source, String where) -> T
+
+    private
+
+    def mismatch: (Object actual, String expected_source) -> String?
+
+    def run_block: (entry entry) -> void
+  end
+end

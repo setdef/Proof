@@ -14,5 +14,15 @@ Dir.glob("tasks/**/*.rake").each { |r| import(r) }
 # Default runs gates only, never fixers.
 desc "Run every gate"
 task default: %w[
-  bundle:frozen test:ruby rubocop rubycritic steep reuse:lint rdoc:coverage docs:placement usage:lint usage:references
+  bundle:frozen
+  test:ruby
+  rubocop
+  rubycritic
+  steep
+  reuse:lint
+  rdoc:coverage
+  docs:placement
+  docs:examples
+  usage:lint
+  usage:references
 ]

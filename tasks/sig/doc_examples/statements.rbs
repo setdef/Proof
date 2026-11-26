@@ -1,0 +1,15 @@
+module DocExamples
+  module Statements
+    type ending = [Integer, Integer, Prism::node]
+
+    def self.endings: (Prism::node program) -> Array[ending]
+
+    def self.target: (Prism::Comment comment, Array[ending] endings) -> Prism::node?
+
+    def self.statements_in: (Prism::node node) -> Array[Prism::node]
+
+    def self.ending_on: (Array[ending] endings, Integer line) -> Prism::node?
+
+    def self.ending_above: (Array[ending] endings, Integer line) -> Prism::node?
+  end
+end

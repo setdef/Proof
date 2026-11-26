@@ -1,0 +1,20 @@
+module DocExamples
+  class Runner
+    @root: String
+    @requires: Array[String]
+
+    def self.entry_for: (Block block, Array[String] faults) -> entry?
+
+    def initialize: (String root, Array[String] requires) -> void
+
+    def check: (Array[String] paths) -> Report
+
+    private
+
+    def check_file: (String path) -> Report
+
+    def blocks_in: (String path) -> Array[Block]
+
+    def instrument: (Array[Block] blocks) -> [Array[entry], Array[String]]
+  end
+end

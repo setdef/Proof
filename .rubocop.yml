@@ -78,3 +78,9 @@ Style/DocumentationMethod:
   Exclude:
     - "lib/**/*.rb"
     - "gems/*/lib/**/*.rb"
+
+Style/InlineComment:
+  # A Markdown page shows a result as `expression # => value`, a trailing
+  # comment that the docs:examples task checks.
+  Exclude:
+    - "**/*.md"

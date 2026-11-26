@@ -1,0 +1,23 @@
+module DocExamples
+  class Block < Data
+    ERROR_MARKER: String
+
+    attr_reader path: String
+    attr_reader line: Integer
+    attr_reader code: String
+    attr_reader skip_reason: String?
+
+    def self.new: (String path, Integer line, String code, String? skip_reason) -> instance
+                | (path: String, line: Integer, code: String, skip_reason: String?) -> instance
+
+    def skipped?: () -> bool
+
+    def missing_reason: () -> String?
+
+    def skip_line: () -> String
+
+    def raises: () -> String?
+
+    def place: (?Integer line_in_block) -> String
+  end
+end

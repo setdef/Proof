@@ -1,0 +1,10 @@
+module DocExamples
+  GENERATED: Array[String]
+  LISTING: Array[String]
+
+  type entry = { path: String, line: Integer, code: String, raises: String? }
+
+  def self.check: (String root, ?Array[String] requires) -> Report
+
+  def self.files: (String root) -> Array[String]
+end

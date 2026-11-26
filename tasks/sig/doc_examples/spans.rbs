@@ -1,0 +1,5 @@
+module DocExamples
+  module Spans
+    def self.scan: (Array[String] lines, ?Integer from) -> Array[Span]
+  end
+end

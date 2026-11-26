@@ -1,0 +1,8 @@
+module DocExamples
+  module Skip
+    START: String
+    FINISH: String
+
+    def self.reason: (Array[String] lines, Integer start) -> String?
+  end
+end

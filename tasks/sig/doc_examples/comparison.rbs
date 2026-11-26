@@ -1,0 +1,5 @@
+module DocExamples
+  module Comparison
+    def self.mismatch: (Object actual, Object expected) -> String?
+  end
+end

@@ -1,0 +1,20 @@
+module DocExamples
+  class Span
+    @lines: Array[String]
+    @fence: Fence
+
+    attr_reader start: Integer
+
+    def initialize: (Array[String] lines, Integer start) -> void
+
+    def opens?: () -> bool
+
+    def language: () -> String
+
+    def finish: () -> Integer
+
+    def code: () -> String
+
+    def skip_reason: () -> String?
+  end
+end

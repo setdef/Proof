@@ -1,0 +1,18 @@
+module DocExamples
+  class Fence
+    PATTERN: Regexp
+
+    @marks: String
+    @info: String
+
+    attr_reader indent: Integer
+
+    def initialize: (String line) -> void
+
+    def opens?: () -> bool
+
+    def language: () -> String
+
+    def closes?: (String line) -> bool
+  end
+end

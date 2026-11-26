@@ -26,6 +26,7 @@ run = "bundle exec rake test"
 
 `bin/setup.rb` runs the same way on every operating system, and can branch where they differ:
 
+<!-- skip-example: runs bundle install and checks the operating system -->
 ```ruby
 system("bundle", "install", exception: true)
 

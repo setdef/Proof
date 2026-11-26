@@ -93,12 +93,41 @@ end
 *   **Headings:** Use Markdown headings, `##` and below, for section headers like `## Examples`.
 *   **Why-comments in `.rb`:** Put a comment that says why the code is written as it is inside the body. RDoc attaches a comment to the next `def`, `class`, `module`, or constant even across blank lines, so a blank line doesn't keep it out of the documentation.
 
-## 5. Checklist for Agents
+## 5. Examples the Gate Runs
+
+`rake docs:examples` runs every fenced `ruby` block in the Markdown pages and in the `.rbs` comments, so an example can't drift from the code. Write each one so it runs as it stands.
+
+*   **Order and isolation:** The blocks of one file run top to bottom in one fresh Ruby process, so a block can use a variable an earlier block set. Each file's process starts fresh, so one file's blocks can't change another's. The process has `lib` and the `lib` of each gem under `gems/` on its load path, and it has required `proof`, as the app has, so an example of Proof's classes needs no `require`. An example `require`s anything else it uses. The process runs in a temporary folder.
+*   **Results:** Write `expression # => value` on one line, or put `# => value` on the line after the expression. The value is one Ruby expression on one line. The task fails unless the result equals the value and prints the same, so `1.0` doesn't match `1`. The failure lists the file and line, the expected value, and the actual one. A `# =>` with no expression to check also fails. The task reads the value an expression returns, not what it prints: `puts 1` returns `nil`.
+
+```ruby
+1 + 1 # => 2
+[3, 1, 2].sort
+# => [1, 2, 3]
+```
+
+*   **The wrong form:** To show what fails, put `# Wrong: raises ErrorClass` on the first line of a block. The task fails the block unless it raises that error or a subclass, so the wrong form stays wrong.
+
+```ruby
+# Wrong: raises ZeroDivisionError
+1 / 0
+```
+
+*   **Skipping:** To skip a block that isn't meant to run, such as a shell transcript tagged `ruby` by mistake or a fragment that needs a database, put an HTML comment on the line before its fence: `<!-- skip-example: reason -->`. Give the reason on that one line: a marker with none fails the task. Every run reports each skipped block with its place and reason. In an `.rbs` comment, write the marker after the `#`. To show a marker on a page, put it in a `markdown` fence, which the task doesn't run:
+
+````markdown
+<!-- skip-example: needs a database -->
+```ruby
+Invoice.all.each(&:send_reminder)
+```
+````
+
+## 6. Checklist for Agents
 
 Before finalizing documentation, ask:
 1.  Did I explain the *problem* this code solves?
 2.  Are my sentences short and active? (Did I remove "allows the user to"?)
-3.  Is the code example valid and copy-pasteable?
+3.  Is the code example valid and copy-pasteable, and does `rake docs:examples` pass on it?
 4.  Did I use backticks for symbols and code values?
 5.  Did I document every attribute and parameter?
 6.  Is the comment in the `.rbs` file, with no comment above a definition in the `.rb` file?

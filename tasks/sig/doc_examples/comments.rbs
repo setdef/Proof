@@ -1,0 +1,7 @@
+module DocExamples
+  module Comments
+    def self.runs: (Array[String] lines) -> Array[[Integer, Array[String]]]
+
+    def self.text_of: (Array[[String, Integer]] run) -> [Integer, Array[String]]
+  end
+end

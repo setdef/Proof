@@ -37,9 +37,10 @@ The command exits 0 when every check passes, with no errors and no warnings. It 
 | REUSE | A file that `REUSE.toml` gives no copyright or license |
 | RDoc coverage | A public class, module, constant, or method with no documentation, counting the comments in `sig/**/*.rbs` |
 | Comment placement | A comment in `lib/` directly above a `def`, `class`, or `module`, where RDoc would take it as documentation |
+| Documentation examples | A Ruby example in a Markdown page or an `.rbs` comment that raises, or shows a wrong `# =>` value. The failure shows the file and line |
 | CLI spec | `usage lint` finding a fault, or a generated reference that differs from the spec |
 
-Run one check while you work: `bundle exec rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `docs:placement`, `usage:lint`, or `usage:references`. `bundle exec rake lint:fix` corrects the RuboCop offenses it can.
+Run one check while you work: `bundle exec rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `docs:placement`, `docs:examples`, `usage:lint`, or `usage:references`. `bundle exec rake lint:fix` corrects the RuboCop offenses it can.
 
 Tests never reach the internet. Use local fakes.
 

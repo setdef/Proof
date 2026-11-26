@@ -1,0 +1,17 @@
+module DocExamples
+  module Outcome
+    def self.of: (Binding scope, entry entry) -> String?
+
+    def self.raised_by: (Binding scope, entry entry) -> Exception?
+
+    def self.problem: (entry entry, Exception? error) -> String?
+
+    def self.unexpected: (entry entry, Exception? error) -> String?
+
+    def self.judge: (entry entry, Class kind, Exception? error) -> String?
+
+    def self.error_class: (String name) -> Class?
+
+    def self.place: (entry entry, Exception error) -> String
+  end
+end

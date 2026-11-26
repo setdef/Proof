@@ -21,9 +21,9 @@ How Proof is built, with the libraries and layout and the options each beat: `do
 
 ## Commands
 
-- The gate, before every commit: `MISE_TRUSTED_CONFIG_PATHS=$PWD mise exec -- bundle exec rake`, with `BUNDLE_PATH` pointing outside the repository, where RuboCop and REUSE won't read the gems. It runs the tests with 100% line and branch coverage, RuboCop with every cop on, Steep, RubyCritic, REUSE, RDoc coverage, the comment-placement check, the CLI spec's lint, and the check that both generated references match it. It must pass with zero errors and zero warnings.
+- The gate, before every commit: `MISE_TRUSTED_CONFIG_PATHS=$PWD mise exec -- bundle exec rake`, with `BUNDLE_PATH` pointing outside the repository, where RuboCop and REUSE won't read the gems. It runs the tests with 100% line and branch coverage, RuboCop with every cop on, Steep, RubyCritic, REUSE, RDoc coverage, the comment-placement check, the Ruby examples in the docs, the CLI spec's lint, and the check that both generated references match it. It must pass with zero errors and zero warnings.
 - RubyCritic's gate fails unless every file is rated A, reek and flay report no smells or duplication, and the overall score is at least 95. That floor may rise, never fall. `tasks/critic_faults.rb` reads RubyCritic's JSON report, because RubyCritic has no option that fails on a rating or a smell; its `--minimum-score` enforces the score.
-- One gate at a time: `rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `docs:placement`, `usage:lint`, `usage:references`.
+- One gate at a time: `rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `docs:placement`, `docs:examples`, `usage:lint`, `usage:references`.
 - Fix what a gate can fix: `rake lint:fix` corrects RuboCop offenses.
 - Run Ruby as `bundle exec ruby`, never `ruby -Ilib:test`.
 - Don't run `bin/setup` or install a pre-commit hook: the hooks of a clone's worktrees are shared. Run `mise install` and `bundle install`.

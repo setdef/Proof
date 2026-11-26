@@ -1,0 +1,11 @@
+module DocExamples
+  module Extractor
+    def self.blocks: (String text, String path) -> Array[Block]
+
+    def self.markdown: (String text, String path, ?Integer first_line) -> Array[Block]
+
+    def self.rbs: (String text, String path) -> Array[Block]
+
+    def self.block: (Span span, String path, Integer first_line) -> Block
+  end
+end

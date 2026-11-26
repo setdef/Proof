@@ -1,0 +1,26 @@
+module DocExamples
+  class Subprocess
+    CHILD: String
+    MAIN: String
+
+    @root: String
+    @requires: Array[String]
+    @path: String
+
+    def self.crash: (String path, Process::Status status, String output) -> String?
+
+    def initialize: (String root, Array[String] requires, String path) -> void
+
+    def run: (Array[entry] entries) -> Array[String]
+
+    private
+
+    def run_in: (String dir, Array[entry] entries) -> Array[String]
+
+    def spawn_child: (String dir, Array[entry] entries, String results) -> [String, Process::Status]
+
+    def command: (String blocks_path, String results_path) -> Array[String]
+
+    def options: () -> Array[String]
+  end
+end

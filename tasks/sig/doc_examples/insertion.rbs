@@ -1,0 +1,9 @@
+module DocExamples
+  module Insertion
+    type edit = [Integer, String]
+
+    def self.wrap: (Prism::node target, String expected, String place) -> Array[edit]
+
+    def self.apply: (String code, Array[edit] edits) -> String
+  end
+end

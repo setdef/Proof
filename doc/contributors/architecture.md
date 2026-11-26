@@ -195,7 +195,7 @@ Options weighed:
 
 The API documentation is RDoc in the `.rbs` files, written in Markdown. A `.rb` file has comments only inside method bodies, because RDoc takes a comment above a definition as its documentation, even with blank lines between. The gate checks both: `rake rdoc:coverage` for the `.rbs` files and `rake docs:placement` for the `.rb` files.
 
-Documentation examples in Markdown pages and in `.rbs` comments run as tests, through a runner written for Proof.
+Documentation examples in Markdown pages and in `.rbs` comments run as tests, through a runner written for Proof. `rake docs:examples` runs them, one Ruby process for each file.
 
 Options weighed:
 

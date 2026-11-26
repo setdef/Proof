@@ -30,8 +30,14 @@ end
 target :tasks do
   signature "tasks/sig"
   check "tasks/ruby_doc_comments.rb"
+  check "tasks/doc_examples.rb"
+  check "tasks/doc_examples"
 
   configure_code_diagnostics(Steep::Diagnostic::Ruby.all_error)
 
   library "ripper"
+  library "json"
+  library "open3"
+  library "prism"
+  library "tmpdir"
 end

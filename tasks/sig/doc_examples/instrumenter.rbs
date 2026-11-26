@@ -1,0 +1,16 @@
+module DocExamples
+  class Fault < StandardError
+  end
+
+  module Instrumenter
+    ARROW: String
+
+    def self.call: (Block block) -> String
+
+    def self.check_syntax: (Block block, Prism::ParseResult result) -> void
+
+    def self.edits_in: (Block block, Prism::ParseResult result) -> Array[Insertion::edit]
+
+    def self.edits_for: (Block block, Prism::Comment comment, Array[Statements::ending] endings) -> Array[Insertion::edit]
+  end
+end

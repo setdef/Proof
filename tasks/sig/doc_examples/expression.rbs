@@ -1,0 +1,5 @@
+module DocExamples
+  module Expression
+    def self.single?: (String source) -> bool
+  end
+end
