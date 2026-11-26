@@ -8,6 +8,8 @@ module Proof
       end
 
       def self.expand(token)
+        # OptionParser reads -Cdir as -C with the value dir, where usage reads it as -C -d -i -r and refuses it.
+        # Written one letter at a time, each flag reaches OptionParser as usage reads it.
         cluster = token.length > 2 && flag?(token) && !token.start_with?("--")
         cluster ? token.delete_prefix("-").chars.map { |letter| "-#{letter}" } : [token]
       end
