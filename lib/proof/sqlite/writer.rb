@@ -17,7 +17,10 @@ module Proof
       rescue ROM::SQL::UniqueConstraintError
         # The unique indexes refuse a run whose ID or queue position another run has. Whether the ID is stored says
         # which.
-        raise(@facts.of(run.id.to_s).to_a.empty? ? Refusals.position_taken(run) : Refusals.exists(run))
+        id = run.id
+        raise(RunExistsError.new(id:)) unless @facts.of(id.to_s).to_a.empty?
+
+        raise(QueuePositionTakenError.new(position: run.queued.position))
       end
 
       def append(run, fact)

@@ -9,17 +9,11 @@ ROM::SQL.migration do
       column :kind, String, null: false
       column :at_seconds, Integer, null: false
       column :at_nanoseconds, Integer, null: false
-      column :position, Integer
-      column :os, String
-      column :labels, String
-      column :cpus, Integer
-      column :megabytes, Integer
-      column :host, String
-      column :runner, String
-      column :exit_status, Integer
-      column :signal, Integer
-      column :bytes, Integer
-      column :reason, String
+      %i[position cpus megabytes exit_status signal bytes].each { |name| column(name, Integer) }
+      %i[os labels host runner reason].each { |name| column(name, String) }
+      index %i[run_id version], unique: true, name: :facts_one_fact_per_version
+      index :position, unique: true, where: { kind: "Queued" }, name: :facts_one_run_per_position
+      index :run_id, unique: true, where: { kind: "Placed" }, name: :facts_one_placement_per_run
     end
   end
 end

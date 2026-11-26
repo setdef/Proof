@@ -20,14 +20,6 @@ module Proof
 
         RunChangedError.new(id:, version: rows.size, read: run.version - 1)
       end
-
-      def self.exists(run)
-        RunExistsError.new(id: run.id)
-      end
-
-      def self.position_taken(run)
-        QueuePositionTakenError.new(position: run.queued.position)
-      end
     end
   end
 end

@@ -55,21 +55,6 @@ module Proof
       # Proof::Sqlite::Refusals.beaten(run.with_fact(placed), placed, stored).class # => Proof::RunAlreadyPlacedError
       # ```
       def self.beaten: (Run run, Run::Fact fact, Array[row] rows) -> (RunAlreadyPlacedError | RunChangedError)
-
-      # The error for a run whose ID is stored: `Proof::RunExistsError`.
-      #
-      # ```ruby
-      # Proof::Sqlite::Refusals.exists(run).class # => Proof::RunExistsError
-      # ```
-      def self.exists: (Run run) -> RunExistsError
-
-      # The error for a run whose queue position is taken:
-      # `Proof::QueuePositionTakenError`.
-      #
-      # ```ruby
-      # Proof::Sqlite::Refusals.position_taken(run).class # => Proof::QueuePositionTakenError
-      # ```
-      def self.position_taken: (Run run) -> QueuePositionTakenError
     end
   end
 end
