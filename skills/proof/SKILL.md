@@ -23,7 +23,7 @@ Proof runs a project's tasks on other computers (hosts) in a pool, and streams t
 4. **Read the last line and the exit status.** The last line is the result, such as `proof: exit=1 run=20261125-0336-r5c6t task=test runner=nuc-linux …`. With one run, `proof` exits with that status. Act on it by the table in **Exit statuses**, which also says what several runs exit with.
 5. **On a failure, read the output.** If the output you saw was cut short, print the end of it with `proof logs r5c6t --tail 200`, using the run's last five characters.
 
-Words for the task follow `--`, as with `cargo run` and `npm run`: `proof run test -- --seed 1234`. Proof's flags go anywhere before `--`, and a flag Proof doesn't have is refused with exit status 2, naming the flag and the nearest one Proof has. `:::` starts the next task, and each task's words follow a `--` after its name: `proof run lint -- --fix ::: test -- --seed 1234`. For any command or flag this file doesn't show, read [references/cli.md](references/cli.md), which matches the installed version of `proof`.
+Words for the task follow `--`, as with `cargo run` and `npm run`: `proof run test -- --seed 1234`. Proof's flags go anywhere before `--`, and a flag Proof doesn't have is refused with exit status 2, naming the flag and the nearest one Proof has. `:::` starts the next task, and each task's words follow a `--` after its name: `proof run lint -- --fix ::: test -- --seed 1234`. For any command or flag this file doesn't show, read [references/cli.md](references/cli.md), which matches the installed version of `proof`; `proof --version` prints that version as `proof VERSION`.
 
 ## Choose where it runs
 
@@ -53,7 +53,7 @@ A run Proof can't vouch for never reports 0: a pass you see happened.
 ## Keep the result
 
 - **Never pipe `proof` into `head`, `tail`, `grep`, or `less`.** A reader that closes early cancels the run, and a pipe hides the exit status. Run `proof` alone, then use `proof logs RUN_ID --tail N` or `proof logs RUN_ID | grep PATTERN` on the finished run.
-- **Never wrap it in `bash -c` or `sh -c`.** Agent harnesses refuse compound commands. A one-off experiment goes in a script file in the project, then `proof run --script path/to/script.sh --os linux`.
+- **Never wrap it in `bash -c` or `sh -c`.** Agent harnesses refuse compound commands. A one-off experiment goes in a script file in the project, then `proof run --script path/to/script.sh --os linux`. The script's words follow `--`, as a task's do: `proof run --script path/to/script.sh --os linux -- --quick`.
 - **If your command is interrupted or you run in the background,** the run goes on, or is canceled if your harness signaled it. The run's ID is in the second line, and if you lost it, `proof status` lists your recent runs with their IDs. `proof watch RUN_ID` picks up a run still going and exits with its status. `proof run --detach` starts a run and returns its ID at once, for when you have other work meanwhile.
 
 ## While a run waits

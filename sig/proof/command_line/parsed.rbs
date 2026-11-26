@@ -13,7 +13,9 @@ module Proof
     # ## Examples
     #
     # ```ruby
-    # flags = Proof::CommandLine::GlobalFlags.new(quiet: false, debug: false, no_color: false, no_input: false)
+    # flags = Proof::CommandLine::GlobalFlags.new(
+    #   quiet: false, debug: false, no_color: false, no_input: false, version: false
+    # )
     # parsed = Proof::CommandLine::Parsed.new(global: flags, command: Proof::CommandLine::LogoutCommand.new)
     # parsed.command # => Proof::CommandLine::LogoutCommand.new
     # ```

@@ -1,13 +1,13 @@
 module Proof
   module CommandLine
-    # The flags that work on every command: `--quiet`, `--debug`, `--no-color`, and `--no-input`.
+    # The flags that work on every command: `--quiet`, `--debug`, `--no-color`, `--no-input`, and `--version`.
     #
-    # Each of the four may come before or after any subcommand, and each
+    # Each of the five may come before or after any subcommand, and each
     # changes what Proof prints or asks, not what it runs. Mixed into each
     # command's own value, a command line with `-q` in one place and in another
     # would mean two things.
     #
-    # This class holds the four apart from the command, with each as a yes or no.
+    # This class holds the five apart from the command, with each as a yes or no.
     #
     # Use it to decide how much to print, whether to use color, and whether to
     # prompt, whichever command ran.
@@ -15,7 +15,7 @@ module Proof
     # ## Examples
     #
     # ```ruby
-    # flags = Proof::CommandLine::GlobalFlags.new(quiet: true, debug: false, no_color: false, no_input: false)
+    # flags = Proof::CommandLine::GlobalFlags.new(quiet: true, debug: false, no_color: false, no_input: false, version: false)
     # flags.quiet # => true
     # ```
     class GlobalFlags < Data
@@ -31,8 +31,11 @@ module Proof
       # Whether to never prompt.
       attr_reader no_input: bool
 
-      def self.new: (quiet: bool, debug: bool, no_color: bool, no_input: bool) -> instance
-                  | (bool quiet, bool debug, bool no_color, bool no_input) -> instance
+      # Whether to print `proof VERSION` and exit.
+      attr_reader version: bool
+
+      def self.new: (quiet: bool, debug: bool, no_color: bool, no_input: bool, version: bool) -> instance
+                  | (bool quiet, bool debug, bool no_color, bool no_input, bool version) -> instance
 
       # Builds the global flags.
       #
@@ -40,7 +43,8 @@ module Proof
       # - `debug`: bool, whether `-d` or `--debug` was given.
       # - `no_color`: bool, whether `--no-color` was given.
       # - `no_input`: bool, whether `--no-input` was given.
-      def initialize: (quiet: bool, debug: bool, no_color: bool, no_input: bool) -> void
+      # - `version`: bool, whether `--version` was given.
+      def initialize: (quiet: bool, debug: bool, no_color: bool, no_input: bool, version: bool) -> void
     end
   end
 end

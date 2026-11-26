@@ -1,15 +1,14 @@
 module Proof
   module CommandLine
     class Spec
-      # A set of flags and arguments of which a command takes exactly one.
+      # A set of flags and arguments of which a command may need at least one.
       #
-      # `proof run` takes a task or `--script`, never both, and never neither.
-      # Left to each flag's own check, nothing would see that the pair is
-      # missing or doubled.
+      # `proof run` takes a task or `--script`, and never neither. Left to
+      # each flag's own check, nothing would see that the pair is missing.
       #
       # This class names the members of such a set and says whether one is required.
       #
-      # Use it to check that a command line gave one member of each group.
+      # Use it to check that a command line gave a member of each required group.
       #
       # ## Examples
       #
@@ -38,7 +37,7 @@ module Proof
         # ```
         def names: () -> Array[String]
 
-        # Whether one member must be given.
+        # Whether at least one member must be given.
         #
         # ```ruby
         # Proof::CommandLine::Spec.load.command(["run"])&.groups&.first&.required? # => true

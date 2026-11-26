@@ -19,7 +19,7 @@ class CommandLineMessageStyleTest < Minitest::Test
     %w[run test --os],
     %w[run test --empty=1],
     %w[run test -o d],
-    %w[run t --script f],
+    %w[run --script],
   ].freeze
   private_constant(:LINES)
 

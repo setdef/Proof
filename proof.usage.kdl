@@ -45,6 +45,9 @@ flag "--no-color" global=#true help="Print no color, as when NO_COLOR is set or 
 flag "--no-input" global=#true help="Never prompt; fail and name the flag to use instead"
 flag "-q --quiet" global=#true help="Print only the task's output and the result lines"
 flag "-d --debug" global=#true help="Print what Proof does at each step, to standard error"
+flag "--version" global=#true help="Print proof and its version, and exit" {
+  long_help "Prints `proof VERSION` to standard output, where VERSION is the version of this build, and exits with 0."
+}
 
 cmd "run" effect="write" help="Run a task or a script on one or more runners" {
   long_help #"""
@@ -71,12 +74,15 @@ has, and exits 2 without sending anything.
 `:::` starts the next task, before or after `--`, as it does for `mise run`. The word after `:::`
 is that task's name, and its words again follow `--`.
 
+The words for a script follow `--` too, as in `proof run --script bench.sh -- --quick`, and go to
+the script as its arguments, as `bash FILE ARGS` would pass them.
+
 Press Ctrl-C to cancel the run. To start a run without waiting for it, use --detach.
 """#
   arg "[task]" help="The task to run, from the project's mise.toml or .config/proof.kdl"
-  arg "[args]..." help="After `--`, the words for the task; `:::` starts the next task, whose name follows it and whose words follow a `--` after that name"
+  arg "[args]..." help="After `--`, the words for the task or the script; `:::` starts the next task, whose name follows it and whose words follow a `--` after that name"
   flag "--script <file>" help="Run this script file instead of a task; give - to read it from standard input"
-  group "what" "task" "--script" required=#true
+  group "what" "task" "--script" required=#true multiple=#true
 
   flag "--os <os>" var=#true help="Run on this operating system; repeat to run on several in parallel" {
     long_help "Runs on this operating system; repeat the flag to run on several in parallel. Without --os, Proof places the run on any operating system with a runner free, or only on those the project file lists for the task. \"any\" means the same, and \"all\" runs once on every one of them."
@@ -113,6 +119,7 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
   example "proof run lint -- --fix ::: test -- --seed 1234" header="Give two tasks different words"
   example "proof run build --os linux --keep 'pkg/*.gem' --download" header="Build on Linux and download what it built"
   example "proof run --script - --os macos" header="Run a script from standard input"
+  example "proof run --script bench.sh -- --quick" header="Give a script its words" help="The words after -- go to the script as its arguments."
 }
 
 cmd "watch" effect="read" help="Stream a run's output until it ends, and exit with its status" {

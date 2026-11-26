@@ -11,9 +11,6 @@ module Proof
       # The line for a command given none of a group's members.
       def missing_member: (Array[String] names) -> String
 
-      # The line for members of a group given together.
-      def together: (Array[String] names) -> String
-
       # The line for an argument the command can't run without.
       def missing_argument: (Spec::Arg argument) -> String
 

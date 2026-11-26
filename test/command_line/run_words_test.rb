@@ -63,8 +63,16 @@ class CommandLineRunWordsTest < Minitest::Test
     assert_equal([task("test")], command("run", "test", "--").tasks)
   end
 
-  # proof.usage.kdl: the group `what` takes a task or `--script`, so a script has no tasks.
+  # proof.usage.kdl: the group `what` takes a task or `--script`, so a script alone has no tasks.
   def test_a_script_has_no_tasks
     assert_empty(command("run", "--script", "f").tasks)
+  end
+
+  # issue #51: "a script's words follow `--`". usage binds them to `task` and `args`, as it binds a task's, so
+  # until a script's words have a member of their own they are held as the first task's name and words.
+  def test_the_words_after_the_dashes_go_to_a_script
+    run = command("run", "--script", "f", "--", "--quick", "x")
+
+    assert_equal(["f", [task("--quick", "x")]], [run.script, run.tasks])
   end
 end

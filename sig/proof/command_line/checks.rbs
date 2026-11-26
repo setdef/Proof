@@ -1,6 +1,6 @@
 module Proof
   module CommandLine
-    # Checks what a command takes together: the one of each group, and the flag that another flag needs.
+    # Checks what a command takes together: a member of each required group, and the flag that another flag needs.
     class Checks
       @command: Spec::Command
       @values: Values
@@ -10,12 +10,12 @@ module Proof
       # Takes the command and the values its flags and arguments gave.
       def initialize: (Spec::Command command, Values values) -> void
 
-      # Raises a Mistake unless one member of each group was given and each flag has the flags it requires.
+      # Raises a Mistake unless a member of each required group was given and each flag has the flags it requires.
       def verify: () -> void
 
       private
 
-      def one_of: (Spec::Group group) -> void
+      def given_some: (Spec::Group group) -> void
 
       def needs: (Spec::Flag flag) -> void
     end

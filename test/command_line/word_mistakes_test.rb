@@ -41,14 +41,6 @@ class CommandLineWordMistakesTest < Minitest::Test
     assert_equal("proof: proof run needs a task or --script. To see its usage, run: proof run --help", mistake("run"))
   end
 
-  # proof.usage.kdl: the group takes one of the two.
-  def test_a_task_with_a_script_is_refused
-    assert_equal(
-      "proof: a task and --script can't go together; give one. To see its usage, run: proof run --help",
-      mistake("run", "test", "--script", "f")
-    )
-  end
-
   # proof.usage.kdl: `arg "<run>"` is required.
   def test_a_command_without_a_required_argument_is_refused
     assert_equal("proof: proof watch needs <run>. To see its usage, run: proof watch --help", mistake("watch"))

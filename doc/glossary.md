@@ -195,7 +195,7 @@ A run of a pushed commit, which the **server** starts for a commit on a branch t
 
 ### script
 
-A file, or text on standard input, that you run once with `proof run --script FILE` or `proof run --script -`, without defining a task.
+A file, or text on standard input, that you run once with `proof run --script FILE` or `proof run --script -`, without defining a task. The words for a script follow `--`, as a task's do, and go to the script as its arguments.
 
 - Elsewhere: called a batch script in Slurm.
 - Don't say: ad hoc run; one-off; command string; snippet.

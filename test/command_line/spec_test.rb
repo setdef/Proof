@@ -48,9 +48,9 @@ class CommandLineSpecTest < Minitest::Test
     )
   end
 
-  # proof.usage.kdl: the four flags marked `global=#true`.
-  def test_the_global_flags_are_the_four_the_spec_marks
-    assert_equal(%w[no-color no-input quiet debug], SPEC.root.global_flags.map(&:name))
+  # proof.usage.kdl: the five flags marked `global=#true`.
+  def test_the_global_flags_are_the_five_the_spec_marks
+    assert_equal(%w[no-color no-input quiet debug version], SPEC.root.global_flags.map(&:name))
   end
 
   # proof.usage.kdl: no top-level `flag` lacks `global=#true`.

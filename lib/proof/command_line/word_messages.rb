@@ -17,11 +17,6 @@ module Proof
         "#{command} needs #{Phrases.alternatives(names.map { |name| Phrases.member(name) })}. #{usage}"
       end
 
-      def together(names)
-        "#{names.map { |name| Phrases.member(name) }
-.join(' and ')} can't go together; give one. #{usage}"
-      end
-
       def missing_argument(argument)
         "#{command} needs #{argument}. #{usage}"
       end

@@ -81,7 +81,7 @@ class CommandLineSpecFlagTest < Minitest::Test
     assert_equal("Run on this operating system; repeat to run on several in parallel", flag(%w[run], "os").help)
   end
 
-  # proof.usage.kdl: the four flags marked `global=#true`.
+  # proof.usage.kdl: the five flags marked `global=#true`.
   def test_a_global_flag_is_marked_global_and_another_is_not
     assert_predicate(flag([], "debug"), :global?)
     refute_predicate(flag(%w[status], "json"), :global?)

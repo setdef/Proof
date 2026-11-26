@@ -7,19 +7,19 @@ require_relative("../test_helper")
 class CommandLineGlobalFlagsTest < Minitest::Test
   include CommandLineHelper
 
-  NONE = { quiet: false, debug: false, no_color: false, no_input: false }.freeze
+  NONE = { quiet: false, debug: false, no_color: false, no_input: false, version: false }.freeze
   private_constant(:NONE)
 
-  # proof.usage.kdl: the four flags marked `global=#true`.
-  def test_no_global_flag_is_false_for_all_four
+  # proof.usage.kdl: the five flags marked `global=#true`.
+  def test_no_global_flag_is_true_when_none_is_given
     assert_equal(CL::GlobalFlags.new(**NONE), global("status"))
   end
 
-  # proof.usage.kdl: `-q --quiet`, `-d --debug`, `--no-color`, and `--no-input`.
+  # proof.usage.kdl: `-q --quiet`, `-d --debug`, `--no-color`, `--no-input`, and `--version`.
   def test_each_global_flag_is_true_when_given
     assert_equal(
-      CL::GlobalFlags.new(quiet: true, debug: true, no_color: true, no_input: true),
-      global("status", "-q", "--debug", "--no-color", "--no-input")
+      CL::GlobalFlags.new(quiet: true, debug: true, no_color: true, no_input: true, version: true),
+      global("status", "-q", "--debug", "--no-color", "--no-input", "--version")
     )
   end
 
@@ -71,9 +71,9 @@ class CommandLineGlobalFlagsTest < Minitest::Test
     )
   end
 
-  # proof.usage.kdl: the four global flags and --help take no value, before the command as after it.
+  # proof.usage.kdl: the five global flags and --help take no value, before the command as after it.
   def test_a_long_global_flag_with_a_value_before_the_command_is_refused
-    flags = %w[--quiet --debug --no-color --no-input --help]
+    flags = %w[--quiet --debug --no-color --no-input --version --help]
     lines = flags.map { |flag| "proof: #{flag} takes no value. To see its usage, run: proof --help" }
 
     assert_equal(

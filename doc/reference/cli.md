@@ -52,6 +52,7 @@ proof watch m3d8q
 - **`--no-input`** — Never prompt; fail and name the flag to use instead
 - **`-q --quiet`** — Print only the task's output and the result lines
 - **`-d --debug`** — Print what Proof does at each step, to standard error
+- **`--version`** — Prints `proof VERSION` to standard output, where VERSION is the version of this build, and exits with 0.
 
 ## Exit Status
 
@@ -95,11 +96,14 @@ has, and exits 2 without sending anything.
 `:::` starts the next task, before or after `--`, as it does for `mise run`. The word after `:::`
 is that task's name, and its words again follow `--`.
 
+The words for a script follow `--` too, as in `proof run --script bench.sh -- --quick`, and go to
+the script as its arguments, as `bash FILE ARGS` would pass them.
+
 Press Ctrl-C to cancel the run. To start a run without waiting for it, use --detach.
 
 ### Arguments
 - **`[task]`** — The task to run, from the project's mise.toml or .config/proof.kdl
-- **`[args]…`** — After `--`, the words for the task; `:::` starts the next task, whose name follows it and whose words follow a `--` after that name
+- **`[args]…`** — After `--`, the words for the task or the script; `:::` starts the next task, whose name follows it and whose words follow a `--` after that name
 
 ### Flags
 - **`--script <file>`** — Run this script file instead of a task; give - to read it from standard input
@@ -187,6 +191,14 @@ proof run build --os linux --keep 'pkg/*.gem' --download
 
 ```
 proof run --script - --os macos
+```
+
+**Give a script its words**
+
+The words after -- go to the script as its arguments.
+
+```
+proof run --script bench.sh -- --quick
 ```
 
 ## `proof watch`

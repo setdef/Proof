@@ -24,8 +24,8 @@
           {
             "name": "args",
             "usage": "[args]…",
-            "help": "After `--`, the words for the task; `:::` starts the next task, whose name follows it and whose words follow a `--` after that name",
-            "help_first_line": "After `--`, the words for the task; `:::` starts the next task, whose name follows it and whose words follow a `--` after that name",
+            "help": "After `--`, the words for the task or the script; `:::` starts the next task, whose name follows it and whose words follow a `--` after that name",
+            "help_first_line": "After `--`, the words for the task or the script; `:::` starts the next task, whose name follows it and whose words follow a `--` after that name",
             "required": false,
             "double_dash": "Optional",
             "var": true,
@@ -353,7 +353,8 @@
               "task",
               "--script"
             ],
-            "required": true
+            "required": true,
+            "multiple": true
           }
         ],
         "effect": "write",
@@ -361,7 +362,7 @@
         "hide": false,
         "args_override_self": true,
         "help": "Run a task or a script on one or more runners",
-        "help_long": "Sends your working tree as it is, with uncommitted changes and untracked files that Git doesn't\nignore, or the commit you name with --commit, and runs a task or a script there. Streams the\noutput while it runs and exits with the run's status. With several --os flags, runs one run per\noperating system in parallel and exits with the first of these that applies:\n\n1. 130, 141, or 143, when Proof canceled the runs: you pressed Ctrl-C, standard output was closed,\n   or Proof received TERM.\n2. The status of the first run whose command failed, in the order of the --os flags, not the order the runs\n   finish. With --os all, the order is linux, macos, windows.\n3. 78, when a run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, or the server was short of space and the command never started.\n4. 75, when the pool failed, as when a runner's host went away.\n5. 0.\n\nA refusal, 2, comes before anything is sent, so it never mixes with these.\n\nProof's flags work anywhere before `--`. The words for the task follow `--`, as they do for\n`cargo run` and `npm run`, and go to the task as they are, so they mean what they mean to mise. A\nflag Proof doesn't have, before `--`, is a mistake: Proof names it, suggests the nearest flag it\nhas, and exits 2 without sending anything.\n\n`:::` starts the next task, before or after `--`, as it does for `mise run`. The word after `:::`\nis that task's name, and its words again follow `--`.\n\nPress Ctrl-C to cancel the run. To start a run without waiting for it, use --detach.",
+        "help_long": "Sends your working tree as it is, with uncommitted changes and untracked files that Git doesn't\nignore, or the commit you name with --commit, and runs a task or a script there. Streams the\noutput while it runs and exits with the run's status. With several --os flags, runs one run per\noperating system in parallel and exits with the first of these that applies:\n\n1. 130, 141, or 143, when Proof canceled the runs: you pressed Ctrl-C, standard output was closed,\n   or Proof received TERM.\n2. The status of the first run whose command failed, in the order of the --os flags, not the order the runs\n   finish. With --os all, the order is linux, macos, windows.\n3. 78, when a run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, or the server was short of space and the command never started.\n4. 75, when the pool failed, as when a runner's host went away.\n5. 0.\n\nA refusal, 2, comes before anything is sent, so it never mixes with these.\n\nProof's flags work anywhere before `--`. The words for the task follow `--`, as they do for\n`cargo run` and `npm run`, and go to the task as they are, so they mean what they mean to mise. A\nflag Proof doesn't have, before `--`, is a mistake: Proof names it, suggests the nearest flag it\nhas, and exits 2 without sending anything.\n\n`:::` starts the next task, before or after `--`, as it does for `mise run`. The word after `:::`\nis that task's name, and its words again follow `--`.\n\nThe words for a script follow `--` too, as in `proof run --script bench.sh -- --quick`, and go to\nthe script as its arguments, as `bash FILE ARGS` would pass them.\n\nPress Ctrl-C to cancel the run. To start a run without waiting for it, use --detach.",
         "name": "run",
         "aliases": [],
         "hidden_aliases": [],
@@ -412,6 +413,12 @@
             "code": "proof run --script - --os macos",
             "header": "Run a script from standard input",
             "help": null,
+            "lang": ""
+          },
+          {
+            "code": "proof run --script bench.sh -- --quick",
+            "header": "Give a script its words",
+            "help": "The words after -- go to the script as its arguments.",
             "lang": ""
           }
         ],
@@ -1587,6 +1594,19 @@
         ],
         "long": [
           "debug"
+        ],
+        "hide": false,
+        "global": true
+      },
+      {
+        "name": "version",
+        "usage": "--version",
+        "help": "Print proof and its version, and exit",
+        "help_long": "Prints `proof VERSION` to standard output, where VERSION is the version of this build, and exits with 0.",
+        "help_first_line": "Print proof and its version, and exit",
+        "short": [],
+        "long": [
+          "version"
         ],
         "hide": false,
         "global": true

@@ -12,14 +12,13 @@ module Proof
       end
 
       def verify
-        @command.groups.each { |group| one_of(group) }
+        @command.groups.each { |group| given_some(group) }
         @command.own_flags.each { |flag| needs(flag) }
       end
 
-      private def one_of(group)
+      private def given_some(group)
         names = group.names
         given = names.select { |name| @values.given?(name) }
-        raise(Mistake, @messages.together(given)) if given.size > 1
         raise(Mistake, @messages.missing_member(names)) if given.empty? && group.required?
       end
 

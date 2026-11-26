@@ -146,7 +146,7 @@ module Proof
         # program itself, `Proof::CommandLine::Spec#root`, lists them.
         #
         # ```ruby
-        # Proof::CommandLine::Spec.load.root.global_flags.map(&:name) # => ["no-color", "no-input", "quiet", "debug"]
+        # Proof::CommandLine::Spec.load.root.global_flags.map(&:name) # => ["no-color", "no-input", "quiet", "debug", "version"]
         # ```
         def global_flags: () -> Array[Flag]
       end
