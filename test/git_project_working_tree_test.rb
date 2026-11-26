@@ -6,7 +6,7 @@ require_relative("git_fixtures")
 class GitProjectWorkingTreeTest < Minitest::Test
   include GitFixtures
 
-  # Command design, "Which project and which code": "A working-tree run is a synthetic commit made
+  # Command design, "Which project and which code": "A working-tree run uses a working-tree commit made
   # without touching the clone", and the glossary's "working-tree commit". A change not committed is in it.
   def test_the_commit_holds_a_change_that_is_not_committed
     folder = make_repository
@@ -110,9 +110,9 @@ class GitProjectWorkingTreeTest < Minitest::Test
     assert_equal([commit], git(folder, "rev-list", "--parents", "-n1", commit).split)
   end
 
-  # Command design, "Which project and which code": "The clone's index, `HEAD`, and branches stay exactly
-  # as they were." In a project with no commit, that includes the branch that `HEAD` points to, which stays
-  # without a commit.
+  # Command design, "Which project and which code": "A working-tree run works in a project with no commit
+  # yet, so a run in a new repository isn't refused." In such a project, "The clone's index, `HEAD`, and
+  # branches stay exactly as they were" includes the branch that `HEAD` points to, which stays without a commit.
   def test_making_the_commit_in_a_project_with_no_commit_leaves_the_clone_as_it_was
     folder = make_repository
     write_file(folder, "a.txt", "1")

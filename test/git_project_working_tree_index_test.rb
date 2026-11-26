@@ -18,9 +18,10 @@ class GitProjectWorkingTreeIndexTest < Minitest::Test
     assert_equal("staged", git(folder, "show", "#{working_tree_commit(folder)}:forced.log"))
   end
 
-  # Command design, "Which project and which code": "The clone's index, `HEAD`, and branches stay exactly
-  # as they were." With a split index and an untracked cache set, Git still adds no shared index file, and
-  # no file under `.git` changes, apart from the objects.
+  # Command design, "Which project and which code": "Every other file under the clone's `.git` stays as
+  # it was, apart from new objects", "whatever the clone's settings are". With a split index and an
+  # untracked cache set, Git still adds no shared index file, and no file under `.git` changes, apart from the
+  # objects.
   def test_making_the_commit_changes_no_file_in_the_clone_whatever_its_index_settings
     folder = make_clone_with_split_index
     before = digests(File.join(folder, ".git"))
