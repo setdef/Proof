@@ -71,6 +71,9 @@ module Proof
   class InvalidRepositoryEntryError < Error
   end
 
+  class InvalidPoolFileError < Error
+  end
+
   class InvalidRandomSourceError < Error
   end
 

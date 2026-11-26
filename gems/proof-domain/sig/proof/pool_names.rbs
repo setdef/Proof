@@ -1,0 +1,33 @@
+module Proof
+  # The rules about names that a pool file's entries may not share.
+  #
+  # Two hosts with one name would show their runs under one name in `proof
+  # status`, and so would two repositories. A runner name on two hosts would
+  # count that runner's CPUs and memory twice, and a runner is one operating
+  # system on one host. These rules span entries, so no entry can check them. It
+  # is a private constant of `Proof`, because the rules are `Proof::PoolFile`'s
+  # and `PoolFile` is rated B with them in it.
+  module PoolNames
+    # The message for two entries with one name, which `format` fills in with
+    # what the entries are, the singular of it, and their name.
+    REPEATED: String
+
+    # The message for a runner on two hosts, which `format` fills in with the
+    # runner and the two hosts.
+    SHARED: String
+
+    # Raises `Proof::InvalidPoolFileError` when two hosts have one name, when a
+    # runner is on two hosts, or when two repositories have one name, in that
+    # order. The message names the entries and what to do.
+    #
+    # - `hosts`: Array of `Proof::HostEntry`.
+    # - `repositories`: Array of `Proof::RepositoryEntry`.
+    def self.refuse_repeats: (Array[HostEntry] hosts, Array[RepositoryEntry] repositories) -> void
+
+    private def self.refuse_repeated: (Array[HostEntry | RepositoryEntry] entries, String plural, String singular) -> void
+
+    private def self.refuse_shared_runners: (Array[HostEntry] hosts) -> void
+
+    private def self.refuse_shared: (String runner, Array[HostEntry] hosts) -> void
+  end
+end

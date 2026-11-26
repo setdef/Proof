@@ -1,0 +1,61 @@
+# frozen_string_literal: true
+
+require_relative("host_entry")
+require_relative("host_settings")
+require_relative("limits")
+require_relative("member_check")
+require_relative("pool_names")
+require_relative("repository_entry")
+require_relative("retention")
+
+module Proof
+  # steep:ignore:start
+  class PoolFile < Data.define(:port, :retention, :limits, :defaults, :hosts, :repositories)
+    # steep:ignore:end
+    RULES = {
+      port: [
+        "the server's port is a whole number from 1 to 65535, not %p",
+        -> (value) { MemberCheck.whole?(value, 1) && value <= 65_535 },
+      ],
+      retention: ["a pool file's retention is a Proof::Retention, not %p", Retention.method(:===)],
+      limits: ["a pool file's limits are a Proof::Limits, not %p", Limits.method(:===)],
+      defaults: ["a pool file's defaults are host settings, not %p", HostSettings.method(:===)],
+      hosts: [
+        "a pool file's hosts are a list of host entries, not %p",
+        -> (value) { value.is_a?(Array) && value.all?(HostEntry) },
+      ],
+      repositories: [
+        "a pool file's repositories are a list of repository entries, not %p",
+        -> (value) { value.is_a?(Array) && value.all?(RepositoryEntry) },
+      ],
+    }.freeze
+    DEFAULTS = {
+      port: 7443, retention: Retention.new, limits: Limits.new, defaults: HostSettings.new, hosts: [], repositories: []
+    }.freeze
+    private_constant(:RULES, :DEFAULTS)
+
+    def initialize(**given)
+      # The keywords arrive as one hash, since six keywords make a parameter list longer than RuboCop accepts.
+      settings = checked(given)
+      hosts, repositories = settings.values_at(:hosts, :repositories)
+      PoolNames.refuse_repeats(hosts, repositories)
+      super(**settings, hosts: hosts.dup.freeze, repositories: repositories.dup.freeze)
+      # A host with no budget in its entry or in the defaults is refused when it is resolved.
+      resolved_hosts
+    end
+
+    def resolved_hosts
+      hosts.map { |host| host.resolved(defaults) }
+    end
+
+    private def checked(given)
+      unknown = given.keys - members
+      raise(ArgumentError, "unknown keyword: #{unknown.first.inspect}") unless unknown.empty?
+
+      DEFAULTS.merge(given).tap do |settings|
+        problem = MemberCheck.problem(RULES, settings)
+        raise(InvalidPoolFileError, problem) if problem
+      end
+    end
+  end
+end

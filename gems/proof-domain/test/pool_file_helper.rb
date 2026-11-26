@@ -72,4 +72,16 @@ module PoolFileHelper
       tasks: %w[test package]
     )
   end
+
+  # The pool file of the page's "A complete example", built by hand.
+  def complete_example
+    Proof::PoolFile.new(
+      port: 7443,
+      retention: Proof::Retention.new(runs: days("90d"), output: days("14d"), artifacts: days("7d")),
+      limits: Proof::Limits.new(output: size("1GB"), artifacts: size("16GB")),
+      defaults: example_defaults,
+      hosts: [nuc_entry, pc_entry],
+      repositories: [lota_entry]
+    )
+  end
 end

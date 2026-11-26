@@ -1,0 +1,108 @@
+module Proof
+  # What the pool file holds: the server's port, how long it keeps runs, the
+  # most it keeps from a run, the defaults every host gets, each host, and each
+  # repository.
+  #
+  # The pool file is `~/.config/proof/pool.kdl`, on the computer that runs the
+  # server, and describes the whole pool. Its parts have rules that span them. A
+  # runner is one operating system on one host, so a runner name on two hosts
+  # would count that runner's CPUs and memory twice. Two hosts with one name, or
+  # two repositories with one name, would show their runs under one name in
+  # `proof status`. A host with no budget would have nothing to prune by, and
+  # Proof has no built-in budget.
+  #
+  # This class holds the parts, refuses each of those, and gives each host with
+  # every setting it gets. A part left out has its default: port 7443, the
+  # retention and limits the page lists, `defaults` that give nothing, and no
+  # hosts and no repositories.
+  #
+  # Use it as what `Proof::PoolFileReader` builds, and what the server reads
+  # for its port, its retention, its limits, its hosts, and its repositories.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # budget = Proof::Size.read("400GB", name: "budget")
+  # nuc = Proof::HostEntry.new(name: "nuc", runners: ["nuc-linux"], settings: Proof::HostSettings.new(budget:))
+  # file = Proof::PoolFile.new(hosts: [nuc])
+  # [file.port, file.resolved_hosts.map(&:name), file.resolved_hosts.first.budget.megabytes] # => [7443, ["nuc"], 409_600]
+  # ```
+  #
+  # A pool file with nothing has the defaults:
+  #
+  # ```ruby
+  # Proof::PoolFile.new.hosts # => []
+  # ```
+  #
+  # A runner on two hosts is refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidPoolFileError
+  # settings = Proof::HostSettings.new(budget: Proof::Size.read("100GB", name: "budget"))
+  # nuc = Proof::HostEntry.new(name: "nuc", runners: ["shared"], settings:)
+  # mac = Proof::HostEntry.new(name: "mac", runners: ["shared"], settings:)
+  # Proof::PoolFile.new(hosts: [nuc, mac])
+  # ```
+  class PoolFile < Data
+    # For each member, the message when its value breaks the rule, and the rule.
+    RULES: Hash[Symbol, [String, MemberCheck::_Rule]]
+
+    # The default of each member, for a part the pool file leaves out.
+    DEFAULTS: Hash[Symbol, Object]
+
+    # The TCP port the server listens on, a whole number from 1 to 65535.
+    attr_reader port: Integer
+
+    # How long the server keeps what each run leaves.
+    attr_reader retention: Retention
+
+    # The most the server keeps from one run.
+    attr_reader limits: Limits
+
+    # The settings every host gets unless its entry has a different value.
+    attr_reader defaults: HostSettings
+
+    # Each host's entry, in the order the file has them, in a frozen `Array`.
+    attr_reader hosts: Array[HostEntry]
+
+    # Each repository's entry, in the order the file has them, in a frozen
+    # `Array`.
+    attr_reader repositories: Array[RepositoryEntry]
+
+    def self.new: (?port: Integer, ?retention: Retention, ?limits: Limits, ?defaults: HostSettings, ?hosts: Array[HostEntry], ?repositories: Array[RepositoryEntry]) -> instance
+                | (?Integer port, ?Retention retention, ?Limits limits, ?HostSettings defaults, ?Array[HostEntry] hosts, ?Array[RepositoryEntry] repositories) -> instance
+
+    # Builds a pool file, and raises `Proof::InvalidPoolFileError` unless `port`
+    # is a whole number from 1 to 65535, each part is the kind it holds, no two
+    # hosts have one name, no runner is on two hosts, and no two repositories
+    # have one name. It raises `Proof::InvalidHostEntryError` for a host with no
+    # budget in its entry or in `defaults`. A keyword that isn't one of these
+    # raises `ArgumentError`.
+    #
+    # - `port`: Integer. Defaults to 7443.
+    # - `retention`: Retention. Defaults to the page's defaults.
+    # - `limits`: Limits. Defaults to the page's defaults.
+    # - `defaults`: HostSettings. Defaults to settings that give nothing.
+    # - `hosts`: Array of HostEntry. Defaults to none.
+    # - `repositories`: Array of RepositoryEntry. Defaults to none.
+    #
+    # ```ruby
+    # Proof::PoolFile.new(port: 8443).port # => 8443
+    # ```
+    def initialize: (?port: Integer, ?retention: Retention, ?limits: Limits, ?defaults: HostSettings, ?hosts: Array[HostEntry], ?repositories: Array[RepositoryEntry]) -> void
+
+    # Each host with every setting it gets, in the order the file has them: from
+    # its entry, then `defaults`, then Proof's built-in defaults.
+    #
+    # ```ruby
+    # settings = Proof::HostSettings.new(budget: Proof::Size.read("100GB", name: "budget"))
+    # pc = Proof::HostEntry.new(name: "pc", runners: ["pc-windows", "pc-wsl"])
+    # Proof::PoolFile.new(defaults: settings, hosts: [pc]).resolved_hosts.first.runners # => ["pc-windows", "pc-wsl"]
+    # ```
+    def resolved_hosts: () -> Array[ResolvedHost]
+
+    private
+
+    def checked: (Hash[Symbol, Object] given) -> Hash[Symbol, Object]
+  end
+end

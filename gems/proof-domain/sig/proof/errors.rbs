@@ -137,6 +137,12 @@ module Proof
   class InvalidRepositoryEntryError < Error
   end
 
+  # Raised when a pool file's port isn't a whole number from 1 to 65535, a part
+  # of it isn't the kind it holds, two hosts have one name, one runner is on two
+  # hosts, or two repositories have one name.
+  class InvalidPoolFileError < Error
+  end
+
   # Raised when a source of randomness answers with anything but a whole
   # number from 0 up to, and not including, the limit it was asked for.
   class InvalidRandomSourceError < Error
