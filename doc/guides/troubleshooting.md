@@ -11,7 +11,7 @@ With one run, the last line `proof run` prints is the result, and `proof` exits 
 | 0 | The task succeeded. | Nothing. |
 | 2 | Proof refused the run and sent nothing: a mistake on the command line or in the project file, or a request no host can meet. | Read the message: it says what the mistake is. |
 | 75 | The pool failed: a runner or its host went away, or Proof couldn't reach the server. | Run the same command again. If it keeps happening, check `proof status`. |
-| 78 | The command exited with 0, but the run failed because Proof couldn't keep its artifacts: a `--keep` or `artifact` pattern matched no file, or the artifacts exceeded the pool's limit. | Fix the pattern, or the build that should have made the file, or keep fewer files. |
+| 78 | The run failed because of its artifacts. Either its command exited with 0 but Proof couldn't keep them, because a `--keep` or `artifact` pattern matched no file or they exceeded the pool's limit; or the server was short of space when the run started, and the command never ran. | Fix the pattern, or the build that should have made the file, or keep fewer files. When the message says the server is short of space, free space on the server. |
 | 124 | The run reached its time limit. | Find what took so long with `proof logs RUN_ID`, or raise the task's `timeout`. |
 | 130 | You pressed Ctrl-C, and Proof canceled the run. | Nothing. |
 | 137 | The run held more memory than it requested while its host ran short, or was killed. | Raise the task's `memory` to what the message says it held. |

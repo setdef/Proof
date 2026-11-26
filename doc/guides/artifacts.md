@@ -69,4 +69,6 @@ The run finds it at `$PROOF_INPUTS/files/large-sample.db`.
 
 The server keeps artifacts for 7 days, and at most 16 GB from one run, unless the [pool file](../reference/pool-file.md) says otherwise. After that, `proof download` says when they were deleted. Download what you want to keep.
 
-The server checks that limit and its free space when a run starts, and reserves no space for the run. Two runs that each fit can together fill the server's disk, and the second then fails when its artifacts arrive.
+A run's artifacts aren't known until it ends, so when a run starts, the server checks that its free space is at least that limit for one run. When it isn't, the run is `failed` before its command starts, and `proof` exits with 78 with a message saying the server is short of space. Free space on the server, then run the task again. A run doesn't wait in the queue for space, because nothing on the server frees space by itself.
+
+The server reserves no space for a run. Two runs that each fit can together fill the server's disk, and the second then fails when its artifacts arrive.

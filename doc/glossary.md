@@ -166,7 +166,7 @@ A run is in exactly one of these states. The first two can change; the rest are 
 | `queued` | The run waits for a runner. |
 | `running` | A runner has the run, from its placement until it ends. |
 | `succeeded` | The command exited with status 0, its whole output arrived, and Proof kept the run's artifacts. |
-| `failed` | The command exited with another status, or Proof couldn't keep the run's artifacts. |
+| `failed` | The command exited with another status, Proof couldn't keep the run's artifacts, or the server was short of space for them when the run started. |
 | `timed_out` | The run reached its time limit, and the runner ended it. |
 | `out_of_memory` | The run held more memory than it requested while its host ran short, and the runner ended it. |
 | `canceled` | Someone canceled the run, and the runner ended it. |

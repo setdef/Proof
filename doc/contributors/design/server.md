@@ -46,7 +46,9 @@ What the server must guarantee, and the traps known so far. How to meet each req
 - **A run whose command exited 0 but whose artifacts couldn't be kept is `failed`, never `succeeded`.** A pass is reported only for work Proof finished.
 - Refuse file paths that are absolute or contain `..`, and check names that differ only in case, which collide on Windows and macOS.
 - Enforce `limits artifacts` per run, and keep free space on the server's disk: a run whose artifacts would fill it fails, rather than the server.
-- When a run starts, check `limits artifacts` and the server's free space. Reserve no space: reserving it would make the server account for space across runs, for little gain. Two runs that each fit can together fill the disk, and the second then fails when its artifacts arrive, as the previous requirement allows.
+- **When a run starts, check that the server's free space is at least `limits artifacts` for one run,** so a run never does all its work to fail at the end. A run's artifacts aren't known until it ends, so the limit stands in for them. When the space is short, the run ends `failed` before its command starts, `proof` exits 78, and the message says the server is short of space.
+- **Never keep a run queued until space frees.** Nothing on the server frees space by itself, so the run would wait with no end.
+- **Reserve no space:** reserving it would make the server account for space across runs, for little gain. Two runs that each fit can together fill the disk, and the second then fails when its artifacts arrive, which the requirement that a run whose artifacts would fill the disk fails, rather than the server, allows.
 
 ## Tokens and codes
 

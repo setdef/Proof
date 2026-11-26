@@ -67,7 +67,7 @@ With several runs, from several `--os` flags or from `--os all`, `proof` exits w
 | --- | --- | --- | --- |
 | 1 | 130, 141, or 143 | Proof canceled the runs: you pressed Ctrl-C, standard output was closed, or Proof received `TERM`. | The whole command was stopped, so no status says how the tasks fared. |
 | 2 | The status of the first run whose command failed | A task failed. | A task's failure is a definite answer that running again won't change. |
-| 3 | 78 | A command exited with 0, but the run failed because Proof couldn't keep its artifacts. | A mistake in configuration, which a person has to fix. |
+| 3 | 78 | A run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, or the server was short of space and the command never started. | A mistake in configuration, or a full server disk, which a person has to fix. |
 | 4 | 75 | The pool failed, as when a runner's host went away. | Running again may fix it. |
 | 5 | 0 | Every run succeeded. | |
 

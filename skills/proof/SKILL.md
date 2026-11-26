@@ -39,7 +39,7 @@ Words for the task follow `--`, as with `cargo run` and `npm run`: `proof run te
 | 0 | Passed. | Continue. |
 | 2 | Proof refused and sent nothing: a mistake in your command line or the project file, or a request no host can meet. | Read the message, fix the mistake, run again. |
 | 75 | The pool failed, not the task: a host went away or the server couldn't be reached. | Run the same command once more. If it fails with 75 again, stop and tell the human, quoting the output. |
-| 78 | Failed: the command passed, but Proof couldn't keep the artifacts because a pattern matched no file, or they exceeded the pool's limit. | Fix the pattern or the build, or keep fewer files. |
+| 78 | Failed because of the artifacts: the command passed but Proof couldn't keep them, because a pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never ran. | Fix the pattern or the build, or keep fewer files. When the message says the server is short of space, tell the human, who has to free it. |
 | 124 | The run hit its time limit. | Read the end of the output to see what was slow. Raise the limit only if the work is legitimately long. |
 | 137 | The run held more memory than it requested while its host ran short. | Request what the message says it held: `--memory 12GB` for one run, and tell the human so the task's `memory` in `.config/proof.kdl` can change. |
 | 130 | A human pressed Ctrl-C, and Proof canceled the run. | Stop. Tell the human the run was interrupted, and run it again only if they ask. |

@@ -109,7 +109,7 @@ limits output="1GB" artifacts="16GB"
 | Property | Default | Meaning |
 | --- | --- | --- |
 | `output` | `"1GB"` | The most output the server keeps from one run. Past it, the server keeps the first and last halves, and puts a line between them saying how much it left out. The run itself goes on, and you still see all of it while you watch. |
-| `artifacts` | `"16GB"` | The most artifacts the server keeps from one run. A run whose artifacts would exceed it fails with exit status 78, and the message says how large they were. |
+| `artifacts` | `"16GB"` | The most artifacts the server keeps from one run. A run whose artifacts would exceed it fails with exit status 78, and the message says how large they were. The server also needs this much free space when a run starts: with less, the run fails before its command starts, with exit status 78, and the message says the server is short of space. |
 
 ## `defaults`
 

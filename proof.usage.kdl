@@ -34,7 +34,7 @@ example "proof watch m3d8q" header="Come back to a run" help="Streams run m3d8q'
 exit_code 0 "The run succeeded, or the command did what it was asked."
 exit_code 2 "Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests."
 exit_code 75 "A runner or its host went away, or Proof couldn't reach the server. Run the same command again."
-exit_code 78 "The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit."
+exit_code 78 "The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started."
 exit_code 124 "The run reached its time limit, and the runner ended it."
 exit_code 130 "You interrupted Proof with Ctrl-C."
 exit_code 137 "The run held more memory than it requested while its host ran short, or was killed."
@@ -57,7 +57,7 @@ operating system in parallel and exits with the first of these that applies:
    or Proof received TERM.
 2. The status of the first run whose command failed, in the order of the --os flags, not the order the runs
    finish. With --os all, the order is linux, macos, windows.
-3. 78, when a run's command exited with 0 but Proof couldn't keep its artifacts.
+3. 78, when a run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, or the server was short of space and the command never started.
 4. 75, when the pool failed, as when a runner's host went away.
 5. 0.
 
