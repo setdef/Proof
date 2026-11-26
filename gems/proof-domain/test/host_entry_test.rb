@@ -7,6 +7,9 @@ require_relative("test_helper")
 class HostEntryTest < Minitest::Test
   include PoolFileHelper
 
+  RUNNERS = "a host entry's runners are one or more runner names that differ without regard to case"
+  private_constant(:RUNNERS)
+
   # Pool file reference, "A complete example": `host nuc` has the runner `nuc-linux` and a budget of `"400GB"`, and
   # `host pc` has `pc-windows` and `pc-wsl`, a budget of `"250GB"`, a share, and `withhold gpu`.
   def test_the_complete_examples_hosts_are_what_their_entries_say
@@ -58,7 +61,7 @@ class HostEntryTest < Minitest::Test
   def test_the_messages_name_the_member
     messages = [
       [{ name: 5, runners: %w[a] }, "a host entry's name is a name, not 5"],
-      [{ name: "a", runners: [] }, "a host entry's runners are one or more runner names that differ, not []"],
+      [{ name: "a", runners: [] }, "#{RUNNERS}, not []"],
       [{ name: "a", runners: %w[a], settings: 1 }, "a host entry's settings are host settings, not 1"],
     ]
 

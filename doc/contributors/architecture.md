@@ -108,7 +108,7 @@ Options weighed:
   - `RunnerChoice` holds how `place_next` finds the first queued run that fits and the runner it goes to, with the order that puts the emptiest runner first. It isn't in `Placement` because `Placement` would then be rated B, and its methods use no state of a `Placement`. They take the queued runs, the hosts, and the runs that hold resources.
   - `ClosestHost` holds how `check` finds the host that fits the most of a run that none could ever take, and builds the error that names it. It isn't in `Placement` for the same reason: `Placement` with it would be rated B, and its methods use none of its state.
   - `Room` holds a host's capacity from its runners, and what is left of resources after the runs that hold them and what the host keeps for a person. It isn't in `Host` because `Host` would then be rated B.
-  - `PoolNames` holds the rules about names that a pool file's entries may not share: two hosts with one name, a runner on two hosts, and two repositories with one name. It isn't in `PoolFile` because `PoolFile` would then be rated B.
+  - `PoolNames` holds the rules about names that a pool file's entries may not share: two hosts with one name, a runner on two hosts, and two repositories with one name, each compared without regard to case, as `Label` compares labels, with `String#casecmp?`. It isn't in `PoolFile` because `PoolFile` would then be rated B.
   - `WaitCheck` holds what stops one run on one runner, the nearest of those reasons across runners, and the runs that hold a host. `WaitReason` is the value that gives the answer, and the helper isn't in it because `WaitReason` would then be rated B.
 
 Options weighed:

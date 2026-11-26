@@ -5,9 +5,10 @@ module Proof
   # A host is one physical computer, and the server counts the CPUs and memory
   # of all its runners as one host's. An entry that listed no runner would be a
   # host with nothing to run, and one that listed a runner twice would count it
-  # twice. The entry gives some of the host's settings and leaves the rest to
-  # `defaults` and Proof's built-in defaults, so the entry alone doesn't say what
-  # the host gets.
+  # twice, and a runner's name that differs only in case is the same name. The
+  # entry gives some of the host's settings and leaves the rest to `defaults`
+  # and Proof's built-in defaults, so the entry alone doesn't say what the host
+  # gets.
   #
   # This class holds the name, the names of the runners in the order the file
   # lists them, and the entry's settings. Ask it to resolve its settings
@@ -59,8 +60,8 @@ module Proof
 
     # Builds an entry, and raises `Proof::InvalidHostEntryError` unless `name` is
     # a String of at least one character, `runners` is an `Array` of one or
-    # more such names with no name twice, and `settings` is
-    # `Proof::HostSettings`.
+    # more such names with no name twice, without regard to case, and
+    # `settings` is `Proof::HostSettings`.
     #
     # - `name`: String, such as `"pc"`.
     # - `runners`: Array of String, such as `["pc-windows", "pc-wsl"]`.

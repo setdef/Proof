@@ -14,21 +14,34 @@ module Proof
     end
 
     def self.refuse_repeated(entries, plural, singular)
-      name, = entries.map(&:name).tally.find { |_, times| times > 1 }
+      name = earlier_repeated(entries.map(&:name))
       return unless name
 
       raise(InvalidPoolFileError, format(REPEATED, plural:, name:, singular:))
     end
     private_class_method(:refuse_repeated)
 
+    def self.earlier_repeated(names)
+      # Names compare as Proof::Label does, with String#casecmp?, which folds Unicode case. The pair is named by its
+      # earlier name, as that entry wrote it.
+      names.each_with_index.filter_map { |name, index| same_name(name, names.take(index)) }
+        .first
+    end
+    private_class_method(:earlier_repeated)
+
+    def self.same_name(name, names)
+      names.find { |other| other.casecmp?(name) }
+    end
+    private_class_method(:same_name)
+
     def self.refuse_shared_runners(hosts)
-      runner, = hosts.flat_map(&:runners).tally.find { |_, times| times > 1 }
+      runner = earlier_repeated(hosts.flat_map(&:runners))
       refuse_shared(runner, hosts) if runner
     end
     private_class_method(:refuse_shared_runners)
 
     def self.refuse_shared(runner, hosts)
-      first, second = hosts.filter_map { |host| host.name if host.runners.include?(runner) }
+      first, second = hosts.filter_map { |host| host.name if same_name(runner, host.runners) }
       raise(InvalidPoolFileError, format(SHARED, runner:, first:, second:))
     end
     private_class_method(:refuse_shared)

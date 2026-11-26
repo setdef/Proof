@@ -92,6 +92,18 @@ class PoolFileReaderNamesTest < Minitest::Test
     end
   end
 
+  # A runner listed twice on one host, in any mix of case, is refused at the host's line, with what the domain says,
+  # since it is one operating system on one host.
+  def test_a_runner_twice_on_one_host_in_any_mix_of_case_is_refused_at_the_hosts_line
+    [%w[Pc-WSL pc-wsl], %w[pc-wsl PC-WSL]].each do |runners|
+      assert_refused(
+        "#{DEFAULTS}host pc {\n  runner #{runners.first}\n  runner #{runners.last}\n}\n",
+        4,
+        domain_said(Proof::InvalidHostEntryError) { Proof::HostEntry.new(name: "pc", runners:) }
+      )
+    end
+  end
+
   # Names that are not text, which the domain refuses, compare as KDL reads them, so `host 5` twice is a repeat.
   def test_names_that_are_not_text_are_compared_as_read
     assert_refused(

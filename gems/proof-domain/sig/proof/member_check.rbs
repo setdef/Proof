@@ -25,6 +25,11 @@ module Proof
     # least one character, with no name twice.
     def self.names?: (Object value) -> bool
 
+    # Whether `value` is an `Array` of one or more names, each a String of at
+    # least one character, with no two that differ only in case. It compares as
+    # `Proof::Label` does, with `String#casecmp?`.
+    def self.distinct_names?: (Object value) -> bool
+
     # Whether `value` is an Integer of at least `minimum`.
     #
     # - `value`: the value to check.

@@ -119,9 +119,9 @@ module Proof
   end
 
   # Raised when a host's entry in the pool file has a name that isn't a name,
-  # runners that aren't one or more runner names that differ, or settings that
-  # aren't `Proof::HostSettings`, or when a host has no budget in its entry or
-  # in `defaults`.
+  # runners that aren't one or more runner names that differ without regard to
+  # case, or settings that aren't `Proof::HostSettings`, or when a host has no
+  # budget in its entry or in `defaults`.
   class InvalidHostEntryError < Error
   end
 
@@ -139,7 +139,7 @@ module Proof
 
   # Raised when a pool file's port isn't a whole number from 1 to 65535, a part
   # of it isn't the kind it holds, two hosts have one name, one runner is on two
-  # hosts, or two repositories have one name.
+  # hosts, or two repositories have one name, each without regard to case.
   class InvalidPoolFileError < Error
   end
 

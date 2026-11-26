@@ -18,6 +18,11 @@ module Proof
       value.is_a?(Array) && !value.empty? && value.all? { |name| named?(name) } && value.uniq.size == value.size
     end
 
+    def self.distinct_names?(value)
+      # Names compare as Proof::Label does, with String#casecmp?, so two that differ only in case are one name.
+      names?(value) && value.combination(2).none? { |one, other| one.casecmp?(other) }
+    end
+
     def self.whole?(value, minimum)
       value.is_a?(Integer) && value >= minimum
     end

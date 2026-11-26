@@ -11,7 +11,10 @@ module Proof
     # steep:ignore:end
     RULES = {
       name: ["a host entry's name is a name, not %p", MemberCheck.method(:named?)],
-      runners: ["a host entry's runners are one or more runner names that differ, not %p", MemberCheck.method(:names?)],
+      runners: [
+        "a host entry's runners are one or more runner names that differ without regard to case, not %p",
+        MemberCheck.method(:distinct_names?),
+      ],
       settings: ["a host entry's settings are host settings, not %p", HostSettings.method(:===)],
     }.freeze
     NO_BUDGET = "the host %p has no budget. Give its entry a budget, or give defaults one"

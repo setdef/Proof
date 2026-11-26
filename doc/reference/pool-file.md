@@ -59,7 +59,7 @@ Proof refuses a pool file, with the line and the reason, when:
 - the name of a host, a runner, a repository, a branch, or a task, a repository's `url`, or a `credentials-file`'s path is empty or only spaces;
 - a `port` isn't a whole number from 1 to 65535, or `cpus` isn't a whole number from 0.
 
-Proof compares names as written, so `nuc` and `NUC` are two hosts. Labels are the exception, as [sizes and labels](#sizes-and-labels) says.
+Proof compares names without regard to case, as it does labels, so `nuc` and `NUC` are one host, and a second entry for it is refused. Each name is shown as its entry writes it.
 
 ## Sizes and labels
 

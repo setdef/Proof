@@ -8,8 +8,9 @@ module Proof
   # runner is one operating system on one host, so a runner name on two hosts
   # would count that runner's CPUs and memory twice. Two hosts with one name, or
   # two repositories with one name, would show their runs under one name in
-  # `proof status`. A host with no budget would have nothing to prune by, and
-  # Proof has no built-in budget.
+  # `proof status`. Names compare without regard to case, as labels do, so `nuc`
+  # and `NUC` are one name, and each is kept as its entry writes it. A host with
+  # no budget would have nothing to prune by, and Proof has no built-in budget.
   #
   # This class holds the parts, refuses each of those, and gives each host with
   # every setting it gets. A part left out has its default: port 7443, the
