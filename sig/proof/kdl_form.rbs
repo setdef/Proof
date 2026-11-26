@@ -133,6 +133,14 @@ module Proof
     # ```
     def facts: (Integer count) -> Hash[Symbol, String | Integer]
 
+    # Whether the node takes arguments only, with no properties and no
+    # children.
+    #
+    # ```ruby
+    # [Proof::PoolFileForms[:runner].arguments_only?, Proof::PoolFileForms[:host].arguments_only?] # => [true, false]
+    # ```
+    def arguments_only?: () -> bool
+
     # Whether `child`'s name is not one of this form's children.
     #
     # - `child`: `Proof::KdlNode`.

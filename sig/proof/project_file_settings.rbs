@@ -6,43 +6,42 @@ module Proof
   # each value valid, and `Proof::TaskSettings` owns how they combine. Writing
   # those rules a second time in the reader would let the two drift.
   #
-  # This class refuses a property the page doesn't list, such as `cpu=4`, which
-  # KDL accepts, and a task would run with the built-in value while the person
-  # believes it has theirs. It builds each property's value with the domain's
-  # classes, so a size, a duration, and a count of CPUs have one rule each, reads
-  # the children with `Proof::ProjectFileChildren`, and returns the
-  # `Proof::TaskSettings` that the domain builds from them. A value the domain
-  # refuses is a refusal at the line of the node that gave it.
+  # This class builds each property's and each child's value with the domain's
+  # classes, so a size, a duration, a count of CPUs, and a label have one rule
+  # each, and returns the `Proof::TaskSettings` that the domain builds from
+  # them. A value the domain refuses is a refusal at the line of the node that
+  # gave it. It checks no name: `Proof::KdlFormCheck` has refused a property or
+  # child the page doesn't list before.
   #
   # Use it from `Proof::ProjectFileReader` and `Proof::TaskReader`.
   class ProjectFileSettings
     # Prepares to read with `refusal`.
     #
-    # - `refusal`: `Proof::ProjectFileSettingsRefusal`.
-    def initialize: (refusal: ProjectFileSettingsRefusal) -> void
+    # - `refusal`: `Proof::ProjectFileRefusal`.
+    def initialize: (refusal: ProjectFileRefusal) -> void
 
     # The settings of `node`. A property or child the node lacks gives no
     # setting, as `nil`.
     #
-    # - `node`: `Proof::KdlNode`, a `defaults` or `task` node.
+    # - `node`: `Proof::KdlNode`, a `defaults` or `task` node that
+    #   `Proof::KdlFormCheck` has checked.
     #
     # ```ruby
     # path = ".config/proof.kdl"
     # node = Proof::KdlParser.parse("defaults cpus=4 {\n  os linux\n}\n", path:).first
-    # refusal = Proof::ProjectFileSettingsRefusal.new(path:)
-    # settings = Proof::ProjectFileSettings.new(refusal:).read(node)
+    # settings = Proof::ProjectFileSettings.new(refusal: Proof::ProjectFileRefusal.new(path:)).read(node)
     # [settings.cpus, settings.os.map(&:to_s)] # => [4, ["linux"]]
     # ```
     #
-    # A property the page doesn't list is refused at the line of its node:
+    # A value the domain refuses is refused at the line of its node:
     #
     # ```ruby
     # path = ".config/proof.kdl"
-    # node = Proof::KdlParser.parse("task test cpu=4\n", path:).first
+    # node = Proof::KdlParser.parse("task test {\n  label \"nvidia gpu\"\n}\n", path:).first
     # begin
-    #   Proof::ProjectFileSettings.new(refusal: Proof::ProjectFileSettingsRefusal.new(path:)).read(node)
+    #   Proof::ProjectFileSettings.new(refusal: Proof::ProjectFileRefusal.new(path:)).read(node)
     # rescue Proof::ProjectFileError => e
-    #   e.line # => 1
+    #   e.line # => 2
     # end
     # ```
     def read: (KdlNode node) -> TaskSettings
@@ -51,17 +50,19 @@ module Proof
 
     def properties_of: (KdlNode node) -> Hash[Symbol, Object]
 
-    def refuse_unknown_in: (KdlNode node) -> void
+    def children_of: (Array[KdlNode] children) -> Hash[Symbol, Object]
 
-    def refuse: (KdlNode node, String name) -> void
+    def pair: (String name, KdlNode giver) -> [Symbol, Object]
 
-    def pair: (KdlNode node, Symbol key, kdl_value value) -> [Symbol, Object]
-
+    # The member of the settings that each property and child gives, by its
+    # name.
     MEMBERS: Hash[Symbol, Symbol]
 
-    BUILDERS: Hash[Symbol, ^(kdl_value) -> Object]
+    # The builder of each value, by the name of the property or child that
+    # gives it. A property's builder takes the node that has the property, and
+    # a child's takes the child.
+    BUILDERS: Hash[Symbol, ^(KdlNode) -> Object]
 
-    @refusal: ProjectFileSettingsRefusal
-    @children: ProjectFileChildren
+    @refusal: ProjectFileRefusal
   end
 end

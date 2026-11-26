@@ -60,6 +60,25 @@ class ProjectFileReaderUnknownTest < Minitest::Test
     )
   end
 
+  # The same bullet, for a child written at the top of the file, which is a node the page lists but not there.
+  def test_a_child_at_the_top_of_the_file_is_refused
+    assert_refused(
+      "task a\nos linux\n",
+      2,
+      "there is no node \"os\" in a project file. A project file has \"defaults\" and \"task\" nodes"
+    )
+  end
+
+  # The same bullet, for a property written as a child: the page lists `cpus` as a property only, so a `cpus` child
+  # is a child the node doesn't have.
+  def test_a_property_written_as_a_child_is_refused_as_an_unknown_child
+    assert_refused(
+      "task a {\n  cpus 4\n}\n",
+      2,
+      "a \"task\" node has no child \"cpus\". Its children are os, label, artifact, and cache"
+    )
+  end
+
   # The warning: "Wrong: defaults os=linux os=macos os=windows". `os` is a child and not a property, so Proof
   # refuses the page's own wrong example, with the way to write it.
   def test_a_child_written_as_a_property_is_refused_with_the_way_to_write_it

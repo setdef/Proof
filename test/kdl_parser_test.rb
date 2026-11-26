@@ -138,14 +138,4 @@ class KdlParserTest < Minitest::Test
   def test_a_text_with_no_nodes_has_none
     assert_equal([[], []], [Proof::KdlParser.parse("", path: PATH), Proof::KdlParser.parse("// none\n", path: PATH)])
   end
-
-  # A node says all it says in its arguments when it has no property and no child, which is how a child of a
-  # task entry such as `os linux macos` is written.
-  def test_a_node_with_only_arguments_says_so
-    only, with_property, with_child = ["os linux macos\n", "os linux a=1\n", "os linux {\n  a\n}\n"].map do |text|
-      Proof::KdlParser.parse(text, path: PATH).first.arguments_only?
-    end
-
-    assert_equal([true, false, false], [only, with_property, with_child])
-  end
 end

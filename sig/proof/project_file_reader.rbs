@@ -8,11 +8,12 @@ module Proof
   # line to name, and it doesn't know which nodes and properties the file may
   # have.
   #
-  # This class reads the text with `Proof::KdlParser`, refuses a node, property,
-  # or child the project file page doesn't list, builds each value with the
-  # domain's own classes so that their rules are the file's rules, and raises
-  # `Proof::ProjectFileError` for every mistake, with the path, the line of the
-  # node it is in, and what is wrong.
+  # This class reads the text with `Proof::KdlParser`, checks every node against
+  # `Proof::ProjectFileForms` with `Proof::KdlFormCheck`, which refuses a node,
+  # property, or child the project file page doesn't list, builds each value
+  # with the domain's own classes so that their rules are the file's rules, and
+  # raises `Proof::ProjectFileError` for every mistake, with the path, the line
+  # of the node it is in, and what is wrong.
   #
   # Use it to turn the text that `Proof::GitProject#file_at` gives into the
   # project file that `Proof::SettingsResolver` reads.
@@ -107,16 +108,13 @@ module Proof
 
     private
 
-    def defaults_in: (Array[KdlNode]? nodes) -> TaskSettings
+    def defaults_of: (KdlNode? node) -> TaskSettings
 
-    def defaults_settings: (KdlNode node) -> TaskSettings
+    def tasks_of: (Array[KdlNode] nodes) -> Array[TaskEntry]
 
     @path: String
     @refusal: ProjectFileRefusal
     @settings: ProjectFileSettings
-    @tasks: TaskReader
-
-    NODES: Array[String]
 
     LINK_REASON: String
   end

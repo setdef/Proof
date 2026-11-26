@@ -1,46 +1,64 @@
 module Proof
-  # Raises `Proof::ProjectFileError` for each way the shape of a project file
-  # can be wrong, with the message for it.
+  # Raises `Proof::ProjectFileError` for each way a project file can be wrong,
+  # with the message for it.
   #
   # A refusal names a file and a line, and the reader would repeat both at every
   # place it refuses something. The wording is the person's whole help in fixing
   # the file, so it sits in one place, where it can be read as a list.
   #
-  # This class holds the file's path, and has one method for each refusal of a
-  # node as a whole: a node the page doesn't list, a second `defaults`, and a
-  # task entry with the wrong arguments. Each method raises, and never returns.
-  # It also turns what the domain refuses into the same error, at the line of the
-  # node it was building.
+  # This class holds the project file's messages, in the words the project file
+  # page writes its nodes in, and refuses each mistake `Proof::KdlFormCheck`
+  # finds with them, as `Proof::KdlRefusal` does. The page writes some mistakes
+  # its own way: the arguments of each node, a child that has a property or a
+  # block, and a child that has the name of a property, which is a child the
+  # node doesn't have. It also refuses the mistakes only a project file has: a
+  # second task entry with an entry's name, and a blank command.
   #
   # Use it from the classes that read a project file's nodes.
-  class ProjectFileRefusal < FileRefusal
+  class ProjectFileRefusal < KdlRefusal
     # The messages, by name, for `format` to fill in.
     MESSAGES: Hash[Symbol, String]
+
+    # The message for the arguments of each node that has one of its own, by
+    # the node's name. A child has `child_without_arguments`.
+    ARGUMENTS: Hash[Symbol, Symbol]
 
     # Prepares to refuse as the file at `path`.
     #
     # - `path`: String, the file's path.
-    def initialize: (path: String, ?messages: Hash[Symbol, String]) -> void
+    def initialize: (path: String) -> void
 
-    # - `messages`: Hash from a message's name to its text. Defaults to
-    #   `MESSAGES`, and a subclass with messages of its own passes them.
+    # Refuses a node with a number of arguments its form doesn't take: a
+    # `defaults` node with any, a `task` with no name or with more than a name
+    # and a command, and a child with none.
+    #
+    # ```ruby
+    # path = ".config/proof.kdl"
+    # node = Proof::KdlParser.parse("defaults linux\n", path:).first
+    # begin
+    #   Proof::ProjectFileRefusal.new(path:).node_arguments(node, 1)
+    # rescue Proof::ProjectFileError => e
+    #   e.reason # => "a \"defaults\" node takes properties and children and no arguments, as in defaults cpus=4"
+    # end
+    # ```
+    def node_arguments: (KdlNode node, Integer count) -> bot
 
-    # Refuses a top-level node that isn't `defaults` or `task`.
-    def unknown_node: (KdlNode node) -> bot
+    # Refuses a property that the node's form doesn't list. A child, which takes
+    # arguments only, gets `child_with_more`, and a `defaults` or `task` node
+    # gets what `Proof::KdlRefusal#stray_property` gives.
+    def stray_property: (KdlNode node, String property) -> bot
 
-    # Refuses a second `defaults` node. `first` is the node before it.
-    def repeated_defaults: (KdlNode node, KdlNode first) -> bot
+    # Refuses a child that the parent's form doesn't list. A child of a child,
+    # which takes arguments only, is refused at the parent with
+    # `child_with_more`. Any other is `unknown_child`, even with the name of a
+    # property.
+    def stray_child: (KdlNode parent, KdlNode child) -> bot
 
-    # Refuses a second `task` entry named `name`. `first` is the entry before it.
+    # Refuses a second `task` entry with the name of an earlier one. `first` is
+    # the entry before it.
     def repeated_task: (KdlNode node, KdlNode first) -> bot
 
-    # Refuses arguments on a `defaults` node.
-    def defaults_arguments: (KdlNode node) -> bot
-
-    # Refuses a `task` with no name, or with more than a name and a command.
-    def task_arguments: (KdlNode node, Integer count) -> bot
-
-    # Refuses a command that is empty or only spaces.
+    # Refuses a command that is empty or only white space.
     def blank_command: (KdlNode node, kdl_value command) -> bot
   end
 end

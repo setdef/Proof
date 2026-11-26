@@ -57,15 +57,6 @@ module Proof
     # ```
     def initialize: (name: String, arguments: Array[kdl_value], properties: Hash[String, kdl_value], children: Array[KdlNode], line: Integer) -> void
 
-    # Whether the node has no properties and no children, so that everything
-    # it says is in its arguments.
-    #
-    # ```ruby
-    # node = Proof::KdlParser.parse("os linux macos\n", path: ".config/proof.kdl").first
-    # node.arguments_only? # => true
-    # ```
-    def arguments_only?: () -> bool
-
     # Yields each of `nodes` in order, with the first node before it that has
     # the same name, or `nil` when it is the first of its name. Gives `nodes`.
     #
@@ -122,13 +113,5 @@ module Proof
     # node.arguments_named("runner") # => ["r1", "r2", "r3"]
     # ```
     def arguments_named: (String name) -> Array[kdl_value]
-
-    # The children by name. A name given twice has its last child.
-    #
-    # ```ruby
-    # node = Proof::KdlParser.parse("a {\n  os linux\n  label gpu\n}\n", path: ".config/proof.kdl").first
-    # node.children_by_name.keys # => ["os", "label"]
-    # ```
-    def children_by_name: () -> Hash[String, KdlNode]
   end
 end

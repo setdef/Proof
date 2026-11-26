@@ -17,7 +17,8 @@ module Proof
     end
 
     def read(node)
-      name, command = words_of(node)
+      name, command = node.arguments
+      @refusal.blank_command(node, command) if BLANK.call(command)
       settings = @settings.read(node)
       # The domain refuses a name that is blank or isn't text, and a command that isn't text, with its own message, so
       # the entry is built from what the file holds, and Steep is told that this one call may pass what the domain's
@@ -35,18 +36,6 @@ module Proof
     private def refuse_repeat(same)
       first, second = same
       @refusal.repeated_task(second, first) if first && second
-    end
-
-    private def words_of(node)
-      refuse_count(node)
-      name, command = node.arguments
-      @refusal.blank_command(node, command) if BLANK.call(command)
-      [name, command]
-    end
-
-    private def refuse_count(node)
-      count = node.arguments.size
-      @refusal.task_arguments(node, count) unless (1..2).cover?(count)
     end
   end
 end

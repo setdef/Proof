@@ -3,11 +3,10 @@
 module Proof
   class ProjectFileReader
     PATH = ".config/proof.kdl"
-    NODES = %w[defaults task].freeze
     public_constant(:PATH)
     LINK_REASON = "this is a symbolic link, and Proof reads only a regular file there. " \
       "Replace it with a file that holds the project file's text"
-    private_constant(:NODES, :LINK_REASON)
+    private_constant(:LINK_REASON)
 
     def self.read(text, path: PATH)
       new(path:).read(text)
@@ -20,14 +19,13 @@ module Proof
     def initialize(path:)
       @path = path
       @refusal = ProjectFileRefusal.new(path:)
-      @settings = ProjectFileSettings.new(refusal: ProjectFileSettingsRefusal.new(path:))
-      @tasks = TaskReader.new(refusal: @refusal, settings: @settings)
+      @settings = ProjectFileSettings.new(refusal: @refusal)
     end
 
     def read(text)
-      by_name = KdlParser.parse(text, path: @path).group_by(&:name)
-      by_name.each { |name, nodes| @refusal.unknown_node(nodes.first) unless NODES.include?(name) }
-      ProjectFile.new(defaults: defaults_in(by_name["defaults"]), entries: @tasks.read_all(by_name.fetch("task", [])))
+      nodes = KdlFormCheck.new(forms: ProjectFileForms, refusal: @refusal).check(KdlParser.parse(text, path: @path))
+      by_name = nodes.group_by(&:name)
+      ProjectFile.new(defaults: defaults_of(by_name["defaults"]&.first), entries: tasks_of(by_name.fetch("task", [])))
     end
 
     def read_from(project, id)
@@ -39,15 +37,12 @@ module Proof
       raise(ProjectFileError.new(path: @path, line: nil, reason: LINK_REASON))
     end
 
-    private def defaults_in(nodes)
-      first, second = nodes
-      @refusal.repeated_defaults(second, first) if first && second
-      first ? defaults_settings(first) : TaskSettings.none
+    private def defaults_of(node)
+      node ? @settings.read(node) : TaskSettings.none
     end
 
-    private def defaults_settings(node)
-      @refusal.defaults_arguments(node) unless node.arguments.empty?
-      @settings.read(node)
+    private def tasks_of(nodes)
+      TaskReader.new(refusal: @refusal, settings: @settings).read_all(nodes)
     end
   end
 end

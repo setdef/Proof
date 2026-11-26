@@ -30,18 +30,18 @@ module Proof
     end
 
     def node_arguments(node, count)
-      say_of(node, :node_arguments, **@forms.of(node).facts(count))
+      say_of(node, :node_arguments, **form_of(node).facts(count))
     end
 
     def stray_property(node, property)
-      form = @forms.of(node)
+      form = form_of(node)
       return say(node, :property_that_is_a_child, property:) if form.children.include?(property.to_sym)
 
       say_of(node, :unknown_property, property:, known: KNOWN.call(form.properties, PROPERTIES))
     end
 
     def stray_child(parent, child)
-      form = @forms.of(parent)
+      form = form_of(parent)
       name = child.name
       return unknown_child(parent, child) unless form.properties.include?(name.to_sym)
 
@@ -53,12 +53,16 @@ module Proof
     end
 
     def missing(node, kind, missing)
-      say_of(node, :missing, kind:, missing:, usage: @forms.of(node).usage)
+      say_of(node, :missing, kind:, missing:, usage: form_of(node).usage)
     end
 
     private def unknown_child(parent, child)
-      known = KNOWN.call(@forms.of(parent).children, CHILDREN)
+      known = KNOWN.call(form_of(parent).children, CHILDREN)
       say(child, :unknown_child, name: parent.name, child: child.name, known:)
+    end
+
+    private def form_of(node)
+      @forms.of(node)
     end
 
     private def say_of(node, key, **values)

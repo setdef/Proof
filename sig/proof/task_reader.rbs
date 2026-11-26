@@ -5,10 +5,12 @@ module Proof
   # `defaults` takes. A blank name or command would reach a runner as a task
   # that can't run, and KDL accepts both.
   #
-  # This class refuses a task with no name or with more than a name and a
-  # command, and a command that is empty or only spaces. It reads the settings
-  # with `Proof::ProjectFileSettings` and builds the entry, which refuses a name
-  # that is empty or only white space, at the line of the node.
+  # This class refuses a command that is empty or only white space, and a second
+  # entry with the name of an earlier one. It reads the settings with
+  # `Proof::ProjectFileSettings` and builds the entry, which refuses a name that
+  # is empty or only white space, at the line of the node.
+  # `Proof::KdlFormCheck` has refused a task with no name or with more than a
+  # name and a command before.
   #
   # Use it from `Proof::ProjectFileReader`.
   class TaskReader
@@ -21,39 +23,37 @@ module Proof
     # The entries that the `task` nodes give, in order. Refuses a second entry
     # with the name of an earlier one, at the line of the second.
     #
-    # - `nodes`: Array of `Proof::KdlNode`, the `task` nodes.
+    # - `nodes`: Array of `Proof::KdlNode`, the `task` nodes, which
+    #   `Proof::KdlFormCheck` has checked.
     #
     # ```ruby
     # path = ".config/proof.kdl"
     # nodes = Proof::KdlParser.parse("task test\ntask lint\n", path:)
-    # settings = Proof::ProjectFileSettings.new(refusal: Proof::ProjectFileSettingsRefusal.new(path:))
-    # reader = Proof::TaskReader.new(refusal: Proof::ProjectFileRefusal.new(path:), settings:)
+    # refusal = Proof::ProjectFileRefusal.new(path:)
+    # reader = Proof::TaskReader.new(refusal:, settings: Proof::ProjectFileSettings.new(refusal:))
     # reader.read_all(nodes).map(&:name) # => ["test", "lint"]
     # ```
     def read_all: (Array[KdlNode] nodes) -> Array[TaskEntry]
 
     # The entry that `node` gives.
     #
-    # - `node`: `Proof::KdlNode`, a `task` node.
+    # - `node`: `Proof::KdlNode`, a `task` node that `Proof::KdlFormCheck` has
+    #   checked.
     #
     # ```ruby
     # path = ".config/proof.kdl"
     # node = Proof::KdlParser.parse("task docs \"make docs\"\n", path:).first
-    # settings = Proof::ProjectFileSettings.new(refusal: Proof::ProjectFileSettingsRefusal.new(path:))
-    # entry = Proof::TaskReader.new(refusal: Proof::ProjectFileRefusal.new(path:), settings:).read(node)
+    # refusal = Proof::ProjectFileRefusal.new(path:)
+    # entry = Proof::TaskReader.new(refusal:, settings: Proof::ProjectFileSettings.new(refusal:)).read(node)
     # [entry.name, entry.command] # => ["docs", "make docs"]
     # ```
     def read: (KdlNode node) -> TaskEntry
 
     private
 
-    def words_of: (KdlNode node) -> [kdl_value, kdl_value]
-
     def refuse_repeats_among: (Array[KdlNode] nodes) -> void
 
     def refuse_repeat: (Array[KdlNode] same) -> void
-
-    def refuse_count: (KdlNode node) -> void
 
     BLANK: ^(kdl_value) -> bool
 

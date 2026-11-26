@@ -8,10 +8,6 @@ module Proof
       nodes.each_with_index { |node, index| yield(node, first_named(node.name, nodes.take(index))) }
     end
 
-    def arguments_only?
-      properties.empty? && children.empty?
-    end
-
     def each_child(&)
       KdlNode.each_after_first(children, &)
     end
@@ -26,10 +22,6 @@ module Proof
 
     def arguments_named(name)
       named(name).flat_map(&:arguments)
-    end
-
-    def children_by_name
-      children.to_h { |child| [child.name, child] }
     end
 
     def self.first_named(name, nodes)

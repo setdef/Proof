@@ -1,0 +1,20 @@
+module Proof
+  # The form of each node of the project file that the reader reads.
+  #
+  # The project file page lists the nodes of the file, `defaults` and `task`,
+  # their properties, and their children. This constant is that list as data,
+  # one `Proof::KdlForm` for each node, so the project file's nodes are checked
+  # by the same code as the pool file's, and a node or a property the page
+  # gains is a line here.
+  #
+  # Use it to find the form of a node by its name.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::ProjectFileForms[:task].arguments # => 1..2
+  # Proof::ProjectFileForms[:defaults].properties # => [:cpus, :memory, :timeout]
+  # Proof::ProjectFileForms[:os].arguments_only? # => true
+  # ```
+  ProjectFileForms: KdlForms
+end

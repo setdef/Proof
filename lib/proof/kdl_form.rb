@@ -40,6 +40,10 @@ module Proof
       { takes: TAKES[arguments], usage:, count: }
     end
 
+    def arguments_only?
+      properties.empty? && children.empty?
+    end
+
     def lacks_child?(child)
       !children.include?(child.name.to_sym)
     end

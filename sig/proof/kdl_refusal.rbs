@@ -87,6 +87,8 @@ module Proof
 
     def unknown_child: (KdlNode parent, KdlNode child) -> bot
 
+    def form_of: (KdlNode node) -> KdlForm
+
     def say_of: (KdlNode node, Symbol key, **kdl_value values) -> bot
 
     @forms: KdlForms
