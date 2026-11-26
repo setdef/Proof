@@ -149,7 +149,19 @@ Options weighed:
 
 ### KDL
 
-The `kdl` gem reads KDL, always called with `version: 2`. One reader in `lib/proof` wraps it, outside the domain gem, which has no dependencies. Errors carry the line and column.
+`Proof::ProjectFileReader` reads the project file, and the `kdl` gem reads its KDL. The reader lives in `lib/proof`, outside the domain gem, which has no dependencies and never loads `kdl`. It builds every value with the domain's classes, so a size, a label, or a path has one rule, and it raises `Proof::ProjectFileError` for every mistake, with the file, the line, and the reason.
+
+- **The dependency.** `proof.gemspec` lists `kdl` at `~> 2.2.0`, and `Gemfile.lock` locks 2.2.0 with its SHA-256. The pin takes patch releases of 2.2 and nothing newer, because the reader finds each node's line through a private method of the gem's parser, which the gem doesn't document and a release can change. A new minor release is checked before Proof takes it.
+- **The extra gems.** `kdl` 2.2.0 requires `racc ~> 1.5`, `simpleidn ~> 0.2.1`, `bigdecimal ~> 3.1.6`, and `base64 ~> 0.2.0`, and loads all four when it loads. The lockfile already held `racc` 1.8.1 and `bigdecimal` 3.1.9, and now adds `simpleidn` 0.2.3 and `base64` 0.2.0. The constraints on `bigdecimal` and `base64` exclude the versions that Ruby 4.1.0-preview1 bundles, 4.1.3 and 0.3.0, so the lockfile holds older versions than that Ruby does. The gem uses `racc` for its parser, `bigdecimal` for a decimal beyond a `Float`'s range, and `base64` and `simpleidn` for type annotations such as `(base64)` and `(hostname)`. The reader reads no type annotation: it passes `parse_types: false`, so `(date)"2026-11-26"` is the text `2026-11-26`.
+- **KDL 2 only.** `KDL.parse` without `version: 2` reads a text as KDL 1 when the KDL 2 parser fails on it, and drops the file's name from its errors. The reader calls `KDL::Parser`, the KDL 2 parser that `KDL.parse` calls for `version: 2`, and gives the path itself, so a KDL 1 text is refused. A test reads a text that is valid KDL 1 and not KDL 2, and a text that starts with `/- kdl-version 1`, and both are refused.
+- **Lines.** The gem keeps a line on its errors and its tokens, and none on a node, so a mistake in what a file says, such as a label with a space in it, has no line to name. `Proof::KdlParser`, `Proof::KdlLines`, and `Proof::KdlSyntaxReason` hold the code that touches the gem. The grammar builds a node right after it reads the node's name, so a subclass of the parser records the line of each token in its private `next_token`, and a subclass of the gem's node class takes the last line recorded when the grammar builds it. `test/kdl_parser_test.rb` fails when a release changes how a node gets its line: it checks each node's line across nodes separated by `;`, nested nodes, the node after a `/-` node and the children of one, entries continued with `\`, and a text with CRLF line breaks.
+- **A limit of 2.2.0.** The gem fails on some valid KDL 2: a block's closing `}` followed by a space, a tab, or a comment before the line break, as in `task a { os linux } `. The reader passes on the gem's message, with its line.
+
+Options weighed:
+
+- A second pass over the tokens of `KDL::Tokenizer`: the gem's README documents no tokenizer, and finding the node names among the tokens means writing again the grammar's rules for type annotations, `/-`, and blocks.
+- A reader written for Proof: the reasons to write it can be fixed in `kdl` for everyone ([issue #54](https://github.com/setdef/Proof/issues/54)).
+- `vexyl`'s reader: it reads every number as a float, and it failed 5 of the 338 cases of the official KDL test suite.
 
 ### Git
 
