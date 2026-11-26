@@ -20,7 +20,7 @@ $ proof run package --os linux --keep 'pkg/*.gem'
 
 Patterns are relative to the project's root: `*` matches within a folder, and `**` matches across folders. Quote a pattern on the command line, so your shell doesn't expand it first.
 
-A run keeps its artifacts only when it succeeds. A run that succeeds but whose pattern matches no file fails, with exit status 78, because a pattern that matches nothing is almost always a mistake: a path that changed, or a build that put its output somewhere else.
+A run keeps its artifacts only when it succeeds. When the command exits with 0 but a pattern matches no file, the run is `failed` and `proof` exits with 78, because a pattern that matches nothing is almost always a mistake: a path that changed, or a build that put its output somewhere else.
 
 ## Download them
 

@@ -60,7 +60,7 @@ proof watch m3d8q
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -79,9 +79,9 @@ operating system in parallel and exits with the first of these that applies:
 
 1. 130, 141, or 143, when Proof canceled the runs: you pressed Ctrl-C, standard output was closed,
    or Proof received TERM.
-2. The status of the first failing run, in the order of the --os flags, not the order the runs
+2. The status of the first run whose command failed, in the order of the --os flags, not the order the runs
    finish. With --os all, the order is linux, macos, windows.
-3. 78, when a run succeeded but Proof couldn't keep its artifacts.
+3. 78, when a run's command exited with 0 but Proof couldn't keep its artifacts.
 4. 75, when the pool failed, as when a runner's host went away.
 5. 0.
 
@@ -130,7 +130,7 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -209,7 +209,7 @@ Streams a run's output until it ends, and exits with its status. Picks up a run 
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -243,7 +243,7 @@ Prints a run's whole output. Works for any run Proof still keeps, finished or no
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -279,7 +279,7 @@ Cancel runs, and end everything their commands started
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -314,7 +314,7 @@ Download a run's artifacts
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -350,7 +350,7 @@ Shows the runners, the queue for each operating system, and your recent runs, wi
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -383,7 +383,7 @@ Signs in to a pool's server from this computer. Asks for the one-time code that 
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -410,7 +410,7 @@ Sign out of the pool's server from this computer, and delete the token Proof kep
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -440,7 +440,7 @@ Send a known run to every runner, and report each result
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -466,7 +466,7 @@ Install Proof's Agent Skill, which teaches coding agents to use Proof
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -490,7 +490,7 @@ Install the Agent Skill that matches this version of Proof
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -522,7 +522,7 @@ Set up, upgrade, or uninstall the server, on the computer it runs on
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -546,7 +546,7 @@ Sets up this computer as the pool's server. Run it as the account the server wil
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -582,7 +582,7 @@ Upgrade the server; its runners upgrade themselves to match
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -612,7 +612,7 @@ Stop the server and delete it, with every run's record, output, and artifacts
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -638,7 +638,7 @@ Add, approve, list, and remove runners
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -673,7 +673,7 @@ when you run setup again. On Windows, also sets up a runner in WSL. Safe to run 
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -703,7 +703,7 @@ Lets a runner that asked to join into the pool, and adds its host to the pool fi
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -730,7 +730,7 @@ Start this computer's runner again after `proof runner stop`
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -760,7 +760,7 @@ Stop this computer's runner, and cancel its runs, until `proof runner start`
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -790,7 +790,7 @@ List the runners, with their versions, labels, and resources
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -823,7 +823,7 @@ Remove a runner from the pool, and revoke its token
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -853,7 +853,7 @@ Stop this computer's runner, and delete its workspaces and caches
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -879,7 +879,7 @@ Install or remove a Git pre-push hook that runs a task
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -906,7 +906,7 @@ Adds a pre-push hook to this clone that runs a task on the commits you push. Git
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
@@ -933,7 +933,7 @@ Remove the pre-push hook that Proof installed in this clone
 | `0` | The run succeeded, or the command did what it was asked. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | Proof couldn't keep the run's artifacts: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
+| `78` | The run failed because Proof couldn't keep its artifacts, though its command exited with 0: a --keep or artifact pattern matched no file, or the artifacts exceeded the pool's limit. |
 | `124` | The run reached its time limit, and the runner ended it. |
 | `130` | You interrupted Proof with Ctrl-C. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |

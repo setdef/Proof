@@ -41,6 +41,7 @@ What the server must guarantee, and the traps known so far. How to meet each req
 ## Artifacts
 
 - Each file arrives with its SHA-256 and byte count, is written to a temporary name, and is kept only if both match. The run's artifacts are sealed by a sorted manifest once all have arrived; nothing is added after that.
+- **A run whose command exited 0 but whose artifacts couldn't be kept is `failed`, never `succeeded`.** A pass is reported only for work Proof finished.
 - Refuse file paths that are absolute or contain `..`, and check names that differ only in case, which collide on Windows and macOS.
 - Enforce `limits artifacts` per run, and keep free space on the server's disk: a run whose artifacts would fill it fails, rather than the server.
 - Before a run starts, it must already be known whether the server will accept its artifacts, so a run never does all its work to fail at the end.

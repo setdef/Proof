@@ -70,7 +70,7 @@ Runs on one runner share one account, so the folders keep runs apart only as far
 
 A run ends in one of the [run states](glossary.md#run-states). Whatever the reason, the runner ends every process the run's command started, including ones that left the command's process group, before it reports the end. On Linux, the runner uses a systemd user scope for each run where there is one; on Windows, a job object; on macOS, the process group and its descendants.
 
-- **The command exits.** The run has `succeeded` when the status is 0 and the whole output has reached the server, and `failed` otherwise.
+- **The command exits.** The run has `succeeded` when the status is 0, the whole output has reached the server, and Proof kept the run's artifacts. It has `failed` otherwise: a command that exits with 0 but whose artifacts Proof couldn't keep leaves a `failed` run, and `proof` exits with 78.
 - **The time limit passes.** The runner ends the run, and its state is `timed_out`.
 - **The host runs short of memory.** Each run is held to its memory request. Where the runner can set a limit, through a systemd scope or a Windows job object, it does. Elsewhere, when the host runs short, the runner ends the run that holds the most memory beyond its request. Either way the state is `out_of_memory`, and the message says how much memory to request next time.
 - **Someone cancels it,** with `proof cancel` or Ctrl-C in `proof run`. The state is `canceled`.
