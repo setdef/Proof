@@ -1,6 +1,3 @@
-# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-# SPDX-License-Identifier: MIT
-
 # URL pin. The baseline lives in ruby_quality's config/rubocop.yml and is
 # fetched at lint time, so rule changes propagate with no per-repo sync.
 # Works in CI and contributor clones (bundler already needs network).
@@ -38,12 +35,8 @@ Style/EndlessMethod:
   EnforcedStyle: disallow
 
 Style/Copyright:
-  # The SPDX line every Ruby file starts with. Markdown files hold the same
-  # line in an HTML comment that REUSE reads, which this cop can't see.
-  Notice: '^SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef\.com>$'
-  AutocorrectNotice: "SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>"
-  Exclude:
-    - "**/*.md"
+  # Proof's files carry no headers, because REUSE.toml declares their licenses.
+  Enabled: false
 
 Lint/ConstantResolution:
   # RuboCop's docs say enabling this disables Style/RedundantConstantBase.

@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Pool file reference
 
 The pool file is `~/.config/proof/pool.kdl`, on the computer that runs the **server**. It describes the whole **pool**: each **host**, with its disk **budget**, the **share** Proof keeps free for a **person** who is **active** there, and any **labels** it must not offer; each repository whose pushed commits Proof builds; and how long the server keeps runs. Words in bold are defined in the [glossary](../glossary.md).

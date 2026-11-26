@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Documentation Style Guide
 
 This project follows a strict and specific documentation style designed to be helpful, readable, and consistent. It combines the structural clarity of Christopher Alexander's Pattern Language with the prose style of William Zinsser's *On Writing Well* and the usability of the U.S. Federal Plain Language Guidelines.
@@ -32,24 +27,13 @@ Every public class must begin with a **Context-Problem-Solution** narrative.
 ### Example
 
 **Bad (Generic/Descriptive):**
-<!-- SPDX-SnippetBegin -->
-<!--
-  SPDX-FileCopyrightText: 2026 setdef
-  SPDX-License-Identifier: MIT-0
--->
 ```ruby
 # A class for managing resources.
 # It allows the user to store objects by integer ID.
 # Supports adding, fetching, and closing.
 ```
-<!-- SPDX-SnippetEnd -->
 
 **Good (Alexandrian/Zinsser/Plain Language):**
-<!-- SPDX-SnippetBegin -->
-<!--
-  SPDX-FileCopyrightText: 2026 setdef
-  SPDX-License-Identifier: MIT-0
--->
 ```ruby
 # Stores managed objects behind integer handles.
 #
@@ -62,7 +46,6 @@ Every public class must begin with a **Context-Problem-Solution** narrative.
 # Use it to share images, file handles, or other heavy objects with
 # the WebView.
 ```
-<!-- SPDX-SnippetEnd -->
 
 ## 3. Method and Attribute Documentation
 
@@ -87,11 +70,6 @@ Every public class must begin with a **Context-Problem-Solution** narrative.
 
 ### Example
 
-<!-- SPDX-SnippetBegin -->
-<!--
-  SPDX-FileCopyrightText: 2026 setdef
-  SPDX-License-Identifier: MIT-0
--->
 ```ruby
 class Webview
   # The unique label identifying this webview.
@@ -106,7 +84,6 @@ class Webview
   end
 end
 ```
-<!-- SPDX-SnippetEnd -->
 
 ## 4. RDoc Specifics
 
@@ -114,7 +91,6 @@ end
 *   **No YARD:** Do not use `@param`, `@return`, or other YARD tags. Use standard RDoc formats.
 *   **Directives:** Use `:nodoc:` for private or internal methods that should not appear in the API docs.
 *   **Headings:** Use `===` for section headers like `=== Examples`.
-*   **SPDX in Ruby:** Wrap SPDX headers in `#--` / `#++` so they stay out of the rendered docs (per AGENTS.md).
 
 ## 5. Checklist for Agents
 

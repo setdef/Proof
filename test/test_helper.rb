@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-#--
-# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-#
-# SPDX-License-Identifier: MIT
-#++
-
 # SimpleCov starts before anything from lib loads, so it sees every line.
 require "simplecov"
 

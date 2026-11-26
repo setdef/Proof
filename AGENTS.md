@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # AGENTS.md
 
 ## The Tao of Proof
@@ -27,7 +22,7 @@ What to build next, what 1.0 leaves out, and what is undecided: `doc/contributor
 - The gate, before every commit: `MISE_TRUSTED_CONFIG_PATHS=$PWD mise exec -- bundle exec rake`, with `BUNDLE_PATH` pointing outside the repository, where RuboCop and REUSE won't read the gems. It runs the tests with 100% line and branch coverage, RuboCop with every cop on, Steep, RubyCritic, REUSE, RDoc coverage, the CLI spec's lint, and the check that both generated references match it. It must pass with zero errors and zero warnings.
 - RubyCritic's gate fails unless every file is rated A, reek and flay report no smells or duplication, and the overall score is at least 95. That floor may rise, never fall. `tasks/critic_faults.rb` reads RubyCritic's JSON report, because RubyCritic has no option that fails on a rating or a smell; its `--minimum-score` enforces the score.
 - One gate at a time: `rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `usage:lint`, `usage:references`.
-- Fix what a gate can fix: `rake lint:fix` corrects RuboCop offenses and adds missing SPDX headers.
+- Fix what a gate can fix: `rake lint:fix` corrects RuboCop offenses.
 - Run Ruby as `bundle exec ruby`, never `ruby -Ilib:test`.
 - Don't run `bin/setup` or install a pre-commit hook: the hooks of a clone's worktrees are shared. Run `mise install` and `bundle install`.
 - Set `PAGER=cat` for `git`.
@@ -44,7 +39,7 @@ What to build next, what 1.0 leaves out, and what is undecided: `doc/contributor
 - Each requirement in `doc/contributors/design/` becomes a test that fails when the requirement is broken.
 - Ruby only, packaged with Fledge; native calls go through Fiddle, on every system (Fledge's runtimes ship it as a bundled gem; `Kernel#syscall` doesn't exist on macOS or Windows, and its call numbers differ between Linux processors). Another language needs a reason only it can meet, written in its design page.
 - Reuse before you build. Before writing a parser, a checker, or a helper, look for reliable code that exists: the standard library, Ruby's bundled gems, maintained gems. Write new code only with a written reason.
-- Every file starts with an SPDX header, copyright `2026 setdef <kerrick@setdef.com>`: `MIT` for code, `CC-BY-SA-4.0` for documentation. In Ruby, wrap it in `#--` and `#++` to keep it out of RDoc output.
+- No file carries an SPDX header. `REUSE.toml` declares each file's copyright and license: `MIT` for code and configuration, `CC-BY-4.0` for documentation.
 - Every line of Ruby is covered by tests that would stand up to mutation testing, and each test checks specific behavior. No mutation-testing tool runs in the gate until one exists for Ruby.
 - Value objects are `Data.define`, written `class Foo < Data.define(...)`, because RDoc skips the methods in a `Foo = Data.define(...) do` block and the coverage check never counts them; entities are classes.
 - Type every class and method in `.rbs`, with no `untyped`; `.rbs` files carry no comments. A `Data.define` subclass declares `class Foo < Data`, an `attr_reader` for each member, and `self.new` (and `self.[]` if used) with positional and keyword overloads, because `Data.new` returns `bot`.

@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Remove a runner or the server
 
 Take a host out of the pool, uninstall Proof from a computer, and delete what it kept. Removing a runner takes two steps: revoke it, so the server no longer trusts it, then uninstall it on its host.

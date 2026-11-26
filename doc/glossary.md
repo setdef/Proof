@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Glossary
 
 In Proof's documentation, commands, and messages, each idea has one word. This page defines each word, says what other tools call the same idea, and lists the words to avoid for it, with the reason. Each word in **bold** inside a definition is defined on this page.

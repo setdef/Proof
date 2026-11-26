@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Server design
 
 What the server must guarantee, and the traps known so far. How to meet each requirement is the implementer's choice. The decision to place runs without an external scheduler is [ADR 0002](../decisions/0002-proof-places-runs-itself-with-no-external-scheduler.md); keeping the server to these few rules is part of that decision.

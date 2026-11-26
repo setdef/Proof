@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Run Android emulators and iOS Simulators
 
 Run a mobile app's tests on an emulator or a Simulator. Android emulators need a Linux host with KVM; iOS Simulators need a Mac with Xcode.

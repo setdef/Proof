@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Run a task on several operating systems
 
 Once a pool has hosts with more than one operating system, a task can run on any of them. This guide makes a project's setup work on Linux, macOS, and Windows alike, and says where each task works, so Proof never places a run where it can't succeed.

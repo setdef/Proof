@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-#--
-# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-# SPDX-License-Identifier: MIT
-#++
-
 require "minitest/test_task"
 
 # Clear the default test task created by Minitest::TestTask if it exists

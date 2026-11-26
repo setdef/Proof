@@ -1,15 +1,9 @@
 # frozen_string_literal: true
 
-#--
-# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-# SPDX-License-Identifier: MIT
-#++
-
 require "inch/rake"
 require "rubocop/rake_task"
 require "rubycritic/rake_task"
 require_relative("../critic_faults")
-require_relative("reuse_fixer")
 
 RuboCop::RakeTask.new
 
@@ -44,16 +38,6 @@ namespace :reuse do
   task :lint do
     sh("reuse lint")
   end
-
-  desc "Add SPDX headers to files missing them (per AGENTS.md standards)"
-  task :fix do
-    ReuseFixer.new.annotate_missing
-  end
-
-  desc "Normalize Ruby files: frozen_string_literal at top, SPDX in #--/#++ block"
-  task :normalize_ruby do
-    ReuseFixer.new.normalize_ruby
-  end
 end
 
 desc "Run the REUSE Tool to confirm REUSE compliance"
@@ -83,11 +67,8 @@ namespace :lint do
       sh("bundle exec rubocop --autocorrect-all")
     end
 
-    desc "Add SPDX headers and normalize Ruby file structure"
-    task reuse: %w[reuse:fix reuse:normalize_ruby]
-
     desc "Run all auto-fix tasks"
-    task all: %w[lint:fix:rubocop lint:fix:reuse]
+    task all: %w[lint:fix:rubocop]
   end
 end
 

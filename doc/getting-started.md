@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Getting started
 
 In this tutorial, we set up a Proof pool of one server and one Linux runner, and run a project's tests on it from the computer you work on. By the end, you'll have run a task on another host, seen a failing run and what `proof` does with it, and checked a commit apart from your uncommitted changes. It takes about 30 minutes, most of it waiting for downloads.

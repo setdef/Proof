@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Runner design
 
 What the runner must guarantee, and the traps between a design that looks right and one that is. How to meet each requirement is the implementer's choice. [How Proof works](../../how-proof-works.md) describes the behavior people see; this page is for the people building it. Each requirement here becomes an acceptance test.

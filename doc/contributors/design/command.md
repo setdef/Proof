@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Command design
 
 What the `proof` command must guarantee, and the traps known so far. Its interface is [`proof.usage.kdl`](../../../proof.usage.kdl); this page covers what the interface can't say. How to meet each requirement is the implementer's choice.

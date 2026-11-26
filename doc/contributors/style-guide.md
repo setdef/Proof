@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Documentation style guide
 
 The conventions Proof's documentation follows that general writing guidance doesn't settle. They apply to the README, everything under `doc/`, Proof's Agent Skill, and the text Proof itself prints.

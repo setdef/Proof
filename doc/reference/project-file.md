@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Project file reference
 
 The project file is `.config/proof.kdl`, at the root of a project's Git repository. It contains what only Proof needs to know about the project's **tasks**: which operating systems each one works on, which **labels** it needs a runner to have, the **resources** it requests, its time limit, the files to keep from its runs as **artifacts**, and the folders to keep between its runs as **caches**. It can also define tasks that the project's `mise.toml` doesn't have. Words in bold are defined in the [glossary](../glossary.md).

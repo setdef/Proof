@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Add a Windows PC
 
 Set up a runner on a Windows PC, and a second one in its WSL (the Windows Subsystem for Linux), so tasks that need Windows run there, and Linux tasks can use the PC too. Proof counts the two runners as one host, so together they never get more work than the PC can do.

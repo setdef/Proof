@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Teach your agents to use Proof
 
 A coding agent runs a project's tests the way its instructions say. Proof's Agent Skill tells it to run them with `proof`, how to read the result, and what to do when a run fails or waits. This guide installs the skill, and adds one line to a project's agent instructions.

@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # When a run fails or waits
 
 Find out why a run failed, waited, or never started, from what Proof prints, and what to put in an issue when that isn't enough.

@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Check every push
 
 Add a Git pre-push hook to a clone, so every `git push` from it runs a task on the commits being pushed, and Git stops the push when the run fails. Nothing leaves your computer that hasn't passed.

@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Plan for 1.0
 
 What 1.0 builds, in what order, and what it leaves out. Delete each item here once it's done.

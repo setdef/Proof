@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Keep and download artifacts
 
 Keep files a run makes, such as a built package or a test report, download them to the computer you work on, and give them to another run. The examples use [Lota](https://github.com/setdef/Lota), whose native extension builds only for the operating system it builds on.

@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Platform design
 
 What each operating system needs from a runner, and its traps. Where an item has been tested or comes from documentation, it says so. How to meet each requirement is the implementer's choice.

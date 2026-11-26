@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-#--
-# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-#
-# SPDX-License-Identifier: MIT
-#++
-
 require_relative("test_helper")
 
 # SimpleCov starts in test_helper, so it must load before the code it measures.

@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-#--
-# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-#
-# SPDX-License-Identifier: MIT
-#++
-
 source "https://rubygems.org"
 
 # Specify your gem's dependencies in proof.gemspec

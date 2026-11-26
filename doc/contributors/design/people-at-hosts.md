@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # People at hosts
 
 What a runner must do when a person uses its host, what is known about sensing that, and what must be proven before anything is built on it. How to meet each requirement is the implementer's choice.

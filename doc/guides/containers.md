@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Run containers in a run
 
 Use containers in a task, for a database or another service its tests need, on a Linux runner. Proof runs containers with rootless [Podman](https://podman.io/): no Docker daemon, and no root, so a container can't change the host it runs on.

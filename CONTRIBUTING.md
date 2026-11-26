@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Contributing
 
 This page shows how to set up a computer to work on Proof, run the checks a change has to pass, and regenerate the CLI reference when you change the CLI. It is for people who change Proof's code or docs; to use Proof on a project, start with the [README](README.md).
@@ -39,11 +34,11 @@ The command exits 0 when every check passes, with no errors and no warnings. It 
 | RuboCop | Any offense, with every cop on |
 | Steep | A type error, or `untyped` in a `.rbs` file |
 | RubyCritic | A file rated below A, a smell (from reek), duplication (from flay), or an overall score below 95. The failure names each file, its rating, and each smell |
-| REUSE | A file without an SPDX header |
+| REUSE | A file that `REUSE.toml` gives no copyright or license |
 | RDoc coverage | A public class, module, constant, or method with no documentation |
 | CLI spec | `usage lint` finding a fault, or a generated reference that differs from the spec |
 
-Run one check while you work: `bundle exec rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `usage:lint`, or `usage:references`. `bundle exec rake lint:fix` corrects the RuboCop offenses it can and adds missing SPDX headers.
+Run one check while you work: `bundle exec rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `usage:lint`, or `usage:references`. `bundle exec rake lint:fix` corrects the RuboCop offenses it can.
 
 Tests never reach the internet. Use local fakes.
 

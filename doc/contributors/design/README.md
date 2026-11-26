@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Design
 
 What each part of Proof must guarantee, and the traps known so far. These pages say what must hold and why, not how to build it. Each requirement becomes an acceptance test. The decisions they rest on are in [the decision log](../decisions/README.md), and the behavior people see is in [How Proof works](../../how-proof-works.md).

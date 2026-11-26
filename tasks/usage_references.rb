@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-#--
-# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-# SPDX-License-Identifier: MIT
-#++
-
 require "open3"
 
 # Finds the generated CLI references that no longer match the CLI spec.

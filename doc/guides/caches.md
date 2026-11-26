@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Keep caches between runs
 
 Make a project's runs faster by keeping what's slow to make again between them, and know when to start a run from nothing instead.

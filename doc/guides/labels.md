@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Give runs a GPU, KVM, or a desktop
 
 Some tasks need more than an operating system: a GPU, KVM for an Android emulator, or a desktop where windows can open. Each runner checks its host and offers a **label** for each of these it finds. A task asks for labels, and the server places its runs only on runners that offer all of them.

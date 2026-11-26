@@ -1,10 +1,5 @@
 # frozen_string_literal: true
 
-#--
-# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-# SPDX-License-Identifier: MIT
-#++
-
 # Declared lint exceptions with justifications.
 #
 # An exceptions file calls +allow+ once for each approved occurrence. A lint

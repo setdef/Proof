@@ -1,7 +1,7 @@
 ---
 name: proof
 description: Use before you run a project's tests, builds, linters, or any check, and before you call a change done or push it, in a project whose computer has `proof` installed, even when the user only says "run the tests" or "check it passes". Also use for work that needs another operating system, a GPU, a desktop that opens windows, KVM, containers, or an iOS Simulator; when a run fails, waits, or exits 75; and when you need a file a run built. Not for setting up a pool's server or hosts, which a human does from Proof's guides, and not for how commits are pushed or landed (use trunk-based-development).
-license: CC-BY-SA-4.0
+license: CC-BY-4.0
 compatibility: Needs the proof command on PATH, signed in to a pool with `proof login`.
 ---
 

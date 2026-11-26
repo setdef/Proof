@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Add a Mac
 
 Set up a runner on a Mac with Apple silicon, so tasks that need macOS run there. A Mac runner starts when the Mac starts, with nobody signed in, and runs work that needs no window, such as builds, unit tests, and iOS Simulator tests, from the moment setup ends. To also run tasks that open windows, the runner's account needs a signed-in session, which this guide sets up at the end.

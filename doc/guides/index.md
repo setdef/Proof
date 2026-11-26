@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Guides
 
 Each guide does one job, from a pool that already has a server and one runner. If you don't have that yet, start with [Getting started](../getting-started.md). For every command and setting, see the [command reference](../reference/cli.md), the [project file reference](../reference/project-file.md), and the [pool file reference](../reference/pool-file.md).

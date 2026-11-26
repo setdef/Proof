@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-#--
-# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-#
-# SPDX-License-Identifier: MIT
-#++
-
 require_relative("proof/version")
 
 # Runs your project's tests and builds on your spare computers.

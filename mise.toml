@@ -1,6 +1,3 @@
-# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-# SPDX-License-Identifier: MIT
-
 # mise 2026.8.9 and later trust the configuration that `mise install` and
 # `mise exec` load, so a computer that has never trusted this folder runs
 # them with no prompt. An older mise stops at the trust prompt or at a key it

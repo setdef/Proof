@@ -1,11 +1,5 @@
 # frozen_string_literal: true
 
-#--
-# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-#
-# SPDX-License-Identifier: MIT
-#++
-
 Gem::Specification.new do |spec|
   spec.name = "proof"
   # Bundler evaluates this file before the tests start SimpleCov, so it reads

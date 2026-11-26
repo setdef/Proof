@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Decisions
 
 The architectural decisions Proof rests on, one per record. Each record says what was decided, the options weighed, and why the others lost. How each part works is in the documents the records point to, not here.

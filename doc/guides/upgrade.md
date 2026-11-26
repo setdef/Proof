@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Upgrade the pool
 
 Upgrade every part of a pool to a new version of Proof. You upgrade the server; the runners follow it; and you upgrade the `proof` command where you work.

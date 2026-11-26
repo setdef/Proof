@@ -1,6 +1,3 @@
-# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-# SPDX-License-Identifier: MIT
-
 # The gate (`bundle exec rake`) on Linux and macOS, for every push to trunk.
 # Windows joins when mise.toml installs Ruby there.
 name: CI

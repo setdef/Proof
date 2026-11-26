@@ -1,8 +1,3 @@
-<!--
-  SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
-  SPDX-License-Identifier: CC-BY-SA-4.0
--->
-
 # Share a host with the person who uses it
 
 Most hosts are someone's computer first. This guide sets how much of a host Proof keeps free for a person using it, and explains what runs do while they're there, so the person can work, or play, without noticing Proof.
