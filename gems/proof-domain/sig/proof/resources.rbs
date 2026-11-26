@@ -1,0 +1,80 @@
+module Proof
+  # The CPUs and memory a task requests.
+  #
+  # The server places a run only where a host has the resources free, and the
+  # runner holds the run to its memory request. A project file writes memory
+  # as text, `"512MB"` or `"8GB"`, and the server compares amounts. Left as
+  # text, `"1GB"` and `"1024MB"` look like two requests.
+  #
+  # This class reads a size into whole megabytes, counting 1 GB as 1,024 MB,
+  # and raises unless the CPUs are a whole number from 1 and the memory is a
+  # size. Ask a request whether it fits within what a host has free.
+  #
+  # Use it for a task's request, a flag's request, and a host's free amounts.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # asked = Proof::Resources.request(cpus: 4, memory: "8GB")
+  # asked.megabytes # => 8192
+  # asked.fits_within?(Proof::Resources.request(cpus: 8, memory: "16GB")) # => true
+  # asked.fits_within?(Proof::Resources.request(cpus: 2, memory: "16GB")) # => false
+  # ```
+  #
+  # A size in gigabytes and the same size in megabytes are one request:
+  #
+  # ```ruby
+  # Proof::Resources.request(cpus: 1, memory: "1GB") == Proof::Resources.request(cpus: 1, memory: "1024MB") # => true
+  # ```
+  #
+  # A request needs at least 1 CPU, and a size has no space and no other unit:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidResourcesError
+  # Proof::Resources.request(cpus: 0, memory: "8 GB")
+  # ```
+  class Resources < Data
+    # The number of CPUs, a whole number from 1.
+    attr_reader cpus: Integer
+
+    # The memory in megabytes, a whole number from 0.
+    attr_reader megabytes: Integer
+
+    def self.new: (cpus: Integer, megabytes: Integer) -> instance
+                | (Integer cpus, Integer megabytes) -> instance
+
+    # Builds a request from CPUs and a memory size as a project file writes it.
+    # It raises `Proof::InvalidResourcesError` unless `memory` is whole digits
+    # then `MB` or `GB`, in capitals and with nothing else, such as `"512MB"`,
+    # `"8GB"`, or `"0GB"`. A number, `nil`, `"8 GB"`, `"8gb"`, and `"1.5GB"`
+    # raise.
+    #
+    # - `cpus`: Integer, a whole number from 1.
+    # - `memory`: String, such as `"4GB"`.
+    #
+    # ```ruby
+    # Proof::Resources.request(cpus: 2, memory: "512MB").megabytes # => 512
+    # ```
+    def self.request: (cpus: Integer, memory: String) -> Resources
+
+    # Builds resources from CPUs and megabytes, and raises
+    # `Proof::InvalidResourcesError` unless `cpus` is an Integer from 1 and
+    # `megabytes` is an Integer from 0.
+    #
+    # - `cpus`: Integer, a whole number from 1.
+    # - `megabytes`: Integer, a whole number from 0.
+    def initialize: (cpus: Integer, megabytes: Integer) -> void
+
+    # Whether these resources fit within `available`: no more CPUs and no
+    # more memory than it has. Equal amounts fit.
+    #
+    # - `available`: Resources, what a host has free.
+    #
+    # ```ruby
+    # asked = Proof::Resources.request(cpus: 2, memory: "4GB")
+    # asked.fits_within?(Proof::Resources.request(cpus: 2, memory: "4GB")) # => true
+    # asked.fits_within?(Proof::Resources.request(cpus: 2, memory: "3GB")) # => false
+    # ```
+    def fits_within?: (Resources available) -> bool
+  end
+end

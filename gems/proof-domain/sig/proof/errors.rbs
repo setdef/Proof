@@ -25,4 +25,9 @@ module Proof
   # Raised when a set of labels is built from anything but labels.
   class InvalidLabelSetError < Error
   end
+
+  # Raised when a number of CPUs isn't a whole number from 1, or an amount of
+  # memory isn't a size such as `"512MB"` or `"8GB"`.
+  class InvalidResourcesError < Error
+  end
 end

@@ -12,4 +12,7 @@ module Proof
 
   class InvalidLabelSetError < Error
   end
+
+  class InvalidResourcesError < Error
+  end
 end
