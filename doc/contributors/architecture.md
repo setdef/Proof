@@ -177,10 +177,49 @@ Options weighed:
 
 ### Certificates
 
-The server makes an EC P-256 key with Ruby's `openssl`. The command and every runner pin the SHA-256 of the server's public key, the form Git's `http.pinnedPubkey` takes, so the command, the runners, and Git use one fingerprint. How a new command or runner first learns the fingerprint is still open in [issue #17](https://github.com/setdef/Proof/issues/17).
+The server makes an EC P-256 key with Ruby's `openssl`. The command and every runner pin the SHA-256 of the server's public key, the form Git's `http.pinnedPubkey` takes, so the command, the runners, and Git use one fingerprint.
+
+A new command or runner first learns the fingerprint from a slow tag, keyed by the one-time code, over the server's key fingerprint. The tag uses scrypt, HKDF, ECDH, and AES-GCM from Ruby's `openssl`. The codes' format, the commands, and what a person types don't change. The reasoning is in [issue #17](https://github.com/setdef/Proof/issues/17).
+
+Sign-in:
+
+1. For each sign-in code, the server makes a fresh random nonce and keeps `T = scrypt(code, salt: "proof login", nonce, F)`, where `F` is the SHA-256 of its public key.
+2. `proof login` connects with TLS 1.3 only and takes `F'` from the leaf certificate's key.
+3. It fetches each `(nonce, T)` and checks for one that matches over `F'`.
+4. Only then does it pin `F'` and send the code, which counts toward its 5 attempts.
+
+A runner:
+
+1. The runner makes its code `c` and a key pair `R`. It never sends `c`.
+2. Its join request carries `R` and `J = scrypt(c, salt: "proof join", R)`.
+3. `proof runner approve c`, on a computer already signed in, finds the pending request that matches `J`. It computes `S = scrypt(c, salt: "proof server", F, R)` itself, so `c` never reaches the server.
+4. The server sends the runner its token encrypted to `R`, along with `S`. The runner pins `F'` only if `S` matches over the key it saw.
+5. The runner forgets `c` 15 minutes after making it.
+
+Rules:
+
+- Every salt field is length-prefixed.
+- The scrypt parameters (N=2^17, r=8, p=1, 32 bytes) are constants in Proof, never read from a server.
+- There is no fallback to trust on first use.
+- Nothing re-pins by itself after a key change.
+- Pending join requests are capped and expire after 15 minutes.
+- Codes are normalized before scrypt and compared in constant time.
+
+An adversarial review found these flaws in the first draft, and the rules and steps above fix them:
+
+- A relayed join request handed over a runner token.
+- One salt per server allowed a table built ahead of time.
+- A runner kept waiting could be searched for as long as an attacker liked.
+- Anonymous join requests forced the server to compute scrypt.
+
+A forged tag needs the code. Searching all 2^40 codes for one tag takes about 10,590 years on one M1 Max core, at a measured 0.304 s and 128 MiB per tag, and each code lasts 15 minutes. A fresh salt per code stops any table built ahead of time. A relayed join request gets the attacker nothing it can read, because the token is encrypted to the runner's key.
 
 Options weighed:
 
+- SPAKE2 (RFC 9382), bound to the TLS exporter (RFC 9266): it leaves no offline target at all. It lost because no maintained Ruby implementation exists. Proof would have to write its own elliptic-curve protocol on `OpenSSL::PKey::EC::Point`, whose constant-time behavior on every platform Proof ships to is unverified. Revisit this if a maintained implementation appears, or if measured GPU rates bring a code's search under hours.
+- TLS with a pre-shared key: Ruby's `SSLContext` has no PSK support, and RFC 8446 says a low-entropy key can be searched from an observed handshake.
+- An HMAC tag: 2^40 HMACs take about 38 days on one core.
+- A fingerprint a person compares, or a longer code: people skip the comparison, agents can't make it, and a long code can't be typed from a text console.
 - The `localhost` gem: puts an IP address in a DNS-name field, adds a separate certificate authority, and writes under `~/.local/state`. Falcon's TLS setup loads only RSA keys.
 
 ### Native calls
