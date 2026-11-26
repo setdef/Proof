@@ -30,7 +30,7 @@ Proof sends code as Git commits, through the server, and never through the proje
 2. **`proof` pushes the commit to the server's copy of the project,** under a temporary name. Only objects the server doesn't have travel, so a change of one line sends a few kilobytes, not the project. Every clone of one repository shares that copy, because Proof identifies a project by its repository's root commit.
 3. **The runner fetches the commit from the server** into the workspace. It counts the commit as fetched only once it has every object the commit reaches, so a fetch that was cut off can't leave a commit without its files.
 
-Because the code travels as Git, the runner gets the same files you have, with the same file modes, symbolic links, and line endings as Git records them. A run of a commit has its history too, so a task that compares with `HEAD~1` or runs `git log` works. Submodules arrive at the commits the commit records; uncommitted changes inside a submodule are not sent.
+Because the code travels as Git, the runner gets the same files you have, with the same file modes, symbolic links, and line endings as Git records them. A run of a commit has its history too, so a task that compares with `HEAD~1` or runs `git log` works. Submodules arrive at the commits the commit records. For a run of your working tree, that is the commit each submodule's checkout is at, so a submodule bump you haven't committed is tested too. Uncommitted changes inside a submodule are not sent.
 
 The project's forge never sees any of this. A runner needs no credentials for GitHub, and nothing you check is pushed anywhere you didn't push it yourself.
 
