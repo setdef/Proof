@@ -1,0 +1,24 @@
+module Proof
+  module CommandLine
+    # What `proof runner start` was asked to do.
+    #
+    # Starting this computer's runner again takes nothing but the command.
+    #
+    # This class stands for `proof runner start` itself, so the code that runs the command
+    # is chosen by the value's class and never by the words.
+    #
+    # Use it as the result of parsing `proof runner start`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # Proof::CommandLine::RunnerStartCommand.new == Proof::CommandLine::RunnerStartCommand.new # => true
+    # ```
+    class RunnerStartCommand < Data
+      def self.new: () -> instance
+
+      # Builds the value of a `proof runner start` command line, which has no flags or arguments of its own.
+      def initialize: () -> void
+    end
+  end
+end

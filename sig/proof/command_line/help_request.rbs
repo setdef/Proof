@@ -1,0 +1,33 @@
+module Proof
+  module CommandLine
+    # A command line that asks for help.
+    #
+    # `-h` or `--help` on any command, or on `proof` itself, asks to read how
+    # to use it, and the answer has to be the help of that command. Parsed as
+    # a command with a flag, it would run the command.
+    #
+    # This class holds the words that name the command, and nothing else, so
+    # nothing runs.
+    #
+    # Use it as the result of parsing a command line with `-h` or `--help`, to
+    # print that command's help.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # Proof::CommandLine::HelpRequest.new(path: ["runner", "setup"]).path # => ["runner", "setup"]
+    # ```
+    class HelpRequest < Data
+      # The words that name the command, such as `["runner", "setup"]`. Empty for `proof` itself.
+      attr_reader path: Array[String]
+
+      def self.new: (path: Array[String]) -> instance
+                  | (Array[String] path) -> instance
+
+      # Builds a request for the help of the command at `path`.
+      #
+      # - `path`: Array of String, the words that name the command.
+      def initialize: (path: Array[String]) -> void
+    end
+  end
+end

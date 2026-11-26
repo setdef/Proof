@@ -1,0 +1,35 @@
+module Proof
+  module CommandLine
+    # What `proof login` was asked to do.
+    #
+    # Signing in needs the server's address, and may read the one-time code from a file. Proof never takes a secret as an argument.
+    #
+    # This class holds each flag and argument of `proof login` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof login`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::LoginCommand.new(server: "server.home.arpa", code_file: nil)
+    # command.server # => "server.home.arpa"
+    # ```
+    class LoginCommand < Data
+      # The server's address, as typed.
+      attr_reader server: String
+
+      # The file to read the one-time code from, or `nil` to ask for it.
+      attr_reader code_file: String?
+
+      def self.new: (server: String, code_file: String?) -> instance
+                  | (String server, String? code_file) -> instance
+
+      # Builds the value of a `proof login` command line from what the words and flags gave.
+      #
+      # - `server`: String, the server's address, as typed.
+      # - `code_file`: String?, the file to read the one-time code from, or `nil` to ask for it.
+      def initialize: (server: String, code_file: String?) -> void
+    end
+  end
+end

@@ -1,0 +1,39 @@
+module Proof
+  module CommandLine
+    # A task's name with the words that go to it.
+    #
+    # `proof run lint -- --fix ::: test -- --seed 1234` runs two tasks in one
+    # run, and each takes its own words. Held in one list of strings, the two
+    # tasks' words would run together, and nothing would say where the first
+    # task ends.
+    #
+    # This class pairs a task's name with its words, as they were typed.
+    #
+    # Use it for each task of a `proof run`, so the words of one task never
+    # reach another.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # task = Proof::CommandLine::TaskWords.new(name: "lint", words: ["--fix"])
+    # task.name # => "lint"
+    # task.words # => ["--fix"]
+    # ```
+    class TaskWords < Data
+      # The task's name, as typed.
+      attr_reader name: String
+
+      # The words that go to the task as they are, in order. Empty when none were given.
+      attr_reader words: Array[String]
+
+      def self.new: (name: String, words: Array[String]) -> instance
+                  | (String name, Array[String] words) -> instance
+
+      # Builds a task's words.
+      #
+      # - `name`: String, the task's name, as typed.
+      # - `words`: Array of String, the words for the task, as typed.
+      def initialize: (name: String, words: Array[String]) -> void
+    end
+  end
+end

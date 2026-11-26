@@ -11,5 +11,28 @@ module Proof
   # says what is wrong. It starts no run, reads no file, and makes no network
   # call.
   module CommandLine
+    # The value of any command `proof` takes: one class for each command.
+    type command = RunCommand
+                 | WatchCommand
+                 | LogsCommand
+                 | CancelCommand
+                 | DownloadCommand
+                 | StatusCommand
+                 | LoginCommand
+                 | LogoutCommand
+                 | VerifyCommand
+                 | SkillInstallCommand
+                 | ServerSetupCommand
+                 | ServerUpgradeCommand
+                 | ServerUninstallCommand
+                 | RunnerSetupCommand
+                 | RunnerApproveCommand
+                 | RunnerStartCommand
+                 | RunnerStopCommand
+                 | RunnerListCommand
+                 | RunnerRevokeCommand
+                 | RunnerUninstallCommand
+                 | HookInstallCommand
+                 | HookUninstallCommand
   end
 end

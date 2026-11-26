@@ -1,0 +1,31 @@
+module Proof
+  module CommandLine
+    # What `proof skill install` was asked to do.
+    #
+    # Installing the Agent Skill may go to a skills folder other than the default.
+    #
+    # This class holds each flag and argument of `proof skill install` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof skill install`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::SkillInstallCommand.new(to: nil)
+    # command.to # => nil
+    # ```
+    class SkillInstallCommand < Data
+      # The skills folder to install into, or `nil` for the default.
+      attr_reader to: String?
+
+      def self.new: (to: String?) -> instance
+                  | (String? to) -> instance
+
+      # Builds the value of a `proof skill install` command line from what the words and flags gave.
+      #
+      # - `to`: String?, the skills folder to install into, or `nil` for the default.
+      def initialize: (to: String?) -> void
+    end
+  end
+end

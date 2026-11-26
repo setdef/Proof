@@ -1,0 +1,31 @@
+module Proof
+  module CommandLine
+    # What `proof runner approve` was asked to do.
+    #
+    # Approving a runner needs the code it printed, or lists the runners that wait.
+    #
+    # This class holds each flag and argument of `proof runner approve` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof runner approve`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::RunnerApproveCommand.new(code: nil)
+    # command.code # => nil
+    # ```
+    class RunnerApproveCommand < Data
+      # The code the runner printed, as typed, or `nil` to list the runners waiting.
+      attr_reader code: String?
+
+      def self.new: (code: String?) -> instance
+                  | (String? code) -> instance
+
+      # Builds the value of a `proof runner approve` command line from what the words and flags gave.
+      #
+      # - `code`: String?, the code the runner printed, as typed, or `nil` to list the runners waiting.
+      def initialize: (code: String?) -> void
+    end
+  end
+end

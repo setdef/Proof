@@ -1,0 +1,31 @@
+module Proof
+  module CommandLine
+    # What `proof status` was asked to do.
+    #
+    # Showing the pool's status has one choice: the text or JSON.
+    #
+    # This class holds each flag and argument of `proof status` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof status`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::StatusCommand.new(json: false)
+    # command.json # => false
+    # ```
+    class StatusCommand < Data
+      # Whether to print the status as JSON.
+      attr_reader json: bool
+
+      def self.new: (json: bool) -> instance
+                  | (bool json) -> instance
+
+      # Builds the value of a `proof status` command line from what the words and flags gave.
+      #
+      # - `json`: bool, whether to print the status as JSON.
+      def initialize: (json: bool) -> void
+    end
+  end
+end

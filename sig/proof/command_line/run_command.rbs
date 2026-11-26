@@ -1,0 +1,95 @@
+module Proof
+  module CommandLine
+    # What `proof run` was asked to do.
+    #
+    # Running a task or a script takes many words: the tasks and their words, the operating systems, the labels, the commit, the resources, the artifacts to keep and to take in, and whether to wait. Held as a list of strings, every use case would read them again, and a typo in one would pass unnoticed.
+    #
+    # This class holds each flag and argument of `proof run` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof run`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::RunCommand.new(tasks: [Proof::CommandLine::TaskWords.new(name: "test", words: [])], script: nil, os: ["linux"], label: [], commit: nil, project: nil, cpus: nil, memory: nil, timeout: nil, empty: false, keep: [], input: [], input_file: [], download: false, output: nil, detach: false, json: false)
+    # command.tasks # => [Proof::CommandLine::TaskWords.new(name: "test", words: [])]
+    # ```
+    class RunCommand < Data
+      # The tasks to run, each with its words, in the order given. Empty when `script` is given.
+      attr_reader tasks: Array[TaskWords]
+
+      # The script file to run in place of a task, or `-` for standard input, or `nil` when a task is given.
+      attr_reader script: String?
+
+      # The operating systems to run on, one run for each, as `--os` gave them.
+      attr_reader os: Array[String]
+
+      # The labels a runner must have, as `--label` gave them.
+      attr_reader label: Array[String]
+
+      # The commit to send in place of the working tree, or `nil`.
+      attr_reader commit: String?
+
+      # The folder whose Git repository is the project, or `nil`.
+      attr_reader project: String?
+
+      # The CPUs to request, as typed, or `nil`.
+      attr_reader cpus: String?
+
+      # The memory to request, as typed, such as `"8GB"`, or `nil`.
+      attr_reader memory: String?
+
+      # The time limit, as typed, such as `"30m"`, or `nil`.
+      attr_reader timeout: String?
+
+      # Whether to start in an empty workspace.
+      attr_reader empty: bool
+
+      # The patterns of the files to keep as artifacts, in addition to the task's.
+      attr_reader keep: Array[String]
+
+      # The runs whose artifacts this run takes in.
+      attr_reader input: Array[String]
+
+      # The files and folders from this computer this run takes in.
+      attr_reader input_file: Array[String]
+
+      # Whether to download the artifacts when the run succeeds.
+      attr_reader download: bool
+
+      # The folder to download artifacts into, or `nil`.
+      attr_reader output: String?
+
+      # Whether to start the run and exit without waiting for it.
+      attr_reader detach: bool
+
+      # Whether to print one JSON object for each run in place of the result lines.
+      attr_reader json: bool
+
+      def self.new: (tasks: Array[TaskWords], script: String?, os: Array[String], label: Array[String], commit: String?, project: String?, cpus: String?, memory: String?, timeout: String?, empty: bool, keep: Array[String], input: Array[String], input_file: Array[String], download: bool, output: String?, detach: bool, json: bool) -> instance
+                  | (Array[TaskWords] tasks, String? script, Array[String] os, Array[String] label, String? commit, String? project, String? cpus, String? memory, String? timeout, bool empty, Array[String] keep, Array[String] input, Array[String] input_file, bool download, String? output, bool detach, bool json) -> instance
+
+      # Builds the value of a `proof run` command line from what the words and flags gave.
+      #
+      # - `tasks`: Array[TaskWords], the tasks to run, each with its words, in the order given. Empty when `script` is given.
+      # - `script`: String?, the script file to run in place of a task, or `-` for standard input, or `nil` when a task is given.
+      # - `os`: Array[String], the operating systems to run on, one run for each, as `--os` gave them.
+      # - `label`: Array[String], the labels a runner must have, as `--label` gave them.
+      # - `commit`: String?, the commit to send in place of the working tree, or `nil`.
+      # - `project`: String?, the folder whose Git repository is the project, or `nil`.
+      # - `cpus`: String?, the CPUs to request, as typed, or `nil`.
+      # - `memory`: String?, the memory to request, as typed, such as `"8GB"`, or `nil`.
+      # - `timeout`: String?, the time limit, as typed, such as `"30m"`, or `nil`.
+      # - `empty`: bool, whether to start in an empty workspace.
+      # - `keep`: Array[String], the patterns of the files to keep as artifacts, in addition to the task's.
+      # - `input`: Array[String], the runs whose artifacts this run takes in.
+      # - `input_file`: Array[String], the files and folders from this computer this run takes in.
+      # - `download`: bool, whether to download the artifacts when the run succeeds.
+      # - `output`: String?, the folder to download artifacts into, or `nil`.
+      # - `detach`: bool, whether to start the run and exit without waiting for it.
+      # - `json`: bool, whether to print one JSON object for each run in place of the result lines.
+      def initialize: (tasks: Array[TaskWords], script: String?, os: Array[String], label: Array[String], commit: String?, project: String?, cpus: String?, memory: String?, timeout: String?, empty: bool, keep: Array[String], input: Array[String], input_file: Array[String], download: bool, output: String?, detach: bool, json: bool) -> void
+    end
+  end
+end

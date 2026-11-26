@@ -1,0 +1,35 @@
+module Proof
+  module CommandLine
+    # What `proof hook install` was asked to do.
+    #
+    # Installing the pre-push hook needs the task it runs, and replaces an existing hook only when forced.
+    #
+    # This class holds each flag and argument of `proof hook install` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof hook install`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::HookInstallCommand.new(task: "test", force: false)
+    # command.task # => "test"
+    # ```
+    class HookInstallCommand < Data
+      # The task the hook runs, as typed.
+      attr_reader task: String
+
+      # Whether to replace an existing pre-push hook.
+      attr_reader force: bool
+
+      def self.new: (task: String, force: bool) -> instance
+                  | (String task, bool force) -> instance
+
+      # Builds the value of a `proof hook install` command line from what the words and flags gave.
+      #
+      # - `task`: String, the task the hook runs, as typed.
+      # - `force`: bool, whether to replace an existing pre-push hook.
+      def initialize: (task: String, force: bool) -> void
+    end
+  end
+end

@@ -1,0 +1,39 @@
+module Proof
+  module CommandLine
+    # What `proof logs` was asked to do.
+    #
+    # Reading a run's output again needs the run, and sometimes only its last lines.
+    #
+    # This class holds each flag and argument of `proof logs` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof logs`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::LogsCommand.new(run: "m3d8q", tail: nil, no_pager: false)
+    # command.run # => "m3d8q"
+    # ```
+    class LogsCommand < Data
+      # The run's ID, or its last five characters, as typed.
+      attr_reader run: String
+
+      # How many of the last lines to print, as typed, or `nil` for all.
+      attr_reader tail: String?
+
+      # Whether to print to standard output without a pager.
+      attr_reader no_pager: bool
+
+      def self.new: (run: String, tail: String?, no_pager: bool) -> instance
+                  | (String run, String? tail, bool no_pager) -> instance
+
+      # Builds the value of a `proof logs` command line from what the words and flags gave.
+      #
+      # - `run`: String, the run's ID, or its last five characters, as typed.
+      # - `tail`: String?, how many of the last lines to print, as typed, or `nil` for all.
+      # - `no_pager`: bool, whether to print to standard output without a pager.
+      def initialize: (run: String, tail: String?, no_pager: bool) -> void
+    end
+  end
+end

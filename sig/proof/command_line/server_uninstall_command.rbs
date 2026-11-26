@@ -1,0 +1,31 @@
+module Proof
+  module CommandLine
+    # What `proof server uninstall` was asked to do.
+    #
+    # Uninstalling the server deletes every run's record, so it asks first unless it is forced.
+    #
+    # This class holds each flag and argument of `proof server uninstall` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof server uninstall`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::ServerUninstallCommand.new(force: false)
+    # command.force # => false
+    # ```
+    class ServerUninstallCommand < Data
+      # Whether to uninstall without asking first.
+      attr_reader force: bool
+
+      def self.new: (force: bool) -> instance
+                  | (bool force) -> instance
+
+      # Builds the value of a `proof server uninstall` command line from what the words and flags gave.
+      #
+      # - `force`: bool, whether to uninstall without asking first.
+      def initialize: (force: bool) -> void
+    end
+  end
+end

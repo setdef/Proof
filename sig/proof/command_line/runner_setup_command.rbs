@@ -1,0 +1,47 @@
+module Proof
+  module CommandLine
+    # What `proof runner setup` was asked to do.
+    #
+    # Setting up a runner needs the server's address, and takes a name, a desktop session, a Windows-only setup, and a dry run.
+    #
+    # This class holds each flag and argument of `proof runner setup` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof runner setup`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::RunnerSetupCommand.new(server: "server.home.arpa", name: nil, desktop: false, no_wsl: false, dry_run: false)
+    # command.server # => "server.home.arpa"
+    # ```
+    class RunnerSetupCommand < Data
+      # The server's address, as typed.
+      attr_reader server: String
+
+      # The name for the runner, or `nil` for the computer's network name.
+      attr_reader name: String?
+
+      # Whether to run the runner in the signed-in session of this account.
+      attr_reader desktop: bool
+
+      # Whether to set up the Windows runner only, without one in WSL.
+      attr_reader no_wsl: bool
+
+      # Whether to list the changes and make none.
+      attr_reader dry_run: bool
+
+      def self.new: (server: String, name: String?, desktop: bool, no_wsl: bool, dry_run: bool) -> instance
+                  | (String server, String? name, bool desktop, bool no_wsl, bool dry_run) -> instance
+
+      # Builds the value of a `proof runner setup` command line from what the words and flags gave.
+      #
+      # - `server`: String, the server's address, as typed.
+      # - `name`: String?, the name for the runner, or `nil` for the computer's network name.
+      # - `desktop`: bool, whether to run the runner in the signed-in session of this account.
+      # - `no_wsl`: bool, whether to set up the Windows runner only, without one in WSL.
+      # - `dry_run`: bool, whether to list the changes and make none.
+      def initialize: (server: String, name: String?, desktop: bool, no_wsl: bool, dry_run: bool) -> void
+    end
+  end
+end

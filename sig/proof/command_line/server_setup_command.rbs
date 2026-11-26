@@ -1,0 +1,31 @@
+module Proof
+  module CommandLine
+    # What `proof server setup` was asked to do.
+    #
+    # Setting up the server may be a dry run that changes nothing.
+    #
+    # This class holds each flag and argument of `proof server setup` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof server setup`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::ServerSetupCommand.new(dry_run: false)
+    # command.dry_run # => false
+    # ```
+    class ServerSetupCommand < Data
+      # Whether to list the changes and make none.
+      attr_reader dry_run: bool
+
+      def self.new: (dry_run: bool) -> instance
+                  | (bool dry_run) -> instance
+
+      # Builds the value of a `proof server setup` command line from what the words and flags gave.
+      #
+      # - `dry_run`: bool, whether to list the changes and make none.
+      def initialize: (dry_run: bool) -> void
+    end
+  end
+end

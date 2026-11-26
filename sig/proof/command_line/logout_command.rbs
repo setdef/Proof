@@ -1,0 +1,24 @@
+module Proof
+  module CommandLine
+    # What `proof logout` was asked to do.
+    #
+    # Signing out takes nothing but the command.
+    #
+    # This class stands for `proof logout` itself, so the code that runs the command
+    # is chosen by the value's class and never by the words.
+    #
+    # Use it as the result of parsing `proof logout`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # Proof::CommandLine::LogoutCommand.new == Proof::CommandLine::LogoutCommand.new # => true
+    # ```
+    class LogoutCommand < Data
+      def self.new: () -> instance
+
+      # Builds the value of a `proof logout` command line, which has no flags or arguments of its own.
+      def initialize: () -> void
+    end
+  end
+end

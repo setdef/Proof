@@ -1,0 +1,37 @@
+module Proof
+  module CommandLine
+    # A command line that asks `proof` to do something: the command, and the global flags.
+    #
+    # The use cases run a command, and the composition root decides how much to
+    # print from the global flags. Passed as two loose values, a use case could
+    # take the flags for a command's own.
+    #
+    # This class holds the two together, so a command line parses into one value.
+    #
+    # Use it as the result of parsing every command line but a request for help.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # flags = Proof::CommandLine::GlobalFlags.new(quiet: false, debug: false, no_color: false, no_input: false)
+    # invocation = Proof::CommandLine::Invocation.new(global: flags, command: Proof::CommandLine::LogoutCommand.new)
+    # invocation.command # => Proof::CommandLine::LogoutCommand.new
+    # ```
+    class Invocation < Data
+      # The global flags.
+      attr_reader global: GlobalFlags
+
+      # The command, as the value of its own class.
+      attr_reader command: command
+
+      def self.new: (global: GlobalFlags, command: command) -> instance
+                  | (GlobalFlags global, command command) -> instance
+
+      # Builds an invocation.
+      #
+      # - `global`: GlobalFlags, the flags that work on every command.
+      # - `command`: the command's value, such as `RunCommand`.
+      def initialize: (global: GlobalFlags, command: command) -> void
+    end
+  end
+end

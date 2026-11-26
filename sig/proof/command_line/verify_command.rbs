@@ -1,0 +1,31 @@
+module Proof
+  module CommandLine
+    # What `proof verify` was asked to do.
+    #
+    # Verifying the pool has one choice: the text or JSON.
+    #
+    # This class holds each flag and argument of `proof verify` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof verify`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::VerifyCommand.new(json: false)
+    # command.json # => false
+    # ```
+    class VerifyCommand < Data
+      # Whether to print each runner's result as JSON.
+      attr_reader json: bool
+
+      def self.new: (json: bool) -> instance
+                  | (bool json) -> instance
+
+      # Builds the value of a `proof verify` command line from what the words and flags gave.
+      #
+      # - `json`: bool, whether to print each runner's result as JSON.
+      def initialize: (json: bool) -> void
+    end
+  end
+end

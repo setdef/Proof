@@ -1,0 +1,31 @@
+module Proof
+  module CommandLine
+    # What `proof cancel` was asked to do.
+    #
+    # Canceling takes one run or several, each named by its ID or its last five characters.
+    #
+    # This class holds each flag and argument of `proof cancel` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof cancel`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::CancelCommand.new(runs: ["m3d8q"])
+    # command.runs # => ["m3d8q"]
+    # ```
+    class CancelCommand < Data
+      # The runs to cancel, each as typed, in the order given.
+      attr_reader runs: Array[String]
+
+      def self.new: (runs: Array[String]) -> instance
+                  | (Array[String] runs) -> instance
+
+      # Builds the value of a `proof cancel` command line from what the words and flags gave.
+      #
+      # - `runs`: Array[String], the runs to cancel, each as typed, in the order given.
+      def initialize: (runs: Array[String]) -> void
+    end
+  end
+end

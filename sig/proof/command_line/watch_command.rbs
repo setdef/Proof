@@ -1,0 +1,35 @@
+module Proof
+  module CommandLine
+    # What `proof watch` was asked to do.
+    #
+    # Coming back to a run needs its ID, which a person types in full or as its last five characters.
+    #
+    # This class holds each flag and argument of `proof watch` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof watch`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::WatchCommand.new(run: "m3d8q", json: false)
+    # command.run # => "m3d8q"
+    # ```
+    class WatchCommand < Data
+      # The run's ID, or its last five characters, as typed.
+      attr_reader run: String
+
+      # Whether to print the run's result as JSON when it ends.
+      attr_reader json: bool
+
+      def self.new: (run: String, json: bool) -> instance
+                  | (String run, bool json) -> instance
+
+      # Builds the value of a `proof watch` command line from what the words and flags gave.
+      #
+      # - `run`: String, the run's ID, or its last five characters, as typed.
+      # - `json`: bool, whether to print the run's result as JSON when it ends.
+      def initialize: (run: String, json: bool) -> void
+    end
+  end
+end

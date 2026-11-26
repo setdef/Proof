@@ -1,0 +1,46 @@
+module Proof
+  module CommandLine
+    # The flags that work on every command: `--quiet`, `--debug`, `--no-color`, and `--no-input`.
+    #
+    # Each of the four may come before or after any subcommand, and each
+    # changes what Proof prints or asks, not what it runs. Mixed into each
+    # command's own value, a command line with `-q` in one place and in another
+    # would mean two things.
+    #
+    # This class holds the four apart from the command, with each as a yes or no.
+    #
+    # Use it to decide how much to print, whether to use color, and whether to
+    # prompt, whichever command ran.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # flags = Proof::CommandLine::GlobalFlags.new(quiet: true, debug: false, no_color: false, no_input: false)
+    # flags.quiet # => true
+    # ```
+    class GlobalFlags < Data
+      # Whether to print only the task's output and the result lines.
+      attr_reader quiet: bool
+
+      # Whether to print what Proof does at each step, to standard error.
+      attr_reader debug: bool
+
+      # Whether to print no color.
+      attr_reader no_color: bool
+
+      # Whether to never prompt.
+      attr_reader no_input: bool
+
+      def self.new: (quiet: bool, debug: bool, no_color: bool, no_input: bool) -> instance
+                  | (bool quiet, bool debug, bool no_color, bool no_input) -> instance
+
+      # Builds the global flags.
+      #
+      # - `quiet`: bool, whether `-q` or `--quiet` was given.
+      # - `debug`: bool, whether `-d` or `--debug` was given.
+      # - `no_color`: bool, whether `--no-color` was given.
+      # - `no_input`: bool, whether `--no-input` was given.
+      def initialize: (quiet: bool, debug: bool, no_color: bool, no_input: bool) -> void
+    end
+  end
+end

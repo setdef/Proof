@@ -1,0 +1,43 @@
+module Proof
+  module CommandLine
+    # What `proof download` was asked to do.
+    #
+    # Downloading artifacts needs the run, and may name the artifacts and the folder.
+    #
+    # This class holds each flag and argument of `proof download` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof download`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::DownloadCommand.new(run: "m3d8q", patterns: [], output: nil, json: false)
+    # command.run # => "m3d8q"
+    # ```
+    class DownloadCommand < Data
+      # The run's ID, or its last five characters, as typed.
+      attr_reader run: String
+
+      # The patterns of the artifacts to download, or empty for all.
+      attr_reader patterns: Array[String]
+
+      # The folder to download into, or `nil` for the current one.
+      attr_reader output: String?
+
+      # Whether to print each downloaded file's path and size as JSON.
+      attr_reader json: bool
+
+      def self.new: (run: String, patterns: Array[String], output: String?, json: bool) -> instance
+                  | (String run, Array[String] patterns, String? output, bool json) -> instance
+
+      # Builds the value of a `proof download` command line from what the words and flags gave.
+      #
+      # - `run`: String, the run's ID, or its last five characters, as typed.
+      # - `patterns`: Array[String], the patterns of the artifacts to download, or empty for all.
+      # - `output`: String?, the folder to download into, or `nil` for the current one.
+      # - `json`: bool, whether to print each downloaded file's path and size as JSON.
+      def initialize: (run: String, patterns: Array[String], output: String?, json: bool) -> void
+    end
+  end
+end

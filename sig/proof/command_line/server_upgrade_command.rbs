@@ -1,0 +1,31 @@
+module Proof
+  module CommandLine
+    # What `proof server upgrade` was asked to do.
+    #
+    # Upgrading the server may be a dry run that installs nothing.
+    #
+    # This class holds each flag and argument of `proof server upgrade` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof server upgrade`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::ServerUpgradeCommand.new(dry_run: false)
+    # command.dry_run # => false
+    # ```
+    class ServerUpgradeCommand < Data
+      # Whether to say which version would be installed and install nothing.
+      attr_reader dry_run: bool
+
+      def self.new: (dry_run: bool) -> instance
+                  | (bool dry_run) -> instance
+
+      # Builds the value of a `proof server upgrade` command line from what the words and flags gave.
+      #
+      # - `dry_run`: bool, whether to say which version would be installed and install nothing.
+      def initialize: (dry_run: bool) -> void
+    end
+  end
+end

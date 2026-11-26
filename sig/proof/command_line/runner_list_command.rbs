@@ -1,0 +1,31 @@
+module Proof
+  module CommandLine
+    # What `proof runner list` was asked to do.
+    #
+    # Listing the runners has one choice: the text or JSON.
+    #
+    # This class holds each flag and argument of `proof runner list` as a value of one
+    # type, so the code that runs the command reads a field and never the words.
+    #
+    # Use it as the result of parsing `proof runner list`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # command = Proof::CommandLine::RunnerListCommand.new(json: false)
+    # command.json # => false
+    # ```
+    class RunnerListCommand < Data
+      # Whether to print the runners as JSON.
+      attr_reader json: bool
+
+      def self.new: (json: bool) -> instance
+                  | (bool json) -> instance
+
+      # Builds the value of a `proof runner list` command line from what the words and flags gave.
+      #
+      # - `json`: bool, whether to print the runners as JSON.
+      def initialize: (json: bool) -> void
+    end
+  end
+end
