@@ -25,6 +25,13 @@ One operating system on a **host**, together with the Proof program there that r
 - Elsewhere: called a runner in GitHub Actions and GitLab, and an agent in Buildkite and Jenkins.
 - Don't say: agent, which in Proof's docs always means a coding agent; node; worker; client, which in Nomad and BOINC means the program that does the work and elsewhere means the program that asks for it.
 
+### capacity
+
+The CPUs and memory a **runner** can use, which it reports to the **server**. A runner in a virtual machine, such as WSL, can have less than its **host**. A host's capacity is the most that any of its runners reports, of each.
+
+- Elsewhere: called capacity in Kubernetes, for a node's CPUs and memory.
+- Don't say: size, which Proof keeps for amounts of memory and disk; total; limit, which in Proof's docs is a time limit or one of the pool file's `limits`.
+
 ### server
 
 The one Proof program, on an always-on computer, that keeps the **queue**, receives your code, places each **run** on a **runner**, and keeps every run's record, output, and **artifacts**. The server's computer has no runner.
@@ -65,6 +72,12 @@ To choose the **runner** a queued **run** goes to, and hold the CPUs and memory 
 
 - Elsewhere: called place in Nomad, Kubernetes, and Concourse; allocate in Slurm and Jenkins; match in HTCondor; assign in GitHub Actions; and dispatch in Buildkite. Nomad calls the result of placing an allocation.
 - Don't say: schedule, which Buildkite and Jenkins also use for a time trigger; dispatch, which in Nomad means making an instance of a parameterized job; allocate, which **request** also avoids, and which is Nomad's word for the result of placing; assign, which suggests the choice ends when the runner is named, where placing also holds the CPUs and memory.
+
+### shortfall
+
+How much less of a resource a **host** could ever have free than a run **requests**: CPUs, or memory. What a host could ever have free is its **capacity**, within the capacity of the runner the run would go to, less the memory of its **share**. Proof refuses a run that every host falls short of, and names the host whose worst shortfall is the smallest.
+
+- Don't say: deficit; gap; missing resources.
 
 ### approval
 
@@ -224,6 +237,13 @@ The line `proof` writes to standard error when a run ends, with the run's exit s
 What the **server** keeps of a run apart from its **output** and **artifacts**.
 
 - Elsewhere: Slurm calls the same thing an accounting record, and HTCondor a job's entry in its history. In Kubernetes, an object is a "record of intent", a desired state, where Proof's record is what the server keeps of a run while it goes on and after it ends.
+
+### fact
+
+One thing that happened to a run, as the **server** recorded it, with the time on the server's clock: the run was queued at its **queue position**, placed on a runner, its command started, its command ended with a status, its whole **output** arrived, its **artifacts** were kept or not kept, a cancel was asked for, it reached a final state, or its processes ended after it was `lost`. A run's **record** is its list of facts, which the server only ever adds to, and its state follows from them.
+
+- Elsewhere: called an event in event sourcing, and a fact in Datomic.
+- Don't say: event, which in Proof's docs means what the server publishes once a fact is stored; log entry, because **output** is what a run prints; history.
 
 ### invocation
 
