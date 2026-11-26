@@ -4,14 +4,16 @@ Most hosts are someone's computer first. This guide sets how much of a host Proo
 
 ## What a person notices, and doesn't
 
+Proof keeps the memory of a host's **share** free whether or not a person is there, because memory a run already holds can't be taken back when a person arrives. Runs never use it, and an idle host leaves it unused.
+
 While a person is **active** at a host, using its keyboard, mouse, trackpad, or screen:
 
-- Proof keeps the host's **share** of CPUs and memory free for them, and places no new run that would need it.
+- Proof also keeps the share's CPUs free for them, and places no new run that would need them.
 - Runs already going continue at the lowest priority the operating system has, so the person's programs come first.
 - Runs that need the person's display, GPU, or speakers wait until they stop. On Windows, a run already using the display when a person arrives goes on, and the person finds the display busy until the run ends, which its time limit bounds.
 - On Linux and Windows, runs draw on separate displays and desktops, and never take the person's keyboard focus.
 
-When nobody has used the host for its `active-for` time, five minutes unless the pool file says otherwise, runs get the whole host back.
+When nobody has used the host for its `active-for` time, five minutes unless the pool file says otherwise, runs get the share's CPUs back. The share's memory stays free.
 
 Any person counts, not only one owner: a family member at the same computer gets the same share. On Linux and Windows, input from runs never counts as a person, because runs draw on separate displays and desktops.
 
@@ -28,8 +30,7 @@ host pc {
 }
 ```
 
-> [!WARNING]
-> Memory a run already holds can't be taken back when a person arrives. Proof keeps the share free only while a person is active, so a run placed while nobody was there can be holding part of it when someone sits down. That run slows to the lowest priority, but its memory stays taken until it ends.
+The 32 GB of memory stays free whenever the PC is on, even when nobody is there, and the 8 CPUs are free only while someone is active. An idle host leaves that memory unused, so set the share's memory to what the person needs.
 
 ## Keep a GPU or a host to yourself
 

@@ -7,7 +7,7 @@ What the server must guarantee, and the traps known so far. How to meet each req
 - Count CPUs, memory, and disk per **host**, summing every runner on it. Two runners on one host must never be offered the host's resources twice.
 - A run is placed only where its operating system, every label it needs, and its requested resources fit. Among the runs that fit now, the one that arrived first goes first, and a run that fits nowhere doesn't hold up the runs behind it. There are no priorities and no preemption.
 - **A large request can wait indefinitely** behind runs that request less and keep taking the resources it needs, because nothing shares fairly. `proof status` is where that wait shows.
-- A host with a person active keeps its share free: no new run is placed into it.
+- A host keeps its memory share free always, and its CPU share free while a person is active: no new run is placed into either. A host with nobody active leaves its memory share unused, which is the cost of never having to take memory back.
 - Refuse a run no host could ever take before anything is sent, and name the closest host. Keep a run queued when its operating system has no runner at the moment, since hosts come back.
 - `proof status` must say what each queued run waits behind: which runs hold the host it needs, or that a person is active there, or that the host needs someone to sign in, or that no runner of its operating system is connected. A run that waits a long time without saying why looks hung.
 - `proof status` must also say what a run a runner already has is doing: getting its code, waiting for a desktop or for a person to leave, running its command, or sending its output. A run that sits before its command starts looks hung the same way.

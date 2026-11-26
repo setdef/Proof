@@ -312,14 +312,14 @@ A human at a host, using its keyboard, mouse, trackpad, or screen. On Linux and 
 
 ### active
 
-A person is active at a host while they have used its input devices within the last few minutes. You set how many in the pool file. While a person is active, Proof keeps a **share** of the host for them: runs go on, with less of the host, and runs that need the person's display, GPU, or speakers wait. When the person stops, runs get the share back.
+A person is active at a host while they have used its input devices within the last few minutes. You set how many in the pool file. While a person is active, Proof keeps the CPUs of the host's **share** free for them: runs go on, with less of the host, and runs that need the person's display, GPU, or speakers wait. When the person stops, runs get the share's CPUs back.
 
 - Elsewhere: in BOINC, the user is active; in HTCondor, the machine is in its Owner state.
 - Don't say: idle or busy alone, because both also describe how hard a computer's processors work; in use; present; on console.
 
 ### share
 
-The CPUs and memory Proof keeps free on a host for a person while they are active. You set each host's share in the pool file.
+The CPUs and memory Proof keeps free on a host for a person. The memory is free always, because a run can't give memory back, and the CPUs are free while a person is **active**, because priority takes CPU back. You set each host's share in the pool file.
 
 - Don't say: reservation, which suggests runs; headroom.
 

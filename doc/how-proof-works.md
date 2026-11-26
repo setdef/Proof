@@ -40,7 +40,7 @@ A run waits in the queue until the server can place it on a runner. Among the ru
 
 - the runner's operating system is one the project file lists for the task, any operating system when it lists none, or the one you named with `--os`;
 - the runner has every label the task needs;
-- the runner's host has the CPUs and memory the run requests free, counting every runner on that host together.
+- the runner's host has the CPUs and memory the run requests free, counting every runner on that host together, and leaving the host's memory share free, and its CPU share free while a person is active.
 
 The server counts resources per **host**, not per runner. A Windows PC with WSL is one host, and the server never gives its two runners more runs together than the PC can run.
 
@@ -90,13 +90,14 @@ A run counts as `succeeded` only when the server has the whole output, as the ru
 
 ## How Proof gives way to a person
 
-On each host, the runner watches how long it has been since anyone used the keyboard, mouse, or trackpad. While that is shorter than the host's `active-for` setting, a person is **active** there, and Proof keeps the host's **share** of CPUs and memory free for them:
+On each host, the runner watches how long it has been since anyone used the keyboard, mouse, or trackpad. While that is shorter than the host's `active-for` setting, a person is **active** there. Proof keeps the host's **share** of CPUs and memory free for a person in two ways:
 
-- The server places no new run that would need any of the share.
-- Runs already going continue at the lowest priority the operating system has, so they slow down instead of the person's work.
-- Runs that need the person's display, GPU, or speakers wait until the person stops.
+- **The memory share is free always,** whether or not anyone is at the host, because memory a run holds can't be taken back when a person arrives. The server places no run that would need any of it. An idle host leaves that memory unused.
+- **The CPU share is free while a person is active.** The server places no new run that would need any of it, and runs already going continue at the lowest priority the operating system has, so they slow down instead of the person's work. Priority takes CPU back, so when no one is active, runs can use the share's CPUs.
 
-When nobody has used the host for longer than `active-for`, runs get the whole host back.
+While a person is active, runs that need their display, GPU, or speakers wait until they stop.
+
+When nobody has used the host for longer than `active-for`, runs get the share's CPUs back.
 
 On Windows, a run that needs the display is placed only while no person is active, and one already using the display when a person arrives isn't stopped. The person finds the display busy until the run ends, which its time limit bounds.
 

@@ -1,6 +1,6 @@
 # Pool file reference
 
-The pool file is `~/.config/proof/pool.kdl`, on the computer that runs the **server**. It describes the whole **pool**: each **host**, with its disk **budget**, the **share** Proof keeps free for a **person** who is **active** there, and any **labels** it must not offer; each repository whose pushed commits Proof runs tasks on; and how long the server keeps runs. Words in bold are defined in the [glossary](../glossary.md).
+The pool file is `~/.config/proof/pool.kdl`, on the computer that runs the **server**. It describes the whole **pool**: each **host**, with its disk **budget**, the **share** of its CPUs and memory that Proof keeps free for a **person**, and any **labels** it must not offer; each repository whose pushed commits Proof runs tasks on; and how long the server keeps runs. Words in bold are defined in the [glossary](../glossary.md).
 
 `proof server setup` writes the file, and `proof runner approve` adds a host to it, saying what it added. Everything else in it is yours to change. The server reads the file again whenever it changes, so a change takes effect for the next run without a restart.
 
@@ -41,7 +41,7 @@ repository lota url="https://github.com/setdef/Lota.git" {
 }
 ```
 
-The server listens on port 7443. It keeps each run's record for 90 days, its output for 14 days, and its artifacts for 7 days, and it keeps at most 1 GB of output and 16 GB of artifacts from any one run. On `nuc`, Proof may use 400 GB of disk. On `pc`, Proof may use 250 GB, keeps 4 CPUs and 16 GB free while someone is active there, and never offers the PC's GPU to a task. Every commit pushed to Lota's `trunk` branch gets a run of its `test` and `package` tasks.
+The server listens on port 7443. It keeps each run's record for 90 days, its output for 14 days, and its artifacts for 7 days, and it keeps at most 1 GB of output and 16 GB of artifacts from any one run. On `nuc`, Proof may use 400 GB of disk. On `pc`, Proof may use 250 GB, keeps 16 GB of memory free always and 4 CPUs free while someone is active there, and never offers the PC's GPU to a task. Every commit pushed to Lota's `trunk` branch gets a run of its `test` and `package` tasks.
 
 ## What happens when the file has a mistake
 
@@ -143,7 +143,7 @@ One entry for each physical computer. `proof status` shows the host under `NAME`
 | `runner` | Written by `proof runner approve` | The runners on this host. The server counts their CPUs, memory, and disk as one host's, so the server never gives a Windows PC and its WSL more runs together than the PC can run. |
 | `budget` | Half the host's free disk space when `proof runner approve` adds the host, written into its entry | The disk space Proof may use on this host for workspaces and caches. When Proof's files exceed it, the host's runners delete the workspaces used least recently, never one in use. |
 | `keep-free` | `"25GB"` | The disk space the host's runners always leave free, whatever the budget, so a disk that fills for other reasons never fills completely because of Proof. |
-| `share` | `cpus=2 memory="4GB"` | The CPUs and memory Proof keeps free on this host while a person is active there. Runs go on with the rest, and runs that need the person's display, GPU, or speakers wait. |
+| `share` | `cpus=2 memory="4GB"` | The CPUs and memory Proof keeps free on this host for a person. The memory is free always, and the CPUs only while a person is active there. Runs go on with the rest, and runs that need the person's display, GPU, or speakers wait. |
 | `active-for` | `"5m"` | How long after the last use of the host's keyboard, mouse, or trackpad a person still counts as active. |
 | `withhold` | None | Labels this host's runners must not offer, even when they find the hardware. |
 
@@ -177,7 +177,7 @@ The tasks come from the commit they run on: its `mise.toml` and its `.config/pro
 
 ## Examples
 
-### Keep more of the PC free while someone is gaming
+### Keep more of the PC free for someone who games on it
 
 ```kdl
 host pc {
@@ -187,7 +187,7 @@ host pc {
 }
 ```
 
-While someone uses the PC, runs share what's left after 8 CPUs and 32 GB. When nobody has used it for 5 minutes, runs get the whole PC back.
+Runs never use 32 GB of the PC's memory, whether or not anyone is there. While someone uses the PC, runs also leave 8 CPUs free and share what's left. When nobody has used it for 5 minutes, runs can use all the CPUs again, and the 32 GB stays free.
 
 ### Keep runs' output longer
 
