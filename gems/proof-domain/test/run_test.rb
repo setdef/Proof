@@ -126,6 +126,11 @@ class RunTest < Minitest::Test
     refute_predicate(run_of(queued, placed, cancel, ended(:canceled)), :holds_resources?)
   end
 
+  # A run canceled while queued was never placed, so it holds nothing.
+  def test_a_run_canceled_while_queued_holds_no_resources
+    refute_predicate(run_of(queued, cancel, ended(:canceled)), :holds_resources?)
+  end
+
   # Server design, "Runs and their records": "The host's resources stay held
   # until the runner reports that the run's processes ended".
   def test_a_lost_run_holds_its_resources_until_its_processes_end

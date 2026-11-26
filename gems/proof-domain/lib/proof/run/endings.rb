@@ -18,7 +18,7 @@ module Proof
         ],
         TimedOut => [:started?, "a run times out only after its command starts"],
         OutOfMemory => [:started?, "a run runs out of memory only after its command starts"],
-        Canceled => [:canceled?, "a run is canceled only after a cancel is asked for and the run is placed"],
+        Canceled => [:canceled?, "a run is canceled only after a cancel is asked for"],
         Lost => [:placed?, "a run is lost only after it is placed"],
       }.freeze
       AFTER_FINAL = "a final state is final: only the run's processes ending, once, may follow lost"
@@ -55,7 +55,7 @@ module Proof
       end
 
       def self.canceled?(earlier)
-        earlier.any?(CancelAsked) && placed?(earlier)
+        earlier.any?(CancelAsked)
       end
 
       def self.placed?(earlier)

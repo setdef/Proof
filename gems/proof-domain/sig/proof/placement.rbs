@@ -51,7 +51,8 @@ module Proof
 
     # Places the earliest queued run that fits now, and gives it with its
     # placement, or `nil` when no queued run fits. A run that fits nowhere
-    # doesn't hold up the runs behind it. Raises `Proof::RunAlreadyPlacedError`
+    # doesn't hold up the runs behind it. A queued run whose cancel was asked
+    # for is never placed, since it ends `canceled` with no runner. Raises `Proof::RunAlreadyPlacedError`
     # or `Proof::RunChangedError` when another decision changed the run since
     # it was read, as `Proof::_Runs#append` says.
     #
@@ -103,7 +104,7 @@ module Proof
 
     # What each queued run that fits nowhere now waits behind, by run ID, in
     # queue order. A run that fits now waits behind nothing, so it isn't
-    # there. See `Proof::WaitReason` for how each reason is found.
+    # there, and neither is a queued run whose cancel was asked for. See `Proof::WaitReason` for how each reason is found.
     #
     # ```ruby
     # nuc_linux = Proof::Runner.new(
@@ -126,6 +127,10 @@ module Proof
     def wait_reasons: () -> Hash[RunId, WaitReason]
 
     private
+
+    # The queued runs that wait for a runner, earliest queue position first:
+    # every queued run but those whose cancel was asked for.
+    def queue: () -> Array[Run]
 
     def place: (Run run, Host host, Runner runner) -> Run
   end

@@ -110,18 +110,28 @@ class RunEndTest < Minitest::Test
     assert_breaks(OUT_OF_MEMORY, queued, placed, ended(:out_of_memory))
   end
 
-  # Glossary, "run states": `canceled` is "Someone canceled the run, and the
-  # runner ended it."
+  # Glossary, "run states": `canceled` is "Someone canceled the run. A runner
+  # ended it", which it does for a run it has, whether the cancel came before
+  # or after the placement.
   def test_a_run_is_canceled_after_a_cancel_and_a_placement_in_either_order
     assert_equal(:canceled, run_of(queued, placed, cancel, ended(:canceled)).state)
     assert_equal(:canceled, run_of(queued, cancel, placed, ended(:canceled)).state)
   end
 
-  # Glossary, "run states": `canceled` needs both someone who canceled and a
-  # runner that ended the run.
-  def test_a_run_is_not_canceled_without_a_cancel_or_a_placement
+  # Glossary, "run states": `canceled` covers "no runner had it yet: a run that
+  # is still `queued` ends `canceled` without one."
+  def test_a_queued_run_is_canceled_without_a_placement
+    canceled = run_of(queued, cancel, ended(:canceled))
+
+    assert_equal(:canceled, canceled.state)
+    assert_nil(canceled.placement)
+  end
+
+  # Glossary, "run states": `canceled` means "Someone canceled the run", so a
+  # run that nobody asked to cancel isn't canceled, placed or not.
+  def test_a_run_is_not_canceled_without_a_cancel
     assert_breaks(CANCELED, queued, placed, started, ended(:canceled))
-    assert_breaks(CANCELED, queued, cancel, ended(:canceled))
+    assert_breaks(CANCELED, queued, ended(:canceled))
   end
 
   # Glossary, "run states": `lost` is a run whose runner the server "lost

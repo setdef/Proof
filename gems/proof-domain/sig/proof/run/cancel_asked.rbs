@@ -2,10 +2,12 @@ module Proof
   class Run
     # The fact that someone asked for a run to be canceled.
     #
-    # A run is `canceled` only once its runner has ended it, which can take
-    # the grace period after `TERM`, and the command may exit by itself first.
-    # The ask has to be durable before `proof` exits, so the runner learns of
-    # it even if `proof` is gone.
+    # A run with a runner is `canceled` only once its runner has ended it, which
+    # can take the grace period after `TERM`, and the command may exit by itself
+    # first. The ask has to be durable before `proof` exits, so the runner learns
+    # of it even if `proof` is gone. A queued run has no runner, so
+    # `Proof::Placement` never places it once the ask is recorded, and it ends
+    # `canceled` with no runner.
     #
     # This fact records the ask, once. It changes no state: the run ends
     # `canceled` only with a later `Proof::Run::Canceled`.

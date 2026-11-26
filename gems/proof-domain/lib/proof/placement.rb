@@ -14,7 +14,7 @@ module Proof
     end
 
     def place_next
-      found = RunnerChoice.first(@runs.queued, @hosts.hosts, @runs.holding_resources)
+      found = RunnerChoice.first(queue, @hosts.hosts, @runs.holding_resources)
       place(*found) if found
     end
 
@@ -24,7 +24,12 @@ module Proof
     end
 
     def wait_reasons
-      WaitReason.all(@runs.queued, @hosts.hosts, @runs.holding_resources)
+      WaitReason.all(queue, @hosts.hosts, @runs.holding_resources)
+    end
+
+    private def queue
+      # A run whose cancel was asked for ends canceled with no runner, so it is never placed and waits behind nothing.
+      @runs.queued.reject(&:cancel_asked?)
     end
 
     private def place(run, host, runner)

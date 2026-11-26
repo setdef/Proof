@@ -18,7 +18,7 @@ module RunRules
     "artifacts aren't kept, or when the server is short of space before its command starts"
   TIMES_OUT = "a run times out only after its command starts"
   OUT_OF_MEMORY = "a run runs out of memory only after its command starts"
-  CANCELED = "a run is canceled only after a cancel is asked for and the run is placed"
+  CANCELED = "a run is canceled only after a cancel is asked for"
   LOST = "a run is lost only after it is placed"
   public_constant(*constants)
 end

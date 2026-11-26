@@ -22,9 +22,12 @@ class PlacementTest < Minitest::Test
   # the run's number of facts, not the first.
   def test_a_run_is_placed_at_the_version_read
     enqueue("aaaaa")
-    runs.append(ids("aaaaa").first, Proof::Run::CancelAsked.new(at: NOW), version: 1)
+    read = runs.queued.each { |run| run.define_singleton_method(:version) { 3 } }
+    error = assert_raises(Proof::RunChangedError) do
+      placement(host("nuc", runner("nuc-linux")), store: stale(read)).place_next
+    end
 
-    assert_equal("nuc-linux", placed_on(host("nuc", runner("nuc-linux"))))
+    assert_match(/has 1 facts, not the 3 it had when it was read/, error.message)
   end
 
   # A decision made from a run that another decision changed since is refused,

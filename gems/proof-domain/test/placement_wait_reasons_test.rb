@@ -17,6 +17,15 @@ class PlacementWaitReasonsTest < Minitest::Test
     assert_equal({ ids("aaaaa").first => Proof::WaitReason.new(kind: :no_runner_connected) }, reasons)
   end
 
+  # A queued run whose cancel was asked for ends `canceled` without a runner,
+  # so it waits behind nothing.
+  def test_placement_gives_no_reason_for_a_queued_run_whose_cancel_was_asked_for
+    enqueue("aaaaa", os: %i[macos])
+    runs.append(ids("aaaaa").first, Proof::Run::CancelAsked.new(at: NOW), version: 1)
+
+    assert_empty(placement(host("nuc", runner("nuc-linux"))).wait_reasons)
+  end
+
   # Server design, "Placement": `proof status` says "which runs hold the host
   # it needs", for each queued run.
   def test_placement_gives_the_runs_each_queued_run_waits_behind

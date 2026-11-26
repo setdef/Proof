@@ -91,7 +91,8 @@ module Proof
     #   artifacts not kept, unless the artifacts weren't kept for space before
     #   the command started.
     # - `timed_out` and `out_of_memory` need the command to have started.
-    # - `canceled` needs a cancel asked for and the run placed.
+    # - `canceled` needs a cancel asked for, and no placement: a run canceled
+    #   while it is queued is never placed.
     # - `lost` needs the run placed.
     # - Nothing follows a final state, except one `Proof::Run::ProcessesEnded`
     #   after `Proof::Run::Lost`.
@@ -226,7 +227,9 @@ module Proof
     def state: () -> Symbol
 
     # Whether someone asked for the run to be canceled. The ask changes no
-    # state: the run is `canceled` only once its runner ends it.
+    # state: the run is `canceled` only once a `Proof::Run::Canceled` fact
+    # follows it. A runner ends a run it has, and the server ends a queued run
+    # with no runner.
     #
     # ```ruby
     # id = Proof::RunId.parse("20261125-0336-m3d8q")
@@ -235,6 +238,20 @@ module Proof
     #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
     # )
     # Proof::Run.new(id:, facts: [queued]).cancel_asked? # => false
+    # ```
+    #
+    # A run canceled while queued is never placed:
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # at = Time.utc(2026, 11, 25, 3, 37)
+    # queued = Proof::Run::Queued.new(
+    #   at:, position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # canceled = Proof::Run.new(id:, facts: [queued, Proof::Run::CancelAsked.new(at:), Proof::Run::Canceled.new(at:)])
+    # canceled.state # => :canceled
+    # canceled.placement # => nil
     # ```
     def cancel_asked?: () -> bool
 

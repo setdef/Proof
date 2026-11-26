@@ -50,8 +50,8 @@ module Proof
       # need.
       def self.started?: (Array[Fact] earlier) -> bool
 
-      # Whether a cancel was asked for and the run was placed, which
-      # `canceled` needs.
+      # Whether a cancel was asked for, which `canceled` needs. It needs no
+      # placement, because a run canceled while queued has none.
       def self.canceled?: (Array[Fact] earlier) -> bool
 
       # Whether the run was placed, which `lost` needs.

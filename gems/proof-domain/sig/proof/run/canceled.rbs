@@ -1,14 +1,16 @@
 module Proof
   class Run
-    # The fact that someone canceled a run, and its runner ended it.
+    # The fact that someone canceled a run, and it ended.
     #
-    # A cancel is asked for, and the run is `canceled` only once its runner ends
-    # it, so the ask and the end are two facts.
+    # A cancel is asked for, and the run is `canceled` only once it ends, so the
+    # ask and the end are two facts. A runner ends a run it has. A run that is
+    # still queued has no runner, and the server ends it.
     #
     # This fact is the run's final state, `canceled`. `Proof::Run` refuses it
-    # unless a cancel was asked for and the run was placed.
+    # unless a cancel was asked for. A run canceled while queued has no
+    # placement.
     #
-    # Use it to record that a runner ended a run someone canceled.
+    # Use it to record that a run someone canceled ended.
     #
     # ## Examples
     #
