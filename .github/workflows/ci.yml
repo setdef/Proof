@@ -10,13 +10,16 @@ on:
 permissions:
   contents: read
 
-# A push never cancels a run in progress. GitHub keeps one run going and one
-# waiting in the group, and a newer push replaces only the waiting one, so
-# every run that starts finishes, and it covers every commit pushed since the
-# run before it started.
+# Every push to trunk gets a run of its own, and nothing cancels it. A group
+# shared by all of trunk's runs leaves one run going and one waiting, and a
+# newer push cancels the waiting run even with cancel-in-progress off, so
+# under frequent pushes almost no run finished. Here a trunk run's group is its
+# commit, so runs go side by side and every commit's run finishes. A run of
+# any other ref (a manual dispatch) still shares its ref's group, where a
+# newer run cancels the older one, which does no harm there.
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref == 'refs/heads/trunk' && github.sha || github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/trunk' }}
 
 defaults:
   run:
