@@ -3,7 +3,7 @@
 require_relative("../support/command_line_helper")
 require_relative("../test_helper")
 
-# Checks the flags that work on every command, and the requests for help.
+# Checks the flags that work on every command, and the command lines that ask for help.
 class CommandLineGlobalFlagsTest < Minitest::Test
   include CommandLineHelper
 
@@ -36,24 +36,24 @@ class CommandLineGlobalFlagsTest < Minitest::Test
   # clig.dev: "-h and --help ... Ignore any other flags and arguments that are passed", on every command.
   def test_help_on_any_command_asks_for_that_commands_help
     assert_equal(
-      [CL::HelpRequest.new(path: ["run"]), CL::HelpRequest.new(path: %w[runner setup])],
+      [CL::HelpAsked.new(path: ["run"]), CL::HelpAsked.new(path: %w[runner setup])],
       [parse("run", "test", "--oss", "-h"), parse("runner", "setup", "--help")]
     )
   end
 
   # proof.usage.kdl: `cmd "server" subcommand_required=#true` still has help.
   def test_help_on_a_command_with_subcommands_asks_for_its_help
-    assert_equal(CL::HelpRequest.new(path: ["server"]), parse("server", "-h"))
+    assert_equal(CL::HelpAsked.new(path: ["server"]), parse("server", "-h"))
   end
 
   # clig.dev: "Display concise help text by default" when `proof` is run with no arguments.
   def test_proof_alone_asks_for_its_help
-    assert_equal([CL::HelpRequest.new(path: []), CL::HelpRequest.new(path: [])], [parse, parse("-q")])
+    assert_equal([CL::HelpAsked.new(path: []), CL::HelpAsked.new(path: [])], [parse, parse("-q")])
   end
 
   # A cluster that holds h asks for help too.
   def test_help_in_a_cluster_asks_for_help
-    assert_equal(CL::HelpRequest.new(path: ["status"]), parse("status", "-qh"))
+    assert_equal(CL::HelpAsked.new(path: ["status"]), parse("status", "-qh"))
   end
 
   # command.md, "The interface": the words after `--` aren't flags, so `-h` there goes to the task.

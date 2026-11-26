@@ -12,7 +12,7 @@ module CommandLineContract
     # The outcome of +argv+, the words after `proof`.
     def outcome(argv)
       result = Proof::CommandLine.parse(argv)
-      return HELP if result.is_a?(Proof::CommandLine::HelpRequest)
+      return HELP if result.is_a?(Proof::CommandLine::HelpAsked)
 
       path = words_of(result.command)
       Outcome.new(kind: :accepted, command: path, flags: flags(path, result), args: args(path, result.command))

@@ -12,7 +12,7 @@ module Proof
         raise(Mistake, @messages.extra_word(tail.first)) unless tail.empty?
         raise(Mistake, @messages.needs_subcommand(@command.subcommand_names)) if @command.subcommand_required?
 
-        HelpRequest.new(path: @command.path)
+        HelpAsked.new(path: @command.path)
       end
     end
   end

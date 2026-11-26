@@ -11,7 +11,7 @@ module Proof
 
       def parse(tokens, tail)
         values, words = Options.new(@command, @spec.root.global_flags).parse(tokens)
-        return HelpRequest.new(path: @path) if values.help?
+        return HelpAsked.new(path: @path) if values.help?
 
         verify(values, words, tail)
         Builder.new(@spec, @command, values).parsed

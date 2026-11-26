@@ -15,16 +15,16 @@ module Proof
     # ## Examples
     #
     # ```ruby
-    # Proof::CommandLine::HelpRequest.new(path: ["runner", "setup"]).path # => ["runner", "setup"]
+    # Proof::CommandLine::HelpAsked.new(path: ["runner", "setup"]).path # => ["runner", "setup"]
     # ```
-    class HelpRequest < Data
+    class HelpAsked < Data
       # The words that name the command, such as `["runner", "setup"]`. Empty for `proof` itself.
       attr_reader path: Array[String]
 
       def self.new: (path: Array[String]) -> instance
                   | (Array[String] path) -> instance
 
-      # Builds a request for the help of the command at `path`.
+      # Builds the result for the help of the command at `path`.
       #
       # - `path`: Array of String, the words that name the command.
       def initialize: (path: Array[String]) -> void

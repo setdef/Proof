@@ -9,7 +9,7 @@ module Proof
       def initialize: (Spec::Command command) -> void
 
       # Answers a request for help, or raises a Mistake when the command line names none of the subcommands or has extra words.
-      def parse: (Array[String] tail) -> HelpRequest
+      def parse: (Array[String] tail) -> HelpAsked
     end
   end
 end

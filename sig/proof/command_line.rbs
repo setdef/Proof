@@ -35,7 +35,7 @@ module Proof
     # Proof::CommandLine.parse(["cancel", "m3d8q"]).command.runs # => ["m3d8q"]
     # Proof::CommandLine.parse(["run", "-h"]).path # => ["run"]
     # ```
-    def self.parse: (Array[String] argv) -> (Parsed | HelpRequest)
+    def self.parse: (Array[String] argv) -> (Parsed | HelpAsked)
 
     # The help for the command at `path`, as `proof` prints it to standard
     # output when asked: what the command does, how to use it, its examples,
@@ -43,7 +43,7 @@ module Proof
     # empty `path` is `proof` itself, and a path that names no command
     # gives the help of `proof`.
     #
-    # - `path`: Array of String, the words that name the command, as `Proof::CommandLine::HelpRequest#path` gives them.
+    # - `path`: Array of String, the words that name the command, as `Proof::CommandLine::HelpAsked#path` gives them.
     #
     # ```ruby
     # Proof::CommandLine.help(["watch"]).lines.first # => "proof watch - Stream a run's output until it ends, and exit with its status\n"

@@ -18,7 +18,7 @@ module Proof
       def parse(argv)
         head, tail = self.class.split(argv)
         command, tokens = Resolver.new(@spec).resolve(head)
-        return HelpRequest.new(path: command.path) if tokens.intersect?(HELP)
+        return HelpAsked.new(path: command.path) if tokens.intersect?(HELP)
 
         command.subcommands.empty? ? Leaf.new(@spec, command).parse(tokens, tail) : Branch.new(command).parse(tail)
       end

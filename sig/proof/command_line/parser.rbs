@@ -13,7 +13,7 @@ module Proof
       def initialize: (Spec spec) -> void
 
       # Parses the words after `proof`.
-      def parse: (Array[String] argv) -> (Parsed | HelpRequest)
+      def parse: (Array[String] argv) -> (Parsed | HelpAsked)
     end
   end
 end
