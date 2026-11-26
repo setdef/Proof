@@ -4,26 +4,28 @@ module Proof
   module CommandLine
     class Values
       def initialize
-        @flags = {}
-        @words = {}
-        @help = false
+        @given = Set.new
+        @texts = {}
+        @lists = {}
         @tasks = nil
       end
 
       def switch(name)
-        @flags[name] = true
+        @given << name
       end
 
       def replace(name, text)
-        @flags[name] = text
+        @given << name
+        @texts[name] = text
       end
 
       def append(name, text)
-        @flags[name] = list(name) + [text]
+        @given << name
+        @lists[name] = list(name) + [text]
       end
 
       def assign(name, words)
-        @words[name] = words
+        @lists[name] = words
       end
 
       def assign_tasks(tasks)
@@ -35,15 +37,16 @@ module Proof
       end
 
       def ask_for_help
-        @help = true
+        # Every command takes -h and --help, and the spec has no flag called help, so the name is free to record it.
+        switch("help")
       end
 
       def help?
-        @help
+        flag?("help")
       end
 
       def flag?(name)
-        @flags.key?(name)
+        @given.include?(name)
       end
 
       def given?(member)
@@ -51,8 +54,7 @@ module Proof
       end
 
       def text(name)
-        found = @flags[name]
-        found if found.is_a?(String)
+        @texts[name]
       end
 
       def first(name)
@@ -60,8 +62,7 @@ module Proof
       end
 
       def list(name)
-        found = @flags[name] || @words[name]
-        found.is_a?(Array) ? found : []
+        @lists[name] || []
       end
     end
   end

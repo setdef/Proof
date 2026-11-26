@@ -2,9 +2,9 @@ module Proof
   module CommandLine
     # What the flags and arguments of one command line gave, by the names the spec gives them.
     class Values
-      @flags: Hash[String, true | String | Array[String]]
-      @words: Hash[String, Array[String]]
-      @help: bool
+      @given: Set[String]
+      @texts: Hash[String, String]
+      @lists: Hash[String, Array[String]]
       @tasks: Array[TaskWords]?
 
       # Starts with no flags and no words.
