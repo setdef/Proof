@@ -53,9 +53,10 @@ class PoolFileReaderNamesTest < Minitest::Test
     assert_equal(7, error.line)
   end
 
-  # Pool file reference, "What happens when the file has a mistake": "Proof compares names without regard to case, as it
-  # does labels, so `nuc` and `NUC` are one host, and a second entry for it is refused." The refusal is the one for a
-  # repeated host, at the second entry's line, and names the first as it wrote the name, in either order.
+  # Pool file reference, "What happens when the file has a mistake": "Proof compares the names of hosts, runners, and
+  # repositories without regard to case, as it does labels, so `nuc` and `NUC` are one host, and a second entry for it
+  # is refused." The refusal is the one for a repeated host, at the second entry's line, and names the first as it
+  # wrote the name, in either order.
   def test_two_hosts_that_differ_only_in_case_are_refused_at_the_second
     [%w[nuc NUC], %w[NUC nuc], %w[Nuc nUC]].each do |first, second|
       assert_refused(

@@ -20,9 +20,9 @@ class PoolNamesCaseTest < Minitest::Test
     repository_entry(name, "https://example.com/#{name}.git", branches: %w[trunk], tasks: %w[test])
   end
 
-  # Pool file reference, "What happens when the file has a mistake": "Proof compares names without regard to case, as
-  # it does labels, so `nuc` and `NUC` are one host, and a second entry for it is refused." The message is the one for
-  # a repeated host, and names the first entry as it was written.
+  # Pool file reference, "What happens when the file has a mistake": "Proof compares the names of hosts, runners, and
+  # repositories without regard to case, as it does labels, so `nuc` and `NUC` are one host, and a second entry for it
+  # is refused." The message is the one for a repeated host, and names the first entry as it was written.
   def test_two_hosts_that_differ_only_in_case_are_refused_as_one_name_written_twice
     [%w[nuc NUC], %w[NUC nuc], %w[Nuc nUC]].each do |first, second|
       message = refusal_of_hosts(host_entry(first, %w[a]), host_entry(second, %w[b]))
