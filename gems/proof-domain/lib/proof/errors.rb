@@ -16,10 +16,16 @@ module Proof
   class InvalidLabelSetError < Error
   end
 
+  class InvalidProjectFileError < Error
+  end
+
   class InvalidResourcesError < Error
   end
 
   class InvalidRunIdError < Error
+  end
+
+  class InvalidTaskEntryError < Error
   end
 
   class InvalidTaskSettingsError < Error

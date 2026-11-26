@@ -27,6 +27,12 @@ module Proof
   class InvalidLabelSetError < Error
   end
 
+  # Raised when a project file's defaults aren't `Proof::TaskSettings`, its
+  # entries aren't an `Array` of `Proof::TaskEntry`, or two entries have one
+  # name.
+  class InvalidProjectFileError < Error
+  end
+
   # Raised when a number of CPUs isn't a whole number (from 1 for a request,
   # from 0 for any other resources), or an amount of memory isn't a size: a
   # number, an optional space, and `MB`, `GB`, `TB`, `MiB`, `GiB`, or `TiB` in
@@ -43,6 +49,11 @@ module Proof
   # the workspace's root: it is empty, starts with `/`, has a folder named
   # `..`, or isn't text.
   class InvalidPathPatternError < Error
+  end
+
+  # Raised when a task entry's name isn't text, its command is neither text nor
+  # `nil`, or its settings aren't `Proof::TaskSettings`.
+  class InvalidTaskEntryError < Error
   end
 
   # Raised when one source's settings hold something that isn't a setting:

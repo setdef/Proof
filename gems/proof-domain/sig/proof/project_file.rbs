@@ -1,0 +1,87 @@
+module Proof
+  # What a project's `.config/proof.kdl` holds: its `defaults` and its task
+  # entries.
+  #
+  # Each task's settings come from several sources, and the file gives two of
+  # them: the task's own entry and the `defaults` node. A file that names one
+  # task twice would give that task two entries, and no rule says which one
+  # counts. The project file page says "A name can appear in only one `task`
+  # entry".
+  #
+  # This class holds the defaults and the entries, refuses two entries with one
+  # name, and finds an entry by name. `Proof::ProjectFile.none` stands for a
+  # project with no file, which has no defaults and no entries.
+  #
+  # Use it as what the reader of the project file builds, and what the
+  # resolution of a run's settings reads.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # file = Proof::ProjectFile.new(
+  #   defaults: Proof::TaskSettings.new(cpus: 4),
+  #   entries: [Proof::TaskEntry.new(name: "test"), Proof::TaskEntry.new(name: "package")]
+  # )
+  # file.entry_named("package").name # => "package"
+  # file.entry_named("docs") # => nil
+  # ```
+  #
+  # A project with no file has nothing:
+  #
+  # ```ruby
+  # Proof::ProjectFile.none.entries # => []
+  # ```
+  #
+  # Two entries with one name are refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidProjectFileError
+  # Proof::ProjectFile.new(entries: [Proof::TaskEntry.new(name: "test"), Proof::TaskEntry.new(name: "test")])
+  # ```
+  class ProjectFile < Data
+    # The message for two entries with one name, which `format` fills in with
+    # the name.
+    REPEATED_MESSAGE: String
+
+    # The settings of the `defaults` node. A file with no `defaults` node has
+    # settings that give nothing.
+    attr_reader defaults: TaskSettings
+
+    # The task entries, in the order the file has them, in a frozen array.
+    attr_reader entries: Array[TaskEntry]
+
+    def self.new: (?defaults: TaskSettings, ?entries: Array[TaskEntry]) -> instance
+                | (?TaskSettings defaults, ?Array[TaskEntry] entries) -> instance
+
+    # A project with no project file: no defaults and no entries.
+    #
+    # ```ruby
+    # Proof::ProjectFile.none == Proof::ProjectFile.new # => true
+    # ```
+    def self.none: () -> ProjectFile
+
+    # Builds a project file, and raises `Proof::InvalidProjectFileError` unless
+    # `defaults` is a `Proof::TaskSettings` and `entries` is an `Array` of
+    # `Proof::TaskEntry`, and when two entries have one name. Names are
+    # compared as written, so `test` and `Test` are two tasks.
+    #
+    # - `defaults`: `Proof::TaskSettings`. Defaults to settings that give
+    #   nothing.
+    # - `entries`: Array of `Proof::TaskEntry`. Defaults to none.
+    #
+    # ```ruby
+    # Proof::ProjectFile.new(entries: [Proof::TaskEntry.new(name: "test")]).entries.size # => 1
+    # ```
+    def initialize: (?defaults: TaskSettings, ?entries: Array[TaskEntry]) -> void
+
+    # The entry with `name`, or `nil` when the file has none. A task with no
+    # entry is still a task, as long as the project's `mise.toml` has it.
+    #
+    # - `name`: String, such as `"test"`.
+    #
+    # ```ruby
+    # Proof::ProjectFile.none.entry_named("test") # => nil
+    # ```
+    def entry_named: (String name) -> TaskEntry?
+  end
+end

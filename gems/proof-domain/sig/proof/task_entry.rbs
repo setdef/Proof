@@ -1,0 +1,70 @@
+module Proof
+  # A task's entry in the project file: its name, its command if it has one,
+  # and the settings it gives.
+  #
+  # `proof run NAME` looks the name up in the project file. An entry without a
+  # command adds Proof's settings to the mise task of the same name, and Proof
+  # runs `mise run NAME` on the runner. An entry with a command defines the
+  # task, and Proof runs that command instead.
+  #
+  # This class holds the three, and refuses a name or a command that isn't
+  # text, and settings that aren't `Proof::TaskSettings`. It leaves a
+  # command exactly as written, so the runner's shell reads it.
+  #
+  # Use it for each `task` node of a project file.
+  #
+  # ## Examples
+  #
+  # The `docs` entry of the project file page's complete example:
+  #
+  # ```ruby
+  # docs = Proof::TaskEntry.new(
+  #   name: "docs",
+  #   command: "bundle exec rake rdoc",
+  #   settings: Proof::TaskSettings.new(os: [Proof::OS.new(name: :linux)])
+  # )
+  # docs.command # => "bundle exec rake rdoc"
+  # ```
+  #
+  # An entry with no command adds settings to the mise task of the same name:
+  #
+  # ```ruby
+  # Proof::TaskEntry.new(name: "test").command # => nil
+  # ```
+  #
+  # A name that isn't text is refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidTaskEntryError
+  # Proof::TaskEntry.new(name: :test)
+  # ```
+  class TaskEntry < Data
+    # The name you run with `proof run NAME`.
+    attr_reader name: String
+
+    # The command the entry defines, or `nil` for an entry that adds settings
+    # to the mise task of the same name.
+    attr_reader command: String?
+
+    # The settings the entry gives.
+    attr_reader settings: TaskSettings
+
+    def self.new: (name: String, ?command: String?, ?settings: TaskSettings) -> instance
+                | (String name, ?String? command, ?TaskSettings settings) -> instance
+
+    # Builds an entry, and raises `Proof::InvalidTaskEntryError` unless `name`
+    # is a String, `command` is a String or `nil`, and `settings` is a
+    # `Proof::TaskSettings`. A name or a command that is empty is kept as
+    # written.
+    #
+    # - `name`: String, such as `"test"` or `"lint:ruby"`.
+    # - `command`: String or `nil`, such as `"bundle exec rake rdoc"`.
+    # - `settings`: `Proof::TaskSettings`, the settings the entry gives.
+    #   Defaults to settings that give nothing.
+    #
+    # ```ruby
+    # Proof::TaskEntry.new(name: "lint:ruby").name # => "lint:ruby"
+    # ```
+    def initialize: (name: String, ?command: String?, ?settings: TaskSettings) -> void
+  end
+end
