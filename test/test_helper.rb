@@ -16,6 +16,9 @@ SimpleCov.start do
   minimum_coverage(line: 100, branch: 100)
   coverage(:line) { minimum(100, per: :file) }
   coverage(:branch) { minimum(100, per: :file) }
+  # Merging would add the coverage of an earlier run, named differently, to this
+  # run's, and report lines no test in this run executes.
+  merging(false)
   refuse_coverage_drop
 end
 
