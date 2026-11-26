@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "delegate"
 require_relative("pool")
 
 # A store of runs, a pool's hosts, and the placement service over them, for
@@ -29,9 +30,21 @@ module Placing
     held.each { |run| runs.add(run) }
   end
 
-  # The placement service over the test's runs and these hosts.
-  def placement(*hosts)
-    Proof::Placement.new(runs:, hosts: HOSTS.new(hosts:), clock: CLOCK.new(now: NOW))
+  # The placement service over the test's runs, or another store, and these
+  # hosts.
+  def placement(*hosts, store: runs)
+    Proof::Placement.new(runs: store, hosts: HOSTS.new(hosts:), clock: CLOCK.new(now: NOW))
+  end
+
+  # A store that gives the queue as it was when it was read, and the rest as
+  # the test's runs have it now.
+  def stale(read)
+    SimpleDelegator.new(runs).tap { |old| old.define_singleton_method(:queued) { read } }
+  end
+
+  # The IDs of runs with these characters.
+  def ids(*characters)
+    characters.map { |each| Proof::RunId.new(minute: AT, characters: each) }
   end
 
   # The runner the next placement over these hosts chooses, or nil.

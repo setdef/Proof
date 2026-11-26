@@ -17,6 +17,26 @@ class PlacementTest < Minitest::Test
     assert_equal(:running, runs.find(placed&.id || ID)&.state)
   end
 
+  # Architecture, "Placing a run": the store refuses a fact added at a version
+  # the run no longer has, so placement writes at the version it read, which is
+  # the run's number of facts, not the first.
+  def test_a_run_is_placed_at_the_version_read
+    enqueue("aaaaa")
+    runs.append(ids("aaaaa").first, Proof::Run::CancelAsked.new(at: NOW), version: 1)
+
+    assert_equal("nuc-linux", placed_on(host("nuc", runner("nuc-linux"))))
+  end
+
+  # A decision made from a run that another decision changed since is refused,
+  # not written over it.
+  def test_a_run_changed_since_it_was_read_is_not_placed
+    enqueue("aaaaa")
+    read = runs.queued
+    runs.append(ids("aaaaa").first, Proof::Run::CancelAsked.new(at: NOW), version: 1)
+
+    assert_raises(Proof::RunChangedError) { placement(host("nuc", runner("nuc-linux")), store: stale(read)).place_next }
+  end
+
   # With no queued run, nothing is placed.
   def test_an_empty_queue_places_nothing
     assert_nil(placement(host("nuc", runner("nuc-linux"))).place_next)
@@ -48,6 +68,14 @@ class PlacementTest < Minitest::Test
     pc = host("pc", runner("pc-windows", os: :windows, has: [16, "64GB"]), runner("pc-wsl", has: [16, "8GB"]))
 
     assert_nil(placed_on(pc))
+  end
+
+  # A host's second runner takes a run as its first would.
+  def test_a_run_goes_to_any_runner_of_a_host
+    enqueue("aaaaa")
+    pc = host("pc", runner("pc-windows", os: :windows), runner("pc-wsl"))
+
+    assert_equal("pc-wsl", placed_on(pc))
   end
 
   # Server design, "Placement": "A run is placed only where its operating
