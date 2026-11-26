@@ -18,7 +18,8 @@ module Proof
   class InvalidOSError < Error
   end
 
-  # Raised when a label isn't a String with something in it.
+  # Raised when a label isn't 1 to 63 ASCII letters, digits, hyphens,
+  # underscores, and dots, beginning and ending with a letter or a digit.
   class InvalidLabelError < Error
   end
 

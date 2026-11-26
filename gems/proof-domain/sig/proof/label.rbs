@@ -3,11 +3,14 @@ module Proof
   # `gpu`, `kvm`, or `desktop`.
   #
   # A task asks for labels and a runner has them, and the server places a run
-  # only where the two match. A label that is blank, or isn't text, can't name
-  # anything a runner offers.
+  # only where the two match. A name with a space, or with a symbol, can't
+  # match what a runner offers, so a label that breaks the rule would leave a
+  # run waiting for a runner that can't have it.
   #
-  # This class raises unless a label is a string with something in it. It
-  # keeps the name exactly as given, so `gpu` and `GPU` are two labels.
+  # A label is 1 to 63 ASCII letters, digits, hyphens (`-`), underscores
+  # (`_`), and dots (`.`), beginning and ending with a letter or a digit. This
+  # class raises for any other name. It compares without regard to case, so
+  # `GPU` and `gpu` are one label, and keeps the name as it was written.
   #
   # Use it for each label in a project file, a pool file, and the `--label`
   # flag.
@@ -16,30 +19,87 @@ module Proof
   #
   # ```ruby
   # Proof::Label.new(name: "gpu").to_s # => "gpu"
+  # Proof::Label.new(name: "cuda-12.4").to_s # => "cuda-12.4"
   # Proof::Label.new(name: "gpu") == Proof::Label.new(name: "gpu") # => true
   # ```
   #
-  # A blank name raises:
+  # A name that differs only in case is the same label, and keeps its case:
+  #
+  # ```ruby
+  # Proof::Label.new(name: "GPU") == Proof::Label.new(name: "gpu") # => true
+  # Proof::Label.new(name: "GPU").to_s # => "GPU"
+  # ```
+  #
+  # A name with a space raises:
   #
   # ```ruby
   # # Wrong: raises Proof::InvalidLabelError
-  # Proof::Label.new(name: " ")
+  # Proof::Label.new(name: "nvidia gpu")
+  # ```
+  #
+  # So does a name that begins or ends with something but a letter or a digit:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidLabelError
+  # Proof::Label.new(name: "gpu-")
   # ```
   class Label < Data
-    # The label's name, frozen.
+    # The form of a name, as a pattern.
+    FORM: Regexp
+
+    # The message for a name that breaks the rule, which `format` fills in with
+    # what the name was.
+    MESSAGE: String
+
+    # The label's name as written, frozen.
     attr_reader name: String
 
     def self.new: (name: String) -> instance
                 | (String name) -> instance
 
-    # Builds a label, and raises `Proof::InvalidLabelError` unless `name` is a
-    # string with a character other than whitespace in it. A symbol, `nil`,
-    # the empty string, and a string with a byte that isn't valid text raise.
+    # Builds a label, and raises `Proof::InvalidLabelError` unless `name` is 1
+    # to 63 ASCII letters, digits, `-`, `_`, and `.`, beginning and ending
+    # with a letter or a digit. The empty string, a name with a space or a line
+    # break, a name with a letter that isn't ASCII, a symbol, `nil`, and a
+    # string with a byte that isn't valid text raise. The message lists the
+    # rule and forms that work.
     #
-    # - `name`: String, such as `"gpu"`.
+    # - `name`: String, such as `"gpu"` or `"cuda-12.4"`.
+    #
+    # ```ruby
+    # Proof::Label.new(name: "a" * 63).name.size # => 63
+    # ```
     def initialize: (name: String) -> void
 
-    # The name.
+    # Whether `other` is a label with the same name, without regard to case.
+    # Anything that isn't a label, such as a string, is never equal.
+    #
+    # - `other`: Object.
+    #
+    # ```ruby
+    # Proof::Label.new(name: "Kvm") == Proof::Label.new(name: "kvm") # => true
+    # Proof::Label.new(name: "kvm") == "kvm" # => false
+    # ```
+    def ==: (Object other) -> bool
+
+    # The same as `==`, so a set or a hash holds one of two labels that differ
+    # only in case.
+    #
+    # - `other`: Object.
+    #
+    # ```ruby
+    # Proof::Label.new(name: "Kvm").eql?(Proof::Label.new(name: "kvm")) # => true
+    # ```
+    def eql?: (Object other) -> bool
+
+    # A hash code that is the same for labels that differ only in case.
+    #
+    # ```ruby
+    # Proof::Label.new(name: "Kvm").hash == Proof::Label.new(name: "kvm").hash # => true
+    # ```
+    def hash: () -> Integer
+
+    # The name, as written.
     #
     # ```ruby
     # Proof::Label.new(name: "kvm").to_s # => "kvm"

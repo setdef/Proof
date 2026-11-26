@@ -51,6 +51,27 @@ class LabelSetTest < Minitest::Test
     assert_equal(2, labels("kvm", "gpu", "gpu").labels.size)
   end
 
+  # Project file reference, "Labels": "`GPU` and `gpu` are one label, and a task
+  # that asks for one matches a runner that offers the other".
+  def test_a_runner_offers_a_label_in_the_case_a_task_asks_for_it_in
+    assert(labels("GPU").offers_every_label_of?(labels("gpu")))
+    assert(labels("gpu", "KVM").offers_every_label_of?(labels("GPU", "kvm")))
+  end
+
+  # Project file reference, "Labels": `GPU` and `gpu` are "one label", so a
+  # set holds it once, and two sets of the same labels in other case are equal.
+  def test_labels_that_differ_in_case_are_one_label_in_a_set
+    assert_equal(1, labels("gpu", "GPU").labels.size)
+    assert_equal(labels("gpu", "kvm"), labels("KVM", "GPU"))
+    assert_equal(labels("gpu", "kvm").hash, labels("KVM", "GPU").hash)
+  end
+
+  # Project file reference, "Labels": a label is kept "as written", so the set
+  # keeps the first spelling it was given.
+  def test_the_set_keeps_the_first_spelling_of_a_label
+    assert_equal(%w[GPU], labels("GPU", "gpu").labels.map(&:name))
+  end
+
   # A set built from a list of labels, as the project file reader will.
   def test_a_set_is_built_from_an_array_or_a_set_of_labels
     gpu = Proof::Label.new(name: "gpu")

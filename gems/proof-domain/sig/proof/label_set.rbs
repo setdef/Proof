@@ -6,7 +6,9 @@ module Proof
   # and a repeated label counts twice.
   #
   # A set holds each label once, in no order, so two sets with the same labels
-  # are equal. Ask a runner's set whether it offers every label of a task's set.
+  # are equal. Labels that differ only in case are one label, so `GPU` and
+  # `gpu` count once, and the set keeps the first spelling it was given. Ask a
+  # runner's set whether it offers every label of a task's set.
   #
   # Use it for a runner's labels and for a task's `label` entries.
   #
@@ -22,6 +24,12 @@ module Proof
   #
   # ```ruby
   # Proof::LabelSet.of("gpu", "kvm", "gpu") == Proof::LabelSet.of("kvm", "gpu") # => true
+  # ```
+  #
+  # So does the case of a label:
+  #
+  # ```ruby
+  # Proof::LabelSet.of("GPU").offers_every_label_of?(Proof::LabelSet.of("gpu")) # => true
   # ```
   class LabelSet < Data
     # The labels, in a frozen set.
