@@ -22,8 +22,8 @@ module Proof
   #   defaults: Proof::TaskSettings.new(cpus: 4),
   #   entries: [Proof::TaskEntry.new(name: "test"), Proof::TaskEntry.new(name: "package")]
   # )
-  # file.entry_named("package").name # => "package"
-  # file.entry_named("docs") # => nil
+  # file.entry_for("package").name # => "package"
+  # file.entry_for("docs").command # => nil
   # ```
   #
   # A project with no file has nothing:
@@ -74,14 +74,31 @@ module Proof
     # ```
     def initialize: (?defaults: TaskSettings, ?entries: Array[TaskEntry]) -> void
 
-    # The entry with `name`, or `nil` when the file has none. A task with no
-    # entry is still a task, as long as the project's `mise.toml` has it.
+    # The entry with `name`. A name with no entry gets an entry that has that
+    # name, no command, and settings that give nothing, because a task with no
+    # entry is still a task, as long as the project's `mise.toml` has it, and
+    # it runs with the defaults.
     #
     # - `name`: String, such as `"test"`.
     #
     # ```ruby
-    # Proof::ProjectFile.none.entry_named("test") # => nil
+    # file = Proof::ProjectFile.new(entries: [Proof::TaskEntry.new(name: "docs", command: "bundle exec rake rdoc")])
+    # file.entry_for("docs").command # => "bundle exec rake rdoc"
+    # file.entry_for("test").command # => nil
+    # file.entry_for("test").settings == Proof::TaskSettings.none # => true
     # ```
-    def entry_named: (String name) -> TaskEntry?
+    def entry_for: (String name) -> TaskEntry
+
+    # The command of each task in `names`, as a hash from the name to its
+    # command, in the order of `names`. A task with no entry, or an entry with
+    # no command, has `nil`, which means it runs `mise run NAME`.
+    #
+    # - `names`: Array of String, such as `["lint", "test"]`.
+    #
+    # ```ruby
+    # file = Proof::ProjectFile.new(entries: [Proof::TaskEntry.new(name: "docs", command: "make docs")])
+    # file.commands_of(%w[docs test]) # => {"docs" => "make docs", "test" => nil}
+    # ```
+    def commands_of: (Array[String] names) -> Hash[String, String?]
   end
 end

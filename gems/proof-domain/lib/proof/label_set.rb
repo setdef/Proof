@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative("label")
+
 module Proof
   # steep:ignore:start
   class LabelSet < Data.define(:labels)
@@ -14,6 +16,10 @@ module Proof
       end
 
       super(labels: Set.new(labels).freeze)
+    end
+
+    def |(other)
+      LabelSet.new(labels: labels | other.labels)
     end
 
     def offers_every_label_of?(required)

@@ -1,0 +1,25 @@
+module Proof
+  # Proof's built-in defaults: the settings of a run that no flag, task entry,
+  # or `defaults` node says anything about.
+  #
+  # A project needs no project file to run a task, so every setting needs a
+  # value that comes from nowhere in the project. The project file page lists
+  # them: any operating system, 2 CPUs, 4 GB, and 60 minutes, with no label, no
+  # artifact, and no cache.
+  #
+  # Use it as the last source when working out a run's settings.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::BuiltInDefaults::SETTINGS.cpus # => 2
+  # Proof::BuiltInDefaults::SETTINGS.megabytes # => 4096
+  # Proof::BuiltInDefaults::SETTINGS.time_limit.seconds # => 3600
+  # Proof::BuiltInDefaults::SETTINGS.os.size # => 3
+  # ```
+  module BuiltInDefaults
+    # The built-in defaults, as the settings of one source that gives every
+    # setting.
+    SETTINGS: TaskSettings
+  end
+end

@@ -56,6 +56,16 @@ module Proof
     # - `labels`: an `Array` or `Set` of `Proof::Label`.
     def initialize: (labels: Array[Label] | Set[Label]) -> void
 
+    # A new set with the labels of both sets, which are left as they were. A
+    # label in both counts once, whatever its case.
+    #
+    # - `other`: LabelSet, the labels to add.
+    #
+    # ```ruby
+    # (Proof::LabelSet.of("desktop") | Proof::LabelSet.of("gpu")).labels.size # => 2
+    # ```
+    def |: (LabelSet other) -> LabelSet
+
     # Whether this set has every label in `required`. An empty `required` is
     # always satisfied.
     #

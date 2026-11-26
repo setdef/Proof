@@ -1,0 +1,116 @@
+module Proof
+  # Works out the settings of a run of one or more tasks.
+  #
+  # Each setting of a run comes from a flag, the task's entry in the project
+  # file, the `defaults` node, or Proof's built-in defaults. A person reading
+  # the project file page can say which one wins, and so can a test, but code
+  # that has to say it in several places drifts.
+  #
+  # This class gives each task its settings, then combines the tasks'. For one
+  # task, the first source that has a single value wins, in the order flag,
+  # entry, `defaults`, built-in. `os` replaces, so the first source with `os`
+  # decides every operating system. `label`, `artifact`, and `cache` add, so
+  # every source's labels, artifacts, and caches count. The built-in defaults
+  # are any operating system, 2 CPUs, 4 GB, 60 minutes, no label, no artifact,
+  # and no cache.
+  #
+  # For several tasks, the run gets the operating systems that all of them work
+  # on, every label, the largest CPUs, the largest memory, the longest time
+  # limit, and all artifacts and caches. When the tasks share no operating
+  # system, it raises `Proof::NoSharedOSError`, which lists each task's. A name
+  # with no entry gets the `defaults` and the built-in defaults, and no command,
+  # because the project's `mise.toml` can have a task the project file lacks.
+  # A flag's `os` replaces every task's.
+  #
+  # It doesn't turn `--os any` and `--os all` into runs: that is the command's
+  # to do with the operating systems it returns.
+  #
+  # Use it before anything is sent, so a run that no runner could take is
+  # refused first.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # file = Proof::ProjectFile.new(
+  #   defaults: Proof::TaskSettings.new(cpus: 4, megabytes: 8192),
+  #   entries: [Proof::TaskEntry.new(name: "test", settings: Proof::TaskSettings.new(megabytes: 12_288))]
+  # )
+  # resolver = Proof::SettingsResolver.new(project_file: file, flags: Proof::TaskSettings.none)
+  # run = resolver.resolve(["test"])
+  # run.settings.cpus # => 4
+  # run.settings.megabytes # => 12288
+  # run.settings.time_limit.seconds # => 3600
+  # ```
+  #
+  # A flag comes before the entry, and a flag's labels add to the entry's:
+  #
+  # ```ruby
+  # flags = Proof::TaskSettings.new(megabytes: 16_384, labels: Proof::LabelSet.of("gpu"))
+  # run = Proof::SettingsResolver.new(project_file: file, flags:).resolve(["test"])
+  # run.settings.megabytes # => 16384
+  # run.settings.labels.labels.map(&:to_s) # => ["gpu"]
+  # ```
+  #
+  # Tasks with no operating system in common are refused:
+  #
+  # ```ruby
+  # linux = Proof::TaskSettings.new(os: [Proof::OS.new(name: :linux)])
+  # macos = Proof::TaskSettings.new(os: [Proof::OS.new(name: :macos)])
+  # lint = Proof::TaskEntry.new(name: "lint", settings: linux)
+  # ios = Proof::TaskEntry.new(name: "ios", settings: macos)
+  # both = Proof::SettingsResolver.new(project_file: Proof::ProjectFile.new(entries: [lint, ios]), flags: Proof::TaskSettings.none)
+  # ```
+  #
+  # ```ruby
+  # # Wrong: raises Proof::NoSharedOSError
+  # both.resolve(%w[lint ios])
+  # ```
+  class SettingsResolver < Data
+    # The message for a project file or flags of the wrong kind, which `format`
+    # fills in with what each was.
+    MESSAGE: String
+
+    # The project file the settings are read from. `Proof::ProjectFile.none`
+    # stands for a project with no file.
+    attr_reader project_file: ProjectFile
+
+    # The flags of `proof run`, as the settings they give.
+    attr_reader flags: TaskSettings
+
+    def self.new: (project_file: ProjectFile, flags: TaskSettings) -> instance
+                | (ProjectFile project_file, TaskSettings flags) -> instance
+
+    # Builds a resolver, and raises `Proof::InvalidRunSettingsError` unless
+    # `project_file` is a `Proof::ProjectFile` and `flags` is a
+    # `Proof::TaskSettings`.
+    #
+    # - `project_file`: `Proof::ProjectFile`.
+    # - `flags`: `Proof::TaskSettings`, what the flags of `proof run` give.
+    #   `Proof::TaskSettings.none` for a command with no such flag.
+    def initialize: (project_file: ProjectFile, flags: TaskSettings) -> void
+
+    # The settings of a run of these tasks, as `Proof::RunSettings`. Raises
+    # `Proof::InvalidRunSettingsError` unless `task_names` is an Array or Set of
+    # one or more Strings, and `Proof::NoSharedOSError` when the tasks have no operating
+    # system in common. A name given twice counts once.
+    #
+    # - `task_names`: Array of String, the names after `proof run`, in the order
+    #   typed, such as `["lint", "test"]`.
+    #
+    # ```ruby
+    # resolver = Proof::SettingsResolver.new(project_file: Proof::ProjectFile.none, flags: Proof::TaskSettings.none)
+    # resolver.resolve(["test"]).commands # => {"test" => nil}
+    # ```
+    def resolve: (Array[String] | Set[String] task_names) -> RunSettings
+
+    private
+
+    def task_names_in: (Object task_names) -> Array[String]
+
+    def settings_for: (String name) -> TaskSettings
+
+    def together: (Array[String] names) -> TaskSettings
+
+    def refuse_unshared: (Hash[String, Set[OS]] systems) -> void
+  end
+end

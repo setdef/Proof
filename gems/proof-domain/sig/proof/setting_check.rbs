@@ -1,0 +1,42 @@
+module Proof
+  # The rule for each setting that `Proof::TaskSettings` holds.
+  #
+  # `Proof::TaskSettings.new` checks each setting a source gives with it. It is
+  # a separate module so that the rules are in one place, and so that
+  # `TaskSettings` holds only what a source's settings are. It is a private
+  # constant of `Proof`, so the domain has no public name for it.
+  module SettingCheck
+    # The message that starts the error for each setting that isn't a number,
+    # which `format` completes with what the setting was.
+    MESSAGES: Hash[Symbol, String]
+
+    # The class each setting that isn't a number holds, or each member of it.
+    KINDS: Hash[Symbol, Class]
+
+    # Every setting of `given` checked, as the hash `Proof::TaskSettings` is
+    # built from, with each name in `names` that `given` leaves out, or gives as
+    # `nil`, set to `nil`. A name that isn't in `names` raises `ArgumentError`,
+    # as Ruby does for a keyword a method doesn't take. Each setting that is
+    # given is checked by `checked`.
+    #
+    # - `given`: Hash from setting name to what the source gave.
+    # - `names`: Array of the setting names.
+    def self.all: (Hash[Symbol, Object?] given, Array[Symbol] names) -> Hash[Symbol, Object?]
+
+    # The setting `name` as `Proof::TaskSettings` holds it, or an error. CPUs
+    # and megabytes are checked as `Proof::Resources` checks them, and raise
+    # `Proof::InvalidResourcesError`. The operating systems, artifacts, and
+    # caches are lists of their kind, and the operating systems have at least
+    # one. The labels are a `Proof::LabelSet` and the time limit a
+    # `Proof::TimeLimit`. Any of those raises `Proof::InvalidTaskSettingsError`
+    # when it is something else.
+    #
+    # - `name`: Symbol, one of the setting names.
+    # - `value`: Object, what the source gave. Never `nil`.
+    def self.checked: (Symbol name, Object value) -> Object
+
+    private def self.single: (Symbol name, Object value) -> Object
+
+    private def self.listed: (Symbol name, Object values) -> Set[Object]
+  end
+end

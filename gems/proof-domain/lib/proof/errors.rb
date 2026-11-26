@@ -7,6 +7,16 @@ module Proof
   class InvalidOSError < Error
   end
 
+  class NoSharedOSError < Error
+    def initialize(operating_systems:)
+      listed = operating_systems.map { |task, systems| "#{task} works on #{systems.sort_by(&:to_s).join(', ')}" }
+      super(
+        "no operating system is common to these tasks: #{listed.join('; ')}. " \
+          "Run them with separate commands, or name one operating system with --os."
+      )
+    end
+  end
+
   class InvalidPathPatternError < Error
   end
 
@@ -23,6 +33,9 @@ module Proof
   end
 
   class InvalidRunIdError < Error
+  end
+
+  class InvalidRunSettingsError < Error
   end
 
   class InvalidTaskEntryError < Error

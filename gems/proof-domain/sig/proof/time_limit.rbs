@@ -42,6 +42,8 @@ module Proof
   # Proof::TimeLimit.read("2H")
   # ```
   class TimeLimit < Data
+    include Comparable
+
     # The message for a timeout that isn't a duration, which `format` fills in
     # with what the timeout was.
     MESSAGE: String
@@ -77,5 +79,15 @@ module Proof
     # Proof::TimeLimit.new(seconds: 3600) == Proof::TimeLimit.read("1h") # => true
     # ```
     def initialize: (seconds: Integer) -> void
+
+    # Compares the lengths of two time limits, so the largest of several is
+    # `max`. A value that isn't a time limit has no order, and gives `nil`.
+    #
+    # - `other`: the value to compare with.
+    #
+    # ```ruby
+    # [Proof::TimeLimit.read("90m"), Proof::TimeLimit.read("2h")].max.seconds # => 7200
+    # ```
+    def <=>: (Object other) -> Integer?
   end
 end

@@ -1,0 +1,57 @@
+module Proof
+  # The settings a run gets, with every one filled in, and the command of each
+  # of its tasks.
+  #
+  # A run's settings come from flags, task entries, the `defaults` node, and
+  # Proof's built-in defaults, and one run can have several tasks. Whoever
+  # places the run needs one answer for each setting, never "it depends on the
+  # source", and the runner needs to know whether a task runs `mise run NAME` or
+  # a command the project file defines.
+  #
+  # This class holds `Proof::TaskSettings` that give every setting, and one
+  # entry in `commands` for each task name. A command of `nil` means the task
+  # runs `mise run NAME`. It raises when a setting is missing. `Proof::SettingsResolver`
+  # builds it.
+  #
+  # Use it as what a run starts from: the operating systems it can go to, the
+  # labels a runner needs, the resources and time limit, and what to keep.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # settings = Proof::TaskSettings.new(
+  #   os: Proof::OS.all, labels: Proof::LabelSet.of, cpus: 2, megabytes: 4096,
+  #   time_limit: Proof::TimeLimit.read("60m"), artifacts: [], caches: []
+  # )
+  # run = Proof::RunSettings.new(settings:, commands: { "test" => nil, "docs" => "bundle exec rake rdoc" })
+  # run.settings.cpus # => 2
+  # run.commands["docs"] # => "bundle exec rake rdoc"
+  # ```
+  #
+  # A setting that is left out is refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidRunSettingsError
+  # Proof::RunSettings.new(settings: Proof::TaskSettings.none, commands: { "test" => nil })
+  # ```
+  class RunSettings < Data
+    # The settings, each one given.
+    attr_reader settings: TaskSettings
+
+    # The command of each task, by task name, in a frozen hash, in the order of
+    # the command line. `nil` means the task runs `mise run NAME`.
+    attr_reader commands: Hash[String, String?]
+
+    def self.new: (settings: TaskSettings, commands: Hash[String, String?]) -> instance
+                | (TaskSettings settings, Hash[String, String?] commands) -> instance
+
+    # Builds a run's settings, and raises `Proof::InvalidRunSettingsError`
+    # unless `settings` is a `Proof::TaskSettings` that gives every setting, and
+    # `commands` is a Hash with at least one entry, whose keys are Strings and
+    # whose values are Strings or `nil`.
+    #
+    # - `settings`: `Proof::TaskSettings`, with no setting `nil`.
+    # - `commands`: Hash, task name to command or `nil`.
+    def initialize: (settings: TaskSettings, commands: Hash[String, String?]) -> void
+  end
+end

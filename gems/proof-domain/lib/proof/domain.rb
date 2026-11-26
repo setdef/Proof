@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative("built_in_defaults")
 require_relative("crockford")
 require_relative("domain/version")
 require_relative("duration_text")
@@ -14,7 +15,11 @@ require_relative("project_file")
 require_relative("resources")
 require_relative("run_id")
 require_relative("run_id_text")
+require_relative("run_settings")
+require_relative("setting_check")
+require_relative("settings_resolver")
 require_relative("size_text")
+require_relative("task_commands")
 require_relative("task_entry")
 require_relative("task_settings")
 require_relative("time_limit")

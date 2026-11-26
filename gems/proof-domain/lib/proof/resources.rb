@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative("size_text")
+
 module Proof
   # steep:ignore:start
   class Resources < Data.define(:cpus, :megabytes)

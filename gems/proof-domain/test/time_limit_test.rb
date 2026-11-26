@@ -44,6 +44,20 @@ class TimeLimitTest < Minitest::Test
     assert_equal("a time limit is a whole number of seconds from 1, not 0", error.message)
   end
 
+  # Project file reference, "Several tasks on one command line", table: `timeout`
+  # is "The largest of their values", so time limits compare by their length.
+  def test_time_limits_compare_by_their_length
+    limits = %w[90m 2h 30s].map { |text| Proof::TimeLimit.read(text) }
+
+    assert_equal(Proof::TimeLimit.read("2h"), limits.max)
+    assert_equal(Proof::TimeLimit.read("30s"), limits.min)
+  end
+
+  # A time limit is equal only to a time limit of the same length.
+  def test_a_time_limit_is_not_equal_to_a_number
+    refute_equal(Proof::TimeLimit.read("1s"), 1)
+  end
+
   # Every error the domain raises is a Proof::Error.
   def test_the_error_is_a_proof_error
     assert_operator(Proof::InvalidTimeLimitError, :<, Proof::Error)

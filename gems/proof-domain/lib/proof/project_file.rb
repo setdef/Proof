@@ -26,8 +26,12 @@ module Proof
       super(defaults:, entries: entries.dup.freeze)
     end
 
-    def entry_named(name)
-      entries.find { |entry| entry.name == name }
+    def entry_for(name)
+      entries.find { |entry| entry.name == name } || TaskEntry.new(name:)
+    end
+
+    def commands_of(names)
+      names.to_h { |name| [name, entry_for(name).command] }
     end
   end
 end

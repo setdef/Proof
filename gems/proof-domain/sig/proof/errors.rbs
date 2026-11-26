@@ -27,6 +27,18 @@ module Proof
   class InvalidLabelSetError < Error
   end
 
+  # Raised when the tasks of one run have no operating system in common, so no
+  # runner could take them all together. The message lists each task's
+  # operating systems.
+  class NoSharedOSError < Error
+    # Builds the error, with a message that lists each task's operating systems
+    # and what to do next.
+    #
+    # - `operating_systems`: Hash from each task's name to a set of its
+    #   `Proof::OS` values, in the order of the command line.
+    def initialize: (operating_systems: Hash[String, Set[OS]]) -> void
+  end
+
   # Raised when a project file's defaults aren't `Proof::TaskSettings`, its
   # entries aren't an `Array` of `Proof::TaskEntry`, or two entries have one
   # name.
@@ -49,6 +61,13 @@ module Proof
   # the workspace's root: it is empty, starts with `/`, has a folder named
   # `..`, or isn't text.
   class InvalidPathPatternError < Error
+  end
+
+  # Raised when a run's settings can't be worked out: the resolver was given
+  # something that isn't a project file or flags, the task names aren't a list
+  # of one or more names, a setting of the run is missing, or its commands
+  # aren't a command or `nil` for each task name.
+  class InvalidRunSettingsError < Error
   end
 
   # Raised when a task entry's name isn't text, its command is neither text nor

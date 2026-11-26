@@ -44,12 +44,17 @@ module Proof
   # Proof::TaskSettings.new(os: [])
   # ```
   class TaskSettings < Data
-    # The message that starts the error for each setting that isn't a number,
-    # which `format` completes with what the setting was.
-    MESSAGES: Hash[Symbol, String]
+    # The settings that a source with the setting replaces, and that a source
+    # without it leaves to the next: the operating systems, CPUs, memory, and
+    # time limit.
+    REPLACING: Array[Symbol]
 
-    # The class each setting that isn't a number holds, or each member of it.
-    KINDS: Hash[Symbol, Class]
+    # The settings that every source adds to: the labels, artifacts, and caches.
+    ADDING: Array[Symbol]
+
+    # The settings of which a run of several tasks gets the largest value: the
+    # CPUs, the memory, and the time limit.
+    LARGEST: Array[Symbol]
 
     # The operating systems the task works on, in a frozen set, or `nil`. A set
     # has at least one.
@@ -108,12 +113,49 @@ module Proof
     # ```
     def initialize: (?os: Array[OS] | Set[OS] | nil, ?labels: LabelSet?, ?cpus: Integer?, ?megabytes: Integer?, ?time_limit: TimeLimit?, ?artifacts: Array[PathPattern] | Set[PathPattern] | nil, ?caches: Array[PathPattern] | Set[PathPattern] | nil) -> void
 
+    # These settings, with what they leave out filled in from `lower`: the
+    # settings of the source that comes next in the order flag, task entry,
+    # `defaults`, built-in defaults. For each of the operating systems, CPUs,
+    # memory, and time limit, this source's value wins when it gives one. For
+    # labels, artifacts, and caches, the two sources' values add, and a setting
+    # that only one gives is that one's. A setting that neither gives stays
+    # `nil`. Both sources are left as they were.
+    #
+    # - `lower`: `Proof::TaskSettings`, the source whose values fill in.
+    #
+    # ```ruby
+    # entry = Proof::TaskSettings.new(cpus: 8, labels: Proof::LabelSet.of("desktop"))
+    # defaults = Proof::TaskSettings.new(cpus: 4, megabytes: 8192, labels: Proof::LabelSet.of("gpu"))
+    # settings = entry.over(defaults)
+    # settings.cpus # => 8
+    # settings.megabytes # => 8192
+    # settings.labels.labels.size # => 2
+    # ```
+    def over: (TaskSettings lower) -> TaskSettings
+
+    # The settings that suit both these settings and `other`, for a run of two
+    # tasks: the operating systems that both work on, the labels, artifacts, and
+    # caches of both added, and the larger CPUs, memory, and time limit. A
+    # setting that only one gives is that one's. Both are left as they were. It
+    # raises `Proof::InvalidTaskSettingsError` when the two share no operating
+    # system, because settings with none can't exist, so check the operating
+    # systems first.
+    #
+    # - `other`: `Proof::TaskSettings`, the settings of the other task.
+    #
+    # ```ruby
+    # lint = Proof::TaskSettings.new(cpus: 2, labels: Proof::LabelSet.of("kvm"))
+    # test = Proof::TaskSettings.new(cpus: 8, labels: Proof::LabelSet.of("desktop"))
+    # both = lint.alongside(test)
+    # both.cpus # => 8
+    # both.labels.labels.size # => 2
+    # ```
+    def alongside: (TaskSettings other) -> TaskSettings
+
     private
 
-    def setting: (Symbol name, Object? value) -> Object?
+    def pair: (Symbol member, TaskSettings other) -> Array[Object?]
 
-    def single: (Symbol name, Object value) -> Object
-
-    def listed: (Symbol name, Object values) -> Set[Object]
+    def added: (TaskSettings other) -> Hash[Symbol, Object?]
   end
 end

@@ -1,0 +1,15 @@
+module Proof
+  # What a run's commands must look like: a hash from each task's name to its
+  # command, or to `nil` for a task that runs `mise run NAME`.
+  #
+  # `Proof::RunSettings.new` checks its commands with it. It is a separate
+  # module so that the check is in one place. It is a private constant of
+  # `Proof`, so the domain has no public name for it.
+  module TaskCommands
+    # Whether `commands` is a Hash with at least one entry, whose keys are all
+    # Strings and whose values are each a String or `nil`.
+    #
+    # - `commands`: Object, any value.
+    def self.valid?: (Object commands) -> bool
+  end
+end

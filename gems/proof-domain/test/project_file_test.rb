@@ -41,14 +41,26 @@ class ProjectFileTest < Minitest::Test
     docs = entry("docs")
     file = Proof::ProjectFile.new(entries: [entry("test"), docs])
 
-    assert_same(docs, file.entry_named("docs"))
+    assert_same(docs, file.entry_for("docs"))
   end
 
   # Project file reference, "Tasks without a project file": "Fails on the
-  # runner: mise has no `docs` task", so a name with no entry has none.
-  def test_a_name_with_no_entry_has_none
-    assert_nil(Proof::ProjectFile.new(entries: [entry("test")]).entry_named("docs"))
-    assert_nil(Proof::ProjectFile.none.entry_named("test"))
+  # runner: mise has no `docs` task", so a name with no entry is not refused: it
+  # has an entry that gives no command and no setting.
+  def test_a_name_with_no_entry_has_an_entry_that_gives_nothing
+    empty = Proof::ProjectFile.new(entries: [entry("test")]).entry_for("docs")
+
+    assert_equal(Proof::TaskEntry.new(name: "docs"), empty)
+    assert_equal(Proof::TaskEntry.new(name: "test"), Proof::ProjectFile.none.entry_for("test"))
+  end
+
+  # Project file reference, "`task`": "**With `COMMAND`,** the entry defines a
+  # task with that command", and "**Without `COMMAND`,** ... Proof runs `mise
+  # run NAME`", so each name has its entry's command, or none.
+  def test_each_name_has_its_entrys_command_or_none
+    file = Proof::ProjectFile.new(entries: [Proof::TaskEntry.new(name: "docs", command: "make docs"), entry("test")])
+
+    assert_equal([["test", nil], ["docs", "make docs"], ["lint", nil]], file.commands_of(%w[test docs lint]).to_a)
   end
 
   # Project file reference, "Mistakes Proof catches": "two `task` entries have

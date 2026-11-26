@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative("path_text")
+
 module Proof
   # steep:ignore:start
   class PathPattern < Data.define(:path)
