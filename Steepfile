@@ -21,7 +21,7 @@ end
 # The domain gem is checked alone, with only its own signatures, so a type
 # that names anything outside it is an error.
 target :domain do
-  signature "gems/proof-domain/sig"
+  signature "gems/proof-domain/sig", "gems/proof-domain/steep"
   check "gems/proof-domain/lib"
 
   configure_code_diagnostics(Steep::Diagnostic::Ruby.all_error)

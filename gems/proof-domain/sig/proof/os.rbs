@@ -1,0 +1,66 @@
+module Proof
+  # The name of an operating system, as a symbol.
+  type os_name = :linux | :macos | :windows
+
+  # A runner's operating system: `linux`, `macos`, or `windows`.
+  #
+  # A task works on some operating systems and not on others, and a runner
+  # runs on exactly one. Held as bare strings, a misspelling such as `"darwin"`
+  # or `"Linux"` would reach the server, which would then find no runner for
+  # the task.
+  #
+  # This class raises for every name but the three when you build one. The
+  # words `any` and `all` are values of the `--os` flag, not operating systems,
+  # so they raise too.
+  #
+  # Use it wherever Proof holds an operating system: a task's `os` list, a
+  # runner's operating system, and the value of `--os`.
+  #
+  # ## Examples
+  #
+  # Build one from a string, as a file gives it, or from a symbol:
+  #
+  # ```ruby
+  # Proof::OS.new(name: "macos").name # => :macos
+  # Proof::OS.new(name: :macos) == Proof::OS.new(name: "macos") # => true
+  # ```
+  #
+  # Anything else raises:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidOSError
+  # Proof::OS.new(name: "Linux")
+  # ```
+  class OS < Data
+    # The three operating systems' names, in the order `linux`, `macos`,
+    # `windows`.
+    NAMES: Array[Symbol]
+
+    # The operating system's name.
+    attr_reader name: os_name
+
+    def self.new: (name: Symbol | String) -> instance
+                | (Symbol | String name) -> instance
+
+    # All three operating systems, in the order `linux`, `macos`, `windows`.
+    #
+    # ```ruby
+    # Proof::OS.all.map(&:to_s) # => ["linux", "macos", "windows"]
+    # ```
+    def self.all: () -> Array[OS]
+
+    # Builds an operating system from its name, and raises
+    # `Proof::InvalidOSError` for any name but `linux`, `macos`, and `windows`.
+    # The name is case-sensitive, and `nil` and other types raise.
+    #
+    # - `name`: Symbol or String, such as `:linux` or `"windows"`.
+    def initialize: (name: Symbol | String) -> void
+
+    # The name as a string, such as `"linux"`.
+    #
+    # ```ruby
+    # Proof::OS.new(name: :windows).to_s # => "windows"
+    # ```
+    def to_s: () -> String
+  end
+end

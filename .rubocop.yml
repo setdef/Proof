@@ -65,8 +65,10 @@ Style/Documentation:
       - Exclude
   # The documentation of lib/ lives in sig/**/*.rbs, so a class or module in
   # lib/ carries no comment. The docs:placement task fails on one that does.
+  # The same holds for the lib/ of each gem under gems/.
   Exclude:
     - "lib/**/*.rb"
+    - "gems/*/lib/**/*.rb"
 
 Style/DocumentationMethod:
   inherit_mode:
@@ -75,3 +77,4 @@ Style/DocumentationMethod:
   # Same reason as Style/Documentation: lib/'s methods are documented in sig/.
   Exclude:
     - "lib/**/*.rb"
+    - "gems/*/lib/**/*.rb"

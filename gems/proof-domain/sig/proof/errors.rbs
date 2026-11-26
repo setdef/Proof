@@ -1,0 +1,20 @@
+module Proof
+  # The base of every error the domain raises on purpose.
+  #
+  # A value that checks its rules when you build it raises a subclass of this
+  # class for the rule it broke. Rescue `Proof::Error` to catch any rule the
+  # domain enforces, and rescue a subclass to catch one rule.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::InvalidOSError.ancestors.include?(Proof::Error) # => true
+  # ```
+  class Error < StandardError
+  end
+
+  # Raised when a value isn't one of the operating systems `linux`, `macos`,
+  # and `windows`.
+  class InvalidOSError < Error
+  end
+end
