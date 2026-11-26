@@ -1,0 +1,28 @@
+module Proof
+  # The written form of a duration, such as `"90s"` or `"2h"`, read into whole
+  # seconds.
+  #
+  # `Proof::TimeLimit.read` reads a timeout with it. It is a separate module so
+  # that the form is checked in one place, and so that `TimeLimit` holds only
+  # what a time limit is. It is a private constant of `Proof`, so the domain has
+  # no public name for it: read a duration with `Proof::TimeLimit.read`.
+  #
+  # A duration is a whole number from 1 and one unit, with no space: `s` for
+  # seconds, `m` for minutes, or `h` for hours, in lowercase.
+  module DurationText
+    # The form of a duration, with the number and the unit as named groups.
+    FORM: Regexp
+
+    # The seconds in one of each unit, by the unit's letter as a symbol.
+    SECONDS: Hash[Symbol, Integer]
+
+    # The seconds in `text`, or `nil` when `text` isn't a duration in the form
+    # above. A value that isn't text, text with a byte that isn't valid text,
+    # and text in an encoding that isn't ASCII-compatible, such as UTF-16, give
+    # `nil`.
+    #
+    # - `text`: Object, such as `"90s"`. Any value is accepted, and only a
+    #   String in the form gives a number.
+    def self.seconds: (Object text) -> Integer?
+  end
+end

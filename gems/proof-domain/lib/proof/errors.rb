@@ -19,6 +19,9 @@ module Proof
   class InvalidRunIdError < Error
   end
 
+  class InvalidTimeLimitError < Error
+  end
+
   class InvalidRandomSourceError < Error
   end
 

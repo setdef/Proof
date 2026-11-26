@@ -39,6 +39,12 @@ module Proof
   class InvalidRunIdError < Error
   end
 
+  # Raised when a time limit isn't a duration: a whole number from 1 and one
+  # unit, `s`, `m`, or `h` in lowercase, with no space, such as `"90s"`,
+  # `"30m"`, or `"2h"`.
+  class InvalidTimeLimitError < Error
+  end
+
   # Raised when a source of randomness answers with anything but a whole
   # number from 0 up to, and not including, the limit it was asked for.
   class InvalidRandomSourceError < Error

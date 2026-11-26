@@ -1,0 +1,81 @@
+module Proof
+  # How long a run may take, in whole seconds.
+  #
+  # After this long, the runner ends the run, and its state is `timed_out`. A
+  # project file writes the limit as text, `"90s"`, `"30m"`, or `"2h"`, and a
+  # flag writes it the same way. Left as text, `"60m"` and `"3600s"` look like
+  # two limits, and the largest of several can't be found.
+  #
+  # This class reads a duration into whole seconds. A duration is a whole
+  # number from 1 and one unit, with no space: `s` for seconds, `m` for
+  # minutes, or `h` for hours, in lowercase. Everything else is refused, with
+  # the forms that work: `"1h30m"`, `"1.5h"`, `"90 s"`, `"2H"`, `"1d"`, `"0s"`,
+  # and a number.
+  #
+  # Use it for a task's `timeout`, a flag's `--timeout`, and the largest
+  # limit among several tasks.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::TimeLimit.read("45m").seconds # => 2700
+  # Proof::TimeLimit.read("2h").seconds # => 7200
+  # ```
+  #
+  # A duration in minutes and the same duration in seconds are one limit:
+  #
+  # ```ruby
+  # Proof::TimeLimit.read("60m") == Proof::TimeLimit.read("3600s") # => true
+  # ```
+  #
+  # Two units in one duration are refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidTimeLimitError
+  # Proof::TimeLimit.read("1h30m")
+  # ```
+  #
+  # A unit in another case is refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidTimeLimitError
+  # Proof::TimeLimit.read("2H")
+  # ```
+  class TimeLimit < Data
+    # The message for a timeout that isn't a duration, which `format` fills in
+    # with what the timeout was.
+    MESSAGE: String
+
+    # The length of the limit in seconds, a whole number from 1.
+    attr_reader seconds: Integer
+
+    def self.new: (seconds: Integer) -> instance
+                | (Integer seconds) -> instance
+
+    # Reads a duration as a project file or a flag writes it. Raises
+    # `Proof::InvalidTimeLimitError` unless `text` is a whole number from 1,
+    # written without a leading zero, then `s`, `m`, or `h` in lowercase, with
+    # no space, such as `"90s"`, `"30m"`, or `"2h"`. `"1h30m"`, `"1.5h"`,
+    # `"90 s"`, `"2H"`, `"1d"`, `"0s"`, `"01m"`, `"90"`, a number, `nil`, a
+    # string with a byte that isn't valid text, and a string in an encoding
+    # that isn't ASCII-compatible, such as UTF-16, raise. The message lists the
+    # forms that work.
+    #
+    # - `text`: String, such as `"30m"`.
+    #
+    # ```ruby
+    # Proof::TimeLimit.read("90s").seconds # => 90
+    # ```
+    def self.read: (Object text) -> TimeLimit
+
+    # Builds a time limit from a number of seconds, and raises
+    # `Proof::InvalidTimeLimitError` unless `seconds` is an Integer from 1.
+    #
+    # - `seconds`: Integer, a whole number from 1.
+    #
+    # ```ruby
+    # Proof::TimeLimit.new(seconds: 3600) == Proof::TimeLimit.read("1h") # => true
+    # ```
+    def initialize: (seconds: Integer) -> void
+  end
+end
