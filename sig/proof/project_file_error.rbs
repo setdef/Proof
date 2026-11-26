@@ -21,19 +21,28 @@ module Proof
   # error.message # => ".config/proof.kdl:7: a label has no space"
   # error.line # => 7
   # ```
+  #
+  # A mistake with no line leaves the line out of the message:
+  #
+  # ```ruby
+  # error = Proof::ProjectFileError.new(path: ".config/proof.kdl", line: nil, reason: "this is a symbolic link")
+  # error.message # => ".config/proof.kdl: this is a symbolic link"
+  # ```
   class ProjectFileError < Error
     # The path of the file from the project's root, such as `".config/proof.kdl"`.
     attr_reader path: String
 
     # The line of the mistake, counting from 1. For a node, it is the line of
-    # the node's name. For a value, it is the line of its node.
+    # the node's name. For a value, it is the line of its node. A mistake with no
+    # line, such as a symbolic link in place of the file, has `nil`.
     attr_reader line: Integer?
 
     # What is wrong, starting with a lowercase letter and with no period at the
     # end, as the second part of the message.
     attr_reader reason: String
 
-    # Builds the error, with the message `PATH:LINE: REASON`.
+    # Builds the error, with the message `PATH:LINE: REASON`, or `PATH: REASON`
+    # when there is no line.
     #
     # - `path`: String, such as `".config/proof.kdl"`.
     # - `line`: Integer, from 1, or `nil` for a mistake that has no line.

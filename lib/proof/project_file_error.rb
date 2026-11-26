@@ -12,7 +12,7 @@ module Proof
       @path = path
       @line = line
       @reason = reason
-      super("#{path}:#{line}: #{reason}")
+      super("#{[path, line].compact.join(':')}: #{reason}")
     end
   end
 end

@@ -41,13 +41,19 @@ module Proof
     # The file's text, or `nil` when the commit has no file at the path, or
     # when the path is a folder or a submodule. The path is written as Git
     # writes it, so one with a slash after it, `"."`, or a `./` before it gives
-    # `nil`. An empty file gives `""`. A symbolic link gives the text of its
-    # target's path. Raises `Proof::GitFailedError` when Git fails.
+    # `nil`. An empty file gives `""`. Raises `Proof::ProjectFileError`, with no
+    # line, when the entry is a symbolic link, because Proof reads only a regular
+    # file there, and a link could lead out of the commit to a file Proof never
+    # sent. Raises `Proof::GitFailedError` when Git fails.
     def text: () -> String?
 
     private
 
     def entry: () -> Array[String]
+
+    LINK: String
+
+    LINK_REASON: String
 
     @git: Git
     @commit: String
