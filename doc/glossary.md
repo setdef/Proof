@@ -250,7 +250,7 @@ What a queued run waits behind, as `proof status` shows it.
 
 ### queue position
 
-A run's place in arrival order, given by the server when the run is queued.
+A run's place in arrival order, given by the server when the run is queued. The server places the earliest run among those that fit, so a run with a later position can start first.
 
 - Elsewhere: in Slurm, a job's order in the queue changes with its priority. In Proof it never changes, because there are no priorities.
 

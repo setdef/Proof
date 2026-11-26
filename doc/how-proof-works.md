@@ -36,7 +36,7 @@ The project's forge never sees any of this. A runner needs no credentials for Gi
 
 ## How the server places a run
 
-A run waits in the queue until the server can place it on a runner, in the order runs arrived. The server places a run on a runner when all of these hold:
+A run waits in the queue until the server can place it on a runner. Among the runs that can be placed now, the one that arrived first goes first, and a run that fits nowhere at the moment doesn't hold up the runs behind it. The server places a run on a runner when all of these hold:
 
 - the runner's operating system is one the project file lists for the task, any operating system when it lists none, or the one you named with `--os`;
 - the runner has every label the task needs;
@@ -44,7 +44,7 @@ A run waits in the queue until the server can place it on a runner, in the order
 
 The server counts resources per **host**, not per runner. A Windows PC with WSL is one host, and the server never gives its two runners more runs together than the PC can run.
 
-The server places each run by these rules alone. It has no priorities, and it never stops one run to make room for another. `proof status` shows what each queued run is waiting behind, so a run that waits a long time says why.
+The server places each run by these rules alone. It has no priorities, and it never stops one run to make room for another. `proof status` shows what each queued run is waiting behind, so a run that waits a long time says why. The cost of placing the earliest run that fits is that a run that requests a lot, such as 16 GB, can wait indefinitely while runs that request 2 GB keep taking the memory it needs, because the server shares nothing fairly between runs.
 
 From its placement until it ends, a run is `running`, even before its command starts. `proof status` shows what it is doing then: fetching its code, waiting for a desktop or for a person to leave, running its command, or sending its output.
 
