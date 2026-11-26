@@ -59,7 +59,7 @@ module Proof
     #     Proof::InMemory::Runs.new(records: runs.records)
     #   end
     # end
-    # InMemoryRunsTest.public_instance_methods.grep(/\Atest_runs_contract/).size # => 16
+    # InMemoryRunsTest.public_instance_methods.grep(/\Atest_runs_contract/).size # => 17
     # ```
     module RunsContract : Object, _RunsFactory, _Assertions
       include RunsFindContract
@@ -95,6 +95,10 @@ module Proof
 
       # A fact added at an older version is refused, and not stored.
       def test_runs_contract_append_refuses_a_version_the_run_no_longer_has: () -> void
+
+      # A fact added at a version the run hasn't reached is refused, and not
+      # stored.
+      def test_runs_contract_append_refuses_a_version_the_run_has_not_reached: () -> void
 
       # A fact for a run the store doesn't have is refused.
       def test_runs_contract_append_refuses_a_run_it_does_not_have: () -> void

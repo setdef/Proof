@@ -20,6 +20,13 @@ module Proof
         assert_equal(2, RunFixtures.facts(runs).size)
       end
 
+      def test_runs_contract_append_refuses_a_version_the_run_has_not_reached
+        runs = RunFixtures.storing(build_runs, RunFixtures.run)
+
+        assert_raises(RunChangedError) { runs.append(RunFixtures.id, RunFixtures.placed, version: 2) }
+        assert_equal(1, RunFixtures.facts(runs).size)
+      end
+
       def test_runs_contract_append_refuses_a_run_it_does_not_have
         assert_raises(UnknownRunError) { build_runs.append(RunFixtures.id, RunFixtures.placed, version: 1) }
       end
