@@ -4,7 +4,7 @@ Find out why a run failed, waited, or never started, from what Proof prints, and
 
 ## Start with the exit status
 
-The last line `proof run` prints is the result, and `proof` exits with the status it shows. The status says whose problem it is:
+With one run, the last line `proof run` prints is the result, and `proof` exits with the status it shows. The status says whose problem it is:
 
 | Status | What happened | What to do |
 | --- | --- | --- |

@@ -20,7 +20,7 @@ Proof runs a project's tasks on other computers (hosts) in a pool, and streams t
 
    This sends the working tree as it is, uncommitted changes included. To check exactly what you committed, add `--commit HEAD`.
 3. **Read the first line.** It shows the project and the commit Proof sent. If it shows another project, your shell is in the wrong folder: stop, and run again with `-C PATH_TO_PROJECT`.
-4. **Read the last line and the exit status.** The last line is the result, such as `proof: exit=1 run=20261125-0336-r5c6t task=test runner=nuc-linux …`. `proof` exits with that status. Act on it by the table in **Exit statuses**.
+4. **Read the last line and the exit status.** The last line is the result, such as `proof: exit=1 run=20261125-0336-r5c6t task=test runner=nuc-linux …`. With one run, `proof` exits with that status. Act on it by the table in **Exit statuses**, which also says what several runs exit with.
 5. **On a failure, read the output.** If the output you saw was cut short, print the end of it with `proof logs r5c6t --tail 200`, using the run's last five characters.
 
 Words for the task follow `--`, as with `cargo run` and `npm run`: `proof run test -- --seed 1234`. Proof's flags go anywhere before `--`, and a flag Proof doesn't have is refused with exit status 2, naming the flag and the nearest one Proof has. `:::` starts the next task, and each task's words follow a `--` after its name: `proof run lint -- --fix ::: test -- --seed 1234`. For any command or flag this file doesn't show, read [references/cli.md](references/cli.md), which matches the installed version of `proof`.
@@ -42,7 +42,7 @@ Words for the task follow `--`, as with `cargo run` and `npm run`: `proof run te
 | 78 | Passed, but Proof couldn't keep the artifacts: a pattern matched no file, or they exceeded the pool's limit. | Fix the pattern or the build, or keep fewer files. |
 | 124 | The run hit its time limit. | Read the end of the output to see what was slow. Raise the limit only if the work is legitimately long. |
 | 137 | The run held more memory than it requested while its host ran short. | Request what the message says it held: `--memory 12GB` for one run, and tell the human so the task's `memory` in `.config/proof.kdl` can change. |
-| 141, 143 | Proof canceled the run because its output pipe closed (141) or it received `TERM` (143). | Run it again without a pipe, and don't stop it early. |
+| 130, 141, 143 | Proof canceled the run because you interrupted it with Ctrl-C (130), its output pipe closed (141), or it received `TERM` (143). | Run it again without a pipe, and don't stop it early. |
 | Any other | The task failed. | Fix your change. Never treat it as the pool's fault. |
 
 With several runs, as with `--os all`, `proof` exits with the first of these that applies: 130, 141, or 143 when Proof canceled the runs; the status of the first failing run, in the order of the `--os` flags; 78; 75; 0. A 75 then means no run failed and the pool lost at least one, so run the same command once more. An earlier run's failure hides the status of a later one, such as 124, so read each run's result line, not only the exit status.
