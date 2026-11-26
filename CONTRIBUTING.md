@@ -36,9 +36,10 @@ The command exits 0 when every check passes, with no errors and no warnings. It 
 | RubyCritic | A file rated below A, a smell (from reek), duplication (from flay), or an overall score below 95. The failure names each file, its rating, and each smell |
 | REUSE | A file that `REUSE.toml` gives no copyright or license |
 | RDoc coverage | A public class, module, constant, or method with no documentation, counting the comments in `sig/**/*.rbs` |
+| Comment placement | A comment in `lib/` directly above a `def`, `class`, or `module`, where RDoc would take it as documentation |
 | CLI spec | `usage lint` finding a fault, or a generated reference that differs from the spec |
 
-Run one check while you work: `bundle exec rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `usage:lint`, or `usage:references`. `bundle exec rake lint:fix` corrects the RuboCop offenses it can.
+Run one check while you work: `bundle exec rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `docs:placement`, `usage:lint`, or `usage:references`. `bundle exec rake lint:fix` corrects the RuboCop offenses it can.
 
 Tests never reach the internet. Use local fakes.
 

@@ -4,7 +4,7 @@ This project follows a strict and specific documentation style designed to be he
 
 **All agents and contributors must adhere to these standards.**
 
-The API documentation lives in the `.rbs` files under `sig/`, next to each declaration, and is written in Markdown. RDoc reads the `.rbs` files when you pass them as input, and then the HTML, `ri`, and `rake rdoc:coverage` all use those comments. A `.rb` file keeps only comments that say why the code is written as it is, or that explain a tricky part, and none sits directly above a `def`, `class`, or `module`: RDoc would take it as documentation.
+The API documentation lives in the `.rbs` files under `sig/`, next to each declaration, and is written in Markdown. RDoc reads the `.rbs` files when you pass them as input, and then the HTML, `ri`, and `rake rdoc:coverage` all use those comments. A `.rb` file keeps only comments that say why the code is written as it is, or that explain a tricky part, and none sits directly above a `def`, `class`, or `module`: RDoc would take it as documentation. `rake docs:placement` fails on one that does.
 
 ## 1. Core Philosophy
 

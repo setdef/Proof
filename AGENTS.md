@@ -19,9 +19,9 @@ What to build next, what 1.0 leaves out, and what is undecided: `doc/contributor
 
 ## Commands
 
-- The gate, before every commit: `MISE_TRUSTED_CONFIG_PATHS=$PWD mise exec -- bundle exec rake`, with `BUNDLE_PATH` pointing outside the repository, where RuboCop and REUSE won't read the gems. It runs the tests with 100% line and branch coverage, RuboCop with every cop on, Steep, RubyCritic, REUSE, RDoc coverage, the CLI spec's lint, and the check that both generated references match it. It must pass with zero errors and zero warnings.
+- The gate, before every commit: `MISE_TRUSTED_CONFIG_PATHS=$PWD mise exec -- bundle exec rake`, with `BUNDLE_PATH` pointing outside the repository, where RuboCop and REUSE won't read the gems. It runs the tests with 100% line and branch coverage, RuboCop with every cop on, Steep, RubyCritic, REUSE, RDoc coverage, the comment-placement check, the CLI spec's lint, and the check that both generated references match it. It must pass with zero errors and zero warnings.
 - RubyCritic's gate fails unless every file is rated A, reek and flay report no smells or duplication, and the overall score is at least 95. That floor may rise, never fall. `tasks/critic_faults.rb` reads RubyCritic's JSON report, because RubyCritic has no option that fails on a rating or a smell; its `--minimum-score` enforces the score.
-- One gate at a time: `rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `usage:lint`, `usage:references`.
+- One gate at a time: `rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `docs:placement`, `usage:lint`, `usage:references`.
 - Fix what a gate can fix: `rake lint:fix` corrects RuboCop offenses.
 - Run Ruby as `bundle exec ruby`, never `ruby -Ilib:test`.
 - Don't run `bin/setup` or install a pre-commit hook: the hooks of a clone's worktrees are shared. Run `mise install` and `bundle install`.
@@ -44,7 +44,7 @@ What to build next, what 1.0 leaves out, and what is undecided: `doc/contributor
 - Value objects are `Data.define`, written `class Foo < Data.define(...)`, because RDoc skips the methods in a `Foo = Data.define(...) do` block and the coverage check never counts them; entities are classes.
 - Type every class and method in `.rbs`, with no `untyped`. A `Data.define` subclass declares `class Foo < Data`, an `attr_reader` for each member, and `self.new` (and `self.[]` if used) with positional and keyword overloads, because `Data.new` returns `bot`.
 - Write RDoc, not YARD, in the `.rbs` file, in Markdown, for every public class, module, constant, and method, following `doc/contributors/documentation_style.md`. That guide covers API documentation; `doc/contributors/style-guide.md` covers everything else.
-- A comment in a `.rb` file says why the code is written as it is, or explains a tricky part. Put it inside the body, never directly above a `def`, `class`, or `module`: RDoc would take it as documentation.
+- A comment in a `.rb` file says why the code is written as it is, or explains a tricky part. Put it inside the body, never directly above a `def`, `class`, or `module`: RDoc would take it as documentation. `rake docs:placement` fails on one that is.
 - Every cop RuboCop has is on. Fix an offense; never write `rubocop:disable`. Turn a cop off in `.rubocop.yml` only for a reason written beside it.
 - A one-off script that grows past a few lines is a temporary Rake task or `ruby -e`, not a long shell string.
 - Commit straight to the trunk, one tested change at a time; run the checks before the push, not after. A commit message is one plain imperative line in sentence case with no prefix (not Conventional Commits), a blank line, and a short body saying why.
