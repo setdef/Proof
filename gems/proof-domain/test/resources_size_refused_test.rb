@@ -55,6 +55,12 @@ class ResourcesSizeRefusedTest < Minitest::Test
     assert_equal(%(#{MEMORY_MESSAGE}"8\\xFFGB"), error.message)
   end
 
+  # A string in an encoding that isn't ASCII-compatible, such as UTF-16, is
+  # valid text but not a size, and raises the resources' error, not Ruby's.
+  def test_a_memory_in_an_encoding_that_is_not_ascii_compatible_is_refused
+    assert_refused(["8GB".encode(Encoding::UTF_16LE)])
+  end
+
   # Project file reference, "Sizes": "When a size breaks these rules, Proof
   # refuses it with the forms that work", so the message lists the number, the
   # space, and the units, with examples.

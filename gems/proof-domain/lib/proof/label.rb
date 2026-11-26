@@ -12,7 +12,7 @@ module Proof
 
     def initialize(name:)
       raise(InvalidLabelError, format(MESSAGE, name)) unless
-        name.is_a?(String) && name.valid_encoding? && FORM.match?(name)
+        name.is_a?(String) && name.ascii_only? && FORM.match?(name)
 
       super(name: -name)
     end

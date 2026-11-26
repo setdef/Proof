@@ -7,7 +7,7 @@ module Proof
     private_constant(:FORM, :MEGABYTES)
 
     def self.megabytes(text)
-      match = (text.is_a?(String) && text.valid_encoding?) ? FORM.match(text) : nil
+      match = (text.is_a?(String) && text.ascii_only?) ? FORM.match(text) : nil
       # Rational keeps 0.1 as exactly 1/10, so a decimal that no binary float holds still rounds up exactly.
       match && (Rational(match[:number]) * MEGABYTES[match[:unit].downcase.to_sym]).ceil
     end

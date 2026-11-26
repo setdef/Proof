@@ -86,7 +86,8 @@ module Proof
     # `MiB`, `GiB`, or `TiB` in any case, such as `"512MB"`, `"8 gb"`,
     # `"1.5GiB"`, or `"0GB"`. A decimal size rounds up to the next whole
     # megabyte. A number, `nil`, `"8"`, `"8G"`, `"1e3MB"`, `"-1GB"`, `".5GB"`,
-    # `"8  GB"`, `"8GB "`, and a string with a byte that isn't valid text raise
+    # `"8  GB"`, `"8GB "`, a string with a byte that isn't valid text, and a
+    # string in an encoding that isn't ASCII-compatible, such as UTF-16, raise
     # as memory, and `0` raises as `cpus`. The message lists the forms that
     # work.
     #

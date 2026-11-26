@@ -60,9 +60,10 @@ module Proof
     # Builds a label, and raises `Proof::InvalidLabelError` unless `name` is 1
     # to 63 ASCII letters, digits, `-`, `_`, and `.`, beginning and ending
     # with a letter or a digit. The empty string, a name with a space or a line
-    # break, a name with a letter that isn't ASCII, a symbol, `nil`, and a
-    # string with a byte that isn't valid text raise. The message lists the
-    # rule and forms that work.
+    # break, a name with a letter that isn't ASCII, a symbol, `nil`, a string
+    # with a byte that isn't valid text, and a string in an encoding that isn't
+    # ASCII-compatible, such as UTF-16, raise. The message lists the rule and
+    # forms that work.
     #
     # - `name`: String, such as `"gpu"` or `"cuda-12.4"`.
     #

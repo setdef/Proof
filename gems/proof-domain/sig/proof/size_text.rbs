@@ -22,8 +22,9 @@ module Proof
     MEGABYTES: Hash[Symbol, Integer]
 
     # The megabytes in `text`, rounded up to a whole number, or `nil` when
-    # `text` isn't a size in the form above. A value that isn't text, and text
-    # with a byte that isn't valid text, give `nil`.
+    # `text` isn't a size in the form above. A value that isn't text, text with
+    # a byte that isn't valid text, and text in an encoding that isn't
+    # ASCII-compatible, such as UTF-16, give `nil`.
     #
     # - `text`: Object, such as `"8GB"`. Any value is accepted, and only a
     #   String in the form gives a number.
