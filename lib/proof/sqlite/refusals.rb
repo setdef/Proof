@@ -13,6 +13,12 @@ module Proof
         raise(RunChangedError.new(id:, version:, read:)) unless version == read
       end
 
+      def self.added(run, rows)
+        return QueuePositionTakenError.new(position: run.queued.position) if rows.empty?
+
+        RunExistsError.new(id: run.id)
+      end
+
       def self.beaten(run, fact, rows)
         id = run.id
         placed = rows.any? { |row| row[:kind] == PLACED }

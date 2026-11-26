@@ -8,7 +8,8 @@ module Proof
     #
     # This class inserts a new run's rows, or one fact's row, in one
     # transaction, and when SQLite refuses the insert because of a unique
-    # index, it reads what is stored and raises the matching error.
+    # index, it reads what is stored and raises the error
+    # `Proof::Sqlite::Refusals` chooses.
     #
     # Use it through `Proof::Sqlite::Runs`.
     class Writer
@@ -42,6 +43,8 @@ module Proof
       private
 
       def insert: (row | Array[row] rows) -> Array[row]
+
+      def stored: (Run run) -> Array[row]
     end
   end
 end

@@ -7,7 +7,8 @@ module Proof
     # in the domain, and which error depends on what is stored.
     #
     # This module checks a fact against a run, and chooses the error for an
-    # insert that SQLite refused after another writer got in first.
+    # insert that SQLite refused after another writer got in first, whether the
+    # insert was a new run's or one fact's.
     #
     # Use it through `Proof::Sqlite::Runs`.
     module Refusals
@@ -39,6 +40,20 @@ module Proof
       # Proof::Sqlite::Refusals.append(run, cancel, 2)
       # ```
       def self.append: (Run run, Run::Fact fact, Integer read) -> void
+
+      # The error for the insert of a new run that SQLite refused, given the rows
+      # that are stored for its ID now: `Proof::RunExistsError` when there are
+      # any, and `Proof::QueuePositionTakenError` when there are none, since
+      # then another run has its queue position.
+      #
+      # - `run`: Run, the new run.
+      # - `rows`: the rows stored for the run's ID.
+      #
+      # ```ruby
+      # Proof::Sqlite::Refusals.added(run, []).class # => Proof::QueuePositionTakenError
+      # Proof::Sqlite::Refusals.added(run, Proof::Sqlite::RunRows.rows(run)).class # => Proof::RunExistsError
+      # ```
+      def self.added: (Run run, Array[row] rows) -> (RunExistsError | QueuePositionTakenError)
 
       # The error for an insert of `fact` that SQLite refused, given the rows
       # that are stored for `run` now: `Proof::RunAlreadyPlacedError` when

@@ -15,24 +15,23 @@ module Proof
       def add(run)
         insert(RunRows.rows(run))
       rescue ROM::SQL::UniqueConstraintError
-        # The unique indexes refuse a run whose ID or queue position another run has. Whether the ID is stored says
-        # which.
-        id = run.id
-        raise(RunExistsError.new(id:)) unless @facts.of(id.to_s).to_a.empty?
-
-        raise(QueuePositionTakenError.new(position: run.queued.position))
+        # The unique indexes refuse a run whose ID or queue position another run has. What is stored says which.
+        raise(Refusals.added(run, stored(run)))
       end
 
       def append(run, fact)
-        id = run.id
-        insert(FactRows.row(id, run.version, fact))
+        insert(FactRows.row(run.id, run.version, fact))
       rescue ROM::SQL::UniqueConstraintError
         # The unique indexes refuse a writer that read before another wrote. What the other writer stored says which.
-        raise(Refusals.beaten(run, fact, @facts.of(id.to_s).to_a))
+        raise(Refusals.beaten(run, fact, stored(run)))
       end
 
       private def insert(rows)
         @facts.transaction { @create.call(rows) }
+      end
+
+      private def stored(run)
+        @facts.of(run.id.to_s).to_a
       end
     end
   end
