@@ -41,6 +41,19 @@ class PoolFileReaderUnknownTest < Minitest::Test
     )
   end
 
+  # The same bullet: a child that the page lists under `host`, `defaults`, or `repository` is a node of a pool file
+  # only inside its parent, so each one written at the top of the file is refused as a node the page doesn't list.
+  def test_a_child_written_at_the_top_of_the_file_is_refused
+    %w[runner budget keep-free share active-for withhold credentials-file branch task poll].each do |name|
+      assert_refused(
+        "#{name} x\n",
+        1,
+        "there is no node \"#{name}\" in a pool file. A pool file has \"server\", \"retention\", \"limits\", " \
+          "\"defaults\", \"host\", and \"repository\" nodes"
+      )
+    end
+  end
+
   # The same bullet, for a property of `server`, `retention`, and `limits`.
   def test_an_unknown_property_is_refused
     UNKNOWN_PROPERTIES.each do |text, line, reason|

@@ -32,13 +32,13 @@ class RetentionTest < Minitest::Test
     assert_equal(expected, Proof::Retention.new(output: days(30)))
   end
 
-  # Pool file reference, "`retention`": "Each value is a quoted duration in days", so a duration of 90 minutes, which
-  # is not a whole number of days, is refused for each value, and so is anything that is not a duration.
+  # Pool file reference, "`retention`": "Each value is a quoted duration in days", so a duration of 90 minutes, or of 25
+  # hours, which is not a whole number of days, is refused for each value, and so is anything that is not a duration.
   def test_a_value_that_is_not_a_whole_number_of_days_is_refused
-    minutes = Proof::Duration.read("90m", units: %i[m], name: "poll")
+    parts = [["90m", :m], ["25h", :h]].map { |text, unit| Proof::Duration.read(text, units: [unit], name: "poll") }
 
     %i[runs output artifacts].each do |member|
-      assert_raises(Proof::InvalidRetentionError, member.to_s) { Proof::Retention.new(member => minutes) }
+      parts.each { |part| assert_raises(Proof::InvalidRetentionError, member.to_s) { Proof::Retention.new(member => part) } }
       assert_raises(Proof::InvalidRetentionError, member.to_s) { Proof::Retention.new(member => "90d") }
       assert_raises(Proof::InvalidRetentionError, member.to_s) { Proof::Retention.new(member => nil) }
     end

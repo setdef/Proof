@@ -32,6 +32,7 @@ class PoolFileReaderChildrenTest < Minitest::Test
     ["host \"\" {\n  runner a\n}\n", 1, "a host's name is not empty and not only spaces, not \"\""],
     ["host \"  \" {\n  runner a\n}\n", 1, "a host's name is not empty and not only spaces, not \"  \""],
     ["host a {\n  runner b \" \"\n}\n", 2, "a runner's name is not empty and not only spaces, not \" \""],
+    ["host \"\\t\" {\n  runner a\n}\n", 1, "a host's name is not empty and not only spaces, not \"\\t\""],
   ].freeze
   private_constant(:HOST_USAGE, :HOST, :HOST_CHILDREN, :DEFAULTS_CHILDREN, :UNKNOWN_CHILDREN, :NAMES, :BLANKS)
 
