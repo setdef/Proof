@@ -42,7 +42,7 @@ class CommandLineHelpTest < Minitest::Test
 
   # proof.usage.kdl: `exit_code` nodes, which the help lists with the statuses.
   def test_the_programs_help_lists_the_exit_statuses
-    assert_includes(help, "  130  You interrupted Proof with Ctrl-C.")
+    assert_includes(help, "  130  The run was canceled: you interrupted Proof with Ctrl-C, or someone")
   end
 
   # clig.dev: "Lead with examples."

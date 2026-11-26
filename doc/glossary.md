@@ -218,7 +218,7 @@ A run is in exactly one of these states. The first two can change; the rest are 
 | `failed` | The command exited with another status, Proof couldn't keep the run's artifacts, or the server was short of space for them when the run started. |
 | `timed_out` | The run reached its time limit, and the runner ended it. |
 | `out_of_memory` | The run held more memory than it requested while its host ran short, and the runner ended it. |
-| `canceled` | Someone canceled the run, and the runner ended it. |
+| `canceled` | Someone canceled the run. A runner ended it, or no runner had it yet: a run that is still `queued` ends `canceled` without one. |
 | `lost` | The run ended without a status from its command, because the server lost contact with its runner for 10 minutes (the runner or its host went away) or Proof failed, or its command exited but its whole output never reached the server. |
 
 The 10 minutes count only while the server is up, so a server restart or outage never makes a run `lost`. A `lost` run stays `lost`: the server refuses a report that arrives later, even a complete one. The host's CPUs and memory stay held until the runner reports that the run's processes ended, or the runner is revoked.

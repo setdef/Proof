@@ -569,6 +569,7 @@
         "hide": false,
         "args_override_self": true,
         "help": "Cancel runs, and end everything their commands started",
+        "help_long": "Cancels runs, and ends everything their commands started. A run that is still queued is canceled without a runner, and ends `canceled`. When someone else cancels a run, the `proof run` or `proof watch` following it exits with 130, and its result line says who canceled it.",
         "name": "cancel",
         "aliases": [],
         "hidden_aliases": [],
@@ -1665,7 +1666,7 @@
     },
     {
       "code": 130,
-      "help": "You interrupted Proof with Ctrl-C."
+      "help": "The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it."
     },
     {
       "code": 137,

@@ -45,4 +45,5 @@ Most invocations come from coding agents, inside agent harnesses. That shapes se
 - Print a line before any network call, so a command never sits silent while it connects.
 - The last line is the result: `key=value` fields, only ever added to, never renamed.
 - Exit with the task's status, or with one of the statuses the spec reserves for Proof. Proof's failures before anything was sent exit 2; failures of the pool after sending exit 75. A failure of Proof itself prints no result line, so it can't be read as a run's.
+- **A run canceled by someone else, or by the pool, exits 130, not 75.** Scripts retry on 75, and a retry is wrong for a run someone stopped on purpose. The result line says who canceled it.
 - Errors are rewritten for people, end with the command to run next, and keep a debug log under `~/.local/state/proof/`, never in the current folder.

@@ -41,7 +41,8 @@ class CommandLineSpecTest < Minitest::Test
   # proof.usage.kdl: each `exit_code` node, with its meaning.
   def test_an_exit_code_has_its_meaning
     assert_equal(
-      "You interrupted Proof with Ctrl-C.",
+      "The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. " \
+        "The result line says who canceled it.",
       SPEC.exit_codes.find { |code| code.status == 130 }
       .help
     )

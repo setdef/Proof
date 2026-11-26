@@ -62,7 +62,7 @@ proof watch m3d8q
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -132,7 +132,7 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -211,7 +211,7 @@ Streams a run's output until it ends, and exits with its status. Picks up a run 
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -245,7 +245,7 @@ Prints a run's whole output. Works for any run Proof still keeps, finished or no
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -267,7 +267,7 @@ proof logs m3d8q --tail 100
 - **Usage:** `proof cancel <run>…`
 - **Effect:** destructive — may delete or irreversibly overwrite
 
-Cancel runs, and end everything their commands started
+Cancels runs, and ends everything their commands started. A run that is still queued is canceled without a runner, and ends `canceled`. When someone else cancels a run, the `proof run` or `proof watch` following it exits with 130, and its result line says who canceled it.
 
 ### Arguments
 - **`<run>…`** — The runs' IDs, or their last five characters
@@ -281,7 +281,7 @@ Cancel runs, and end everything their commands started
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -316,7 +316,7 @@ Download a run's artifacts
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -352,7 +352,7 @@ Shows the runners, the queue for each operating system, and your recent runs, wi
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -385,7 +385,7 @@ Signs in to a pool's server from this computer. Asks for the one-time code that 
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -412,7 +412,7 @@ Sign out of the pool's server from this computer, and delete the token Proof kep
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -442,7 +442,7 @@ Send a known run to every runner, and report each result
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -468,7 +468,7 @@ Install Proof's Agent Skill, which teaches coding agents to use Proof
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -492,7 +492,7 @@ Install the Agent Skill that matches this version of Proof
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -524,7 +524,7 @@ Set up, upgrade, or uninstall the server, on the computer it runs on
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -548,7 +548,7 @@ Sets up this computer as the pool's server. Run it as the account the server wil
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -584,7 +584,7 @@ Upgrade the server; its runners upgrade themselves to match
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -614,7 +614,7 @@ Stop the server and delete it, with every run's record, output, and artifacts
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -640,7 +640,7 @@ Add, approve, list, and remove runners
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -675,7 +675,7 @@ when you run setup again. On Windows, also sets up a runner in WSL. Safe to run 
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -705,7 +705,7 @@ Lets a runner that asked to join into the pool, and adds its host to the pool fi
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -732,7 +732,7 @@ Start this computer's runner again after `proof runner stop`
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -762,7 +762,7 @@ Stop this computer's runner, and cancel its runs, until `proof runner start`
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -792,7 +792,7 @@ List the runners, with their versions, labels, and resources
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -825,7 +825,7 @@ Remove a runner from the pool, and revoke its token
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -855,7 +855,7 @@ Stop this computer's runner, and delete its workspaces and caches
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -881,7 +881,7 @@ Install or remove a Git pre-push hook that runs a task
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -908,7 +908,7 @@ Adds a pre-push hook to this clone that runs a task on the commits you push. Git
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
@@ -935,7 +935,7 @@ Remove the pre-push hook that Proof installed in this clone
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | You interrupted Proof with Ctrl-C. |
+| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
 | `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
 | `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |

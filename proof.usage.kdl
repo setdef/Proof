@@ -36,7 +36,7 @@ exit_code 2 "Proof refused the run before sending anything: the command line or 
 exit_code 75 "A runner or its host went away, or Proof couldn't reach the server. Run the same command again."
 exit_code 78 "The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started."
 exit_code 124 "The run reached its time limit, and the runner ended it."
-exit_code 130 "You interrupted Proof with Ctrl-C."
+exit_code 130 "The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it."
 exit_code 137 "The run held more memory than it requested while its host ran short, or was killed."
 exit_code 141 "Standard output was closed, as by a pipe into head, and Proof canceled the run."
 exit_code 143 "Proof received TERM, as when an agent harness stops it, and canceled the run."
@@ -132,6 +132,7 @@ cmd "logs" effect="read" help="Print a run's whole output" {
 }
 
 cmd "cancel" effect="destructive" help="Cancel runs, and end everything their commands started" {
+  long_help "Cancels runs, and ends everything their commands started. A run that is still queued is canceled without a runner, and ends `canceled`. When someone else cancels a run, the `proof run` or `proof watch` following it exits with 130, and its result line says who canceled it."
   arg "<run>..." help="The runs' IDs, or their last five characters"
   example "proof cancel m3d8q"
 }
