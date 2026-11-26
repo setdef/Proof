@@ -39,6 +39,11 @@ class CommandLineFlagMistakesTest < Minitest::Test
     )
   end
 
+  # Short flags written together get no suggestion either, though -qx is near -q: -q isn't what was typed.
+  def test_an_unknown_cluster_of_short_flags_is_named_with_no_suggestion
+    assert_equal("proof: -qx isn't a flag of proof. To list the flags, run: proof --help", mistake("-qx", "status"))
+  end
+
   # An abbreviation is a mistake, as OptionParser's require_exact refuses it.
   def test_an_abbreviation_of_a_flag_is_refused_with_the_flag
     assert_equal(
