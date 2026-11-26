@@ -15,6 +15,7 @@ module Proof
   # ## Examples
   #
   # ```ruby
+  # require "kdl"
   # error = begin
   #   KDL::Parser.new.parse("task package memory=8GB\n")
   # rescue KDL::Error => e

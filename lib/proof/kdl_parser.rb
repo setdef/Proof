@@ -1,10 +1,15 @@
 # frozen_string_literal: true
 
-require_relative("kdl_lines/lined_parser")
-require_relative("kdl_lines/output")
 require_relative("kdl_syntax_reason")
 
 module Proof
+  module KdlLines
+    # The adapters load the `kdl` gem and the gems it loads, so they load on the first parse, and a command that reads
+    # no KDL starts on Ruby's standard library alone.
+    autoload(:LinedParser, File.join(__dir__.to_s, "kdl_lines/lined_parser.rb"))
+    autoload(:Output, File.join(__dir__.to_s, "kdl_lines/output.rb"))
+  end
+
   class KdlParser
     NOT_UTF8 = "this is not valid KDL 2: the text is not valid UTF-8"
     ENDS_TOO_SOON = "this is not valid KDL 2: the text ends in the middle of a string"

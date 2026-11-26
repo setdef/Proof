@@ -8,7 +8,9 @@ module Proof
   # work around faults of the gem: a space the grammar can't read, and a block
   # comment with no end that the tokenizer never leaves.
   #
-  # `Proof::KdlParser` uses these, and nothing else does.
+  # `Proof::KdlParser` uses these, and nothing else does. They load the `kdl`
+  # gem and the gems it loads, so they load the first time
+  # `Proof::KdlParser.parse` runs, and `require "proof"` loads none of them.
   module KdlLines
     # What the gem's tokenizer gives the parser for each token: its type and the
     # token.
