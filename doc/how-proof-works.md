@@ -46,6 +46,8 @@ The server counts resources per **host**, not per runner. A Windows PC with WSL 
 
 The server places each run by these rules alone. It has no priorities, and it never stops one run to make room for another. `proof status` shows what each queued run is waiting behind, so a run that waits a long time says why.
 
+From its placement until it ends, a run is `running`, even before its command starts. `proof status` shows what it is doing then: fetching its code, waiting for a desktop or for a person to leave, running its command, or sending its output.
+
 Proof refuses a run that no host could ever run, such as one that requests more memory than any host has, before it sends anything, and says which host comes closest.
 
 ## What a runner gives each run

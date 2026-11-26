@@ -43,6 +43,8 @@ A queued run isn't hung. `proof status` says what each queued run is waiting beh
 | a host needs signing in | A Windows runner needs its account signed in after a restart. A Mac runner needs it only for work that opens windows. | Sign the account in. |
 | no runner offers a label it needs | No host has the hardware, or the runner hasn't found it. | Run setup on the host again, which says what's missing. |
 
+A run that a runner already has is `running`, even before its command starts. `proof status` says what it is doing: fetching its code, waiting for a desktop or for a person to leave, running its command, or sending its output. The [glossary](../glossary.md#run-states) lists the states.
+
 `proof watch RUN_ID` picks the run up again from any terminal, and exits with its status when it ends. If you no longer have the run's ID, `proof status` lists your recent runs with theirs.
 
 ## A run fails in setup

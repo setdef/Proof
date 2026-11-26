@@ -696,7 +696,7 @@
         "hide": false,
         "args_override_self": true,
         "help": "Show the runners, the queue for each operating system, and your recent runs",
-        "help_long": "Shows the runners, the queue for each operating system, and your recent runs, with their IDs. For each queued run, shows what it is waiting behind. For each runner, shows whether a person is active at its host.",
+        "help_long": "Shows the runners, the queue for each operating system, and your recent runs, with their IDs. For each queued run, shows what it is waiting behind, and for each run a runner has, what it is doing. For each runner, shows whether a person is active at its host.",
         "name": "status",
         "aliases": [],
         "hidden_aliases": [],

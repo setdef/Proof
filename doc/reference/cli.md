@@ -338,7 +338,7 @@ proof download m3d8q 'pkg/*.gem' --output dist
 - **Usage:** `proof status [--json]`
 - **Effect:** read-only
 
-Shows the runners, the queue for each operating system, and your recent runs, with their IDs. For each queued run, shows what it is waiting behind. For each runner, shows whether a person is active at its host.
+Shows the runners, the queue for each operating system, and your recent runs, with their IDs. For each queued run, shows what it is waiting behind, and for each run a runner has, what it is doing. For each runner, shows whether a person is active at its host.
 
 ### Flags
 - **`--json`** — Print the status as JSON

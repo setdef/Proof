@@ -146,7 +146,7 @@ cmd "download" effect="write" help="Download a run's artifacts" {
 }
 
 cmd "status" effect="read" help="Show the runners, the queue for each operating system, and your recent runs" {
-  long_help "Shows the runners, the queue for each operating system, and your recent runs, with their IDs. For each queued run, shows what it is waiting behind. For each runner, shows whether a person is active at its host."
+  long_help "Shows the runners, the queue for each operating system, and your recent runs, with their IDs. For each queued run, shows what it is waiting behind, and for each run a runner has, what it is doing. For each runner, shows whether a person is active at its host."
   flag "--json" help="Print the status as JSON"
   example "proof status"
 }

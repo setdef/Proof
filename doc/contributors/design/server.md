@@ -9,6 +9,7 @@ What the server must guarantee, and the traps known so far. How to meet each req
 - A host with a person active keeps its share free: no new run is placed into it.
 - Refuse a run no host could ever take before anything is sent, and name the closest host. Keep a run queued when its operating system has no runner at the moment, since hosts come back.
 - `proof status` must say what each queued run waits behind: which runs hold the host it needs, or that a person is active there, or that the host needs someone to sign in, or that no runner of its operating system is connected. A run that waits a long time without saying why looks hung.
+- `proof status` must also say what a run a runner already has is doing: getting its code, waiting for a desktop or for a person to leave, running its command, or sending its output. A run that sits before its command starts looks hung the same way.
 
 ## The pool file
 

@@ -58,7 +58,7 @@ A run Proof can't vouch for never reports 0: a pass you see happened.
 
 ## While a run waits
 
-A run waiting in the queue isn't hung. `proof status` shows what it waits behind: other runs, a host with no runner connected, or a human using the host. Keep working on something else, and come back with `proof watch`. Never cancel another agent's run to make room, and never move your run to a different operating system to skip the queue unless the change is specific to that system.
+A run waiting in the queue isn't hung. `proof status` shows what it waits behind: other runs, a host with no runner connected, or a human using the host. A run a host already has shows what it is doing: getting its code, waiting for a desktop or for a human to leave, running its command, or sending its output. Keep working on something else, and come back with `proof watch`. Never cancel another agent's run to make room, and never move your run to a different operating system to skip the queue unless the change is specific to that system.
 
 ## Humans at hosts
 

@@ -164,13 +164,15 @@ A run is in exactly one of these states. The first two can change; the rest are 
 | State | Meaning |
 | --- | --- |
 | `queued` | The run waits for a runner. |
-| `running` | A runner is running the run's command. |
+| `running` | A runner has the run, from its placement until it ends. |
 | `succeeded` | The command exited with status 0, and its whole output arrived. |
 | `failed` | The command exited with another status. |
 | `timed_out` | The run reached its time limit, and the runner ended it. |
 | `out_of_memory` | The run held more memory than it requested while its host ran short, and the runner ended it. |
 | `canceled` | Someone canceled the run, and the runner ended it. |
 | `lost` | The run ended without a status from its command, because its runner or host went away or Proof failed, or its command exited but its whole output never reached the server. |
+
+A run that is `running` is doing one of these: fetching its code, waiting for a desktop or for a person to leave, running its command, or sending its output. `proof status` shows which.
 
 - Elsewhere: `queued` is queued in GitHub Actions and pending in Slurm, GitLab, and Kubernetes. Canceled has one l in GitLab, Buildkite, and Nomad.
 - Don't say: waiting or pending for `queued`; passed or green for `succeeded`; aborted or killed for `canceled`.
