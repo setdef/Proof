@@ -26,3 +26,7 @@ pre-commit = "latest"
 "pipx:reuse" = { version = "6.3.0", extras = "charset-normalizer" }
 # usage lints the CLI spec and generates the CLI references.
 usage = "7.4.1"
+# actionlint lints the workflows in .github/workflows. shellcheck is the
+# shell linter actionlint runs on each workflow's run steps when it finds it.
+actionlint = "1.7.12"
+shellcheck = "0.11.0"
