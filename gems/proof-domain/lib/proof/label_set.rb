@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative("label")
+require_relative("listing")
 
 module Proof
   # steep:ignore:start
@@ -11,11 +12,10 @@ module Proof
     end
 
     def initialize(labels:)
-      unless [Array, Set].any? { |kind| labels.is_a?(kind) } && labels.all?(Label)
-        raise(InvalidLabelSetError, format("a set of labels holds only labels, not %p", labels))
-      end
+      found = Listing.set(labels, Label, 0)
+      raise(InvalidLabelSetError, format("a set of labels holds only labels, not %p", labels)) unless found
 
-      super(labels: Set.new(labels).freeze)
+      super(labels: found)
     end
 
     def |(other)

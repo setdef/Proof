@@ -2,8 +2,10 @@ module Proof
   # A list of values of one kind, held as a set.
   #
   # `Proof::TaskSettings` holds a task's operating systems, artifacts, and
-  # caches as sets, and refuses a list with anything else in it. It is a
-  # separate module so that the check is in one place. It is a private constant
+  # caches as sets, `Proof::LabelSet` holds labels, and
+  # `Proof::SettingsResolver` holds the names of tasks. Each refuses a list with
+  # anything else in it. It is a separate module so that the check is in one
+  # place. It is a private constant
   # of `Proof`, so the domain has no public name for it.
   module Listing
     # A frozen set of the items of `values`, or `nil` when `values` isn't an
