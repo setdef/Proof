@@ -35,4 +35,15 @@ class SqliteRunsFileTest < Minitest::Test
 
     assert_equal("wal", mode)
   end
+
+  # SQLite removes the write-ahead log of a file when it closes the file's last connection, so the log is there while
+  # the store is open and gone once the store closes.
+  def test_closing_the_store_closes_its_connections
+    runs = FIXTURES.storing(build_runs, FIXTURES.run)
+    log = "#{runs.path}-wal"
+    during = File.exist?(log)
+    runs.close
+
+    assert_equal([true, false], [during, File.exist?(log)])
+  end
 end
