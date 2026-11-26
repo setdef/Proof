@@ -26,8 +26,8 @@ task docs "bundle exec rake rdoc" {
 
 - `defaults` holds values for every task. A file has at most one.
 - `task NAME` adds Proof's settings to the mise task of that name. `task NAME "COMMAND"` defines a task mise doesn't have; Proof runs the command with `sh -o errexit -c` on Linux and macOS and `cmd /c` on Windows.
-- Properties: `cpus` (a whole number), `memory` (a quoted size such as `"8GB"`), `timeout` (a quoted duration such as `"30m"`).
-- Children: `os` (any of `linux`, `macos`, `windows`), `label` (such as `gpu`, `kvm`, `desktop`, `sound`, `podman`, `xcode`), `artifact` (file patterns to keep after a run passes), `cache` (folders to keep between runs).
+- Properties: `cpus` (a whole number), `memory` (a quoted size such as `"8GB"`; see **Sizes and labels**), `timeout` (a quoted duration such as `"30m"`).
+- Children: `os` (any of `linux`, `macos`, `windows`), `label` (such as `gpu`, `kvm`, `desktop`, `sound`, `podman`, `xcode`; see **Sizes and labels**), `artifact` (file patterns to keep after a run passes), `cache` (folders to keep between runs).
 - A task's `os` replaces the `defaults` `os`. Its `label`, `artifact`, and `cache` add to the defaults. Values on the command line win over both.
 - Without any `os`, a task runs on any operating system.
 
@@ -54,6 +54,12 @@ task package memory=8GB
 // Right:
 task package memory="8GB"
 ```
+
+## Sizes and labels
+
+- **A size** is a number, whole or decimal, an optional space, and a unit: `MB`, `GB`, `TB`, `MiB`, `GiB`, or `TiB`, in any case, all counted in 1,024s. `"8GB"`, `"8 gb"`, `"8GiB"`, and `"1.5GB"` are valid. A size that isn't a whole number of megabytes rounds up to the next one, so `"0.1GB"` is 103 MB. `"8"`, `"8G"`, `"1e3MB"`, and `"8GB "` are refused, and so is a size without quotes.
+- **A label** is 1 to 63 ASCII letters, digits, `-`, `_`, or `.`, beginning and ending with a letter or a digit, with no space. Labels are compared without regard to case, so `GPU` is `gpu`. `gpu`, `cuda-12.4`, and `nested_kvm` are valid. `"nvidia gpu"`, `-gpu`, and `gpu!` are refused.
+- Proof refuses a file with a size or a label that breaks these rules, with the line and the forms that work.
 
 ## After you edit it
 

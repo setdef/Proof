@@ -49,6 +49,31 @@ The server checks the whole file before it uses any of it. When the file has a m
 
 The pool file is [KDL](https://kdl.dev/) 2.0, so a repeated property keeps only its last value, and a size such as `4GB` needs quotes. The [project file reference](project-file.md#mistakes-proof-catches-and-one-it-cant) shows both mistakes with their fixes.
 
+## Sizes and labels
+
+A size in the pool file, in `budget`, `keep-free`, `share`, or `limits`, is a number, an optional space, and a unit: `MB`, `GB`, `TB`, `MiB`, `GiB`, or `TiB`, in any case, all counted in 1,024s. The number is whole or decimal, and a size that isn't a whole number of megabytes rounds up to the next whole megabyte. A budget can run to terabytes. The [project file reference](project-file.md#sizes) gives the whole rule.
+
+| Written | |
+| --- | --- |
+| `budget "1.5TB"` | Valid: 1,572,864 MB. |
+| `keep-free "50 GiB"` | Valid: 51,200 MB. |
+| `limits output="512mb"` | Valid: 512 MB. |
+| `share cpus=2 memory="0.1GB"` | Valid: 103 MB, rounded up from 102.4 MB. |
+| `budget "400G"` | Refused: `G` isn't a unit. |
+| `budget 400GB` | Refused: KDL reads `400GB` as the number 400 followed by `GB`. |
+| `keep-free "25 GB "` | Refused: at most one space, between the number and the unit. |
+
+A label in `withhold` is 1 to 63 characters: ASCII letters, digits, `-`, `_`, and `.`, beginning and ending with a letter or a digit, with no space. Proof compares labels without regard to case, so `withhold GPU` withholds `gpu` too. The [project file reference](project-file.md#labels) gives the whole rule.
+
+| Written | |
+| --- | --- |
+| `withhold gpu desktop` | Valid. |
+| `withhold GPU` | Valid, and the same as `withhold gpu`. |
+| `withhold "nvidia gpu"` | Refused: a label has no space. |
+| `withhold gpu-` | Refused: a label ends with a letter or a digit. |
+
+A size or a label that breaks its rule is a mistake in the file, and [what happens when the file has a mistake](#what-happens-when-the-file-has-a-mistake) applies, with the forms that work in the message.
+
 ## `server`
 
 ```kdl

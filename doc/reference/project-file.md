@@ -89,19 +89,64 @@ A name can appear in only one `task` entry. Task names follow mise's rules, so `
 | Property | Value | Built-in default | Meaning |
 | --- | --- | --- | --- |
 | `cpus` | A whole number from 1 | `2` | The CPUs the task requests. The server places a run only on a host with this many CPUs free. |
-| `memory` | A quoted size, such as `"512MB"` or `"8GB"` | `"4GB"` | The memory the task requests. The server places a run only where this much is free, and the runner holds the run to it. |
+| `memory` | A quoted [size](#sizes), such as `"512MB"`, `"8GB"`, or `"1.5 GiB"` | `"4GB"` | The memory the task requests. The server places a run only where this much is free, and the runner holds the run to it. |
 | `timeout` | A quoted duration, such as `"90s"`, `"30m"`, or `"2h"` | `"60m"` | How long a run may take. After this long, the runner ends the run, and its state is `timed_out`. |
 
-A size counts 1 GB as 1,024 MB. A request larger than every host in the pool has is refused before anything is sent, with the largest host's size in the message.
+A request larger than every host in the pool has is refused before anything is sent, with the largest host's size in the message.
+
+### Sizes
+
+A size is a number, an optional space, and a unit. Proof reads the same sizes everywhere a file or a flag takes one: `memory` here, and the budget, the share, and the limits in the [pool file](pool-file.md).
+
+- **The number** is whole, such as `8`, or decimal with digits on both sides of the point, such as `1.5`. It has no sign, no exponent, and no thousands separator.
+- **The space** is none or one space, so `8GB` and `8 GB` are the same size.
+- **The unit** is `MB`, `GB`, or `TB`, or `MiB`, `GiB`, or `TiB`, in any case, so `gb` and `Gb` work. Proof counts every unit in 1,024s, so `MB` and `MiB` are the same unit, `1GB` is 1,024 MB, and `1TB` is 1,048,576 MB.
+- **A size that isn't a whole number of megabytes** rounds up to the next whole megabyte, so a request is never smaller than what you wrote: `"0.1GB"` is 0.1 × 1,024 = 102.4 MB, which rounds up to 103 MB.
+
+When a size breaks these rules, Proof refuses it with the forms that work.
+
+| Written | Size | |
+| --- | --- | --- |
+| `"512MB"` | 512 MB | |
+| `"8GB"`, `"8 GB"`, `"8gb"`, `"8GiB"` | 8,192 MB | One size, written four ways. |
+| `"1.5GB"` | 1,536 MB | |
+| `"0.1GB"` | 103 MB | Rounded up from 102.4 MB. |
+| `"1TB"` | 1,048,576 MB | |
+| `"0GB"` | 0 MB | Valid: a host's share can keep nothing free. |
+| `8GB`, unquoted | Refused | KDL reads `8GB` as the number 8 followed by `GB`. |
+| `"8"` | Refused | A size needs a unit. |
+| `"8G"`, `"8 gigabytes"` | Refused | `G` and `gigabytes` aren't units. |
+| `"1,5GB"`, `".5GB"`, `"5.GB"` | Refused | A decimal has digits on both sides of a point. |
+| `"1e3MB"`, `"-1GB"`, `"+1GB"` | Refused | No exponent and no sign. |
+| `"8  GB"`, `" 8GB"`, `"8GB "` | Refused | At most one space, between the number and the unit. |
 
 ### Children
 
 | Child | Arguments | Meaning |
 | --- | --- | --- |
 | `os` | One or more of `linux`, `macos`, `windows` | The operating systems the task works on. Without `os`, a task can run on any of them. `proof run NAME` with no `--os`, and with `--os any`, places the run on whichever of these has a runner free; `--os all` runs once on each. |
-| `label` | One or more labels, such as `gpu`, `kvm`, or `desktop` | The labels a runner must have to run the task. The [pool file](pool-file.md) can withhold a label from a host. |
+| `label` | One or more [labels](#labels), such as `gpu`, `kvm`, or `desktop` | The labels a runner must have to run the task. The [pool file](pool-file.md) can withhold a label from a host. |
 | `artifact` | One or more file patterns, relative to the workspace's root | The files to keep after a run succeeds. `*` matches within a folder and `**` matches across folders. A pattern that matches no file makes the run fail with exit status 78. |
 | `cache` | One or more folders, relative to the workspace's root | Folders to keep between the project's runs on a runner, saved only after a run succeeds. |
+
+### Labels
+
+A label is 1 to 63 characters: ASCII letters, digits, `-`, `_`, and `.`, beginning and ending with a letter or a digit. It has no space. Proof compares labels without regard to case, so `GPU` and `gpu` are one label, and a task that asks for one matches a runner that offers the other. The same rule holds for `--label` and for `withhold` in the [pool file](pool-file.md).
+
+| Written | |
+| --- | --- |
+| `gpu`, `kvm`, `desktop` | Valid. |
+| `GPU` | Valid, and the same label as `gpu`. |
+| `cuda-12.4`, `nested_kvm`, `a` | Valid. |
+| `"4k"` | Valid. KDL needs quotes around a value that starts with a digit. |
+| `"gpu "`, `" gpu"`, `"nvidia gpu"` | Refused: a label has no space. |
+| `-gpu`, `gpu-`, `.gpu`, `gpu_` | Refused: a label begins and ends with a letter or a digit. |
+| `gpu!`, `gpu/2`, `gpu:2` | Refused: `!`, `/`, and `:` aren't characters a label has. |
+| A name of 64 or more characters | Refused: a label has at most 63. |
+| `"GPU-ü"` | Refused: only ASCII letters count. |
+| `""` | Refused: a label has at least one character. |
+
+Proof refuses a label that breaks the rule, so a stray space or symbol becomes an error, not a run that waits for a runner that can't have the label.
 
 ## Mistakes Proof catches, and one it can't
 
@@ -110,6 +155,7 @@ Proof refuses a project file, with the line and the reason, when:
 - a node or property isn't one this page lists;
 - a value has the wrong type, such as `cpus="four"`;
 - an `os` node lists an operating system other than `linux`, `macos`, or `windows`;
+- a `label` breaks the [label rule](#labels), or a size breaks the [size rule](#sizes);
 - two `task` entries have the same name;
 - a `cache` or `artifact` path starts with `/` or contains `..`.
 
