@@ -41,5 +41,17 @@ module Proof
     # and branches as they were. Raises `Proof::PartialCloneError` when the
     # project is a partial clone.
     def working_tree_commit_id: () -> String
+
+    # The text of the file at `path` in the commit `commit_id`, or `nil` when
+    # the commit has no file there. A folder at `path` is no file. The text is
+    # what the commit holds, never what is on disk. Raises
+    # `Proof::UnknownRevisionError` when `commit_id` isn't a commit the project
+    # has, and `Proof::PartialCloneError` when the project is a partial clone.
+    #
+    # - `commit_id`: String, the full ID of a commit, such as `commit_id` or
+    #   `working_tree_commit_id` gives.
+    # - `path`: String, the file's path from the project's root, such as
+    #   `".config/proof.kdl"`.
+    def file_at: (String commit_id, String path) -> String?
   end
 end

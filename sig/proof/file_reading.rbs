@@ -1,0 +1,59 @@
+module Proof
+  # What `Proof::FileReading` needs of the class that includes it: the project's
+  # root, the git program, and a way to turn a revision into a commit ID.
+  interface _FileSource
+    # The project's root.
+    def root: () -> String
+
+    # The git program's name or path.
+    def program: () -> String
+
+    # The full ID of the commit that `revision` identifies.
+    def commit_id: (String revision) -> String
+  end
+
+  # Reading a file of a project from a commit, for `Proof::GitProject`.
+  #
+  # A project file is read from the code Proof sends, so the project must answer
+  # for the text of a file at a commit. `Proof::GitProject` needs this beside
+  # finding commits and making the working-tree commit, and it lives in its own
+  # module so that each file of the code stays small enough to read at once.
+  #
+  # A class that includes it answers `file_at`, and has the private `git` and
+  # the public `commit_id` that `Proof::GitProject` has. Use `Proof::GitProject`
+  # and call `file_at` on it.
+  module FileReading : _FileSource
+    # The text of the file at `path` in the commit that `id` identifies, which
+    # is how the project file is read from what Proof sends: the commit of
+    # `--commit`, or the working-tree commit. The text is what the commit
+    # holds, byte for byte, and never what is on disk, so a change on disk that
+    # the commit lacks isn't in it. It is `nil` when the commit has no file at
+    # `path`, and also when `path` is a folder or a submodule. A file that is
+    # empty gives `""`. A symbolic link gives the text of its target's path.
+    # Raises `Proof::UnknownRevisionError` when `id` isn't a commit the project
+    # has, `Proof::PartialCloneError` when the project is a partial clone, and
+    # `Proof::GitFailedError` when Git fails in some other way. A `path` that
+    # starts with `-` is a path to look up, never an option.
+    #
+    # - `id`: String, a full commit ID, such as `commit_id` or
+    #   `working_tree_commit_id` gives.
+    # - `path`: String, the file's path from the project's root.
+    #
+    # ```ruby
+    # require "tmpdir"
+    # Dir.mktmpdir do |folder|
+    #   git = ["git", "-C", folder, "-c", "user.name=Ann", "-c", "user.email=ann@example.com"]
+    #   system(*git, "init", "--quiet")
+    #   File.write(File.join(folder, "proof.kdl"), "task test\n")
+    #   system(*git, "add", "proof.kdl")
+    #   system(*git, "commit", "--quiet", "-m", "First")
+    #   File.write(File.join(folder, "proof.kdl"), "task other\n")
+    #   project = Proof::GitProject.find(folder)
+    #   head = project.commit_id("HEAD")
+    #   [project.file_at(head, "proof.kdl"), project.file_at(head, "missing.kdl")]
+    # end
+    # # => ["task test\n", nil]
+    # ```
+    def file_at: (String id, String path) -> String?
+  end
+end

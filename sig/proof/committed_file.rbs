@@ -1,0 +1,53 @@
+module Proof
+  # A file as a commit holds it.
+  #
+  # Proof reads the project file from the code it sends, not from the disk: a
+  # change on disk that the commit lacks isn't in the run, so it must not be in
+  # the settings either. Reading `.config/proof.kdl` with `File.read` would show
+  # the file as it is now, which may be another version.
+  #
+  # This class asks Git for the entry at a path in a commit. When it is a file,
+  # the text is what Git stores, byte for byte. A folder and a submodule at the
+  # path are no file, and so is a path the commit lacks.
+  #
+  # `Proof::GitProject#file_at` uses it, through `Proof::FileReading`. Make one
+  # of this class only through that method, which checks that the clone is
+  # whole and that the commit exists.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "tmpdir"
+  # Dir.mktmpdir do |folder|
+  #   git = ["git", "-C", folder, "-c", "user.name=Ann", "-c", "user.email=ann@example.com"]
+  #   system(*git, "init", "--quiet")
+  #   File.write(File.join(folder, "proof.kdl"), "task test\n")
+  #   system(*git, "add", "proof.kdl")
+  #   system(*git, "commit", "--quiet", "-m", "First")
+  #   head = IO.popen([*git, "rev-parse", "HEAD"], &:read).chomp
+  #   Proof::CommittedFile.new(git: Proof::Git.new(folder:), commit: head, path: "proof.kdl").text
+  # end
+  # # => "task test\n"
+  # ```
+  class CommittedFile
+    # Prepares to read the file at `path` in `commit`.
+    #
+    # - `git`: Proof::Git, running in the project's root.
+    # - `commit`: String, the full ID of a commit the project has.
+    # - `path`: String, the path from the project's root. A path that starts
+    #   with `-` is a path, never an option.
+    def initialize: (git: Git, commit: String, path: String) -> void
+
+    # The file's text, or `nil` when the commit has no file at the path, or
+    # when the path is a folder or a submodule. An empty file gives `""`. A
+    # symbolic link gives the text of its target's path. Raises
+    # `Proof::GitFailedError` when Git fails.
+    def text: () -> String?
+
+    private
+
+    @git: Git
+    @commit: String
+    @path: String
+  end
+end

@@ -4,6 +4,8 @@ module Proof
   # steep:ignore:start
   class GitProject < Data.define(:root, :program)
     # steep:ignore:end
+    include FileReading
+
     PARTIAL_SETTING = /^(extensions\.partialclone=.|remote\..+\.promisor=true$)/
     private_constant(:PARTIAL_SETTING)
 

@@ -33,6 +33,8 @@ module Proof
   # Dir.mktmpdir { |folder| Proof::GitProject.find(folder) }
   # ```
   class GitProject < Data
+    include FileReading
+
     # Matches the line of `git config --list` that marks a partial clone.
     PARTIAL_SETTING: Regexp
 
