@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class Branch
       def initialize(command)
         @command = command
@@ -17,6 +15,5 @@ module Proof
         HelpRequest.new(path: @command.path)
       end
     end
-    private_constant(:Branch)
   end
 end

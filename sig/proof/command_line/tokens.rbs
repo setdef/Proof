@@ -1,5 +1,6 @@
 module Proof
   module CommandLine
+    # What the words of a command line look like: a flag, or several one-letter flags written together.
     module Tokens
       # Whether the word looks like a flag.
       def self.flag?: (String token) -> bool

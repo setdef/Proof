@@ -3,9 +3,7 @@
 require "optparse"
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class Options
       class Strict < OptionParser
         private def add_officious; end
@@ -40,6 +38,5 @@ module Proof
         parser.on(*switch.specs) { |value| switch.accept(value) }
       end
     end
-    private_constant(:Options)
   end
 end

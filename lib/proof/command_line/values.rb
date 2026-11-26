@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class Values
       def initialize
         @flags = {}
@@ -66,6 +64,5 @@ module Proof
         found.is_a?(Array) ? found : []
       end
     end
-    private_constant(:Values)
   end
 end

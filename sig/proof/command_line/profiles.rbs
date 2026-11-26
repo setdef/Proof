@@ -3,12 +3,8 @@ module Proof
     # What differs between the help of `proof` and the help of a command.
     module Profiles
       # The help of `proof` itself.
-      class Program < Data
-        # The spec.
-        attr_reader spec: Spec
-
-        def self.new: (spec: Spec) -> instance
-                    | (Spec spec) -> instance
+      class Program
+        @spec: Spec
 
         # Takes the spec.
         def initialize: (Spec spec) -> void
@@ -30,15 +26,9 @@ module Proof
       end
 
       # The help of one command.
-      class Subcommand < Data
-        # The spec.
-        attr_reader spec: Spec
-
-        # The command.
-        attr_reader command: Spec::Command
-
-        def self.new: (spec: Spec, command: Spec::Command) -> instance
-                    | (Spec spec, Spec::Command command) -> instance
+      class Subcommand
+        @spec: Spec
+        @command: Spec::Command
 
         # Takes the spec and the command.
         def initialize: (Spec spec, Spec::Command command) -> void

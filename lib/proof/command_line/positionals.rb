@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class Positionals
       def initialize(command, values)
         @args = command.args
@@ -24,6 +22,5 @@ module Proof
         remaining.drop(taken.size)
       end
     end
-    private_constant(:Positionals)
   end
 end

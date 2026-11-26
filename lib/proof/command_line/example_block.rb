@@ -1,22 +1,23 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    class ExampleBlock < Data.define(:item)
-      # steep:ignore:end
+    class ExampleBlock
+      def initialize(item)
+        @item = item
+      end
+
       def lines
-        [*header, "    $ #{item.code}", *text]
+        [*header, "    $ #{@item.code}", *text]
       end
 
       private def header
-        Array(item.header).map { |words| "  #{words}" }
+        Array(@item.header).map { |words| "  #{words}" }
       end
 
       private def text
-        Columns.wrap(item.help.to_s, 70).map { |line| "    #{line}" }
+        Columns.wrap(@item.help.to_s, 70).map { |line| "    #{line}" }
       end
     end
-    private_constant(:ExampleBlock)
   end
 end

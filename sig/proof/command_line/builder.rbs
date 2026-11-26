@@ -19,6 +19,9 @@ module Proof
       def global: () -> GlobalFlags
 
       def command: () -> command
+
+      def construct: (singleton(GlobalFlags) klass, Array[Spec::Flag] flags, Array[Spec::Arg] args) -> GlobalFlags
+                   | (singleton(Data) klass, Array[Spec::Flag] flags, Array[Spec::Arg] args) -> command
     end
   end
 end

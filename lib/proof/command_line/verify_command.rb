@@ -5,6 +5,7 @@ module Proof
     # steep:ignore:start
     class VerifyCommand < Data.define(:json)
       # steep:ignore:end
+      # Steep reports as missing the members that Data.define makes, and the signature declares each one.
     end
   end
 end

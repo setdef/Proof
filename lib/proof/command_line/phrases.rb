@@ -1,12 +1,8 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
-    # steep:ignore:start
     class Phrases
-      # steep:ignore:end
       def self.alternatives(names)
         count = names.size
         return names.first.to_s if count == 1
@@ -22,13 +18,20 @@ module Proof
         name.start_with?("-") ? name : "a #{name}"
       end
 
-      attr_reader :command, :kind, :home
-
       def initialize(path)
-        nested = !path.empty?
-        @command = ["proof", *path].join(" ")
-        @kind = nested ? "subcommand" : "command"
-        @home = nested ? " of #{@command}" : ""
+        @path = path
+      end
+
+      def command
+        ["proof", *@path].join(" ")
+      end
+
+      def kind
+        @path.empty? ? "command" : "subcommand"
+      end
+
+      def home
+        @path.empty? ? "" : " of #{command}"
       end
 
       private def usage
@@ -39,6 +42,5 @@ module Proof
         "#{lead} #{command} --help"
       end
     end
-    private_constant(:Phrases)
   end
 end

@@ -46,6 +46,8 @@ module Proof
         private def object(key)
           Hash.try_convert(value[key]) || {}
         end
+
+        # Steep reports as missing the members that Data.define makes, and the signature declares each one.
       end
     end
   end

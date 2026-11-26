@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
     class Help
-      # steep:ignore:end
       def initialize(spec, command)
         @profile = command.path.empty? ? Profiles::Program.new(spec) : Profiles::Subcommand.new(spec, command)
         @tables = Tables.new(command, spec.root.global_flags, @profile.exit_rows)
@@ -42,6 +40,5 @@ module Proof
         ["Examples:", *blocks].join("\n") unless blocks.empty?
       end
     end
-    private_constant(:Help)
   end
 end

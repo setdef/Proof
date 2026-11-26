@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class Switch
       def initialize(flag, values, messages)
         @flag = flag
@@ -33,6 +31,5 @@ module Proof
         raise(Mistake, @messages.bad_choice(spoken, value, choices))
       end
     end
-    private_constant(:Switch)
   end
 end

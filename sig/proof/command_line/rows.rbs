@@ -3,12 +3,8 @@ module Proof
     # The rows of the help: what each flag, argument, command, and exit status is called, and what it says.
     module Rows
       # A flag as a row of the help: its switches and value, and what it does.
-      class FlagRow < Data
-        # The thing shown.
-        attr_reader item: Spec::Flag
-
-        def self.new: (item: Spec::Flag) -> instance
-                    | (Spec::Flag item) -> instance
+      class FlagRow
+        @item: Spec::Flag
 
         # Takes the thing to show.
         def initialize: (Spec::Flag item) -> void
@@ -21,12 +17,8 @@ module Proof
       end
 
       # An argument as a row of the help.
-      class ArgRow < Data
-        # The thing shown.
-        attr_reader item: Spec::Arg
-
-        def self.new: (item: Spec::Arg) -> instance
-                    | (Spec::Arg item) -> instance
+      class ArgRow
+        @item: Spec::Arg
 
         # Takes the thing to show.
         def initialize: (Spec::Arg item) -> void
@@ -39,12 +31,8 @@ module Proof
       end
 
       # A command as a row of the help: its name and its one line.
-      class CommandRow < Data
-        # The thing shown.
-        attr_reader item: Spec::Command
-
-        def self.new: (item: Spec::Command) -> instance
-                    | (Spec::Command item) -> instance
+      class CommandRow
+        @item: Spec::Command
 
         # Takes the thing to show.
         def initialize: (Spec::Command item) -> void
@@ -57,12 +45,8 @@ module Proof
       end
 
       # An exit status as a row of the help.
-      class ExitRow < Data
-        # The thing shown.
-        attr_reader item: Spec::ExitCode
-
-        def self.new: (item: Spec::ExitCode) -> instance
-                    | (Spec::ExitCode item) -> instance
+      class ExitRow
+        @item: Spec::ExitCode
 
         # Takes the thing to show.
         def initialize: (Spec::ExitCode item) -> void

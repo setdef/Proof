@@ -2,10 +2,9 @@ module Proof
   module CommandLine
     # The words the lines for mistakes are made of: each ends with the command to run next.
     class Phrases
-      @command: String
-      @kind: String
-      @home: String
+      @path: Array[String]
 
+      # The names as one list for a sentence: `a`, `a or b`, or `a, b, or c`.
       def self.alternatives: (Array[String] names) -> String
 
       # The words that offer the nearest names.
@@ -18,13 +17,13 @@ module Proof
       def initialize: (Array[String] path) -> void
 
       # The command as typed, such as `proof run`.
-      attr_reader command: String
+      def command: () -> String
 
       # `command` or `subcommand`.
-      attr_reader kind: String
+      def kind: () -> String
 
       # What the command belongs to, or an empty string for a command of `proof` itself.
-      attr_reader home: String
+      def home: () -> String
 
       private
 

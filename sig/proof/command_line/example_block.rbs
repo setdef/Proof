@@ -1,12 +1,8 @@
 module Proof
   module CommandLine
     # One example of the help, laid out as lines.
-    class ExampleBlock < Data
-      # The example.
-      attr_reader item: Spec::Example
-
-      def self.new: (item: Spec::Example) -> instance
-                  | (Spec::Example item) -> instance
+    class ExampleBlock
+      @item: Spec::Example
 
       # Takes the example.
       def initialize: (Spec::Example item) -> void

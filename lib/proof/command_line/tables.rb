@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
     class Tables
-      # steep:ignore:end
       def initialize(command, globals, exit_rows)
         @command = command
         @globals = globals
@@ -36,6 +34,5 @@ module Proof
         Columns.table("Exit statuses:", @exit_rows)
       end
     end
-    private_constant(:Tables)
   end
 end

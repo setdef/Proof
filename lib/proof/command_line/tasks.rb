@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class Tasks
       def self.read(before, after, path)
         new(path).read(before, after)
@@ -62,6 +60,5 @@ module Proof
         @naming = true
       end
     end
-    private_constant(:Tasks)
   end
 end

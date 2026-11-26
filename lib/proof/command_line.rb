@@ -67,5 +67,36 @@ module Proof
       spec = Spec.load
       Help.new(spec, spec.command(path) || spec.root).text
     end
+
+    # Steep reports the methods above as missing from any other file that opens this module and calls
+    # private_constant, so every private constant is made private here, where the methods are defined.
+    private_constant(
+      :ArgSlot,
+      :Attributes,
+      :Branch,
+      :Builder,
+      :Checks,
+      :Columns,
+      :ExampleBlock,
+      :Failure,
+      :FlagSlot,
+      :Help,
+      :Leaf,
+      :Messages,
+      :Options,
+      :Parser,
+      :Phrases,
+      :Positionals,
+      :Profiles,
+      :Resolver,
+      :Rows,
+      :Suggestions,
+      :Switch,
+      :Tables,
+      :Tasks,
+      :Tokens,
+      :Values,
+      :WordMessages
+    )
   end
 end

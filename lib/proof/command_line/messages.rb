@@ -3,9 +3,7 @@
 require_relative("phrases")
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class Messages < Phrases
       def unknown_flag(switch, suggestions)
         "#{switch} isn't a flag of #{command}.#{Phrases.did_you_mean(suggestions)} #{ending('To list the flags, run:')}"
@@ -31,6 +29,5 @@ module Proof
         "#{switch} needs #{required}. #{usage}"
       end
     end
-    private_constant(:Messages)
   end
 end

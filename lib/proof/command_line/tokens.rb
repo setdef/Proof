@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     module Tokens
       def self.flag?(token)
         token.start_with?("-") && token != "-"
@@ -19,6 +17,5 @@ module Proof
         token.length > 2 && !token.start_with?("--") && letters.all? { |letter| switches.include?("-#{letter}") }
       end
     end
-    private_constant(:Tokens)
   end
 end

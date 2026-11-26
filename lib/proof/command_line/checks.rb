@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class Checks
       def initialize(command, values)
         @command = command
@@ -32,6 +30,5 @@ module Proof
         raise(Mistake, @flag_messages.missing_requirement(flag.switches.last, missing)) if missing
       end
     end
-    private_constant(:Checks)
   end
 end

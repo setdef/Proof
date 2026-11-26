@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class Leaf
       def initialize(spec, command)
         @spec = spec
@@ -25,6 +23,5 @@ module Proof
         values.assign_tasks(Tasks.read(words, tail, @path)) if @path == ["run"]
       end
     end
-    private_constant(:Leaf)
   end
 end

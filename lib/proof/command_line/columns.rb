@@ -1,10 +1,8 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
     class Columns
-      # steep:ignore:end
       WIDTH = 78
       private_constant(:WIDTH)
 
@@ -37,6 +35,5 @@ module Proof
         [("  #{label}".ljust(@gap) + first.to_s).rstrip, *rest.map { |line| "#{' ' * @gap}#{line}" }]
       end
     end
-    private_constant(:Columns)
   end
 end

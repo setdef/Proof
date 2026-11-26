@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class Builder
       CLASSES = {
         ["run"] => RunCommand,
@@ -42,19 +40,22 @@ module Proof
       end
 
       private def global
-        # steep:ignore:start
-        GlobalFlags.new(**Attributes.new(@spec.root.global_flags, [], @values).to_h)
-        # steep:ignore:end
+        construct(GlobalFlags, @spec.root.global_flags, [])
       end
 
       private def command
-        klass = CLASSES.fetch(@command.path)
-        attributes = Attributes.new(@command.own_flags, @command.args, @values).to_h.merge(@values.extras)
+        construct(CLASSES[@command.path], @command.own_flags, @command.args)
+      end
+
+      private def construct(klass, flags, args)
+        attributes = Attributes.new(flags, args, @values).to_h.merge(@values.extras)
+        # Steep can't check a keyword splat against the members that Data.define made, so it can't see that
+        # each class takes exactly the attributes the spec's flags and arguments give it. The commands_test
+        # file checks that for every command.
         # steep:ignore:start
         klass.new(**attributes.slice(*klass.members))
         # steep:ignore:end
       end
     end
-    private_constant(:Builder)
   end
 end

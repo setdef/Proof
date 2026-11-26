@@ -68,6 +68,8 @@ module Proof
         def global_flags
           flags.select(&:global?)
         end
+
+        # Steep reports as missing the members that Data.define makes, and the signature declares each one.
       end
     end
   end

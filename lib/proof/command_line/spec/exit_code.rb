@@ -13,6 +13,8 @@ module Proof
         def help
           node.text("help").to_s
         end
+
+        # Steep reports as missing the members that Data.define makes, and the signature declares each one.
       end
     end
   end

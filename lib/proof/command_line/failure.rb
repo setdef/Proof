@@ -3,9 +3,7 @@
 require "optparse"
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class Failure
       def initialize(messages, flags)
         @messages = messages
@@ -21,6 +19,5 @@ module Proof
         end
       end
     end
-    private_constant(:Failure)
   end
 end

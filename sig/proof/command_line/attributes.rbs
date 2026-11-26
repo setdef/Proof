@@ -9,7 +9,7 @@ module Proof
       def initialize: (Array[Spec::Flag] flags, Array[Spec::Arg] args, Values values) -> void
 
       # The command's members by name, each with what the command line gave.
-      def to_h: () -> Hash[Symbol, top]
+      def to_h: () -> Hash[Symbol, CommandLine::attribute]
     end
   end
 end

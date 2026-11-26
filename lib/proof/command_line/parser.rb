@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class Parser
       HELP = ["-h", "--help"].freeze
       private_constant(:HELP)
@@ -25,6 +23,5 @@ module Proof
         command.subcommands.empty? ? Leaf.new(@spec, command).parse(tokens, tail) : Branch.new(command).parse(tail)
       end
     end
-    private_constant(:Parser)
   end
 end

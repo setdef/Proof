@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class Resolver
       def initialize(spec)
         @command = spec.root
@@ -41,6 +39,5 @@ module Proof
         raise(Mistake, WordMessages.new(@command.path).unknown_command(word, suggestions))
       end
     end
-    private_constant(:Resolver)
   end
 end

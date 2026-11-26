@@ -3,9 +3,7 @@
 require_relative("phrases")
 
 module Proof
-  # steep:ignore:start
   module CommandLine
-    # steep:ignore:end
     class WordMessages < Phrases
       def unknown_command(word, suggestions)
         "#{word} isn't a #{kind}#{home}.#{Phrases.did_you_mean(suggestions)} #{ending("To list the #{kind}s, run:")}"
@@ -40,6 +38,5 @@ module Proof
         "::: needs a task name after it, as in proof run lint ::: test. #{usage}"
       end
     end
-    private_constant(:WordMessages)
   end
 end

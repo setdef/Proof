@@ -1,5 +1,6 @@
 module Proof
   module CommandLine
+    # The nearest names to a word that a command line got wrong.
     module Suggestions
       # The names in `dictionary` nearest to `word`.
       def self.for: (String word, Array[String] dictionary) -> Array[String]
