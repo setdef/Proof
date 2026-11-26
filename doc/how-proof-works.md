@@ -65,7 +65,7 @@ For each run, the runner provides:
 - **[mise](https://mise.jdx.dev/),** which installs the tools the project's `mise.toml` pins and runs the task. Proof installs nothing of a project's.
 - **`CI=true`,** so setup steps that skip work on CI skip it here too.
 - **Sound, for a task with the `sound` label.** On Linux, a run gets a separate virtual audio device. On Windows and macOS, the run plays through the host's speakers, and waits while a person is active there.
-- **A display, for a task with the `desktop` label.** On Linux, a run gets a separate virtual display. On Windows, each run gets a private desktop, so its windows never take the focus of the person at the PC. On macOS, the run uses the runner's signed-in session.
+- **A display, for a task with the `desktop` label.** On Linux, a run gets a separate virtual display. On Windows, each run gets a private desktop, so its windows never take the focus of the person at the PC. On macOS, the run uses a signed-in session of the runner's account, and waits while there is none.
 
 Runs on one runner share one account, so the folders keep runs apart only as far as the files go. A run's command can still read another project's files in that account.
 

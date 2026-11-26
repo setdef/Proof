@@ -5,7 +5,7 @@
 
 # Add a Mac
 
-Set up a runner on a Mac with Apple silicon, so tasks that need macOS run there. A Mac runner runs work that needs no window, such as builds, unit tests, and iOS Simulator tests, from the moment setup ends. To also run tasks that open windows, the runner's account needs a signed-in session, which this guide sets up at the end.
+Set up a runner on a Mac with Apple silicon, so tasks that need macOS run there. A Mac runner starts when the Mac starts, with nobody signed in, and runs work that needs no window, such as builds, unit tests, and iOS Simulator tests, from the moment setup ends. To also run tasks that open windows, the runner's account needs a signed-in session, which this guide sets up at the end.
 
 This page runs commands on two computers, as two accounts:
 
@@ -31,13 +31,16 @@ proof@mac %
 
 ## Install Proof and set up the runner
 
-As `proof`, download the macOS archive from [the releases page](https://github.com/setdef/Proof/releases), check it against `SHA256SUMS`, unpack it, and put `proof` on the account's `PATH`. Then run setup:
+As `proof`, download the macOS archive from [the releases page](https://github.com/setdef/Proof/releases), check it against `SHA256SUMS`, unpack it, and put `proof` on the account's `PATH`. Then run setup.
+
+The runner has to start when the Mac starts, so it runs as a launchd daemon, and installing a daemon needs an administrator. The first time you run setup, it stops before it changes anything, prints the commands for an administrator to run, and asks you to run setup again. Nothing went wrong: setup never runs anything as root itself. Leave the `proof` shell, run the commands it printed as `you`, switch back to `proof` with `sudo -iu proof`, and run setup again:
 
 ```console
 proof@mac % proof runner setup server.home.arpa
 proof: checking mac for a macOS runner
+proof: checked: the runner starts when the Mac starts
 proof: installed mise for the runner
-proof: started the runner mac-macos as a launchd service of this account
+proof: started the runner mac-macos as a launchd daemon that runs as this account
 proof: mac-macos asks to join server.home.arpa as code 7WQK-M2HD
 proof: approve it from where you work with `proof runner approve 7WQK-M2HD`
 ```
@@ -56,7 +59,7 @@ proof: exit=0 runners=2 passed=2 failed=0
 
 ## Let runs open windows
 
-A launchd service has no window server: a run there can draw offscreen, but a window it opens never appears, and macOS XCTest can't start. For tasks with the `desktop` label, the runner has to run inside a signed-in session of its account.
+A launchd daemon has no window server: a run there can draw offscreen, but a window it opens never appears, and macOS XCTest can't start. For tasks with the `desktop` label, the runner has to run that work in a signed-in session of its account.
 
 1. On the Mac, turn on Fast User Switching in System Settings, so the `proof` account can stay signed in while someone else uses the Mac.
 2. Sign in as `proof` once, then switch back to your account. The `proof` account stays signed in in the background.
@@ -64,14 +67,16 @@ A launchd service has no window server: a run there can draw offscreen, but a wi
 
    ```console
    proof@mac % proof runner setup server.home.arpa --desktop
-   proof: moved the runner mac-macos into this account's signed-in session
+   proof: mac-macos now runs work that opens windows in this account's signed-in session
    proof: mac-macos now offers the label desktop
    ```
+
+While the `proof` account has no signed-in session, runs that need a window wait in the queue, and `proof status` says the host needs signing in. Runs that need no window go on.
 
 A session that isn't on the screen opens windows and runs them, but macOS presents none of their frames to a display. Tests that read back what they drew work there; benchmarks of frames reaching the screen don't.
 
 > [!WARNING]
-> With FileVault on, macOS doesn't sign anyone in after a restart. Until someone signs in as `proof` again, the runner is down, and `proof status` says the host needs signing in. Runs that need a Mac wait in the queue meanwhile.
+> With FileVault on, nothing of Proof's starts after a restart until someone unlocks the disk at the unlock screen, and macOS doesn't sign anyone in. Until the disk is unlocked, the runner isn't connected, and runs that need a Mac wait in the queue. After that, runs that open windows wait until someone signs in as `proof`, and `proof status` says the host needs signing in. Don't turn FileVault on over SSH: `fdesetup enable` waits for a consent dialog at the Mac's screen.
 
 ## What you've set up
 

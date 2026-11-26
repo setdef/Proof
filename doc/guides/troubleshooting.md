@@ -42,8 +42,8 @@ A queued run isn't hung. `proof status` says what each queued run is waiting beh
 | --- | --- | --- |
 | behind runs on its hosts | Every host that can run it is busy. | Wait, or add a host. |
 | a person is active at its only host | The host keeps its share free for them, or the run needs their display, GPU, or speakers. | Wait until they stop, or add a host. |
-| no runner of its operating system is connected | The hosts are asleep, off, or off the network. | Wake one. |
-| a host needs signing in | A Mac or Windows runner needs its account signed in after a restart. | Sign the account in. |
+| no runner of its operating system is connected | The hosts are asleep, off, or off the network, or a Mac with FileVault is waiting at its unlock screen after a restart. | Wake one, or unlock the Mac's disk. |
+| a host needs signing in | A Windows runner needs its account signed in after a restart, and so does a Mac runner's work that opens windows. | Sign the account in. |
 | no runner offers a label it needs | No host has the hardware, or the runner hasn't found it. | Run setup on the host again, which says what's missing. |
 
 `proof watch RUN_ID` picks the run up again from any terminal, and exits with its status when it ends. If you no longer have the run's ID, `proof status` lists your recent runs with theirs.
