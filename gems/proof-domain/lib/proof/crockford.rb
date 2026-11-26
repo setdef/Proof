@@ -13,8 +13,17 @@ module Proof
     end
 
     def self.random(length, source)
-      symbols = Array.new(length) { ALPHABET[source.rand(ALPHABET.length)] }
+      symbols = Array.new(length) { ALPHABET[drawn(source)] }
       symbols.join
     end
+
+    def self.drawn(source)
+      limit = ALPHABET.length
+      number = source.rand(limit)
+      return number if number.is_a?(Integer) && number.between?(0, limit - 1)
+
+      raise(InvalidRandomSourceError, format("a source of randomness answers a whole number below 32, not %p", number))
+    end
+    private_class_method(:drawn)
   end
 end

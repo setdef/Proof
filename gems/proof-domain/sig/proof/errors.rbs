@@ -36,4 +36,9 @@ module Proof
   # have the form `20261125-0336-m3d8q`.
   class InvalidRunIdError < Error
   end
+
+  # Raised when a source of randomness answers with anything but a whole
+  # number from 0 up to, and not including, the limit it was asked for.
+  class InvalidRandomSourceError < Error
+  end
 end

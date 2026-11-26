@@ -37,10 +37,24 @@ module Proof
     #
     # - `length`: Integer, how many symbols.
     # - `source`: `_RandomSource`, asked for a number below 32 for each symbol.
+    #   Raises `Proof::InvalidRandomSourceError` when it answers anything but a
+    #   whole number from 0 to 31.
     #
     # ```ruby
     # Proof::Crockford.random(5, Random.new(1)) # => "5bc8z"
     # ```
+    #
+    # A source that answers outside 0 to 31 draws no symbol:
+    #
+    # ```ruby
+    # # Wrong: raises Proof::InvalidRandomSourceError
+    # Proof::Crockford.random(5, Class.new { def rand(limit) = limit }.new)
+    # ```
     def self.random: (Integer length, _RandomSource source) -> String
+
+    # The symbol's number from one answer of `source`, which raises
+    # `Proof::InvalidRandomSourceError` unless the answer is a whole number
+    # from 0 to 31.
+    private def self.drawn: (_RandomSource source) -> Integer
   end
 end

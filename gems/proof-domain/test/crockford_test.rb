@@ -109,6 +109,34 @@ class CrockfordTest < Minitest::Test
     assert_equal(Proof::Crockford::ALPHABET, Proof::Crockford.random(32, source))
   end
 
+  # A source answers "a number below 32", so 32 and up, a negative number
+  # (which Ruby would count from the end of the alphabet), and anything that
+  # isn't a whole number draw no symbol.
+  def test_random_refuses_an_answer_outside_the_alphabet_instead_of_drawing_a_short_string
+    [32, 99, -1, nil, 1.5, "7"].each do |answer|
+      source = ScriptedRandom.new(20, 3, answer)
+
+      assert_raises(Proof::InvalidRandomSourceError, answer.inspect) { Proof::Crockford.random(5, source) }
+    end
+  end
+
+  # The message says what a source answers and what it answered.
+  def test_the_message_for_an_answer_names_the_value
+    error = assert_raises(Proof::InvalidRandomSourceError) { Proof::Crockford.random(1, ScriptedRandom.new(32)) }
+
+    assert_equal("a source of randomness answers a whole number below 32, not 32", error.message)
+  end
+
+  # The ends of the range, 0 and 31, are symbols.
+  def test_random_accepts_the_first_and_last_number
+    assert_equal("0z", Proof::Crockford.random(2, ScriptedRandom.new(0, 31)))
+  end
+
+  # Every error the domain raises is a Proof::Error.
+  def test_the_error_is_a_proof_error
+    assert_operator(Proof::InvalidRandomSourceError, :<, Proof::Error)
+  end
+
   # Ruby's own Random is a source: it answers `rand` with a number below the limit.
   def test_ruby_random_is_a_source
     drawn = Proof::Crockford.read(Proof::Crockford.random(50, Random.new(3)))

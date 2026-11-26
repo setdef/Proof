@@ -18,4 +18,7 @@ module Proof
 
   class InvalidRunIdError < Error
   end
+
+  class InvalidRandomSourceError < Error
+  end
 end

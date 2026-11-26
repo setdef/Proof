@@ -53,11 +53,11 @@ class RunIdGenerationTest < Minitest::Test
     refute_equal(Proof::RunId.generate(clock:, random:), Proof::RunId.generate(clock:, random:))
   end
 
-  # A source that answers outside the alphabet makes a short ID, which is no ID.
+  # A source that answers outside the alphabet makes no ID, not a short one.
   def test_a_source_that_answers_outside_the_alphabet_makes_no_id
     clock = Clock.new(now: Time.utc(2026, 11, 25, 3, 36))
     random = ScriptedRandom.new(20, 3, 13, 8, 99)
 
-    assert_raises(Proof::InvalidRunIdError) { Proof::RunId.generate(clock:, random:) }
+    assert_raises(Proof::InvalidRandomSourceError) { Proof::RunId.generate(clock:, random:) }
   end
 end
