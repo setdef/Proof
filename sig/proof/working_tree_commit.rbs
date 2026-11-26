@@ -7,17 +7,21 @@ module Proof
   # would leave behind what the person never asked for.
   #
   # This class builds the commit in a temporary index file, so the clone's
-  # index, branch, and `HEAD` stay exactly as they were. The index starts from
-  # `HEAD`'s tree, never empty: `git add --all` leaves out a file that
-  # `.gitignore` matches, and an empty index doesn't know that such a file is
-  # tracked, so it would drop it. A submodule goes in at the commit its
-  # checkout is at, as `git add --all` records it, including a commit that
-  # the project hasn't recorded yet. Changes to files inside the submodule
-  # are not sent. The commit's one parent is `HEAD`, and a project with no
-  # commit yet has no `HEAD`, so its commit has no parent and its index starts
-  # empty. Its author and committer are `Proof <proof@proof.invalid>`, so a
-  # computer with no Git identity can make it, and its configuration can't
-  # sign it.
+  # index, branch, and `HEAD` stay exactly as they were. The temporary index
+  # starts as a copy of the clone's index, never empty: `git add --all` leaves
+  # out a file that `.gitignore` matches, and an empty index doesn't know that
+  # such a file is tracked, so it would drop it. The copy also keeps a file that
+  # you staged with `git add -f`, as `git commit` would, and lets `git add
+  # --all` skip the files that haven't changed. Every command that writes the
+  # temporary index runs with `core.splitIndex=false`, so it never refers to a
+  # shared index file in the clone's `.git`, and never adds one. A submodule
+  # goes in at the commit its checkout is at, as `git add --all` records it,
+  # including a commit that the project hasn't recorded yet. Changes to files
+  # inside the submodule are not sent. The commit's one parent is `HEAD`, and a
+  # project with no commit yet has no `HEAD`, so its commit has no parent, and
+  # it has no index file to copy, so its index starts empty. Its author and
+  # committer are `Proof <proof@proof.invalid>`, so a computer with no Git
+  # identity can make it, and its configuration can't sign it.
   #
   # `Proof::GitProject#working_tree_commit_id` uses it. Make one of this class
   # only through that method, which checks that the clone is whole first.
@@ -58,6 +62,8 @@ module Proof
     @head: String?
 
     def commit_tree_of: (String index) -> String
+
+    def copy_the_clones_index: (String index) -> void
 
     def commit: (String tree) -> String
   end
