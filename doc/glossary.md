@@ -59,7 +59,34 @@ The one configuration file for the whole pool, kept on the server. It lists each
 
 - Don't say: config, which is ambiguous between the pool file and the **project file**.
 
+### place
+
+To choose the **runner** a queued **run** goes to, and hold the CPUs and memory it **requests** on that runner's **host**. A run leaves the **queue** when the **server** places it.
+
+- Elsewhere: Nomad says allocation, and other tools say schedule or assign.
+- Don't say: schedule, assign, dispatch.
+
+### approval
+
+Letting a **runner** that asked to join into the **pool**, with `proof runner approve`.
+
+### one-time code
+
+A code of 8 characters that `proof server setup`, `proof runner setup`, and `proof login` use, valid once for 15 minutes.
+
+- Don't say: code alone, which in Proof's docs also means a project's source (see "How your code reaches a runner"); PIN; OTP.
+
 ## The project
+
+### project
+
+The Git repository a run's code comes from, which the **server** keeps one copy of.
+
+### working-tree commit
+
+The commit `proof` makes of the working tree without touching the clone's index, branch, or `HEAD`.
+
+- Don't say: synthetic commit.
 
 ### task
 
@@ -151,6 +178,46 @@ Everything a run's command prints, standard output and standard error together, 
 
 - Don't say: log, except in the name of the `logs` command; console.
 
+### short ID
+
+A run ID's last five characters, which work wherever Proof asks for a run's ID.
+
+### result line
+
+The last line of a run's output from `proof`, with `key=value` fields that are only ever added to.
+
+### record
+
+What the **server** keeps of a run apart from its **output** and **artifacts**.
+
+### invocation
+
+What a **runner** needs to start a run's command that the **record** never keeps: the task's arguments, a script's text, the run's **inputs**.
+
+### follow
+
+To read a run's **output** as it arrives, from a byte offset, as `proof run` and `proof watch` do. Whoever follows is a follower.
+
+### end marker
+
+What the runner sends after a run's last byte of **output**, with the number of bytes it sent.
+
+### manifest
+
+The sorted list of a run's **artifacts**, with each file's SHA-256 and size, after which no artifact is added.
+
+### wait reason
+
+What a queued run waits behind, as `proof status` shows it.
+
+### queue position
+
+A run's place in arrival order, given by the server when the run is queued.
+
+### random source
+
+What gives Proof the unpredictable characters in a **run** ID and in a **one-time code**. Proof's code takes it as a port: an object that answers a request for a random number, so a test can pass a fake that answers from a list.
+
 ## Workspaces
 
 ### workspace
@@ -159,6 +226,10 @@ The directory on a runner where a project's code sits while a run's command runs
 
 - Elsewhere: called a workspace in Jenkins and Woodpecker.
 - Don't say: checkout; build directory; sandbox; slot.
+
+### lease
+
+One run's use of one **workspace**, from before its command starts until it ends.
 
 ### reuse
 

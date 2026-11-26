@@ -16,7 +16,7 @@ What the server must guarantee, and the traps known so far. How to meet each req
 
 ## Runs and their records
 
-- Proof never runs a run again by itself: not after its command fails or times out, and not after it is `lost`. A lost run's `proof` exits 75, and a lost build of a pushed commit shows as `lost` in `proof status`.
+- Proof never runs a run again by itself: not after its command fails or times out, and not after it is `lost`. A lost run's `proof` exits 75, and a lost run of a pushed commit shows as `lost` in `proof status`.
 - A run's record holds its ID, task, commit, runner, state, exit status, resource use, and times. It never holds the command's arguments or environment, which can carry secrets and grow without bound.
 - Records are bounded per run, kept for the pool file's `retention`, and written so that concurrent writers can't interleave or lose them.
 - Times are recorded from the server's clock; clocks on hosts and where `proof` runs can differ.
@@ -34,7 +34,7 @@ What the server must guarantee, and the traps known so far. How to meet each req
 - One bare Git repository per project. `proof` pushes each run's commit under a temporary ref; runners fetch it.
 - **A commit object being present doesn't mean the commit is complete.** A fetch cut off part way can leave the commit without its trees. A runner, or the server, counts a commit as present only when `git rev-list --objects --quiet SHA --not --all` succeeds, and deletes leftover temporary pack files before fetching again.
 - Repack and prune each repository, and delete temporary refs of runs past their retention.
-- For builds of pushed commits, the server fetches the listed branches with read-only credentials read from a file, and never passes those credentials to runners.
+- For runs of pushed commits, the server fetches the listed branches with read-only credentials read from a file, and never passes those credentials to runners.
 
 ## Artifacts
 

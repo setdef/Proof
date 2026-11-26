@@ -14,7 +14,7 @@ Most invocations come from coding agents, inside agent harnesses. That shapes se
 ## Which project and which code
 
 - The project is the Git repository containing the current folder, or `-C`'s. If there is none, refuse; never guess. The first line names the project's root and the commit, so an agent whose shell drifted into another project's folder sees it at once.
-- **A working-tree run is a synthetic commit made without touching the clone:** a temporary index (`GIT_INDEX_FILE`), `git add -A` with untracked files that aren't ignored, `git write-tree`, `git commit-tree` with `HEAD` as parent. The clone's index, `HEAD`, and branches stay exactly as they were.
+- **A working-tree run uses a working-tree commit made without touching the clone:** a temporary index (`GIT_INDEX_FILE`), `git add -A` with untracked files that aren't ignored, `git write-tree`, `git commit-tree` with `HEAD` as parent. The clone's index, `HEAD`, and branches stay exactly as they were.
 - **A tracked file that `.gitignore` matches must still be sent.** A working-tree commit built from an index that starts empty drops it, because `git add -A` leaves out ignored files and the empty index doesn't know the file is tracked. The commit must keep it.
 - **Strip `GIT_*` variables** inherited from a Git hook before running Git: a hook run inside a linked worktree inherits `GIT_DIR`, which redirects every Git command.
 - **Submodules** go at the commits the superproject records; their objects may live in the superproject's `.git/modules/NAME`, not in the submodule's checkout. Uncommitted changes inside a submodule are not sent.
