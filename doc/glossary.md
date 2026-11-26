@@ -63,18 +63,22 @@ The one configuration file for the whole pool, kept on the server. It lists each
 
 To choose the **runner** a queued **run** goes to, and hold the CPUs and memory it **requests** on that runner's **host**. A run leaves the **queue** when the **server** places it.
 
-- Elsewhere: Nomad says allocation, and other tools say schedule or assign.
-- Don't say: schedule, assign, dispatch.
+- Elsewhere: called place in Nomad, Kubernetes, and Concourse; allocate in Slurm and Jenkins; match in HTCondor; assign in GitHub Actions; and dispatch in Buildkite. Nomad calls the result of placing an allocation.
+- Don't say: schedule, which Buildkite and Jenkins also use for a time trigger; dispatch, which in Nomad means making an instance of a parameterized job; allocate, which **request** also avoids, and which is Nomad's word for the result of placing; assign, which suggests the choice ends when the runner is named, where placing also holds the CPUs and memory.
 
 ### approval
 
-Letting a **runner** that asked to join into the **pool**, with `proof runner approve`.
+What a person does to let a **runner** that asked to join into the **pool**: they run `proof runner approve` with the **one-time code** the runner printed.
+
+- Elsewhere: called approve in HTCondor, for an administrator letting a token request in, and in Kubernetes, for a certificate signing request. GitHub Actions and Woodpecker also use approve for permission to run a workflow or a pipeline, which Proof has no equivalent of.
+- Don't say: register, which in GitHub Actions, GitLab, and Buildkite means a runner enrolls itself with a token, and no person approves it.
 
 ### one-time code
 
 A code of 8 characters that `proof server setup` and `proof runner setup` print, and that `proof login` and `proof runner approve` ask for. It works once, for 15 minutes.
 
-- Don't say: code alone, which in Proof's docs also means a project's source (see "How your code reaches a runner"); PIN; OTP.
+- Elsewhere: called a user code in RFC 8628, which defines the device authorization grant, and in GitHub's and Microsoft's device sign-in.
+- Don't say: user code, because Proof's docs use user for the person who runs `proof`; code alone, which in Proof's docs also means a project's source (see "How your code reaches a runner"); PIN, which is a number someone keeps and reuses, where this code works once and expires; OTP, an abbreviation of "one-time password" that the docs would have to explain, where "one-time code" says it in plain words.
 
 ## The project
 
@@ -82,11 +86,15 @@ A code of 8 characters that `proof server setup` and `proof runner setup` print,
 
 The Git repository a run's code comes from, which the **server** keeps one copy of.
 
+- Elsewhere: called a project in GitLab and CircleCI, and a repository in GitHub Actions and Woodpecker. In Nx, a project is a unit inside a repository, where a project in Proof is the whole repository.
+- Don't say: pipeline, which in Buildkite is a definition of work, not the repository the work runs on.
+
 ### working-tree commit
 
 The commit `proof` makes of the working tree without touching the clone's index, branch, or `HEAD`.
 
-- Don't say: synthetic commit.
+- Elsewhere: `git stash create` makes the same kind of commit, a stash entry, and returns it without storing it in any ref.
+- Don't say: synthetic commit, because the docs call it a commit of your working tree; stash, which is Git's word for what it keeps under a ref.
 
 ### task
 
@@ -131,7 +139,9 @@ To ask for **resources**: a task requests 2 CPUs and 4 GB. Also the amount asked
 
 One execution of a **task** or a **script** on one runner, with an ID, its output, and its exit status. A run ID is the minute the run was created, in UTC, then five random characters: `20261125-0336-k7q2w`. Wherever Proof asks for a run's ID, the five characters alone work, matched against the last 7 days of runs. They come from [Crockford's Base32](https://www.crockford.com/base32.html), which has no `i`, `l`, `o`, or `u`, so Proof reads a typed `o` as `0` and an `i` or `l` as `1`.
 
-- Elsewhere: called a run in GitHub Actions, and a build in Jenkins, Buildkite, and Concourse.
+A run of a pushed commit, which the **server** starts for a commit on a branch the **pool file** lists, is a run like any other.
+
+- Elsewhere: called a workflow run in GitHub Actions, a pipeline in GitLab, Woodpecker, and CircleCI, and a build in Jenkins, Buildkite, and Concourse.
 - Don't say: build, which suggests compiling; job; execution; allocation; check.
 
 ### script
@@ -189,23 +199,34 @@ Everything a run's command prints, standard output and standard error together, 
 
 A run ID's last five characters, which work wherever Proof asks for a run's ID.
 
+- Elsewhere: Nomad, GitLab, and Git also shorten an ID to its leading characters. Proof's short ID is the last five.
+- Don't say: prefix, which means the leading characters Nomad, GitLab, and Git keep; abbreviation, which Git uses for that prefix (`--abbrev-commit`).
+
 ### result line
 
 The line `proof` writes to standard error when a run ends, with the run's exit status, its full ID, and other `key=value` fields. Fields are only ever added to it, never renamed or removed.
 
-- Don't say: output, which means what the run's command prints.
+- Elsewhere: Buildkite shows exit status information in the footer of each job, and mise can write a run's result to a JSON report with `--report-file`. Neither is one closing line with a run's status and ID.
+- Don't say: output, which means what the run's command prints; summary, which mise uses for an output style.
 
 ### record
 
 What the **server** keeps of a run apart from its **output** and **artifacts**.
 
+- Elsewhere: Slurm calls the same thing an accounting record, and HTCondor a job's entry in its history. In Kubernetes, an object is a "record of intent", a desired state, where Proof's record is what the server kept after the run.
+
 ### invocation
 
 What a **runner** needs to start a run's command that the **record** never keeps: the task's arguments, a script's text, the run's **inputs**.
 
+- Elsewhere: Bazel's remote execution API calls what a worker needs an action, with a command's arguments and its input files. In Bazel, an invocation is one run of the `bazel` command, which is a **run** in Proof.
+
 ### follow
 
 To read a run's **output** as it arrives, from a byte offset, as `proof run` and `proof watch` do. Whoever follows is a follower.
+
+- Elsewhere: called follow in Nomad (`-f`), Kubernetes (`--follow`), and HTCondor (`-follow`). Nomad's API also takes a byte offset to start from.
+- Don't say: tail, the word in `proof logs --tail`, a flag that prints the last lines of a run's output; attach, which in Slurm means connecting to a running job step's input and output streams, where following only reads.
 
 ### end marker
 
@@ -215,17 +236,25 @@ What the runner sends after a run's last byte of **output**, with the number of 
 
 The sorted list of a run's **artifacts**, with each file's SHA-256 and size, after which no artifact is added.
 
+- Elsewhere: an OCI image manifest is the same kind of list, of an image's layers by digest. In Kubernetes, a manifest is a resource's YAML file, which is something else.
+
 ### wait reason
 
 What a queued run waits behind, as `proof status` shows it.
+
+- Elsewhere: Slurm shows a reason for each pending job, such as `Resources` or `Priority`.
 
 ### queue position
 
 A run's place in arrival order, given by the server when the run is queued.
 
+- Elsewhere: in Slurm, a job's order in the queue changes with its priority. In Proof it never changes, because there are no priorities.
+
 ### random source
 
-What gives Proof the unpredictable characters in a **run** ID and in a **one-time code**. Proof's code takes it as a port: an object that answers a request for a random number, so a test can pass a fake that answers from a list.
+What gives Proof the unpredictable characters in a **run** ID and in a **one-time code**.
+
+- Elsewhere: Ruby's documentation calls such an object a random number generator. `Random` and `SecureRandom` are two, and `Array#sample` takes one as its `random:` argument.
 
 ## Workspaces
 
@@ -239,6 +268,9 @@ The directory on a runner where a project's code sits while a run's command runs
 ### lease
 
 One run's use of one **workspace**, from before its command starts until it ends.
+
+- Elsewhere: a Kubernetes Lease is a node heartbeat or a leader election, and an HTCondor job lease keeps a job running while its submitter is out of contact. Neither is one run's use of a workspace.
+- Don't say: lock, which is what keeps a second run out of the workspace while the lease lasts.
 
 ### reuse
 
