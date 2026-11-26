@@ -34,7 +34,10 @@ module Proof
     # lines. Type annotations, such as `(i8)5`, change no value. Raises
     # `Proof::ProjectFileError` for text that isn't KDL 2, with the line and
     # column the gem reports, and with advice to put a value in quotes when the
-    # value starts with a digit and continues with letters. A block comment
+    # value starts with a digit and continues with letters. The text is read as
+    # UTF-8, whatever encoding the string has, and a byte that isn't UTF-8 is a
+    # refusal at the line it is in. A string that ends the text after a
+    # backslash is a refusal at the last line. A block comment
     # (`/*`) with no end is text that isn't KDL 2, and is refused as the gem
     # refuses an unterminated string.
     #
@@ -55,6 +58,12 @@ module Proof
     def parse: (String text) -> Array[KdlNode]
 
     private
+
+    def utf8_of: (String text) -> String
+
+    NOT_UTF8: String
+
+    ENDS_TOO_SOON: String
 
     @path: String
   end

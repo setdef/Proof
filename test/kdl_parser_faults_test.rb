@@ -53,4 +53,34 @@ class KdlParserFaultsTest < Minitest::Test
     assert_equal([["a", 1]], lines("a /* b */"))
     assert_equal([["a", 3]], lines("/* b\n\nc */ a /* d /* e */ f */"))
   end
+
+  # Project file reference, "Where Proof reads the file": the refusal names "the file, the line, and what's wrong", so
+  # a byte that isn't UTF-8, which the gem fails on with an ArgumentError and no line, is refused at the line it is in.
+  def test_a_byte_that_is_not_utf8_is_refused_at_its_line
+    error = assert_raises(Proof::ProjectFileError) { lines("task a\ntask \xE9b\ntask c\n") }
+
+    assert_equal(
+      [".config/proof.kdl:2: this is not valid KDL 2: the text is not valid UTF-8", 2],
+      [error.message, error.line]
+    )
+  end
+
+  # KDL is UTF-8, so text in a string that Git or a file gave as binary or as ASCII is read as UTF-8, and a name with an
+  # accent is that name.
+  def test_text_in_another_encoding_is_read_as_utf8
+    ["task caf\u00E9\n".b, "task caf\u00E9\n".dup.force_encoding(Encoding::US_ASCII)].each do |text|
+      assert_equal([["task", 1]], lines(text))
+      assert_equal(["caf\u00E9"], Proof::KdlParser.parse(text, path: PATH).first.arguments)
+    end
+  end
+
+  # The same sentence, for a string that a backslash ends the text in, which the gem fails on with a TypeError.
+  def test_a_string_that_a_backslash_ends_the_text_in_is_refused_at_the_last_line
+    error = assert_raises(Proof::ProjectFileError) { lines("task a\ntask \"b\\") }
+
+    assert_equal(
+      [".config/proof.kdl:2: this is not valid KDL 2: the text ends in the middle of a string", 2],
+      [error.message, error.line]
+    )
+  end
 end
