@@ -105,7 +105,7 @@ A size is a number, an optional space, and a unit. Proof reads the same sizes ev
 
 When a size breaks these rules, Proof refuses it with the forms that work.
 
-| Written | Size | |
+| Written | Size | Note |
 | --- | --- | --- |
 | `"512MB"` | 512 MB | |
 | `"8GB"`, `"8 GB"`, `"8gb"`, `"8GiB"` | 8,192 MB | One size, written four ways. |
@@ -133,7 +133,7 @@ When a size breaks these rules, Proof refuses it with the forms that work.
 
 A label is 1 to 63 characters: ASCII letters, digits, `-`, `_`, and `.`, beginning and ending with a letter or a digit. It has no space. Proof compares labels without regard to case, so `GPU` and `gpu` are one label, and a task that asks for one matches a runner that offers the other. The same rule holds for `--label` and for `withhold` in the [pool file](pool-file.md).
 
-| Written | |
+| Written | Result |
 | --- | --- |
 | `gpu`, `kvm`, `desktop` | Valid. |
 | `GPU` | Valid, and the same label as `gpu`. |
@@ -141,9 +141,9 @@ A label is 1 to 63 characters: ASCII letters, digits, `-`, `_`, and `.`, beginni
 | `"4k"` | Valid. KDL needs quotes around a value that starts with a digit. |
 | `"gpu "`, `" gpu"`, `"nvidia gpu"` | Refused: a label has no space. |
 | `-gpu`, `gpu-`, `.gpu`, `gpu_` | Refused: a label begins and ends with a letter or a digit. |
-| `gpu!`, `gpu/2`, `gpu:2` | Refused: `!`, `/`, and `:` aren't characters a label has. |
+| `gpu!`, `"gpu/2"`, `gpu:2` | Refused: `!`, `/`, and `:` aren't characters a label has. KDL needs quotes around `gpu/2`. |
 | A name of 64 or more characters | Refused: a label has at most 63. |
-| `"GPU-ü"` | Refused: only ASCII letters count. |
+| A name with an accented letter | Refused: only ASCII letters count. |
 | `""` | Refused: a label has at least one character. |
 
 Proof refuses a label that breaks the rule, so a stray space or symbol becomes an error, not a run that waits for a runner that can't have the label.

@@ -53,7 +53,7 @@ The pool file is [KDL](https://kdl.dev/) 2.0, so a repeated property keeps only 
 
 A size in the pool file, in `budget`, `keep-free`, `share`, or `limits`, is a number, an optional space, and a unit: `MB`, `GB`, `TB`, `MiB`, `GiB`, or `TiB`, in any case, all counted in 1,024s. The number is whole or decimal, and a size that isn't a whole number of megabytes rounds up to the next whole megabyte. A budget can run to terabytes. The [project file reference](project-file.md#sizes) gives the whole rule.
 
-| Written | |
+| Written | Result |
 | --- | --- |
 | `budget "1.5TB"` | Valid: 1,572,864 MB. |
 | `keep-free "50 GiB"` | Valid: 51,200 MB. |
@@ -65,7 +65,7 @@ A size in the pool file, in `budget`, `keep-free`, `share`, or `limits`, is a nu
 
 A label in `withhold` is 1 to 63 characters: ASCII letters, digits, `-`, `_`, and `.`, beginning and ending with a letter or a digit, with no space. Proof compares labels without regard to case, so `withhold GPU` withholds `gpu` too. The [project file reference](project-file.md#labels) gives the whole rule.
 
-| Written | |
+| Written | Result |
 | --- | --- |
 | `withhold gpu desktop` | Valid. |
 | `withhold GPU` | Valid, and the same as `withhold gpu`. |
