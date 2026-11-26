@@ -46,7 +46,7 @@ What to build next, what 1.0 leaves out, and what is undecided: `doc/contributor
 - Reuse before you build. Before writing a parser, a checker, or a helper, look for reliable code that exists: the standard library, Ruby's bundled gems, maintained gems. Write new code only with a written reason.
 - Every file starts with an SPDX header, copyright `2026 setdef <kerrick@setdef.com>`: `MIT` for code, `CC-BY-SA-4.0` for documentation. In Ruby, wrap it in `#--` and `#++` to keep it out of RDoc output.
 - Every line of Ruby is covered by tests that would stand up to mutation testing, and each test checks specific behavior. No mutation-testing tool runs in the gate until one exists for Ruby.
-- Value objects are `Data.define`, written `class Foo < Data.define(...)`; entities are classes.
+- Value objects are `Data.define`, written `class Foo < Data.define(...)`, because RDoc skips the methods in a `Foo = Data.define(...) do` block and the coverage check never counts them; entities are classes.
 - Type every class and method in `.rbs`, with no `untyped`; `.rbs` files carry no comments. A `Data.define` subclass declares `class Foo < Data`, an `attr_reader` for each member, and `self.new` (and `self.[]` if used) with positional and keyword overloads, because `Data.new` returns `bot`.
 - Document every public class and method with RDoc, not YARD, in the `.rb` file, following `doc/contributors/documentation_style.md`. That guide covers RDoc in Ruby files; `doc/contributors/style-guide.md` covers everything else.
 - Every cop RuboCop has is on. Fix an offense; never write `rubocop:disable`. Turn a cop off in `.rubocop.yml` only for a reason written beside it.
