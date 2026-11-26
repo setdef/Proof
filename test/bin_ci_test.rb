@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative("test_helper")
+require "etc"
 require "open3"
 require "rbconfig"
 require "tmpdir"
@@ -16,6 +17,7 @@ class BinCiTest < Minitest::Test
     echo "mise $*"
     echo "trusted=$MISE_TRUSTED_CONFIG_PATHS"
     echo "dir=$(pwd -P)"
+    echo "workers=$PARALLEL_TEST_PROCESSORS"
     exit 7
   SH
   private_constant(:ROOT, :BIN_CI, :FAKE_MISE)
@@ -99,7 +101,24 @@ class BinCiTest < Minitest::Test
       output, status = run_ci([["BUNDLE_PATH", File.join(empty, "bundle")]].to_h, path: empty)
 
       refute_predicate(status, :success?)
-      assert_includes(output, "bin/ci: mise is not installed.")
+      assert_includes(output, "mise is not installed.")
+    end
+  end
+
+  def test_the_gate_starts_half_as_many_test_processes_as_there_are_processors
+    Dir.mktmpdir("bin-ci-outside") do |outside|
+      output, = run_with_fake_mise([["BUNDLE_PATH", File.join(outside, "bundle")]].to_h, dir: outside)
+
+      assert_includes(output, "workers=#{[Etc.nprocessors / 2, 1].max}\n")
+    end
+  end
+
+  def test_a_number_of_test_processes_that_is_set_is_kept
+    Dir.mktmpdir("bin-ci-outside") do |outside|
+      variables = [["BUNDLE_PATH", File.join(outside, "bundle")], %w[PARALLEL_TEST_PROCESSORS 3]].to_h
+      output, = run_with_fake_mise(variables)
+
+      assert_includes(output, "workers=3\n")
     end
   end
 end

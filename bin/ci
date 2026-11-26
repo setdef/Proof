@@ -5,6 +5,12 @@
 # tools are the ones mise.toml pins. Run it as `bin/ci` with BUNDLE_PATH set to
 # a folder outside the repository. RuboCop and REUSE read every file under the
 # repository, so gems installed inside it would fail the gate.
+#
+# The gate runs at a low priority and starts half as many test processes as the
+# computer has processors, so the person at the computer can keep working. CI
+# runs `bundle exec rake` itself and uses every core.
+
+require "etc"
 
 root = File.realpath(File.expand_path("..", __dir__))
 
@@ -28,8 +34,10 @@ abort(<<~MESSAGE) if bundle == root || bundle.start_with?("#{root}#{File::SEPARA
   Set it to a folder outside the repository, for example BUNDLE_PATH=$HOME/.cache/proof-bundle, and run bin/ci again.
 MESSAGE
 
+workers = ENV.fetch("PARALLEL_TEST_PROCESSORS") { [Etc.nprocessors / 2, 1].max.to_s }
+env = [["MISE_TRUSTED_CONFIG_PATHS", root], ["PARALLEL_TEST_PROCESSORS", workers]].to_h
 begin
-  exec([["MISE_TRUSTED_CONFIG_PATHS", root]].to_h, "mise", "exec", "--", "bundle", "exec", "rake", chdir: root)
+  exec(env, "nice", "-n", "10", "mise", "exec", "--", "bundle", "exec", "rake", chdir: root)
 rescue Errno::ENOENT
-  abort("bin/ci: mise is not installed. Install it from https://mise.jdx.dev, then run bin/ci again.")
+  abort("bin/ci: nice or mise is not installed. Install it from https://mise.jdx.dev, then run bin/ci again.")
 end
