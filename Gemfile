@@ -11,6 +11,8 @@ gem "irb", "~> 1.18"
 gem "minitest", "~> 6.0"
 # Stubs objects in the tests.
 gem "minitest-mock", "~> 5.27"
+# Runs the tests in several processes at once, a slice of the test files each.
+gem "parallel_tests", "~> 5.9"
 # Runs the doc examples of several files at once.
 gem "parallel", "~> 2.3"
 # Holds the values and rules Proof's command, server, and runner share.

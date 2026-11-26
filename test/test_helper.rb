@@ -17,8 +17,11 @@ SimpleCov.start do
   coverage(:line) { minimum(100, per: :file) }
   coverage(:branch) { minimum(100, per: :file) }
   # Merging would add the coverage of an earlier run, named differently, to this
-  # run's, and report lines no test in this run executes.
-  merging(false)
+  # run's, and report lines no test in this run executes. A parallel run is the
+  # exception: each worker holds a slice of the suite, so the run's coverage is
+  # the merge of the workers' slices. rake test:ruby deletes the earlier
+  # resultsets before it starts the workers.
+  merging(ENV.key?("TEST_ENV_NUMBER"))
   refuse_coverage_drop
 end
 
