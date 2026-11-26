@@ -7,8 +7,8 @@ module Proof
   # what a path pattern is. It is a private constant of `Proof`, so the domain
   # has no public name for it: build a `Proof::PathPattern`.
   #
-  # A relative path isn't empty, doesn't start with `/`, and has no folder
-  # named `..` at its start, between slashes, or at its end.
+  # A relative path isn't empty, doesn't start with `/`, and doesn't contain
+  # `..` anywhere, so `"v1..2.txt"` isn't one.
   module PathText
     # Whether `text` is a path relative to the workspace's root. A value that
     # isn't text, text with a byte that isn't valid text, and text in an

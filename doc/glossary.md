@@ -135,7 +135,7 @@ The values in a `defaults` node. In a project file, they apply to every task who
 
 ### setting
 
-One of the values a **run** gets: its **OS**es, **labels**, CPUs, memory, time limit, **artifacts**, and **caches**. Each setting comes from a flag on `proof run`, the **task**'s entry in the **project file**, the **defaults**, or Proof's built-in defaults, in that order of precedence.
+One of the values a **run** gets: its **OS**es, **labels**, CPUs, memory, time limit, **artifacts**, and **caches**. A flag on `proof run`, the **task**'s entry in the **project file**, the **defaults**, and Proof's built-in defaults each give settings, in that order of precedence. CPUs, memory, and the time limit come from the first of them that has one, and so do the **OS**es. **Labels**, **artifacts**, and **caches** add up from all of them.
 
 - Don't say: option, which most tools use for a flag; property, which in the project file means a `name=value` entry on a node, such as `cpus=4`, where `os` and `label` are children.
 
