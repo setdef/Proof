@@ -1,0 +1,31 @@
+# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
+# SPDX-License-Identifier: MIT
+
+# mise 2026.8.9 and later trust the configuration that `mise install` and
+# `mise exec` load, so a computer that has never trusted this folder runs
+# them with no prompt. An older mise stops at the trust prompt or at a key it
+# doesn't know, so this is the oldest mise that reads this file.
+min_version = "2026.10.11"
+
+# jdx/ruby marks 4.1.0-preview1 as a prerelease, and mise doesn't look for a
+# precompiled Ruby among prereleases. precompiled_url names jdx/ruby's asset
+# for each version and platform, so mise downloads the build it would
+# download for a release. ruby.compile = false makes the install fail when
+# that download fails, where mise would otherwise compile Ruby from source
+# against the libraries this computer has. Remove precompiled_url when Proof
+# moves to Ruby 4.1.0.
+[settings]
+ruby.precompiled_url = "https://github.com/jdx/ruby/releases/download/{version}/ruby-{version}.{platform}.tar.gz"
+ruby.compile = false
+
+[tools]
+# The Ruby that Fledge's apps carry, so Proof is developed and tested on the
+# Ruby it ships with. Windows isn't set up yet.
+ruby = { version = "4.1.0-preview1", os = ["linux", "macos"] }
+python = "3.14"
+pre-commit = "latest"
+# reuse lint checks licensing (rake reuse:lint). charset-normalizer, pure
+# Python, detects file encodings without libmagic, which python-magic needs.
+"pipx:reuse" = { version = "6.3.0", extras = "charset-normalizer" }
+# usage lints the CLI spec and generates the CLI references.
+usage = "7.4.1"

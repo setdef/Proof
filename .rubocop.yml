@@ -1,0 +1,60 @@
+# SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>
+# SPDX-License-Identifier: MIT
+
+# URL pin. The baseline lives in ruby_quality's config/rubocop.yml and is
+# fetched at lint time, so rule changes propagate with no per-repo sync.
+# Works in CI and contributor clones (bundler already needs network).
+
+inherit_from:
+  - https://raw.githubusercontent.com/Kerrick/ruby_quality/main/config/rubocop.yml
+
+plugins:
+  - rubocop-performance
+  - rubocop-minitest
+  - rubocop-rake
+  - rubocop-thread_safety
+  - rubocop-packaging
+  - rubocop-md
+  - rubocop-on-rbs
+
+AllCops:
+  # The baseline sets DisabledByDefault: true, and RuboCop refuses both
+  # settings at once.
+  DisabledByDefault: false
+  EnabledByDefault: true
+  NewCops: enable
+  TargetRubyVersion: "4.1"
+  Exclude:
+    - "tmp/**/*"
+    - "vendor/**/*"
+
+Markdown:
+  # Lint only code blocks tagged ruby. With autodetection on, rubocop-md
+  # parses the console and shell blocks in the docs as Ruby.
+  Autodetect: false
+
+Style/EndlessMethod:
+  # documentation_style.md bans endless methods, since RDoc misreads them.
+  EnforcedStyle: disallow
+
+Style/Copyright:
+  # The SPDX line every Ruby file starts with. Markdown files hold the same
+  # line in an HTML comment that REUSE reads, which this cop can't see.
+  Notice: '^SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef\.com>$'
+  AutocorrectNotice: "SPDX-FileCopyrightText: 2026 setdef <kerrick@setdef.com>"
+  Exclude:
+    - "**/*.md"
+
+Lint/ConstantResolution:
+  # RuboCop's docs say enabling this disables Style/RedundantConstantBase.
+  Enabled: false
+
+Style/MissingElse:
+  # RuboCop's docs say this conflicts with Style/EmptyElse's default style.
+  Enabled: false
+
+Markdown/Syntax:
+  # Kramdown doesn't know GitHub's alert syntax, which the docs use for
+  # warnings, so it reports each "> [!warning]" line as an undefined link. No
+  # Markdown satisfies both this cop and those alerts.
+  Enabled: false
