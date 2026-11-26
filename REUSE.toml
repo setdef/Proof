@@ -1,9 +1,10 @@
 version = 1
 
-# No file carries an SPDX header, because MIT and CC-BY-4.0 aren't copyleft or
-# share-alike licenses. This file declares each file's copyright and license.
-# Where two entries match a file, the later one wins, and a header inside a
-# file wins over both.
+# An SPDX header is only for a file copied under a copyleft or share-alike
+# license. This file declares the copyright and license of every other file:
+# Proof's own, under MIT and CC-BY-4.0, and any copied under a permissive or
+# public-domain license. Where two entries match a file, the later one wins,
+# and a header inside a file wins over both.
 
 # Code and configuration: every file no later entry matches.
 [[annotations]]
