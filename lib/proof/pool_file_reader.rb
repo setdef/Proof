@@ -22,7 +22,7 @@ module Proof
     end
 
     private def parts_of(by_name)
-      PoolFileEntries.new(by_name:, refusal: @refusal).check
+      PoolFileSharedNames.new(by_name:, refusal: @refusal).check
       parts = @readers.map { |reader| reader.read(by_name) }
       parts.reduce({}, :merge)
     end

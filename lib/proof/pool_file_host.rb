@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  class PoolFileSettings
+  class PoolFileHost
     MEMBERS = {
       budget: :budget, "keep-free": :keep_free, share: :share, "active-for": :active_for, withhold: :withheld
     }.freeze
@@ -10,13 +10,14 @@ module Proof
       "keep-free": -> (child) { Size.read(child.arguments.first, name: "keep-free") },
       share: -> (child) { Resources.share(cpus: child.properties["cpus"], memory: child.properties["memory"]) },
       "active-for": -> (child) { Duration.read(child.arguments.first, units: %i[s m h], name: "active-for") },
-      withhold: -> (child) { LabelSet.new(labels: child.arguments.map { |name| Label.new(name:) }) },
+      withhold: -> (child) { LabelSet.of(*child.arguments) },
     }.freeze
     private_constant(:MEMBERS, :BUILDERS)
 
-    def initialize(node:, refusal:)
+    def initialize(node:, refusal:, names:)
       @node = node
       @refusal = refusal
+      @names = names
     end
 
     def settings
@@ -28,7 +29,7 @@ module Proof
       # The domain refuses a name or a runner that isn't text, with its own message, so the entry is built from what the
       # file holds, and Steep is told that this one call may pass what the domain's signature refuses.
       # steep:ignore:start
-      HostEntry.new(name: @node.arguments.first, runners: @node.arguments_named("runner"), settings:)
+      HostEntry.new(name: @node.arguments.first, runners: @names.read(@node, :runner), settings:)
       # steep:ignore:end
     end
 

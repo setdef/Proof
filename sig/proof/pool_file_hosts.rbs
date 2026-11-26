@@ -6,10 +6,10 @@ module Proof
   # holds each rule, but it has no line to name, and KDL accepts a host with a
   # blank name, or with no runner.
   #
-  # This class refuses a blank runner name, reads each node's settings with
-  # `Proof::PoolFileSettings`, builds each `Proof::HostEntry`, and refuses a
-  # host with no budget at the line of the host. `Proof::KdlFormCheck` has
-  # refused a host with no `runner` child before.
+  # This class builds the settings of `defaults` and the `Proof::HostEntry` of
+  # each host with `Proof::PoolFileHost`, and refuses a host with no budget at
+  # the line of the host. `Proof::KdlFormCheck` has refused a host with no
+  # `runner` child before.
   #
   # Use it from `Proof::PoolFileReader`.
   class PoolFileHosts
@@ -37,7 +37,7 @@ module Proof
 
     private
 
-    def settings_for: (KdlNode node) -> PoolFileSettings
+    def host: (KdlNode node) -> PoolFileHost
 
     def entry: (KdlNode node, HostSettings defaults) -> HostEntry
 

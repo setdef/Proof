@@ -8,9 +8,11 @@ module Proof
   # drift.
   #
   # This class gathers the node's parts and builds the entry with the domain's
-  # classes. A poll the node lacks leaves the default of one minute. The
-  # domain's refusals come out of the entry, and a poll that isn't a duration is
-  # refused at the line of its child.
+  # classes. It reads the credentials file, the branches, and the tasks with
+  # `Proof::PoolFileNames`, so a blank one is refused at the line of its child.
+  # A poll the node lacks leaves the default of one minute. The domain's
+  # refusals come out of the entry, and a poll that isn't a duration is refused
+  # at the line of its child.
   #
   # Use it from `Proof::PoolFileRepositories`.
   class PoolFileRepository
@@ -19,17 +21,20 @@ module Proof
     # - `node`: `Proof::KdlNode`, a `repository` node that `Proof::KdlFormCheck`
     #   has checked.
     # - `refusal`: `Proof::PoolFileRefusal`.
-    def initialize: (node: KdlNode, refusal: PoolFileRefusal) -> void
+    # - `names`: `Proof::PoolFileNames`, which reads the credentials file, the
+    #   branches, and the tasks.
+    def initialize: (node: KdlNode, refusal: PoolFileRefusal, names: PoolFileNames) -> void
 
     # The entry of the node. Raises `Proof::InvalidRepositoryEntryError` for what
-    # the domain refuses, and `Proof::PoolFileError` for a poll that isn't a
-    # duration.
+    # the domain refuses, and `Proof::PoolFileError` for a blank credentials
+    # file, branch, or task, and for a poll that isn't a duration.
     #
     # ```ruby
     # path = "pool.kdl"
     # text = "repository lota url=\"https://example.com/lota.git\" {\n  branch trunk\n  task test\n}\n"
     # node = Proof::KdlParser.parse(text, path:, error: Proof::PoolFileError).first
-    # Proof::PoolFileRepository.new(node:, refusal: Proof::PoolFileRefusal.new(path:)).entry.tasks # => ["test"]
+    # refusal = Proof::PoolFileRefusal.new(path:)
+    # Proof::PoolFileRepository.new(node:, refusal:, names: Proof::PoolFileNames.new(refusal:)).entry.tasks # => ["test"]
     # ```
     def entry: () -> RepositoryEntry
 
@@ -39,5 +44,6 @@ module Proof
 
     @node: KdlNode
     @refusal: PoolFileRefusal
+    @names: PoolFileNames
   end
 end

@@ -1,5 +1,5 @@
 module Proof
-  # Checks the entries of a pool file against each other: two hosts with one
+  # Refuses a name that two entries of a pool file share: two hosts with one
   # name, a runner on two hosts, and two repositories with one name.
   #
   # The domain refuses all three, in `Proof::PoolFile`, but a mistake in what
@@ -15,7 +15,7 @@ module Proof
   # name.
   #
   # Use it from `Proof::PoolFileReader`.
-  class PoolFileEntries
+  class PoolFileSharedNames
     # Whether two names are one, without regard to case, as `Proof::Label`
     # compares labels. A name that isn't text compares as KDL read it.
     SAME_NAME: ^(kdl_value, kdl_value) -> bool
@@ -38,7 +38,7 @@ module Proof
     # nodes = Proof::KdlParser.parse(text, path:, error: Proof::PoolFileError)
     # by_name = nodes.group_by { |node| node.name.to_sym }
     # begin
-    #   Proof::PoolFileEntries.new(by_name:, refusal: Proof::PoolFileRefusal.new(path:)).check
+    #   Proof::PoolFileSharedNames.new(by_name:, refusal: Proof::PoolFileRefusal.new(path:)).check
     # rescue Proof::PoolFileError => e
     #   e.line # => 4
     # end

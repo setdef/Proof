@@ -5,16 +5,12 @@ module Proof
   # its tasks, and its poll. The domain holds each rule, but it has no line to
   # name, and KDL accepts a repository with a blank name or URL.
   #
-  # This class refuses a blank credentials file, branch, and task at the line of
-  # the child that gave it, and builds each `Proof::RepositoryEntry` with
+  # This class builds each `Proof::RepositoryEntry` with
   # `Proof::PoolFileRepository`, so that what the domain refuses, such as a
   # blank name or URL, is refused at the line of the repository.
   #
   # Use it from `Proof::PoolFileReader`.
   class PoolFileRepositories
-    # The children whose arguments may be blank.
-    BLANKS: Array[Symbol]
-
     # Prepares to read with `refusal`.
     #
     # - `refusal`: `Proof::PoolFileRefusal`.
@@ -36,8 +32,6 @@ module Proof
     private
 
     def entry: (KdlNode node) -> RepositoryEntry
-
-    def refuse_blanks: (KdlNode node) -> void
 
     @refusal: PoolFileRefusal
     @names: PoolFileNames

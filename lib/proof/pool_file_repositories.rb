@@ -2,9 +2,6 @@
 
 module Proof
   class PoolFileRepositories
-    BLANKS = %i[credentials-file branch task].freeze
-    private_constant(:BLANKS)
-
     def initialize(refusal:)
       @refusal = refusal
       @names = PoolFileNames.new(refusal:)
@@ -15,12 +12,7 @@ module Proof
     end
 
     private def entry(node)
-      refuse_blanks(node)
-      @refusal.checking(node) { PoolFileRepository.new(node:, refusal: @refusal).entry }
-    end
-
-    private def refuse_blanks(node)
-      BLANKS.each { |kind| @names.refuse_children(node, kind) }
+      @refusal.checking(node) { PoolFileRepository.new(node:, refusal: @refusal, names: @names).entry }
     end
   end
 end

@@ -14,15 +14,19 @@ module Proof
       @refusal = refusal
     end
 
-    def refuse_children(node, kind)
+    def read(node, kind)
+      node.pairs_named(kind.to_s).map { |value, child| name_at(child, value, kind) }
+    end
+
+    private def name_at(child, value, kind)
+      # Only text is read as a name here: the domain refuses a value that isn't text, with its own message, at the line
+      # of the entry. Every kind has its words, and Steep is told that a lookup in a Hash finds them.
+      return value unless value.is_a?(String)
+
       what, example = KINDS[kind]
-      node.pairs_named(kind.to_s).each do |value, child|
-        # Only text is checked here: the domain refuses a value that isn't text, with its own message. Every kind
-        # has its words, and Steep is told that a lookup in a Hash finds them.
-        # steep:ignore:start
-        @refusal.checking(child) { Name.read(value, what:, example:) } if value.is_a?(String)
-        # steep:ignore:end
-      end
+      # steep:ignore:start
+      @refusal.checking(child) { Name.read(value, what:, example:) }
+      # steep:ignore:end
     end
   end
 end

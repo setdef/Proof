@@ -9,18 +9,17 @@ module Proof
 
     def read(by_name)
       defaults = by_name[:defaults]&.first
-      settings = defaults ? settings_for(defaults).settings : HostSettings.new
+      settings = defaults ? host(defaults).settings : HostSettings.new
       { defaults: settings, hosts: by_name[:host].to_a.map { |node| entry(node, settings) } }
     end
 
-    private def settings_for(node)
-      PoolFileSettings.new(node:, refusal: @refusal)
+    private def host(node)
+      PoolFileHost.new(node:, refusal: @refusal, names: @names)
     end
 
     private def entry(node, defaults)
-      @names.refuse_children(node, :runner)
       # The entry is resolved only to refuse a host with no budget, and the value is the entry.
-      @refusal.checking(node) { settings_for(node).entry.tap { |host| host.resolved(defaults) } }
+      @refusal.checking(node) { host(node).entry.tap { |host| host.resolved(defaults) } }
     end
   end
 end

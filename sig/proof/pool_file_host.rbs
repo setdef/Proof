@@ -1,0 +1,64 @@
+module Proof
+  # Builds the `Proof::HostEntry` of one `host` node, and the settings that the
+  # children of a `defaults` or `host` node give.
+  #
+  # Both nodes take `budget`, `keep-free`, `share`, `active-for`, and
+  # `withhold`, and a host also takes its runners. The domain owns what makes
+  # each value valid: a size, a share, a duration, a set of labels, and a name.
+  # Writing those rules a second time in the reader would let the two drift.
+  #
+  # This class builds each child's value with the domain's classes, so a size, a
+  # duration, and a label have one rule each, and gives the
+  # `Proof::HostSettings` that the domain builds from them, or the
+  # `Proof::HostEntry` of a host, with the runners `Proof::PoolFileNames`
+  # reads. A child the node lacks gives no setting. A value the domain refuses
+  # is a refusal at the line of the child that gave it.
+  #
+  # Use it from `Proof::PoolFileHosts`.
+  class PoolFileHost
+    # The member of `Proof::HostSettings` that each child sets.
+    MEMBERS: Hash[Symbol, Symbol]
+
+    # The builder of each child's value.
+    BUILDERS: Hash[Symbol, ^(KdlNode) -> Object]
+
+    # Prepares to build the settings or the entry of `node`.
+    #
+    # - `node`: `Proof::KdlNode`, a `defaults` or `host` node that
+    #   `Proof::KdlFormCheck` has checked.
+    # - `refusal`: `Proof::PoolFileRefusal`.
+    # - `names`: `Proof::PoolFileNames`, which reads the runners.
+    def initialize: (node: KdlNode, refusal: PoolFileRefusal, names: PoolFileNames) -> void
+
+    # The settings of the node. A child the node lacks gives no setting, as
+    # `nil`.
+    #
+    # ```ruby
+    # path = "pool.kdl"
+    # node = Proof::KdlParser.parse("defaults {\n  budget \"100GB\"\n}\n", path:, error: Proof::PoolFileError).first
+    # refusal = Proof::PoolFileRefusal.new(path:)
+    # Proof::PoolFileHost.new(node:, refusal:, names: Proof::PoolFileNames.new(refusal:)).settings.budget.megabytes # => 102_400
+    # ```
+    def settings: () -> HostSettings
+
+    # The entry of a `host` node: its name, its runners, and its settings.
+    # Raises `Proof::InvalidHostEntryError` for what the domain refuses, and
+    # `Proof::PoolFileError` for a blank runner.
+    #
+    # ```ruby
+    # path = "pool.kdl"
+    # node = Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n}\n", path:, error: Proof::PoolFileError).first
+    # refusal = Proof::PoolFileRefusal.new(path:)
+    # Proof::PoolFileHost.new(node:, refusal:, names: Proof::PoolFileNames.new(refusal:)).entry.runners # => ["nuc-linux"]
+    # ```
+    def entry: () -> HostEntry
+
+    private
+
+    def pair: (KdlNode child) -> [Symbol, Object]?
+
+    @node: KdlNode
+    @refusal: PoolFileRefusal
+    @names: PoolFileNames
+  end
+end

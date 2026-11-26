@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  class PoolFileEntries
+  class PoolFileSharedNames
     SAME_NAME = lambda do |one, other|
       # The rule of the domain's PoolNames and of Proof::Label, String#casecmp?. A name that isn't text, which the
       # domain refuses later, compares as KDL read it. A lambda, so that a name can be curried into the test of a list.

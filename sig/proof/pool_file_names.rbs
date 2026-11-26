@@ -1,34 +1,35 @@
 module Proof
-  # Checks the arguments of a node's children for a name that is empty or only
-  # white space, at the line of the child.
+  # Reads the names that the children of a node give, and refuses a name that
+  # is empty or only white space at the line of its child.
   #
   # KDL accepts `runner "  "`, and a runner with a blank name would show in
   # `proof status` under a name nobody can type, and a blank branch would watch
   # nothing. The domain refuses a blank name, with no line to name, since a
   # host's entry holds all its runners. A runner, a credentials file, a branch,
-  # and a task are each written in a child node, so the reader asks the
-  # domain's `Proof::Name` about each one, and refuses it at the line of that
-  # child, with the domain's message. A host's name and a repository's name
-  # and URL are written on the node, and the entry the reader builds refuses a
-  # blank one at that line.
+  # and a task are each written in a child node, so the reader reads each one
+  # with the domain's `Proof::Name`, and refuses it at the line of that child,
+  # with the domain's message. A host's name and a repository's name and URL
+  # are written on the node, and the entry the reader builds refuses a blank
+  # one at that line.
   #
-  # This class checks the text in the arguments of a node's children of one
-  # name. It checks nothing else: a value that isn't text is the domain's to
-  # refuse.
+  # This class reads the text in the arguments of a node's children of one
+  # name. It gives a value that isn't text as KDL read it, which the domain
+  # refuses with its own message.
   #
-  # Use it from `Proof::PoolFileHosts` and `Proof::PoolFileRepositories`.
+  # Use it from `Proof::PoolFileHost` and `Proof::PoolFileRepository`.
   class PoolFileNames
     # For each kind of name, whose name it is for the message, and a name that
     # works.
     KINDS: Hash[Symbol, Array[String]]
 
-    # Prepares to refuse with `refusal`.
+    # Prepares to read with `refusal`.
     #
     # - `refusal`: `Proof::PoolFileRefusal`.
     def initialize: (refusal: PoolFileRefusal) -> void
 
-    # Refuses each argument of each child of `node` named `kind` that is text of
-    # no characters or only white space, at the line of that child.
+    # Each argument of each child of `node` named `kind`, in order. Refuses an
+    # argument that is text of no characters or only white space, at the line
+    # of its child.
     #
     # - `node`: `Proof::KdlNode`, the parent.
     # - `kind`: Symbol, which name each argument is, and the children's name: a
@@ -36,17 +37,26 @@ module Proof
     #
     # ```ruby
     # path = "pool.kdl"
+    # node = Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n  runner nuc-wsl\n}\n", path:, error: Proof::PoolFileError).first
+    # Proof::PoolFileNames.new(refusal: Proof::PoolFileRefusal.new(path:)).read(node, :runner) # => ["nuc-linux", "nuc-wsl"]
+    # ```
+    #
+    # A blank name is refused at the line of its child:
+    #
+    # ```ruby
+    # path = "pool.kdl"
     # node = Proof::KdlParser.parse("host nuc {\n  runner \" \"\n}\n", path:, error: Proof::PoolFileError).first
-    # names = Proof::PoolFileNames.new(refusal: Proof::PoolFileRefusal.new(path:))
     # begin
-    #   names.refuse_children(node, :runner)
+    #   Proof::PoolFileNames.new(refusal: Proof::PoolFileRefusal.new(path:)).read(node, :runner)
     # rescue Proof::PoolFileError => e
     #   e.line # => 2
     # end
     # ```
-    def refuse_children: (KdlNode node, Symbol kind) -> void
+    def read: (KdlNode node, Symbol kind) -> Array[kdl_value]
 
     private
+
+    def name_at: (KdlNode child, kdl_value value, Symbol kind) -> kdl_value
 
     @refusal: PoolFileRefusal
   end
