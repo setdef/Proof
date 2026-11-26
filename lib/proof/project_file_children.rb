@@ -2,15 +2,24 @@
 
 module Proof
   class ProjectFileChildren
-    NAMES = %w[os label artifact cache].freeze
+    MEMBERS = { os: :os, label: :labels, artifact: :artifacts, cache: :caches }.freeze
+    BUILDERS = {
+      os: -> (names) { names.map { |name| OS.new(name:) } },
+      label: -> (names) { LabelSet.new(labels: names.map { |name| Label.new(name:) }) },
+      artifact: -> (paths) { paths.map { |path| PathPattern.new(path:) } },
+      cache: -> (paths) { paths.map { |path| PathPattern.new(path:) } },
+    }.freeze
+    NAMES = MEMBERS.keys.map(&:to_s).freeze
     public_constant(:NAMES)
+    private_constant(:MEMBERS, :BUILDERS)
 
     def initialize(refusal:)
       @refusal = refusal
     end
 
-    def refuse_mistakes_in(node)
+    def read(node)
       node.each_child { |child, first| check(node, child, first) }
+      node.children_by_name.to_h { |name, child| pair(child, name.to_sym) }
     end
 
     private def check(parent, child, first)
@@ -26,6 +35,10 @@ module Proof
     private def refuse_shape(child)
       @refusal.child_without_arguments(child) if child.arguments.empty?
       @refusal.child_with_more(child) unless child.arguments_only?
+    end
+
+    private def pair(child, key)
+      [MEMBERS[key], @refusal.checking(child) { BUILDERS[key].call(child.arguments) }]
     end
   end
 end

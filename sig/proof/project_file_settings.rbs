@@ -6,7 +6,11 @@ module Proof
   # each value valid, and `Proof::TaskSettings` owns how they combine. Writing
   # those rules a second time in the reader would let the two drift.
   #
-  # This class reads the properties and the children, and returns the
+  # This class refuses a property the page doesn't list, such as `cpu=4`, which
+  # KDL accepts, and a task would run with the built-in value while the person
+  # believes it has theirs. It builds each property's value with the domain's
+  # classes, so a size, a duration, and a count of CPUs have one rule each, reads
+  # the children with `Proof::ProjectFileChildren`, and returns the
   # `Proof::TaskSettings` that the domain builds from them. A value the domain
   # refuses is a refusal at the line of the node that gave it.
   #
@@ -29,12 +33,35 @@ module Proof
     # settings = Proof::ProjectFileSettings.new(refusal:).read(node)
     # [settings.cpus, settings.os.map(&:to_s)] # => [4, ["linux"]]
     # ```
+    #
+    # A property the page doesn't list is refused at the line of its node:
+    #
+    # ```ruby
+    # path = ".config/proof.kdl"
+    # node = Proof::KdlParser.parse("task test cpu=4\n", path:).first
+    # begin
+    #   Proof::ProjectFileSettings.new(refusal: Proof::ProjectFileSettingsRefusal.new(path:)).read(node)
+    # rescue Proof::ProjectFileError => e
+    #   e.line # => 1
+    # end
+    # ```
     def read: (KdlNode node) -> TaskSettings
 
     private
 
+    def properties_of: (KdlNode node) -> Hash[Symbol, Object]
+
+    def refuse_unknown_in: (KdlNode node) -> void
+
+    def refuse: (KdlNode node, String name) -> void
+
+    def pair: (KdlNode node, Symbol key, kdl_value value) -> [Symbol, Object]
+
+    MEMBERS: Hash[Symbol, Symbol]
+
+    BUILDERS: Hash[Symbol, ^(kdl_value) -> Object]
+
     @refusal: ProjectFileSettingsRefusal
-    @properties: ProjectFileProperties
-    @lists: ProjectFileLists
+    @children: ProjectFileChildren
   end
 end
