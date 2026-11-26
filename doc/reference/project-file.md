@@ -138,7 +138,7 @@ task package memory="8GB"
 
 ## Several tasks on one command line
 
-The words after a task's name go to `mise run` on the runner as they are, so `proof run lint ::: test` runs both tasks in one run, as `mise run lint ::: test` would: in parallel, unless one task lists another in its `depends` in `mise.toml`. When a command line names several tasks, the run gets settings that suit all of them:
+Words for a task follow `--` and go to `mise run` on the runner as they are. `:::` starts the next task, so `proof run lint ::: test` runs both tasks in one run, as `mise run lint ::: test` would: in parallel, unless one task lists another in its `depends` in `mise.toml`. When a command line has several tasks, the run gets settings that suit all of them:
 
 | Setting | For several tasks |
 | --- | --- |

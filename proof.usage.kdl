@@ -46,21 +46,25 @@ flag "--no-input" global=#true help="Never prompt; fail and name the flag to use
 flag "-q --quiet" global=#true help="Print only the task's output and the result lines"
 flag "-d --debug" global=#true help="Print what Proof does at each step, to standard error"
 
-cmd "run" effect="write" unknown_flags="value" help="Run a task or a script on one or more runners" {
+cmd "run" effect="write" help="Run a task or a script on one or more runners" {
   long_help #"""
 Sends your working tree as it is, with uncommitted changes and untracked files that Git doesn't
 ignore, or the commit you name with --commit, and runs a task or a script there. Streams the
 output while it runs and exits with the run's status. With several --os flags, runs one run per
 operating system in parallel and exits with the worst status.
 
-The words after the task go to `mise run` on the runner as they are, so they mean what they mean
-to mise: arguments for the task, and `:::` to start another task. A flag Proof doesn't have goes to
-the task; to give the task a flag Proof also has, put it after `--`.
+Proof's flags work anywhere before `--`. The words for the task follow `--`, as they do for
+`cargo run` and `npm run`, and go to the task as they are, so they mean what they mean to mise. A
+flag Proof doesn't have, before `--`, is a mistake: Proof names it, suggests the nearest flag it
+has, and exits 2 without sending anything.
+
+`:::` starts the next task, before or after `--`, as it does for `mise run`. The word after `:::`
+is that task's name, and its words again follow `--`.
 
 Press Ctrl-C to cancel the run. To start a run without waiting for it, use --detach.
 """#
   arg "[task]" help="The task to run, from the project's mise.toml or .config/proof.kdl"
-  arg "[args]..." help="Arguments for the task, and `:::` to start another task, as for `mise run`"
+  arg "[args]..." help="After `--`, the words for the task; `:::` starts the next task, whose name follows it and whose words follow a `--` after that name"
   flag "--script <file>" help="Run this script file instead of a task; give - to read it from standard input"
   group "what" "task" "--script" required=#true
 
@@ -91,8 +95,9 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
   example "proof run test" header="Run a task"
   example "proof run test --commit HEAD" header="Check the last commit, with its history"
   example "proof run test --os all" header="Run on every operating system the task works on"
-  example "proof run test --seed 1234" header="Give the task an argument"
+  example "proof run test -- --seed 1234" header="Give the task a flag" help="The words after -- go to the task, as for cargo run and npm run."
   example "proof run lint ::: test" header="Run two tasks in one run, as mise runs them"
+  example "proof run lint -- --fix ::: test -- --seed 1234" header="Give two tasks different words"
   example "proof run build --os linux --keep 'pkg/*.gem' --download" header="Build on Linux and download what it built"
   example "proof run --script - --os macos" header="Run a script from standard input"
 }

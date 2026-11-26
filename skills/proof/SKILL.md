@@ -23,7 +23,7 @@ Proof runs a project's tasks on other computers (hosts) in a pool, and streams t
 4. **Read the last line and the exit status.** The last line is the result, such as `proof: exit=1 run=20261125-0336-r5c6t task=test runner=nuc-linux …`. `proof` exits with that status. Act on it by the table in **Exit statuses**.
 5. **On a failure, read the output.** If the output you saw was cut short, print the end of it with `proof logs r5c6t --tail 200`, using the run's last five characters.
 
-Arguments after the task go to the task, as with `mise run`: `proof run test --seed 1234`. To give the task a flag Proof also has, put it after `--`. For any command or flag this file doesn't show, read [references/cli.md](references/cli.md), which matches the installed version of `proof`.
+Words for the task follow `--`, as with `cargo run` and `npm run`: `proof run test -- --seed 1234`. Proof's flags go anywhere before `--`, and a flag Proof doesn't have is refused with exit status 2, naming the flag and the nearest one Proof has. `:::` starts the next task, and each task's words follow a `--` after its name: `proof run lint -- --fix ::: test -- --seed 1234`. For any command or flag this file doesn't show, read [references/cli.md](references/cli.md), which matches the installed version of `proof`.
 
 ## Choose where it runs
 

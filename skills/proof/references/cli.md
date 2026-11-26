@@ -77,15 +77,19 @@ ignore, or the commit you name with --commit, and runs a task or a script there.
 output while it runs and exits with the run's status. With several --os flags, runs one run per
 operating system in parallel and exits with the worst status.
 
-The words after the task go to `mise run` on the runner as they are, so they mean what they mean
-to mise: arguments for the task, and `:::` to start another task. A flag Proof doesn't have goes to
-the task; to give the task a flag Proof also has, put it after `--`.
+Proof's flags work anywhere before `--`. The words for the task follow `--`, as they do for
+`cargo run` and `npm run`, and go to the task as they are, so they mean what they mean to mise. A
+flag Proof doesn't have, before `--`, is a mistake: Proof names it, suggests the nearest flag it
+has, and exits 2 without sending anything.
+
+`:::` starts the next task, before or after `--`, as it does for `mise run`. The word after `:::`
+is that task's name, and its words again follow `--`.
 
 Press Ctrl-C to cancel the run. To start a run without waiting for it, use --detach.
 
 ### Arguments
 - **`[task]`** — The task to run, from the project's mise.toml or .config/proof.kdl
-- **`[args]…`** — Arguments for the task, and `:::` to start another task, as for `mise run`
+- **`[args]…`** — After `--`, the words for the task; `:::` starts the next task, whose name follows it and whose words follow a `--` after that name
 
 ### Flags
 - **`--script <file>`** — Run this script file instead of a task; give - to read it from standard input
@@ -143,16 +147,24 @@ proof run test --commit HEAD
 proof run test --os all
 ```
 
-**Give the task an argument**
+**Give the task a flag**
+
+The words after -- go to the task, as for cargo run and npm run.
 
 ```
-proof run test --seed 1234
+proof run test -- --seed 1234
 ```
 
 **Run two tasks in one run, as mise runs them**
 
 ```
 proof run lint ::: test
+```
+
+**Give two tasks different words**
+
+```
+proof run lint -- --fix ::: test -- --seed 1234
 ```
 
 **Build on Linux and download what it built**
