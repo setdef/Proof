@@ -91,12 +91,14 @@ Options weighed:
 
 ### Command line
 
-The command uses Ruby's OptionParser, which requires exact flag names, and dispatches by hand. The tests compare it with `usage explain --format json` for each case [`proof.usage.kdl`](../../proof.usage.kdl) defines, so the spec and the parser can't drift apart.
+The command uses Ruby's OptionParser with `require_exact`, which refuses an abbreviation of a flag's name, and dispatches by hand. For a flag it doesn't know, OptionParser raises an error that gives the flag (`invalid option: --oss`, with `--oss` in the error's `args`). Ruby's did_you_mean gives the suggestion: `DidYouMean::SpellChecker`, given the command's flags, answers `--os`. The command prints both and exits 2, the status [`proof.usage.kdl`](../../proof.usage.kdl) gives to a mistake on the command line.
+
+`proof run` takes Proof's flags anywhere before `--`. The words for the task follow `--`, as for `cargo run` and `npm run` ([issue #18](https://github.com/setdef/Proof/issues/18)). `:::` starts the next task, before or after `--`. After `--`, words go to the current task until a `:::`, the word after `:::` is the next task's name, and that task's words again follow `--`. OptionParser stops reading flags at the first `--`, so the command splits what follows by hand. The tests compare it with `usage explain --format json` for each case the spec defines, so the spec and the parser can't drift apart.
 
 Options weighed:
 
 - Samovar: reads options only before positional arguments, so it refused `proof run test --os linux`.
-- dry-cli, at 1.4.1: for `proof run build a b` it passed the task's name again as the task's first argument (`args` was `["build", "a", "b"]`). For an unknown flag it printed only `"proof run" was called with arguments "build --nope"`, without naming the flag. It also has no way to pass unknown flags through to the task, which [`proof.usage.kdl`](../../proof.usage.kdl) requires of `run` (`unknown_flags="value"`).
+- dry-cli, at 1.4.1: a repeated `--os linux --os windows` kept only `windows`, silently. Every yes-or-no flag also gained a `--no-` form that the spec doesn't have, and it accepted the abbreviation `--dry` for `--dry-run`. `--os beos` and a missing task or script got no specific error, or none. It has no global flags, and it exits 1 for a command-line mistake where the spec gives 2.
 - Thor: its list options took the task's flags.
 - tty-option: has no subcommands, and has had no release since 2023.
 
@@ -159,21 +161,25 @@ Options weighed:
 
 ### Storage
 
-Storage is Sequel over the `sqlite3` gem, with Sequel's `fiber_concurrency` extension and a busy handler that sleeps. A write waiting on a lock then lets other fibers run.
+Storage is ROM, with `rom` and `rom-sql` over Sequel and the `sqlite3` gem. Sequel's `fiber_concurrency` extension and a busy handler that sleeps make a write waiting on a lock let other fibers run. The store refuses a second placement row for a run with a unique index, which ROM raises as `ROM::SQL::UniqueConstraintError`.
 
-Measured with 4 processes of 20 fibers each choosing runners under contention, with a fiber yielding inside each transaction:
+Measured with 4 processes of 20 fibers each choosing runners under contention, 5 runs each:
 
 | Driver | Result |
 | --- | --- |
-| Sequel over `sqlite3` | Every run assigned once, no host's resources twice, no errors |
-| Sequel over `extralite` | The same |
+| ROM over `sqlite3`, with `fiber_concurrency` | Every run placed once and no host's resources offered twice, in every run, with a fiber yielding inside each transaction and without |
+| ROM over `sqlite3`, without `fiber_concurrency` | Runs placed twice, in every run |
+| Sequel over `sqlite3`, used directly | Every run placed once, no host's resources twice |
+| Sequel over `extralite` | Every run placed once, no host's resources twice, no errors |
 | `sqlite3` used directly | Runs assigned twice, hosts oversubscribed |
 | `extralite` used directly | Lock errors raised |
 
+The risk is `rom-sql`'s release cadence: its last release was in January 2025, though its repository has had commits since. The adapter sits behind the domain's ports, so replacing ROM touches one folder.
+
 Options weighed:
 
+- Sequel used directly: it kept placement atomic too. ROM won because it matches how setdef builds Ruby applications elsewhere, at no measured cost.
 - `extralite` as the driver: it fails at once on a lock unless given a progress handler, and the progress handler then holds the GVL for every query.
-- ROM: storage is append-only facts with a versioned append, byte logs read at offsets, and files, which the domain's constructors already build from rows, so ROM's relations and mappers have little to map. `rom-sql` has had no release since January 2025. It also sits over Sequel, whose constraints Proof needs anyway: refusing a second placement fact and checking the expected version.
 
 ### Use cases, validation, and composition
 
