@@ -39,6 +39,12 @@ class InMemoryRunsTest < Minitest::Test
     Proof::InMemory::Runs.new
   end
 
+  # A store over a table that sleeps after each lookup, so the contract's
+  # two-thread tests overlap their calls.
+  def build_runs_pausing_after_reads
+    Proof::InMemory::Runs.new(records: SlowTable.new)
+  end
+
   # A store over the same Hash, as after a restart.
   def reopen_runs(runs)
     Proof::InMemory::Runs.new(records: runs.records)
@@ -62,23 +68,6 @@ class InMemoryRunsTest < Minitest::Test
     runs.records[ID] = [placed]
 
     assert_raises(Proof::InvalidRunError) { runs.queued }
-  end
-
-  # Server design, "Runs and their records": records are "written so that
-  # concurrent writers can't interleave or lose them". A table that takes time
-  # to answer lets the other writer's call overlap, so only the store's lock
-  # keeps the two apart; the contract's threads alone don't show it, because
-  # one thread's call ends before the other's starts.
-  def test_the_lock_keeps_two_writers_apart_while_a_read_takes_time
-    placing = Proof::Testing::RunFixtures.storing(
-      Proof::InMemory::Runs.new(records: SlowTable.new), Proof::Testing::RunFixtures.run
-    )
-
-    assert_equal(%i[placed refused], Proof::Testing::AtOnce.place(placing, 2).sort)
-    assert_equal(
-      %i[added refused],
-      Proof::Testing::AtOnce.add(Proof::InMemory::Runs.new(records: SlowTable.new), %w[k7q2w m3d8q]).sort
-    )
   end
 
   # Each store keeps its own runs unless it is given another's records.

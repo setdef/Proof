@@ -40,6 +40,12 @@ module Proof
     # `build_runs` for a fresh store and `reopen_runs` for a store over the
     # same storage, and two of them use two threads at once.
     #
+    # One thread's call usually ends before the other's starts, so a store
+    # with no lock can pass two threads at once. To make the calls overlap,
+    # define `build_runs_pausing_after_reads` in your test class, as the
+    # example below shows. The two-thread tests then call it instead of
+    # `build_runs`, and fail for a store that has no lock.
+    #
     # Use it to check a store of runs.
     #
     # ## Examples
@@ -47,6 +53,16 @@ module Proof
     # ```ruby
     # require "minitest"
     # require "proof/testing"
+    #
+    # class SlowTable < Hash
+    #   %i[[] key? map].each do |reader|
+    #     define_method(reader) do |*arguments, &block|
+    #       found = super(*arguments, &block)
+    #       sleep(0.02)
+    #       found
+    #     end
+    #   end
+    # end
     #
     # class InMemoryRunsTest < Minitest::Test
     #   include Proof::Testing::RunsContract
@@ -57,6 +73,12 @@ module Proof
     #
     #   def reopen_runs(runs)
     #     Proof::InMemory::Runs.new(records: runs.records)
+    #   end
+    #
+    #   # Optional. A table that sleeps after each read, so the other thread's
+    #   # call overlaps with a call that has read and not yet written.
+    #   def build_runs_pausing_after_reads
+    #     Proof::InMemory::Runs.new(records: SlowTable.new)
     #   end
     # end
     # InMemoryRunsTest.public_instance_methods.grep(/\Atest_runs_contract/).size # => 17
@@ -135,6 +157,31 @@ module Proof
     # The tests with two threads at once, and across a restart, which
     # `RunsContract` includes.
     module RunsDurabilityContract : Object, _RunsFactory, _Assertions
+      # A new, empty store of runs that sleeps for a moment after each read,
+      # so a thread that has read and not yet written is still running when
+      # another thread's call reads. The two-thread tests call it, so a store
+      # with no lock around its reads and writes fails them.
+      #
+      # Define it in your test class to widen the window in your store, for
+      # example with a table that sleeps after each lookup, or a database
+      # connection that sleeps after each `SELECT`. The default is
+      # `build_runs`, which leaves the window as narrow as the store makes it.
+      #
+      # ```ruby
+      # require "minitest"
+      # require "proof/testing"
+      #
+      # class Narrow
+      #   include Proof::Testing::RunsDurabilityContract
+      #
+      #   def build_runs
+      #     Proof::InMemory::Runs.new
+      #   end
+      # end
+      # Narrow.new.build_runs_pausing_after_reads.next_position # => 1
+      # ```
+      def build_runs_pausing_after_reads: () -> Proof::_Runs
+
       # Two threads placing one run at once store one placement.
       def test_runs_contract_two_threads_placing_one_run_place_it_once: () -> void
 
