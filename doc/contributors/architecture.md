@@ -8,7 +8,7 @@ Each section states how Proof is built, then lists the options weighed and why e
 
 ### One model for the command, the server, and the runner
 
-Proof has one bounded context. It has a shared kernel, which holds the ideas all three roles use (runs, tasks, resources, labels, the run states), and one module each for the command, the server, and the runner. The three always run one version and share one glossary, so the kernel's words mean the same in every module. The modules show which rule needs which guarantee: the server's modules need a store that can refuse a second decision, the runner's need none.
+Proof has one bounded context. It has a shared kernel, which holds the ideas all three roles use (runs, tasks, resources, labels, the run states), and one module each for the command, the server, and the runner. The three always run one version and share one glossary, so the kernel's words mean the same in every module. The modules show which rule needs which guarantee. The server's modules need a store that can refuse a second decision. The runner's need a workspace lease that a prune can't race ([the runner design](design/runner.md#workspaces)) and one prune at a time across a host's runners ([the runner design](design/runner.md#disk)).
 
 Options weighed:
 
@@ -34,8 +34,8 @@ lib/proof/           use cases, unit of work, adapters, composition roots
 [Fledge](https://github.com/setdef/Fledge) ships an in-project path gem as part of the app. Three traps:
 
 - The folder on disk ships, not the list of files in the gemspec, so a file left in the folder ships.
-- The gemspec is evaluated at build time, so it can't read anything that exists only on a developer's computer.
-- The gem's version must match the one in `Gemfile.lock`.
+- Fledge evaluates the gemspec at build time and writes the result into the app. A `files` list the gemspec computes, for example from `git ls-files`, comes from the build machine's checkout, and the app needs no Git where it runs.
+- Fledge refuses a path gem whose version differs from the one in `Gemfile.lock`.
 
 Options weighed:
 
@@ -96,7 +96,7 @@ The command uses Ruby's OptionParser, which requires exact flag names, and dispa
 Options weighed:
 
 - Samovar: reads options only before positional arguments, so it refused `proof run test --os linux`.
-- dry-cli, at 1.4.1: repeats the task's name in its arguments, and reports an unknown flag without naming it.
+- dry-cli, at 1.4.1: for `proof run build a b` it passed the task's name again as the task's first argument (`args` was `["build", "a", "b"]`). For an unknown flag it printed only `"proof run" was called with arguments "build --nope"`, without naming the flag. It also has no way to pass unknown flags through to the task, which [`proof.usage.kdl`](../../proof.usage.kdl) requires of `run` (`unknown_flags="value"`).
 - Thor: its list options took the task's flags.
 - tty-option: has no subcommands, and has had no release since 2023.
 
@@ -140,6 +140,15 @@ Options weighed:
 
 - The `localhost` gem: puts an IP address in a DNS-name field, adds a separate certificate authority, and writes under `~/.local/state`. Falcon's TLS setup loads only RSA keys.
 
+### Native calls
+
+Native calls go through Fiddle on every system. Fledge's runtimes ship Fiddle as a bundled gem, and Fledge's tests call native code through it in built apps on macOS and Linux. No Proof code has yet called Win32 through it. `Kernel#syscall` can't do the job everywhere: it raises `NotImplementedError` on macOS (measured on Ruby 4.1.0-preview1), it doesn't exist on Windows, and its call numbers differ between x86-64 and ARM64 Linux.
+
+Options weighed:
+
+- `Kernel#syscall` on Linux with Fiddle elsewhere: two ways to do one thing.
+- A helper program in another language for each native call: a second language, which [the decision for Ruby](decisions/0001-proof-is-ruby-shipped-as-a-fledge-app.md) rules out without a reason only it can meet.
+
 ### Run IDs and codes
 
 Crockford Base32 is written in the domain gem. The domain has no dependencies, and [the glossary](../glossary.md#run) says Proof reads a typed `o` as `0` and an `i` or `l` as `1`, so the decoder is part of the domain's rules.
@@ -163,8 +172,8 @@ Measured with 4 processes of 20 fibers each choosing runners under contention, w
 
 Options weighed:
 
-- `extralite` as the driver: a source-only gem compiled for each operating system and processor. It fails at once on a lock unless given a progress handler, and the progress handler then holds the GVL for every query.
-- ROM: its SQL part takes 173 ms to load, against 100 ms in [clig.dev](https://clig.dev/) for a first line of output. Storage is append-only facts and byte logs, so its mapping has nothing to map. It has had no release since January 2025.
+- `extralite` as the driver: it fails at once on a lock unless given a progress handler, and the progress handler then holds the GVL for every query.
+- ROM: storage is append-only facts with a versioned append, byte logs read at offsets, and files, which the domain's constructors already build from rows, so ROM's relations and mappers have little to map. `rom-sql` has had no release since January 2025. It also sits over Sequel, whose constraints Proof needs anyway: refusing a second placement fact and checking the expected version.
 
 ### Use cases, validation, and composition
 
