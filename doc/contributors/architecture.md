@@ -93,7 +93,7 @@ Options weighed:
 
 The command uses Ruby's OptionParser with `require_exact`, which refuses an abbreviation of a flag's name, and dispatches by hand. For a flag it doesn't know, OptionParser raises an error that gives the flag (`invalid option: --oss`, with `--oss` in the error's `args`). Ruby's did_you_mean gives the suggestion: `DidYouMean::SpellChecker`, given the command's flags, answers `--os`. The command prints both and exits 2, the status [`proof.usage.kdl`](../../proof.usage.kdl) gives to a mistake on the command line.
 
-`proof run` takes Proof's flags anywhere before `--`. The words for the task follow `--`, as for `cargo run` and `npm run` ([issue #18](https://github.com/setdef/Proof/issues/18)). `:::` starts the next task, before or after `--`. After `--`, words go to the current task until a `:::`, the word after `:::` is the next task's name, and that task's words again follow `--`. OptionParser stops reading flags at the first `--`, so the command splits what follows by hand. The tests compare it with `usage explain --format json` for each case the spec defines, so the spec and the parser can't drift apart.
+`proof run` takes Proof's flags anywhere before `--`. The words for the task follow `--`, as for `cargo run` and `npm run` ([issue #18](https://github.com/setdef/Proof/issues/18)). A plain word before `--`, as in `proof run test foo`, goes to the task, as `proof.usage.kdl` reads it: `usage` can mark a word after the task as a mistake only by requiring `--`, which would also refuse `proof run lint ::: test`. The parser is tested against the spec, so it does the same. Only a flag before `--` is refused, which is where typos of Proof's own flags happen. `:::` starts the next task, before or after `--`. After `--`, words go to the current task until a `:::`, the word after `:::` is the next task's name, and that task's words again follow `--`. OptionParser stops reading flags at the first `--`, so the command splits what follows by hand. The tests compare it with `usage explain --format json` for each case the spec defines, so the spec and the parser can't drift apart.
 
 Options weighed:
 
@@ -178,7 +178,7 @@ The risk is `rom-sql`'s release cadence: its last release was in January 2025, t
 
 Options weighed:
 
-- Sequel used directly: it kept placement atomic too. ROM won because it matches how setdef builds Ruby applications elsewhere, at no measured cost.
+- Sequel used directly: it met every requirement measured, as ROM did. ROM was chosen by preference.
 - `extralite` as the driver: it fails at once on a lock unless given a progress handler, and the progress handler then holds the GVL for every query.
 
 ### Use cases, validation, and composition
