@@ -1,0 +1,62 @@
+module Proof
+  # An artifact pattern or a cache folder, as a project file writes it.
+  #
+  # A run's command runs in a workspace on a runner, and Proof keeps files from
+  # the workspace: the artifacts of a run that succeeds, and the caches between
+  # a project's runs. A path that starts with `/` or climbs out of the
+  # workspace with `..` would reach files that aren't the project's, on a host
+  # that is shared.
+  #
+  # This class holds the path as written, such as `"pkg/*.gem"`, `"doc/api/**"`,
+  # or `"tmp/engine/build"`, and refuses one that is empty, starts with `/`,
+  # or has a folder named `..`. It doesn't read the pattern: `*` and `**` are
+  # the runner's to match. A name that only has two dots in it, such as
+  # `"v1..2.txt"`, is no folder named `..` and is kept.
+  #
+  # Use it for each `artifact` pattern and each `cache` folder.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::PathPattern.new(path: "pkg/*.gem").path # => "pkg/*.gem"
+  # Proof::PathPattern.new(path: "doc/api/**").path # => "doc/api/**"
+  # ```
+  #
+  # A path that starts with `/` is refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidPathPatternError
+  # Proof::PathPattern.new(path: "/tmp/engine")
+  # ```
+  #
+  # So is a path that climbs out of the workspace:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidPathPatternError
+  # Proof::PathPattern.new(path: "../pkg")
+  # ```
+  class PathPattern < Data
+    # The message for a path that isn't relative to the workspace's root, which
+    # `format` fills in with what the path was.
+    MESSAGE: String
+
+    # The path as written, a frozen string.
+    attr_reader path: String
+
+    def self.new: (path: String) -> instance
+                | (String path) -> instance
+
+    # Builds a pattern, and raises `Proof::InvalidPathPatternError` unless
+    # `path` is a String, with bytes that are valid text in an
+    # ASCII-compatible encoding, that isn't empty,
+    # doesn't start with `/`, and has no folder named `..`. The message lists
+    # what works.
+    #
+    # - `path`: String, such as `"pkg/*.gem"`.
+    #
+    # ```ruby
+    # Proof::PathPattern.new(path: "coverage").path # => "coverage"
+    # ```
+    def initialize: (path: String) -> void
+  end
+end

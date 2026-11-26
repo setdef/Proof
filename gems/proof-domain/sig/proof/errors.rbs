@@ -39,6 +39,12 @@ module Proof
   class InvalidRunIdError < Error
   end
 
+  # Raised when an artifact pattern or a cache folder isn't a path relative to
+  # the workspace's root: it is empty, starts with `/`, has a folder named
+  # `..`, or isn't text.
+  class InvalidPathPatternError < Error
+  end
+
   # Raised when a time limit isn't a duration: a whole number from 1 and one
   # unit, `s`, `m`, or `h` in lowercase, with no space, such as `"90s"`,
   # `"30m"`, or `"2h"`.

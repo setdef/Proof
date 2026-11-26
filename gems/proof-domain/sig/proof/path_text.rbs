@@ -1,0 +1,20 @@
+module Proof
+  # The written form of a path that is relative to the workspace's root, such
+  # as `"pkg/*.gem"` or `"tmp/engine/build"`.
+  #
+  # `Proof::PathPattern.new` checks a path with it. It is a separate module so
+  # that the form is checked in one place, and so that `PathPattern` holds only
+  # what a path pattern is. It is a private constant of `Proof`, so the domain
+  # has no public name for it: build a `Proof::PathPattern`.
+  #
+  # A relative path isn't empty, doesn't start with `/`, and has no folder
+  # named `..` at its start, between slashes, or at its end.
+  module PathText
+    # Whether `text` is a path relative to the workspace's root. A value that
+    # isn't text, text with a byte that isn't valid text, and text in an
+    # encoding that isn't ASCII-compatible, such as UTF-16, give `false`.
+    #
+    # - `text`: Object, such as `"pkg/*.gem"`. Any value is accepted.
+    def self.relative?: (Object text) -> bool
+  end
+end

@@ -7,6 +7,9 @@ module Proof
   class InvalidOSError < Error
   end
 
+  class InvalidPathPatternError < Error
+  end
+
   class InvalidLabelError < Error
   end
 
