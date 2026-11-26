@@ -52,6 +52,14 @@ class CommandLineFlagMistakesTest < Minitest::Test
     )
   end
 
+  # The word that expanded to the refused -= is found among all the words, not taken as the first of them.
+  def test_a_cluster_with_an_equals_sign_after_other_words_is_named_as_typed
+    assert_equal(
+      "proof: -q=1 isn't a flag of proof run. To list the flags, run: proof run --help",
+      mistake("run", "test", "--os", "linux", "-q=1")
+    )
+  end
+
   # An abbreviation is a mistake, as OptionParser's require_exact refuses it.
   def test_an_abbreviation_of_a_flag_is_refused_with_the_flag
     assert_equal(
