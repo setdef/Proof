@@ -1,0 +1,115 @@
+module Proof
+  # The identity of a run: the minute it was created, in UTC, then five
+  # random characters, written `20261125-0336-m3d8q`.
+  #
+  # A run's ID goes into commands, messages, and file names, and people type
+  # it. Held as one string, nothing checks it: a misread date or a character
+  # that isn't in the alphabet would reach the server as an ID that no run
+  # has. The five characters alone identify a run too, matched against the
+  # last 7 days of runs, so the ID has to be readable in two forms.
+  #
+  # This class checks the form when you build one, counts the minute in UTC
+  # with the seconds dropped, and reads the five characters as Crockford's
+  # Base32, so a typed `o` is `0` and a typed `i` or `l` is `1`. It never reads
+  # the clock or draws a random number: `generate` takes both as arguments.
+  #
+  # Use it to make a run's ID, to read an ID a person typed, and to ask
+  # whether typed text is a run's ID.
+  #
+  # ## Examples
+  #
+  # Read an ID, and write it back:
+  #
+  # ```ruby
+  # id = Proof::RunId.parse("20261125-0336-m3d8q")
+  # id.minute # => Time.utc(2026, 11, 25, 3, 36)
+  # id.characters # => "m3d8q"
+  # id.to_s # => "20261125-0336-m3d8q"
+  # ```
+  #
+  # Make one from a clock and a source of randomness:
+  #
+  # ```ruby
+  # clock = Data.define(:now).new(now: Time.utc(2026, 11, 25, 3, 36, 59))
+  # Proof::RunId.generate(clock:, random: Random.new(1)).to_s # => "20261125-0336-5bc8z"
+  # ```
+  #
+  # The five characters alone are the run's ID too, in either case:
+  #
+  # ```ruby
+  # id = Proof::RunId.parse("20261125-0336-m3d8q")
+  # id.identified_by?("M3D8Q") # => true
+  # id.identified_by?("k7q2w") # => false
+  # ```
+  #
+  # A character outside the alphabet raises:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidRunIdError
+  # Proof::RunId.parse("20261125-0336-m3d8u")
+  # ```
+  class RunId < Data
+    # The minute the run was created, a frozen UTC `Time` with no seconds.
+    attr_reader minute: Time
+
+    # The five characters, in lowercase, as the alphabet writes them.
+    attr_reader characters: String
+
+    def self.new: (minute: Time, characters: String) -> instance
+                | (Time minute, String characters) -> instance
+
+    # Makes the ID of a run created now, with five characters drawn from
+    # `random`.
+    #
+    # - `clock`: `_Clock`, whose `now` gives the moment of creation.
+    # - `random`: `_RandomSource`, asked for five numbers below 32.
+    #
+    # ```ruby
+    # clock = Data.define(:now).new(now: Time.utc(2026, 11, 25, 3, 36))
+    # Proof::RunId.generate(clock:, random: Random.new(7)).minute # => Time.utc(2026, 11, 25, 3, 36)
+    # ```
+    def self.generate: (clock: _Clock, random: _RandomSource) -> RunId
+
+    # Reads an ID written `20261125-0336-m3d8q`, and raises
+    # `Proof::InvalidRunIdError` for any other text. The minute has to exist:
+    # February 30 and 24:00 raise. The characters may be in either case.
+    #
+    # - `text`: String, a run's full ID.
+    #
+    # ```ruby
+    # Proof::RunId.parse("20261125-0336-M3O8L").to_s # => "20261125-0336-m3081"
+    # ```
+    def self.parse: (String text) -> RunId
+
+    # Builds an ID from a minute and five characters. The minute is converted
+    # to UTC and loses its seconds. The characters are read as Crockford's
+    # Base32. Raises `Proof::InvalidRunIdError` unless `minute` is a `Time` in
+    # the years 1000 to 9999 and `characters` is five symbols of the alphabet.
+    #
+    # - `minute`: Time, in any zone.
+    # - `characters`: String, five symbols in either case.
+    def initialize: (minute: Time, characters: String) -> void
+
+    # Whether `text` is this run's ID: its full ID, or its five characters
+    # alone, in either case, with `o` read as `0` and `i` or `l` as `1`. Text
+    # that is neither form is not an error: the answer is `false`.
+    #
+    # - `text`: String, as a person typed it.
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3081")
+    # id.identified_by?("m3o8l") # => true
+    # id.identified_by?("20261125-0337-m3081") # => false
+    # ```
+    def identified_by?: (String text) -> bool
+
+    # The full ID, such as `"20261125-0336-m3d8q"`.
+    def to_s: () -> String
+
+    private
+
+    def utc_minute: (Object moment) -> Time
+
+    def five_characters: (Object given) -> String
+  end
+end

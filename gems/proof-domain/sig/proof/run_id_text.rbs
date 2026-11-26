@@ -1,0 +1,28 @@
+module Proof
+  # The written form of a run ID, `20261125-0336-m3d8q`, read into the
+  # minute and the five characters it holds.
+  #
+  # `Proof::RunId.parse` reads a full ID with it. It is a separate module so
+  # that the form is checked in one place, and so that `RunId` holds only
+  # what a run ID is.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::RunIdText.read("20261125-0336-m3d8q") # => { minute: Time.utc(2026, 11, 25, 3, 36), characters: "m3d8q" }
+  # ```
+  module RunIdText
+    # The minute and the characters of a full ID, as the keywords that
+    # `Proof::RunId.new` takes. Raises `Proof::InvalidRunIdError` for any
+    # text that isn't a full ID of a minute that exists, and for a value that
+    # isn't text.
+    #
+    # - `text`: String, such as `"20261125-0336-m3d8q"`. Any other value
+    #   raises.
+    def self.read: (Object text) -> { minute: Time, characters: String }
+
+    # The same, before any `ArgumentError` from `Time` becomes the error that
+    # `read` raises.
+    private def self.fields: (String text) -> { minute: Time, characters: String }
+  end
+end

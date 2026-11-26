@@ -15,4 +15,7 @@ module Proof
 
   class InvalidResourcesError < Error
   end
+
+  class InvalidRunIdError < Error
+  end
 end

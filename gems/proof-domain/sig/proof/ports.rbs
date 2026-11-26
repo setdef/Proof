@@ -1,0 +1,21 @@
+module Proof
+  # The time, as the domain asks for it. A port: you pass an object that has
+  # `now`, and the domain never reads the clock itself.
+  #
+  # Any object with `now` fits, and so does a `Data` instance holding a `Time`
+  # in a test.
+  interface _Clock
+    # The present moment.
+    def now: () -> Time
+  end
+
+  # Randomness, as the domain asks for it. A port: you pass an object that has
+  # `rand`, and the domain never draws a random number itself.
+  #
+  # An instance of Ruby's `Random` fits. So does a fake that returns
+  # numbers from a list, in a test.
+  interface _RandomSource
+    # A whole number from 0 up to, and not including, `limit`.
+    def rand: (Integer limit) -> Integer
+  end
+end

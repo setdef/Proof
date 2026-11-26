@@ -30,4 +30,9 @@ module Proof
   # memory isn't a size such as `"512MB"` or `"8GB"`.
   class InvalidResourcesError < Error
   end
+
+  # Raised when a run ID, or the five characters that identify a run, doesn't
+  # have the form `20261125-0336-m3d8q`.
+  class InvalidRunIdError < Error
+  end
 end

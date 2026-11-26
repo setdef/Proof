@@ -1,0 +1,45 @@
+module Proof
+  # Crockford's Base32: the 32 symbols that run IDs and codes are written in.
+  #
+  # The alphabet has the digits and the letters but `i`, `l`, `o`, and `u`.
+  # When a person types an ID, Proof reads an `o` as `0` and an `i` or `l` as
+  # `1`.
+  #
+  # This module holds the alphabet, the reading, and the drawing of symbols,
+  # so the code that makes an ID and the code that reads one agree. It is
+  # written here because the domain has no dependencies.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::Crockford.read("M3O8L") # => "m3081"
+  # Proof::Crockford.read("m3d8u") # => nil
+  # ```
+  module Crockford
+    # The 32 symbols, in lowercase, in order of value.
+    ALPHABET: String
+
+    # The symbols a person typed, as the alphabet writes them: lowercase, with
+    # `o` read as `0` and `i` or `l` as `1`. `nil` when any character is
+    # outside the alphabet, such as `u`, `-`, a space, or a byte that isn't
+    # valid text. The empty string reads as the empty string.
+    #
+    # - `text`: String, as typed in either case.
+    #
+    # ```ruby
+    # Proof::Crockford.read("OIL") # => "011"
+    # Proof::Crockford.read("") # => ""
+    # ```
+    def self.read: (String text) -> String?
+
+    # `length` symbols, each drawn from `source`.
+    #
+    # - `length`: Integer, how many symbols.
+    # - `source`: `_RandomSource`, asked for a number below 32 for each symbol.
+    #
+    # ```ruby
+    # Proof::Crockford.random(5, Random.new(1)) # => "5bc8z"
+    # ```
+    def self.random: (Integer length, _RandomSource source) -> String
+  end
+end
