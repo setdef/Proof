@@ -60,6 +60,6 @@ module Usage
 
     private
 
-    def on: (Array[String] path) -> Array[Command]
+    def on: (Array[String] path, ?Command command) -> Array[Command]
   end
 end

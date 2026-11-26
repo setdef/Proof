@@ -98,7 +98,7 @@ module Usage
 
     private def self.place: (json words) -> String
 
-    private def self.parts: (Reader reader) -> { name: String, help: String?, help_long: String?, path: Array[String], args: Array[Arg], flags: Array[Flag], groups: Array[Group], examples: Array[Example], subcommands: Array[Command], subcommand_required: bool }
+    private def self.parts: (Reader reader) -> { path: Array[String], args: Array[Arg], flags: Array[Flag], groups: Array[Group], examples: Array[Example], subcommands: Array[Command], subcommand_required: bool }
 
     # Whether the command can't run without one of its subcommands.
     #
