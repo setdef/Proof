@@ -1,0 +1,3 @@
+gems/proof-domain/lib/proof/placement.rb	      raise(ClosestHost.refusal(closest, queued.resources)) if closest	      raise(ClosestHost.refusal(closest, queued.resources))
+gems/proof-domain/lib/proof/closest_host.rb	shortfalls: Shortfall.of(host.ever_on(runner), resources)	shortfalls: []
+gems/proof-domain/lib/proof/closest_host.rb	      RunFitsNoHostError.new(host: host.name,	      RunFitsNoHostError.new(host: runner.name,

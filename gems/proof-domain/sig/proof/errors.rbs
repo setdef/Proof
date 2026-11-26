@@ -124,6 +124,36 @@ module Proof
   class InvalidWaitReasonError < Error
   end
 
+  # Raised when a shortfall is of anything but `:cpus` or `:memory`, or an
+  # amount isn't a whole number from 0.
+  class InvalidShortfallError < Error
+  end
+
+  # Raised when no host could ever take a run, before it is queued. The
+  # message names the host that fits the most of the request, the one whose
+  # worst shortfall is the smallest, with every resource it lacks, and says
+  # what to change.
+  #
+  # ```ruby
+  # shortfalls = [Proof::Shortfall.new(resource: :memory, could_have: 8192, requested: 16_384)]
+  # Proof::RunFitsNoHostError.new(host: "nuc", shortfalls:).message
+  # # => "No host could ever have the CPUs and memory this run requests free. The closest is nuc, which could have 8 GB of the 16 GB requested. Request less, or add a host with more."
+  # ```
+  class RunFitsNoHostError < Error
+    # The name of the host that fits the most of the request.
+    attr_reader host: String
+
+    # Every resource that host lacks.
+    attr_reader shortfalls: Array[Shortfall]
+
+    # Builds the error, with a message that names the host and what it
+    # lacks.
+    #
+    # - `host`: String, the host's name.
+    # - `shortfalls`: an `Array` of `Proof::Shortfall`, one or more.
+    def initialize: (host: String, shortfalls: Array[Shortfall]) -> void
+  end
+
   # Raised when a store of runs is given a new run whose ID a stored run
   # already has.
   class RunExistsError < Error

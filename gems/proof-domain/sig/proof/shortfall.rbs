@@ -1,0 +1,100 @@
+module Proof
+  # How much less of one resource a host could ever have free than a run
+  # requests.
+  #
+  # Proof refuses a run no host could ever take, before anything is sent,
+  # and the message has to say what to change. "Too large" doesn't say
+  # whether to request fewer CPUs, less memory, or both, or by how much.
+  #
+  # This class holds one resource, `:cpus` or `:memory`, with what the host
+  # could have and what the run requests, in CPUs or in megabytes. It writes
+  # itself as the refusal shows it: `4 of the 8 CPUs`, or `8 GB of the 16 GB`.
+  #
+  # Use it to say what a host lacks for a run.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # ever = Proof::Resources.request(cpus: 8, memory: "8GB")
+  # asked = Proof::Resources.request(cpus: 8, memory: "16GB")
+  # Proof::Shortfall.of(ever, asked).map(&:to_s) # => ["8 GB of the 16 GB"]
+  # ```
+  #
+  # A host short of both lacks two resources:
+  #
+  # ```ruby
+  # ever = Proof::Resources.request(cpus: 4, memory: "8GB")
+  # asked = Proof::Resources.request(cpus: 8, memory: "16GB")
+  # Proof::Shortfall.of(ever, asked).map(&:to_s) # => ["4 of the 8 CPUs", "8 GB of the 16 GB"]
+  # ```
+  class Shortfall < Data
+    # The resources a shortfall can be of, `:cpus` and `:memory`.
+    RESOURCES: Array[Symbol]
+
+    # The resource, `:cpus` or `:memory`.
+    attr_reader resource: Symbol
+
+    # How much of it the host could ever have free, in CPUs or megabytes.
+    attr_reader could_have: Integer
+
+    # How much of it the run requests, in CPUs or megabytes.
+    attr_reader requested: Integer
+
+    def self.new: (resource: Symbol, could_have: Integer, requested: Integer) -> instance
+                | (Symbol resource, Integer could_have, Integer requested) -> instance
+
+    # Every resource of which `ever` has less than `requested`, CPUs first.
+    # Empty when `requested` fits within `ever`.
+    #
+    # - `ever`: Resources, what a host could ever have free.
+    # - `requested`: Resources, what a run requests.
+    #
+    # ```ruby
+    # Proof::Shortfall.of(Proof::Resources.request(cpus: 8, memory: "16GB"), Proof::Resources.request(cpus: 2, memory: "4GB")) # => []
+    # ```
+    def self.of: (Resources ever, Resources requested) -> Array[Shortfall]
+
+    # `megabytes` as the refusal writes a size: whole gigabytes as `GB`, any
+    # other size as `MB`.
+    #
+    # - `megabytes`: Integer.
+    #
+    # ```ruby
+    # Proof::Shortfall.size(16_384) # => "16 GB"
+    # Proof::Shortfall.size(1536) # => "1536 MB"
+    # ```
+    def self.size: (Integer megabytes) -> String
+
+    # Builds a shortfall, and raises `Proof::InvalidShortfallError` unless
+    # `resource` is `:cpus` or `:memory` and both amounts are Integers from 0.
+    #
+    # - `resource`: Symbol, `:cpus` or `:memory`.
+    # - `could_have`: Integer, CPUs or megabytes.
+    # - `requested`: Integer, CPUs or megabytes.
+    def initialize: (resource: Symbol, could_have: Integer, requested: Integer) -> void
+
+    # Whether the host could have less than the run requests.
+    #
+    # ```ruby
+    # Proof::Shortfall.new(resource: :cpus, could_have: 4, requested: 8).short? # => true
+    # ```
+    def short?: () -> bool
+
+    # What the host could have as a part of what the run requests: 1/2 for 4
+    # of 8 CPUs.
+    #
+    # ```ruby
+    # Proof::Shortfall.new(resource: :cpus, could_have: 4, requested: 8).fraction # => Rational(1, 2)
+    # ```
+    def fraction: () -> Rational
+
+    # The shortfall as the refusal writes it. CPUs are a count, with `CPU`
+    # for a request of one, and memory is a size.
+    #
+    # ```ruby
+    # Proof::Shortfall.new(resource: :cpus, could_have: 0, requested: 1).to_s # => "0 of the 1 CPU"
+    # Proof::Shortfall.new(resource: :memory, could_have: 1536, requested: 4096).to_s # => "1536 MB of the 4 GB"
+    # ```
+    def to_s: () -> String
+  end
+end

@@ -65,6 +65,23 @@ module Proof
   class InvalidWaitReasonError < Error
   end
 
+  class InvalidShortfallError < Error
+  end
+
+  class RunFitsNoHostError < Error
+    attr_reader :host, :shortfalls
+
+    def initialize(host:, shortfalls:)
+      # Each attribute is set here, before the message, which names the host and what it lacks.
+      @host = host
+      @shortfalls = shortfalls
+      super(
+        "No host could ever have the CPUs and memory this run requests free. The closest is #{host}, " \
+          "which could have #{shortfalls.join(' and ')} requested. Request less, or add a host with more."
+      )
+    end
+  end
+
   class RunExistsError < Error
     def initialize(id:)
       super("run #{id} is already stored")

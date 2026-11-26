@@ -1,0 +1,29 @@
+module Proof
+  # Which host fits the most of a run that no host could ever take, in one
+  # place.
+  #
+  # `Proof::Placement#check` asks this module before a run is queued. A pair
+  # here is a host and one of its runners. It is a private constant of
+  # `Proof`.
+  module ClosestHost
+    # The host and runner that fit the most of the run `queued` describes, or
+    # `nil` when one of them could take it some time, or when none takes its
+    # operating system and labels. Each pair is judged by what its host could
+    # ever have free within its runner's capacity. The pair whose worst
+    # shortfall is the smallest fits the most, then the first runner by name.
+    def self.of: (Run::Queued queued, Array[Host] hosts) -> [Host, Runner]?
+
+    # Of `pairs`, which can't take a run of `resources`, the one whose worst
+    # shortfall is the smallest, then the first runner by name, or `nil` when
+    # `pairs` is empty.
+    def self.closest: (Array[[Host, Runner]] pairs, Resources resources) -> [Host, Runner]?
+
+    # The error that refuses a run of `resources`, naming the host of `pair`
+    # and every resource it lacks.
+    def self.refusal: ([Host, Runner] pair, Resources resources) -> RunFitsNoHostError
+
+    # The smallest part of a requested resource that `pair` could ever have
+    # free, or 1 when it is short of none.
+    def self.worst: ([Host, Runner] pair, Resources resources) -> (Rational | Integer)
+  end
+end

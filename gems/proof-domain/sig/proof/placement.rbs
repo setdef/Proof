@@ -64,6 +64,43 @@ module Proof
     # ```
     def place_next: () -> Run?
 
+    # Refuses a run no host could ever take, before it is queued. Raises
+    # `Proof::RunFitsNoHostError` when some runner takes the run's operating
+    # system and labels but none could ever have its CPUs and memory free,
+    # within its capacity and with only the memory share kept. The error names
+    # the host whose worst shortfall is the smallest, with every resource it
+    # lacks. A run whose operating systems have no runner, or no runner with
+    # its labels, isn't refused: it waits, since hosts come back and runners
+    # find labels.
+    #
+    # - `queued`: Run::Queued, the fact that would start the run's record.
+    #
+    # ```ruby
+    # nuc_linux = Proof::Runner.new(
+    #   name: "nuc-linux", os: Proof::OS.new(name: :linux), labels: Proof::LabelSet.of,
+    #   capacity: Proof::Resources.request(cpus: 8, memory: "16GB"), connected: true
+    # )
+    # nuc = Proof::Host.new(name: "nuc", share: Proof::Resources.request(cpus: 2, memory: "4GB"), person_active: false, runners: [nuc_linux])
+    # placement = Proof::Placement.new(
+    #   runs: Proof::InMemory::Runs.new, hosts: Data.define(:hosts).new(hosts: [nuc]),
+    #   clock: Data.define(:now).new(now: Time.utc(2026, 11, 25, 3, 37))
+    # )
+    # fits = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 8, memory: "12GB")
+    # )
+    # placement.check(fits) # => nil
+    # ```
+    #
+    # A run that needs more memory than the host could ever have free is
+    # refused:
+    #
+    # ```ruby
+    # # Wrong: raises Proof::RunFitsNoHostError
+    # placement.check(fits.with(resources: Proof::Resources.request(cpus: 8, memory: "16GB")))
+    # ```
+    def check: (Run::Queued queued) -> nil
+
     # What each queued run that fits nowhere now waits behind, by run ID, in
     # queue order. A run that fits now waits behind nothing, so it isn't
     # there. See `Proof::WaitReason` for how each reason is found.

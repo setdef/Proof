@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
+require_relative("closest_host")
 require_relative("runner_choice")
+require_relative("shortfall")
 require_relative("wait_reason")
 
 module Proof
@@ -14,6 +16,11 @@ module Proof
     def place_next
       found = RunnerChoice.first(@runs.queued, @hosts.hosts, @runs.holding_resources)
       place(*found) if found
+    end
+
+    def check(queued)
+      closest = ClosestHost.of(queued, @hosts.hosts)
+      raise(ClosestHost.refusal(closest, queued.resources)) if closest
     end
 
     def wait_reasons
