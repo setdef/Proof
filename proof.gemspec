@@ -15,6 +15,11 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 4.1.0.a"
 
+  # Reads the project file, which is KDL 2. The reader finds each node's line through
+  # the parser's private methods, so it takes patch releases of 2.2 only. kdl's own
+  # constraints on bigdecimal, base64, and simpleidn come with it.
+  spec.add_dependency("kdl", "~> 2.2.0")
+
   spec.metadata["rubygems_mfa_required"] = "true"
   spec.metadata["source_code_uri"] = spec.homepage
   spec.metadata["bug_tracker_uri"] = "#{spec.homepage}/issues"
