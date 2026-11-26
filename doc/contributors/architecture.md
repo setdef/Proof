@@ -131,6 +131,26 @@ Options weighed:
 
 - Refusing a working-tree run: it stops a run in a new repository for no reason the run needs, because the run needs only the files.
 
+#### The index a working-tree commit starts from
+
+A working-tree commit starts its temporary index as a copy of the clone's index file, then runs `git add --all`, `git write-tree`, and `git commit-tree`. A project with no index file starts from an empty index. Every Git command that writes the temporary index runs with `core.splitIndex=false`, so the temporary index never refers to a shared index file in the clone's `.git`, and never adds one, whatever the clone's settings are.
+
+A probe on `rails/rails` at v8.0.2, with 4,762 tracked files, took the median of five runs:
+
+| State | `read-tree HEAD` | Copy of the clone's index | `read-tree HEAD`, `diff-index`, and `ls-files -o` |
+| --- | --- | --- | --- |
+| Nothing changed | 0.39 s | 0.11 to 0.13 s | 0.15 s |
+| One tracked file changed | 0.39 s | 0.11 to 0.12 s | 0.17 s |
+
+Every existing file under `.git` stayed byte for byte the same in every case. With `core.splitIndex=true`, `read-tree HEAD` alone and with `diff-index` and `ls-files -o` each added a `sharedindex` file to the clone's `.git` for each tree state, and the copy added none. `read-tree HEAD` dropped a file the developer staged with `git add -f` that `.gitignore` matches. The copy and the three-command way kept it.
+
+The copy is the fastest, and it sends a staged file the way `git commit` would, which is what "your working tree as it is" means to someone who staged it.
+
+Options weighed:
+
+- `read-tree HEAD`, as Proof first did: it hashes every tracked file on every run, and it drops a file the developer staged that `.gitignore` matches.
+- `read-tree HEAD` plus `diff-index` and `ls-files -o`: it is slower than the copy, and it is three commands where the copy is one.
+
 ### Requests to the server
 
 The command and the runners call the server with Ruby's Net::HTTP, pinned through its certificate-verification callback. It didn't block other fibers in a measurement: three one-second requests at once took 1.03 seconds.
