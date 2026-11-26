@@ -35,7 +35,10 @@ module Proof
         name = flag_name(token)
         # A short flag written with "=" is named as typed, as Options names it, since "=" isn't a letter of it. Cut
         # at "=", -=1 would be "-", which no one typed.
-        (name == "-" || known?(name, switches)) ? token : name
+        return token if name == "-" || known?(name, switches)
+
+        # A cluster is named by its first letter Proof lacks, as OptionParser names it after the command.
+        (expand(name) - switches).first.to_s
       end
 
       def self.known?(token, switches)

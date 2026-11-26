@@ -39,9 +39,16 @@ class CommandLineFlagMistakesTest < Minitest::Test
     )
   end
 
-  # Short flags written together get no suggestion either, though -qx is near -q: -q isn't what was typed.
-  def test_an_unknown_cluster_of_short_flags_is_named_with_no_suggestion
-    assert_equal("proof: -qx isn't a flag of proof. To list the flags, run: proof --help", mistake("-qx", "status"))
+  # issue #51: a cluster with a letter Proof lacks is named by that letter, before the command as after it, since that
+  # letter is the part to fix. It gets no suggestion, since one letter is near every other.
+  def test_an_unknown_cluster_of_short_flags_is_named_by_its_unknown_letter
+    before = "proof: -x isn't a flag of proof. To list the flags, run: proof --help"
+
+    assert_equal([before, before], [mistake("-qx", "status"), mistake("-qxy", "status")])
+    assert_equal(
+      "proof: -x isn't a flag of proof status. To list the flags, run: proof status --help",
+      mistake("status", "-qx")
+    )
   end
 
   # OptionParser reads -q=1 as -q, -=, and -1, and the word that was typed is what the person needs to see.
