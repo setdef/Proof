@@ -1,0 +1,94 @@
+# frozen_string_literal: true
+
+require_relative("git_fixtures")
+
+# Checks how Proof reads a revision of a project, and which clones it refuses.
+class GitProjectRevisionTest < Minitest::Test
+  include GitFixtures
+
+  # How-proof-works, "How your code reaches a runner": "With `--commit REV`, that is the commit you
+  # named", and the run needs its ID in full. Each form of a revision resolves to 40 hexadecimal digits.
+  def test_a_revision_resolves_to_a_full_commit_id
+    folder = make_repository
+    first = commit_file(folder, "a.txt", "1")
+    second = commit_file(folder, "a.txt", "2")
+    git(folder, "branch", "side", first)
+    project = Proof::GitProject.find(folder)
+    revisions = ["HEAD", "HEAD~1", "side", "trunk", second[0, 8]]
+
+    assert_equal([second, first, first, second, second], revisions.map { |revision| project.commit_id(revision) })
+    assert_match(/\A\h{40}\z/, project.commit_id("HEAD"))
+  end
+
+  # The same sentence, for an annotated tag: the run needs the commit, not the tag object.
+  def test_an_annotated_tag_resolves_to_the_commit_it_marks
+    folder = make_repository
+    commit = commit_file(folder)
+    git(folder, "tag", "--annotate", "--message=release", "v1")
+
+    assert_equal(commit, Proof::GitProject.find(folder).commit_id("v1"))
+  end
+
+  # Command design, "Output and exit status": errors say what to do next; a revision that is no commit is refused.
+  def test_a_revision_that_is_not_a_commit_is_refused
+    folder = make_repository
+    commit_file(folder)
+    error = assert_raises(Proof::UnknownRevisionError) { Proof::GitProject.find(folder).commit_id("no-such-branch") }
+
+    assert_equal(
+      [
+        "no-such-branch is not a commit in #{folder}.",
+        "Check the spelling, or run git fetch if it is a branch or tag that the project's remote has.",
+    ].join(" "),
+      error.message
+    )
+  end
+
+  # A tree is a revision to Git but not a commit, and a run needs a commit.
+  def test_a_tree_is_refused_as_a_revision
+    folder = make_repository
+    commit_file(folder)
+
+    assert_raises(Proof::UnknownRevisionError) { Proof::GitProject.find(folder).commit_id("HEAD^{tree}") }
+  end
+
+  # Text a person typed can look like an option. It is a revision to look up, so a flag such as
+  # `--default=HEAD` can't change the answer.
+  def test_a_revision_that_looks_like_an_option_is_not_an_option
+    folder = make_repository
+    commit_file(folder)
+
+    assert_raises(Proof::UnknownRevisionError) { Proof::GitProject.find(folder).commit_id("--default=HEAD") }
+  end
+
+  # Command design, "Which project and which code": "Partial clones can't send all a commit's objects,
+  # because they don't have them. Refuse with a message that says so."
+  def test_a_partial_clone_is_refused_and_the_message_says_why
+    root = make_partial_clone
+    error = assert_raises(Proof::PartialCloneError) { Proof::GitProject.find(root).commit_id("HEAD") }
+
+    assert_equal(
+      [
+        "#{root} is a partial clone, so it lacks objects of the commits that Proof sends.",
+        "Clone the project again without --filter, and run proof from that clone.",
+    ].join(" "),
+      error.message
+    )
+  end
+
+  # The same requirement from the other side: a full clone, even of a local repository, is sent.
+  def test_a_full_clone_is_not_refused
+    source = make_repository("source")
+    commit = commit_file(source)
+    parent = temporary_folder
+    git(parent, "clone", "--quiet", source, "full")
+
+    assert_equal(commit, Proof::GitProject.find(File.join(parent, "full")).commit_id("HEAD"))
+  end
+
+  # Both refusals are Proof errors.
+  def test_the_other_refusals_are_proof_errors
+    assert_operator(Proof::UnknownRevisionError, :<, Proof::Error)
+    assert_operator(Proof::PartialCloneError, :<, Proof::Error)
+  end
+end

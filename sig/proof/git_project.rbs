@@ -36,6 +36,15 @@ module Proof
     # The message for a folder that doesn't exist, as a `format` string.
     NOT_A_FOLDER: String
 
+    # Matches the line of `git config --list` that marks a partial clone.
+    PARTIAL_SETTING: Regexp
+
+    # The message for a revision that isn't a commit, as a `format` string.
+    UNKNOWN_REVISION: String
+
+    # The message for a partial clone, as a `format` string.
+    PARTIAL_CLONE: String
+
     # The message for a folder outside any repository, as a `format` string.
     NOT_IN_REPOSITORY: String
 
@@ -60,5 +69,31 @@ module Proof
     # - `folder`: String, a folder inside the project.
     # - `program`: String, the git program's name or path.
     def self.find: (String folder, ?program: String) -> GitProject
+
+    # The full ID of the commit that `revision` identifies, such as `HEAD`, a
+    # branch, a tag, or a commit's first digits. An annotated tag gives the
+    # commit it marks. Raises `Proof::PartialCloneError` when the project is a
+    # partial clone, and `Proof::UnknownRevisionError` when `revision` isn't a
+    # commit the project has.  Text that starts with `-` is a
+    # revision to look up, never an option.
+    #
+    # - `revision`: String, as a person typed it.
+    #
+    # ```ruby
+    # require "tmpdir"
+    # Dir.mktmpdir do |folder|
+    #   system("git", "init", "--quiet", folder)
+    #   system("git", "-C", folder, "-c", "user.name=Ann", "-c", "user.email=ann@example.com", "commit", "--quiet", "--allow-empty", "-m", "First")
+    #   Proof::GitProject.find(folder).commit_id("HEAD").length
+    # end
+    # # => 40
+    # ```
+    def commit_id: (String revision) -> String
+
+    private
+
+    def git: () -> Git
+
+    def refuse_a_partial_clone: () -> void
   end
 end

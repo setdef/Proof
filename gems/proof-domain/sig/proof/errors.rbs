@@ -52,6 +52,18 @@ module Proof
   class NotInRepositoryError < Error
   end
 
+  # Raised when a revision, such as a branch, a tag, or a commit's first digits,
+  # isn't a commit the project has. A tree or a file is a revision to Git, and
+  # raises this error too.
+  class UnknownRevisionError < Error
+  end
+
+  # Raised when the project is a partial clone, made with a filter such as
+  # `git clone --filter=blob:none`. A partial clone lacks objects that a commit
+  # reaches, so Proof can't send the commit whole.
+  class PartialCloneError < Error
+  end
+
   # Raised when the `git` program ends with a status other than 0 and the
   # caller has no better word for why. A refusal Proof can explain, such as a
   # folder outside any repository, has an error class for that refusal.

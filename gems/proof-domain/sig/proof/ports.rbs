@@ -28,5 +28,10 @@ module Proof
   interface _Project
     # The absolute path of the project's root, the folder that holds `.git`.
     def root: () -> String
+
+    # The full ID of the commit that `revision` identifies. Raises
+    # `Proof::UnknownRevisionError` when `revision` isn't a commit the project
+    # has, and `Proof::PartialCloneError` when the project is a partial clone.
+    def commit_id: (String revision) -> String
   end
 end

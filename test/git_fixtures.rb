@@ -77,4 +77,21 @@ module GitFixtures
     git(folder, "commit", "--quiet", "-m", message)
     git(folder, "rev-parse", "HEAD").chomp
   end
+
+  # Writes +content+ to +path+ in +folder+, commits everything, and returns the commit's ID.
+  def commit_file(folder, path = "a.txt", content = "1")
+    write_file(folder, path, content)
+    commit_all(folder)
+  end
+
+  # A clone of a new repository that has one commit, made with `--filter=blob:none`
+  # as a partial clone is. Returns the clone's folder.
+  def make_partial_clone
+    source = make_repository("source")
+    commit_file(source)
+    git(source, "config", "uploadpack.allowFilter", "true")
+    parent = temporary_folder
+    git(parent, "clone", "--quiet", "--filter=blob:none", "file://#{source}", "partial")
+    File.join(parent, "partial")
+  end
 end
