@@ -111,7 +111,7 @@ A code of 8 characters that `proof server setup` and `proof runner setup` print,
 
 ### project
 
-The Git repository a run's code comes from, which the **server** keeps one copy of.
+The Git repository a run's code comes from, which the **server** keeps one copy of. Proof identifies a project by its repository's root commit, so two clones of one repository are one project, and so is a fork of it until their histories part.
 
 - Elsewhere: called a project in GitLab and CircleCI, and a repository in GitHub Actions and Woodpecker. In Nx, a project is a unit inside a repository, where a project in Proof is the whole repository.
 - Don't say: pipeline, which in Buildkite is a definition of work, not the repository the work runs on.

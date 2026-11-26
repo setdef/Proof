@@ -38,7 +38,8 @@ What the server must guarantee, and the traps known so far. How to meet each req
 
 ## Code
 
-- One bare Git repository per project. `proof` pushes each run's commit under a temporary ref; runners fetch it.
+- One bare Git repository per project. A project is identified by its repository's root commit, the first-parent root of the commit sent, so no file in the project is needed. Two clones of one repository share one repository on the server, and a fork shares it with its origin until their histories part, which costs only disk. The identity is fixed because changing it later means moving every pool's repositories.
+- `proof` pushes each run's commit under a temporary ref; runners fetch it.
 - **A commit object being present doesn't mean the commit is complete.** A fetch cut off part way can leave the commit without its trees. A runner, or the server, counts a commit as present only when `git rev-list --objects --quiet SHA --not --all` succeeds, and deletes leftover temporary pack files before fetching again.
 - Repack and prune each repository, and delete temporary refs of runs past their retention.
 - For runs of pushed commits, the server fetches the listed branches with read-only credentials read from a file, and never passes those credentials to runners.
