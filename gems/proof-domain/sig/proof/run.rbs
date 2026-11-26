@@ -11,9 +11,9 @@ module Proof
   # state follows from them. Building a run checks every rule about a run,
   # including a run rebuilt from storage: a run can't succeed without its whole
   # output and its kept artifacts, can't be placed twice, and takes no fact
-  # after a final state but one, the end of a `lost` run's processes. A list
-  # that breaks a rule raises `Proof::InvalidRunError`, so a record changed by
-  # hand fails to load instead of reporting a pass. Two runs are the same run
+  # after a final state but one, the end of a `lost` run's processes. Building
+  # a run from a list that breaks a rule raises `Proof::InvalidRunError`, so a
+  # record changed by hand fails to load instead of reporting a pass. Two runs are the same run
   # when their IDs are equal.
   #
   # Use it to start a run's record, to add a fact to it, and to ask a run its

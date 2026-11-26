@@ -9,7 +9,7 @@ module Proof
     # the runner's name alone would move with the pool file, and the run
     # would stop holding the host it runs on.
     #
-    # This fact names the host and the runner as the pool file names them.
+    # This fact holds the host and the runner by the names the pool file lists.
     # Each run has it once at most: the store of runs refuses a second.
     #
     # Use it to record a placement.

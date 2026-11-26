@@ -15,14 +15,14 @@ module Proof
   #
   # The kinds, in `KINDS`:
   #
-  # - `:behind_runs`: runs hold the hosts it could fit. `hosts` names them,
+  # - `:behind_runs`: runs hold the hosts it could fit. `hosts` lists them,
   #   and `runs` gives the runs that hold them.
   # - `:person_active`: it fits its hosts only while nobody is active there.
-  #   `hosts` names them.
+  #   `hosts` lists them.
   # - `:no_runner_connected`: no runner of its operating systems that could
-  #   ever take it is connected. `hosts` names those with such a runner.
+  #   ever take it is connected. `hosts` lists those with such a runner.
   # - `:no_label`: no runner of its operating systems offers every label it
-  #   needs. `hosts` names those whose runners lack one.
+  #   needs. `hosts` lists those whose runners lack one.
   #
   # Use it to say what each queued run waits behind.
   #

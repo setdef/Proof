@@ -67,7 +67,7 @@ module Proof
     # Refuses a run no host could ever take, before it is queued. Raises
     # `Proof::RunFitsNoHostError` when some runner takes the run's operating
     # system and labels but none could ever have its CPUs and memory free,
-    # within its capacity and with only the memory share kept. The error names
+    # within its capacity and with only the memory share kept. The error gives
     # the host whose worst shortfall is the smallest, with every resource it
     # lacks. A run whose operating systems have no runner, or no runner with
     # its labels, isn't refused: it waits, since hosts come back and runners
