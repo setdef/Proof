@@ -4,13 +4,8 @@ module Proof
   #
   # `Proof::RunId.parse` reads a full ID with it. It is a separate module so
   # that the form is checked in one place, and so that `RunId` holds only
-  # what a run ID is.
-  #
-  # ## Examples
-  #
-  # ```ruby
-  # Proof::RunIdText.read("20261125-0336-m3d8q") # => { minute: Time.utc(2026, 11, 25, 3, 36), characters: "m3d8q" }
-  # ```
+  # what a run ID is. It is a private constant of `Proof`, so the domain has
+  # no public name for it: read an ID with `Proof::RunId.parse`.
   module RunIdText
     # The minute and the characters of a full ID, as the keywords that
     # `Proof::RunId.new` takes. Raises `Proof::InvalidRunIdError` for any

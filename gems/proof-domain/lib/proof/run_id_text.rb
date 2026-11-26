@@ -16,4 +16,5 @@ module Proof
     end
     private_class_method(:fields)
   end
+  private_constant(:RunIdText)
 end

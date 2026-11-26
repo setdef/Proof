@@ -67,6 +67,19 @@ class RunIdReadingTest < Minitest::Test
     assert_raises(Proof::InvalidRunIdError) { Proof::RunId.parse("20270229-0000-m3d8q") }
   end
 
+  # Glossary: each word names an idea, and the reading of an ID's text is part
+  # of what a run ID is, so it adds no name of its own to the domain.
+  def test_the_reading_of_an_ids_text_is_not_a_public_name
+    refute_includes(Proof.constants, :RunIdText)
+    assert_raises(NameError) { Proof::RunIdText.itself }
+  end
+
+  # A byte string that isn't valid text, as a command line can hold, is not an
+  # ID, and raises the ID's error, not Ruby's.
+  def test_text_with_invalid_bytes_is_refused
+    assert_raises(Proof::InvalidRunIdError) { Proof::RunId.parse("20261125-0336-m3d\xFF8") }
+  end
+
   # The message says what an ID looks like and what it got.
   def test_the_message_for_text_names_the_value
     error = assert_raises(Proof::InvalidRunIdError) { Proof::RunId.parse("m3d8q") }
