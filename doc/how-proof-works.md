@@ -98,6 +98,8 @@ On each host, the runner watches how long it has been since anyone used the keyb
 
 When nobody has used the host for longer than `active-for`, runs get the whole host back.
 
+On Windows, a run that needs the display is placed only while no person is active, and one already using the display when a person arrives isn't stopped. The person finds the display busy until the run ends, which its time limit bounds.
+
 On Windows and Linux, input from runs never counts as a person: runs draw on separate desktops and displays, which the runner leaves out of the measurement.
 
 ## Trust and tokens

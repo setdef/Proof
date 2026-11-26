@@ -39,4 +39,4 @@ If a system can't do it unprivileged, the fallback is a helper program started i
 
 ## Windows: who holds the console
 
-On Windows, the runner also needs to know whether the person holds the console session, because a run that needs the display can't have it while they do. A watcher in the runner's session can see the console change hands within seconds. Runs that need the display then wait; runs already using it are stopped and queued again, since Windows gives no way to hand the display back.
+On Windows, the runner also needs to know whether the person holds the console session, because Windows gives the display to one session at a time and gives no way to take it back from a run. A watcher in the runner's session can see the console change hands within seconds. Runs that need the display are placed only while no person is active, and a run already using it is never stopped because a person arrived. The person finds the display busy until the run ends, which its time limit bounds.

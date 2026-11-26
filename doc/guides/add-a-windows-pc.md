@@ -54,7 +54,7 @@ A PC has one display and one console session at a time. When a person signs in t
 
 - runs that need the `desktop` label, or the PC's GPU, wait;
 - other Windows runs and every WSL run go on, with the share the pool file keeps free for the person;
-- runs that were using the display when the person arrived are stopped and queued again, since Windows gives the display to one session only.
+- a run that was already using the display when the person arrived goes on, since Proof stops no run because a person arrived, and the person finds the display busy until the run ends, which its time limit bounds.
 
 When the person switches back to the `proof` account, or signs out, the waiting runs start. [Share a host with the person who uses it](sharing.md) says how to set what's kept free.
 
