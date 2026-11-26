@@ -17,14 +17,14 @@ module Proof
     # ```ruby
     # spec = Proof::CommandLine::Spec.load
     # spec.bin # => "proof"
-    # spec.command(["server", "setup"])&.help # => "Set up this computer as the pool's server"
-    # spec.command(["frobnicate"]) # => nil
+    # spec.commands.find(["server", "setup"])&.help # => "Set up this computer as the pool's server"
+    # spec.commands.find(["frobnicate"]) # => nil
     # ```
     #
     # Each flag says which switches name it and whether it takes a value:
     #
     # ```ruby
-    # flag = Proof::CommandLine::Spec.load.command(["run"])&.own_flags&.find { |each| each.name == "os" }
+    # flag = Proof::CommandLine::Spec.load.commands.find(["run"])&.own_flags&.find { |each| each.name == "os" }
     # flag&.switches # => ["--os"]
     # flag&.takes_value? # => true
     # flag&.choices # => ["linux", "macos", "windows", "any", "all"]
@@ -36,7 +36,7 @@ module Proof
       # The spec in `PATH`. Raises `Usage::SpecError` when the file holds a spec that usage-rb can't act on in full.
       #
       # ```ruby
-      # Proof::CommandLine::Spec.load.root.subcommand_names.first # => "run"
+      # Proof::CommandLine::Spec.load.commands.root.subcommand_names.first # => "run"
       # ```
       def self.load: () -> Usage::Spec
     end

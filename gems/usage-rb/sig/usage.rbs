@@ -18,7 +18,7 @@
 #    "cmd": {"subcommands": {"add": {"name": "add", "full_cmd": ["add"], "help": "Add an item",
 #                                    "args": [{"name": "text", "required": true}]}}}}
 # JSON
-# spec.command(["add"]).args.map(&:to_s) # => ["<text>"]
+# spec.commands.find(["add"]).args.map(&:to_s) # => ["<text>"]
 # ```
 module Usage
   # The version of the gem, `MAJOR.MINOR.PATCH`.

@@ -37,11 +37,22 @@ class UsageSpecRefusalTest < Minitest::Test
     )
   end
 
+  # `strict` is true or false, so any other value is named.
+  def test_strict_choices_are_true_or_false
+    flag = '"arg": {"name": "x", "choices": {"choices": ["a"], "strict": %s}}'
+
+    assert_predicate(read(with_flag(flag % "true")).commands.root.flags.first, :strict?)
+    assert_equal(
+      "flag v of the program, in arg, in choices sets strict to \"no\", which usage-rb doesn't support",
+      refusal(with_flag(flag % '"no"'))
+    )
+  end
+
   # usage writes these defaults into every spec's JSON.
   def test_the_defaults_usage_writes_are_accepted
     defaults = '"hide": false, "aliases": [], "mounts": [], "unknown_flags": null, "args_override_self": true'
 
-    assert_equal(["rm"], read(with_command(defaults)).root.subcommand_names)
+    assert_equal(["rm"], read(with_command(defaults)).commands.root.subcommand_names)
     assert_equal("t", read('{"bin": "t", "unknown_flags": "error", "usage": "", "complete": {}}').bin)
   end
 
@@ -49,7 +60,7 @@ class UsageSpecRefusalTest < Minitest::Test
   def test_a_null_reads_as_the_key_left_out
     spec = read('{"about": null, "cmd": {"help": null, "flags": [{"name": "v", "long": ["v"], "help": null}]}}')
 
-    assert_equal(["", nil, nil], [spec.about, spec.root.help, spec.root.flags.first&.help])
+    assert_equal(["", nil, nil], [spec.about, spec.commands.root.help, spec.commands.root.flags.first&.help])
   end
 
   # A flag whose value may be left out reads the next word differently.

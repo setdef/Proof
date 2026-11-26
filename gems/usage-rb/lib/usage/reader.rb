@@ -9,12 +9,8 @@ module Usage
       Keys.check(@object, where, keys)
     end
 
-    def name
-      text(:name).to_s
-    end
-
     def descriptions
-      { help: text(:help), help_long: text(:help_long) }
+      { name: text(:name).to_s, help: text(:help), help_long: text(:help_long) }
     end
 
     def text(key)
@@ -34,7 +30,7 @@ module Usage
     end
 
     def false?(key)
-      @object.key?(key) && !boolean(key)
+      @object[key] == false
     end
 
     def number(key)
@@ -51,16 +47,12 @@ module Usage
       Reader.new(object(key), "#{@where}, in #{key}", keys) if @object.key?(key)
     end
 
-    def objects(key)
-      hashes(list(key), key, "a list of objects")
+    def parts(key, kind)
+      list(key).map { |item| item.is_a?(Hash) ? kind.read(item, @where) : refuse(key, "a list of objects") }
     end
 
     def members(key)
-      hashes(object(key).values, key, "an object of objects")
-    end
-
-    private def hashes(items, key, form)
-      items.map { |item| item.is_a?(Hash) ? item : refuse(key, form) }
+      object(key).values.map { |item| item.is_a?(Hash) ? item : refuse(key, "an object of objects") }
     end
 
     private def list(key)

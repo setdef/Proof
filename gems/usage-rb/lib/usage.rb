@@ -3,7 +3,7 @@
 require_relative("usage/arg")
 require_relative("usage/command")
 require_relative("usage/command_page")
-require_relative("usage/command_reader")
+require_relative("usage/command_tree")
 require_relative("usage/example")
 require_relative("usage/exit_code")
 require_relative("usage/flag")
@@ -20,5 +20,5 @@ require_relative("usage/tables")
 require_relative("usage/version")
 
 module Usage
-  private_constant(:CommandPage, :CommandReader, :Keys, :Layout, :Page, :Reader, :Rows, :Tables)
+  private_constant(:CommandPage, :Keys, :Layout, :Page, :Reader, :Rows, :Tables)
 end

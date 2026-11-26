@@ -20,7 +20,7 @@ spec = Usage::Spec.read(<<~JSON)
    "cmd": {"subcommands": {"add": {"name": "add", "full_cmd": ["add"], "help": "Add an item",
                                    "args": [{"name": "text", "required": true}]}}}}
 JSON
-spec.command(["add"]).help # => "Add an item"
+spec.commands.find(["add"]).help # => "Add an item"
 ```
 
 `Usage::Spec.read` raises `Usage::SpecError` for a spec it can't act on in full:

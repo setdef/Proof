@@ -11,7 +11,7 @@ module Usage
     :after_help,
     :examples,
     :exit_codes,
-    :root,
+    :commands,
     :env_prefix,
     :env_allowed
   )
@@ -44,10 +44,6 @@ module Usage
       new(**described(reader), **parts(reader), **environment(reader))
     end
 
-    def command(path)
-      root.follow(path)
-    end
-
     def self.json(text)
       object = JSON.parse(text, symbolize_names: true)
       object.is_a?(Hash) ? object : raise(SpecError, "a usage spec is a JSON object, as usage generate json writes it")
@@ -68,9 +64,9 @@ module Usage
 
     def self.parts(reader)
       {
-        examples: reader.objects(:examples).map { |example| Example.read(example, "the program") },
-        exit_codes: reader.objects(:exit_codes).map { |code| ExitCode.read(code) },
-        root: CommandReader.read(reader.object(:cmd)),
+        examples: reader.parts(:examples, Example),
+        exit_codes: reader.parts(:exit_codes, ExitCode),
+        commands: CommandTree.new(root: Command.read(reader.object(:cmd))),
       }
     end
     private_class_method(:parts)

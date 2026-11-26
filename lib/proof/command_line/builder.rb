@@ -40,7 +40,7 @@ module Proof
       end
 
       private def global
-        construct(GlobalFlags, @spec.root.global_flags, [])
+        construct(GlobalFlags, @spec.commands.root.global_flags, [])
       end
 
       private def command

@@ -10,7 +10,7 @@ module Usage
     def self.read(object, command)
       reader = Reader.new(object, "group #{object[:name]} of #{command}", KEYS)
       new(
-        name: reader.name,
+        name: reader.text(:name).to_s,
         names: reader.texts(:members),
         required: reader.boolean(:required),
         multiple: reader.boolean(:multiple)

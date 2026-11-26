@@ -10,7 +10,7 @@ module Usage
   # anything the gem doesn't act on, so a spec it reads means what it says. A key the JSON leaves out takes usage's
   # default.
   #
-  # Use it to find a command by the words that name it.
+  # Use it to reach a program's commands, its examples, and its exit statuses.
   #
   # ## Examples
   #
@@ -22,8 +22,8 @@ module Usage
   #    "cmd": {"subcommands": {"list": {"name": "list", "full_cmd": ["list"], "help": "List the items"}}}}
   # JSON
   # spec.bin # => "todo"
-  # spec.command(["list"])&.help # => "List the items"
-  # spec.command(["lsit"]) # => nil
+  # spec.commands.find(["list"])&.help # => "List the items"
+  # spec.commands.find(["lsit"]) # => nil
   # ```
   #
   # A spec that uses something the gem doesn't act on is refused when it is read:
@@ -60,8 +60,8 @@ module Usage
     # The statuses the program exits with, in the spec's order.
     attr_reader exit_codes: Array[ExitCode]
 
-    # The program as a command with no name: its subcommands are the commands.
-    attr_reader root: Command
+    # The program's commands, as a tree under the program itself.
+    attr_reader commands: CommandTree
 
     # The prefix of the environment variables the program refuses when it doesn't know them, or `nil`.
     attr_reader env_prefix: String?
@@ -69,8 +69,8 @@ module Usage
     # The variables with that prefix the program accepts anyway.
     attr_reader env_allowed: Array[String]
 
-    def self.new: (bin: String, about: String, about_long: String?, after_help: String?, examples: Array[Example], exit_codes: Array[ExitCode], root: Command, env_prefix: String?, env_allowed: Array[String]) -> instance
-                | (String bin, String about, String? about_long, String? after_help, Array[Example] examples, Array[ExitCode] exit_codes, Command root, String? env_prefix, Array[String] env_allowed) -> instance
+    def self.new: (bin: String, about: String, about_long: String?, after_help: String?, examples: Array[Example], exit_codes: Array[ExitCode], commands: CommandTree, env_prefix: String?, env_allowed: Array[String]) -> instance
+                | (String bin, String about, String? about_long, String? after_help, Array[Example] examples, Array[ExitCode] exit_codes, CommandTree commands, String? env_prefix, Array[String] env_allowed) -> instance
 
     # Builds a spec from its parts.
     #
@@ -80,10 +80,10 @@ module Usage
     # - `after_help`: String or `nil`, the text for the end of the help.
     # - `examples`: Array of `Usage::Example`, the program's examples.
     # - `exit_codes`: Array of `Usage::ExitCode`, the statuses.
-    # - `root`: `Usage::Command`, the program as a command.
+    # - `commands`: `Usage::CommandTree`, the program's commands.
     # - `env_prefix`: String or `nil`, the prefix of the variables to check.
     # - `env_allowed`: Array of String, the variables with the prefix to accept.
-    def initialize: (bin: String, about: String, about_long: String?, after_help: String?, examples: Array[Example], exit_codes: Array[ExitCode], root: Command, env_prefix: String?, env_allowed: Array[String]) -> void
+    def initialize: (bin: String, about: String, about_long: String?, after_help: String?, examples: Array[Example], exit_codes: Array[ExitCode], commands: CommandTree, env_prefix: String?, env_allowed: Array[String]) -> void
 
     # Reads a spec from `text`, the JSON `usage generate json` writes, and raises `Usage::SpecError` for a text that
     # isn't such JSON or that uses anything the gem doesn't act on.
@@ -91,7 +91,7 @@ module Usage
     # - `text`: String, the JSON document.
     #
     # ```ruby
-    # Usage::Spec.read("{}").root.subcommands # => []
+    # Usage::Spec.read("{}").commands.root.subcommands # => []
     # Usage::Spec.read('{"bin": "todo"}').about # => ""
     # ```
     def self.read: (String text) -> Spec
@@ -100,19 +100,8 @@ module Usage
 
     private def self.described: (Reader reader) -> { bin: String, about: String, about_long: String?, after_help: String? }
 
-    private def self.parts: (Reader reader) -> { examples: Array[Example], exit_codes: Array[ExitCode], root: Command }
+    private def self.parts: (Reader reader) -> { examples: Array[Example], exit_codes: Array[ExitCode], commands: CommandTree }
 
     private def self.environment: (Reader reader) -> { env_prefix: String?, env_allowed: Array[String] }
-
-    # The command that the words in `path` name, or `nil` when no command has that path. An empty `path` names the
-    # program itself.
-    #
-    # - `path`: Array of String, such as `["remote", "add"]`.
-    #
-    # ```ruby
-    # Usage::Spec.read("{}").command([])&.path # => []
-    # Usage::Spec.read("{}").command(["add"]) # => nil
-    # ```
-    def command: (Array[String] path) -> Command?
   end
 end

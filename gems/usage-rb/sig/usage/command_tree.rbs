@@ -1,0 +1,65 @@
+module Usage
+  # A program's commands, as a tree under the program, and the rules that follow from a command's place in it.
+  #
+  # A command is named by the words of its path, such as `remote add`, and a flag that a command marks global applies
+  # to every command under it. A command alone knows neither: it knows its subcommands, not the commands above it.
+  #
+  # This class finds the command that a path names, and gives the global flags a command takes from itself and from
+  # every command above it. Parsing and help both ask it, so the two follow one rule.
+  #
+  # Use it to look a command up by its path, and to list every flag a command takes.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # spec = Usage::Spec.read(<<~JSON)
+  #   {"cmd": {"flags": [{"name": "quiet", "long": ["quiet"], "global": true}],
+  #            "subcommands": {"remote": {"name": "remote", "full_cmd": ["remote"],
+  #              "flags": [{"name": "dry-run", "long": ["dry-run"], "global": true}],
+  #              "subcommands": {"add": {"name": "add", "full_cmd": ["remote", "add"]}}}}}}
+  # JSON
+  # tree = spec.commands
+  # tree.find(["remote", "add"])&.name # => "add"
+  # tree.global_flags(["remote", "add"]).map(&:name) # => ["quiet", "dry-run"]
+  # tree.global_flags([]).map(&:name) # => ["quiet"]
+  # ```
+  class CommandTree < Data
+    # The program itself, as a command with no path, whose subcommands are the program's commands.
+    attr_reader root: Command
+
+    def self.new: (root: Command) -> instance
+                | (Command root) -> instance
+
+    # Builds the tree under `root`.
+    #
+    # - `root`: `Usage::Command`, the program as a command.
+    def initialize: (root: Command) -> void
+
+    # The command that the words in `path` name, or `nil` when no command has that path. An empty `path` names the
+    # program itself.
+    #
+    # - `path`: Array of String, such as `["remote", "add"]`.
+    #
+    # ```ruby
+    # tree.find([]) == tree.root # => true
+    # tree.find(["remote", "rm"]) # => nil
+    # ```
+    def find: (Array[String] path) -> Command?
+
+    # The global flags of the program and of each command on `path`, from the program down: every global flag that
+    # the command at `path` takes. A path that leaves the tree gives those of the commands it names before it leaves.
+    #
+    # - `path`: Array of String, the words that name a command.
+    #
+    # ```ruby
+    # tree.global_flags(["remote"]).map(&:name) # => ["quiet", "dry-run"]
+    # tree.global_flags(["status"]).map(&:name) # => ["quiet"]
+    # ```
+    def global_flags: (Array[String] path) -> Array[Flag]
+
+    private
+
+    def on: (Array[String] path) -> Array[Command]
+  end
+end

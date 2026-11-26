@@ -16,8 +16,8 @@ class UsageRealDocumentTest < Minitest::Test
   def test_a_document_with_every_default_usage_writes_is_read
     spec = read(DOCUMENT)
 
-    assert_equal(["todo", "Keep a list", ["add"]], [spec.bin, spec.about, spec.root.subcommands.map(&:name)])
-    assert_equal(["quiet"], spec.root.global_flags.map(&:name))
+    assert_equal(["todo", "Keep a list", ["add"]], [spec.bin, spec.about, spec.commands.root.subcommands.map(&:name)])
+    assert_equal(["quiet"], spec.commands.root.global_flags.map(&:name))
   end
 
   # The defaults are read as the program's help shows them.

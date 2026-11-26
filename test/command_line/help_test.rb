@@ -8,8 +8,9 @@ class CommandLineHelpTest < Minitest::Test
   include CommandLineHelper
 
   SPEC = CL::Spec.load
-  PATHS = [[], *SPEC.root.subcommands.flat_map { |command| [command, *command.subcommands].map(&:path) }].freeze
-  private_constant(:SPEC, :PATHS)
+  COMMANDS = SPEC.commands.root.subcommands
+  PATHS = [[], *COMMANDS.flat_map { |command| [command, *command.subcommands].map(&:path) }].freeze
+  private_constant(:SPEC, :COMMANDS, :PATHS)
 
   # The help for the command at +path+, as lines.
   def help(*path)
@@ -37,7 +38,7 @@ class CommandLineHelpTest < Minitest::Test
   # proof.usage.kdl: the thirteen commands, each with its one line.
   def test_the_programs_help_lists_each_command_with_its_one_line
     assert_includes(help, "  run       Run a task or a script on one or more runners")
-    assert_empty(SPEC.root.subcommands.reject { |command| help.any? { |line| line.start_with?("  #{command.name} ") } })
+    assert_empty(COMMANDS.reject { |command| help.any? { |line| line.start_with?("  #{command.name} ") } })
   end
 
   # proof.usage.kdl: `exit_code` nodes, which the help lists with the statuses.
@@ -94,7 +95,7 @@ class CommandLineHelpTest < Minitest::Test
   # The flags and arguments of the command at +path+ that no line of its help begins with.
   def lines_missing_from(path)
     lines = help(*path)
-    labels(SPEC.command(path)).filter_map do |label|
+    labels(SPEC.commands.find(path)).filter_map do |label|
       "#{path.join(' ')}: #{label}" unless lines.any? { |line| line.start_with?("  #{label}") }
     end
   end

@@ -10,7 +10,7 @@ module CommandLineContract
     private_constant(:SPEC, :BAD_ROLES)
 
     def initialize(spec)
-      @repeating = spec.root.subcommands.flat_map(&:flags).select(&:repeatable?).to_set(&:name)
+      @repeating = spec.commands.root.subcommands.flat_map(&:flags).select(&:repeatable?).to_set(&:name)
     end
 
     # The outcome of +argv+, the words after `proof`.

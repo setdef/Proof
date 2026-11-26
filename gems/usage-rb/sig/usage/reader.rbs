@@ -1,6 +1,13 @@
 module Usage
   # Reads one object of the spec's JSON with the type each key has, and refuses any key the gem doesn't act on.
   class Reader
+    # A part of the spec that reads itself from its object, given where the object above it is.
+    interface _Part[T]
+      # Reads the part from `object`, its object in the spec's JSON, where `where` is the place of the object above
+      # it, such as `"command add"`, for the messages of errors.
+      def read: (object object, String where) -> T
+    end
+
     @object: object
     @where: String
 
@@ -8,11 +15,8 @@ module Usage
     # raises `Usage::SpecError` for any other key or value. A key whose value is `null` reads as left out.
     def initialize: (object object, String where, keys keys) -> void
 
-    # The String under `name`, or an empty String.
-    def name: () -> String
-
-    # The one-line and the longer description.
-    def descriptions: () -> { help: String?, help_long: String? }
+    # The name, as the String under `name` or an empty String, and the one-line and the longer description.
+    def descriptions: () -> { name: String, help: String?, help_long: String? }
 
     # The String under `key`, or `nil` when it is left out.
     def text: (Symbol key) -> String?
@@ -23,7 +27,8 @@ module Usage
     # The `true` or `false` under `key`, or `false` when it is left out.
     def boolean: (Symbol key) -> bool
 
-    # Whether `key` holds `false`, which a key left out doesn't.
+    # Whether `key` holds `false`, which a key left out doesn't. The keys the gem accepts say which values the key
+    # may have.
     def false?: (Symbol key) -> bool
 
     # The whole number under `key`.
@@ -35,8 +40,9 @@ module Usage
     # A reader of the object under `key`, with the keys the gem accepts there, or `nil` when it is left out.
     def nested: (Symbol key, keys keys) -> Reader?
 
-    # The objects in the list under `key`, or an empty list when it is left out.
-    def objects: (Symbol key) -> Array[object]
+    # Each object in the list under `key` read as a part of the spec by `kind`, which is told where this object is,
+    # or an empty list when the key is left out.
+    def parts: [T] (Symbol key, _Part[T] kind) -> Array[T]
 
     # The objects among the values of the object under `key`, in order, or an empty list when it is left out.
     def members: (Symbol key) -> Array[object]
@@ -44,8 +50,6 @@ module Usage
     private
 
     def list: (Symbol key) -> Array[json]
-
-    def hashes: (Array[json] items, Symbol key, String form) -> Array[object]
 
     def refuse: (Symbol key, String form) -> bot
   end

@@ -2,10 +2,9 @@
 
 module Usage
   class Tables
-    def initialize(spec, command, listing)
-      @spec = spec
+    def initialize(command, global_flags)
       @command = command
-      @listing = listing
+      @global_flags = global_flags
     end
 
     def all
@@ -13,20 +12,14 @@ module Usage
         commands,
         Layout.table("Arguments:", @command.args.map { |arg| [arg.to_s, arg.help.to_s] }),
         Rows.flags("Flags:", @command.own_flags),
-        Rows.flags("Global flags:", globals),
+        Rows.flags("Global flags:", @global_flags),
       ]
     end
 
     private def commands
-      Layout.table(@listing, @command.subcommands.map { |child| [child.name, child.help.to_s] })
-    end
-
-    private def globals
-      path = @command.path
-      # A flag is global to every command under the one that has it, so the help lists those of each command on the
-      # path.
-      above = (0..(path.size)).filter_map { |size| @spec.command(path.first(size)) }
-      above.flat_map(&:global_flags)
+      # The program's subcommands are the commands, and a command's are its subcommands.
+      title = @command.path.empty? ? "Commands:" : "Subcommands:"
+      Layout.table(title, @command.subcommands.map { |child| [child.name, child.help.to_s] })
     end
   end
 end

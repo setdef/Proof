@@ -10,7 +10,7 @@ module Proof
       end
 
       def parse(tokens, tail)
-        values, words = Options.new(@command, @spec.root.global_flags).parse(tokens)
+        values, words = Options.new(@command, @spec.commands.root.global_flags).parse(tokens)
         return HelpAsked.new(path: @path) if values.help?
 
         verify(values, words, tail)

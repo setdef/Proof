@@ -28,33 +28,34 @@ class UsageSpecTest < Minitest::Test
   def test_a_command_is_found_by_the_words_that_name_it
     spec = todo
 
-    assert_equal(%w[remote add], spec.command(%w[remote add])&.path)
-    assert_equal(spec.root, spec.command([]))
+    assert_equal(%w[remote add], spec.commands.find(%w[remote add])&.path)
+    assert_equal(spec.commands.root, spec.commands.find([]))
   end
 
   # A typo finds nothing, so the caller decides what to do.
   def test_words_that_name_no_command_find_none
     spec = todo
 
-    assert_equal([nil, nil], [spec.command(["undo"]), spec.command(%w[remote undo])])
+    assert_equal([nil, nil], [spec.commands.find(["undo"]), spec.commands.find(%w[remote undo])])
+    assert_nil(spec.commands.find(%w[undo add]))
   end
 
   # `subcommands` keep the spec's order, and `subcommand_required` says whether one must follow.
   def test_a_command_lists_its_subcommands_in_the_specs_order
-    remote = todo.command(["remote"])
+    remote = todo.commands.find(["remote"])
 
     assert_equal(%w[add remove], remote&.subcommand_names)
     assert_predicate(remote, :subcommand_required?)
-    refute_predicate(todo.root, :subcommand_required?)
+    refute_predicate(todo.commands.root, :subcommand_required?)
   end
 
   # `global` marks the flags a command passes on.
   def test_a_command_tells_its_own_flags_from_the_ones_it_passes_on
-    root = todo.root
+    root = todo.commands.root
 
     assert_equal(%w[quiet debug], root.global_flags.map(&:name))
     assert_empty(root.own_flags)
-    assert_equal(%w[sort json output], todo.command(["list"])&.own_flags&.map(&:name))
+    assert_equal(%w[sort json output], todo.commands.find(["list"])&.own_flags&.map(&:name))
   end
 
   # `unknown_env` names a prefix and the variables with it to allow.
@@ -69,13 +70,13 @@ class UsageSpecTest < Minitest::Test
     spec = read("{}")
 
     assert_equal(["", "", nil, nil], [spec.bin, spec.about, spec.about_long, spec.after_help])
-    assert_equal([[], [], [], nil], [spec.root.subcommands, spec.examples, spec.exit_codes, spec.env_prefix])
+    assert_equal([[], [], [], nil], [spec.commands.root.subcommands, spec.examples, spec.exit_codes, spec.env_prefix])
   end
 
   # `effect` says what a command does for tools that act for a person, and changes nothing the gem does.
   def test_the_effect_of_a_command_is_accepted
     spec = read('{"cmd": {"subcommands": {"rm": {"name": "rm", "full_cmd": ["rm"], "effect": "destructive"}}}}')
 
-    assert_equal(["rm"], spec.command(["rm"])&.path)
+    assert_equal(["rm"], spec.commands.find(["rm"])&.path)
   end
 end

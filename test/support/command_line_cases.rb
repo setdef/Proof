@@ -49,7 +49,7 @@ module CommandLineContract
     # The leaf and branch commands, except `proof` itself, whose bare form prints help where usage accepts it.
     private def commands
       walk = -> (command) { [command, *command.subcommands.flat_map(&walk)] }
-      walk.call(@spec.root).drop(1)
+      walk.call(@spec.commands.root).drop(1)
     end
 
     private def for_command(command)
@@ -114,7 +114,7 @@ module CommandLineContract
     end
 
     private def globals(command, base)
-      switches = @spec.root.global_flags.flat_map(&:switches)
+      switches = @spec.commands.root.global_flags.flat_map(&:switches)
       switches.flat_map { |switch| [[switch, *base], [*base, switch], [*command.path, switch, *words(command)]] } +
         [[*base, "-qd"], [*base, "-q", "-d"], ["-qd", *base], ["--nope", *base], ["-x", *base], ["--quie", *base]]
     end

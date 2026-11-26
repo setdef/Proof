@@ -7,8 +7,9 @@ module Usage
     end
 
     def text(path)
-      command = @spec.command(path) unless path.empty?
-      page = command ? CommandPage.new(@spec, command) : Page.new(@spec, @spec.root)
+      commands = @spec.commands
+      command = commands.find(path) unless path.empty?
+      page = command ? CommandPage.new(@spec, command) : Page.new(@spec, commands.root)
       "#{page.sections.compact.join("\n\n")}\n"
     end
   end

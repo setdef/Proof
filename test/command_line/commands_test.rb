@@ -8,7 +8,7 @@ class CommandLineCommandsTest < Minitest::Test
   private_constant(:SPEC)
 
   # The commands the spec lists that have no subcommand of their own, which are the ones `proof` runs.
-  def leaves(command = SPEC.root)
+  def leaves(command = SPEC.commands.root)
     command.subcommands.flat_map { |child| child.subcommands.empty? ? [child] : leaves(child) }
   end
 
@@ -48,7 +48,7 @@ class CommandLineCommandsTest < Minitest::Test
 
   # proof.usage.kdl: the flags marked `global=#true` are the members of the global flags.
   def test_the_global_flags_hold_the_flags_marked_global
-    expected = SPEC.root.global_flags.map { |flag| flag.name.tr("-", "_").to_sym }
+    expected = SPEC.commands.root.global_flags.map { |flag| flag.name.tr("-", "_").to_sym }
 
     assert_equal(expected.to_set, Proof::CommandLine::GlobalFlags.members.to_set)
   end

@@ -26,15 +26,20 @@ module CommandLineContract
     end
 
     private def flags(path, result)
-      own = @spec.command(path).own_flags.to_h { |flag| [flag.name, read(result.command, flag.name)] }
-      global = @spec.root.global_flags.to_h { |flag| [flag.name, read(result.global, flag.name)] }
-      without_empty(own.merge(global))
+      commands = @spec.commands
+      own = values(commands.find(path).own_flags, result.command)
+      without_empty(own.merge(values(commands.global_flags(path), result.global)))
+    end
+
+    # Each of +flags+ by its name, with what +parsed+ holds for it.
+    private def values(flags, parsed)
+      flags.to_h { |flag| [flag.name, read(parsed, flag.name)] }
     end
 
     private def args(path, command)
       return run_args(command) if path == ["run"]
 
-      given = @spec.command(path).args.to_h do |arg|
+      given = @spec.commands.find(path).args.to_h do |arg|
         [arg.name, read(command, arg.repeatable? ? "#{arg.name}s" : arg.name)]
       end
       without_empty(given)

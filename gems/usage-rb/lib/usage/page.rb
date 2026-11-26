@@ -16,7 +16,7 @@ module Usage
         Layout.paragraphs(description, WIDTH),
         usage,
         Rows.examples(examples),
-        *Tables.new(@spec, @command, listing).all,
+        *Tables.new(@command, @spec.commands.global_flags(@command.path)).all,
         *ending,
       ]
     end
@@ -45,12 +45,8 @@ module Usage
       @spec.examples
     end
 
-    private def listing
-      "Commands:"
-    end
-
     private def ending
-      [Layout.table("Exit statuses:", @spec.exit_codes.map { |code| [code.status.to_s, code.help] }), @spec.after_help]
+      [Rows.exit_statuses(@spec.exit_codes), @spec.after_help]
     end
   end
 end

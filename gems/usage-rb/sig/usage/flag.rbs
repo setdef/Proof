@@ -39,7 +39,7 @@ module Usage
     # `--`, isn't supported.
     VALUE_KEYS: keys
 
-    # The keys of the object that lists a value's choices.
+    # The keys of the object that lists a value's choices. `strict` is `true` or `false`.
     CHOICE_KEYS: keys
 
     # The flag's name in the spec, such as `"dry-run"`.
@@ -104,8 +104,6 @@ module Usage
     # Usage::Flag.read({ name: "color", long: ["color"], negate: "--no-color" }, "the program")
     # ```
     def self.read: (object object, String command) -> Flag
-
-    private def self.described: (Reader reader) -> { name: String, short: Array[String], long: Array[String] }
 
     private def self.valued: (Reader reader, String where) -> { value: String?, choices: Array[String], strict: bool, var: bool }
 

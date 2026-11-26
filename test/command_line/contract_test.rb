@@ -35,15 +35,15 @@ class CommandLineContractTest < Minitest::Test
 
   # The contract names every switch the spec gives a flag, in each of the spec's commands.
   def test_the_cases_use_every_switch_of_every_command
-    commands = SPEC.root.subcommands.flat_map { |command| [command, *command.subcommands] }
-    switches = (commands.flat_map(&:own_flags) + SPEC.root.global_flags).flat_map(&:switches)
+    commands = SPEC.commands.root.subcommands.flat_map { |command| [command, *command.subcommands] }
+    switches = (commands.flat_map(&:own_flags) + SPEC.commands.root.global_flags).flat_map(&:switches)
 
     assert_empty(switches - CASES.flatten)
   end
 
   # The contract has a line for every command, in full.
   def test_the_cases_use_every_command
-    paths = SPEC.root.subcommands.flat_map { |command| [command, *command.subcommands].map(&:path) }
+    paths = SPEC.commands.root.subcommands.flat_map { |command| [command, *command.subcommands].map(&:path) }
 
     assert_empty(paths.reject { |path| CASES.any? { |argv| argv.first(path.size) == path } })
   end

@@ -4,7 +4,7 @@ module Proof
   module CommandLine
     class Resolver
       def initialize(spec)
-        @command = spec.root
+        @command = spec.commands.root
         @skipped = []
         @switches = @command.global_flags.flat_map(&:switches) + ["-h", "--help"]
       end

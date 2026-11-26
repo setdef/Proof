@@ -11,7 +11,7 @@ module Usage
   #
   # ```ruby
   # require "usage"
-  # code = Usage::ExitCode.read({ code: 2, help: "The command line has a mistake." })
+  # code = Usage::ExitCode.read({ code: 2, help: "The command line has a mistake." }, "the program")
   # [code.status, code.help] # => [2, "The command line has a mistake."]
   # ```
   class ExitCode < Data
@@ -37,11 +37,12 @@ module Usage
     # whole number.
     #
     # - `object`: Hash, one entry of `exit_codes`.
+    # - `program`: String, where the program is in the spec, for the error's message, such as `"the program"`.
     #
     # ```ruby
     # # Wrong: raises Usage::SpecError
-    # Usage::ExitCode.read({ code: "two" })
+    # Usage::ExitCode.read({ code: "two" }, "the program")
     # ```
-    def self.read: (object object) -> ExitCode
+    def self.read: (object object, String program) -> ExitCode
   end
 end

@@ -14,6 +14,10 @@ module Usage
       Layout.table(title, list.map { |flag| [label(flag), text(flag)] })
     end
 
+    def self.exit_statuses(codes)
+      Layout.table("Exit statuses:", codes.map { |code| [code.status.to_s, code.help] })
+    end
+
     def self.example_lines(example)
       header = example.header
       lines = ["    $ #{example.code}", *Layout.wrap(example.help.to_s, EXAMPLE_WIDTH).map { |line| "    #{line}" }]

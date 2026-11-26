@@ -8,7 +8,7 @@ class UsageSpecPartsTest < Minitest::Test
 
   # The flag called +name+ on the `todo` command at +path+.
   def flag(path, name)
-    todo.command(path)&.flags&.find { |each| each.name == name } || flunk("no flag #{name}")
+    todo.commands.find(path)&.flags&.find { |each| each.name == name } || flunk("no flag #{name}")
   end
 
   # `short` and `long` give the switches, short ones first.
@@ -52,14 +52,14 @@ class UsageSpecPartsTest < Minitest::Test
 
   # An argument is `<name>` when required, `[name]` when not, and has `...` when it repeats.
   def test_an_argument_is_written_as_a_usage_line_writes_it
-    labels = [["add"], ["done"], %w[remote add]].map { |path| todo.command(path)&.args&.first.to_s }
+    labels = [["add"], ["done"], %w[remote add]].map { |path| todo.commands.find(path)&.args&.first.to_s }
 
     assert_equal(["[text]", "<item...>", "<url>"], labels)
   end
 
   # `required`, `var`, `help`, and `help_long` describe an argument.
   def test_an_argument_has_its_descriptions_and_says_what_it_takes
-    item = todo.command(["done"])&.args&.first || flunk
+    item = todo.commands.find(["done"])&.args&.first || flunk
 
     assert_equal(["The items, by number", nil], [item.help, item.help_long])
     assert_equal([true, true], [item.required?, item.repeatable?])
@@ -67,7 +67,7 @@ class UsageSpecPartsTest < Minitest::Test
 
   # A group names its members, and `required` and `multiple` say what it needs.
   def test_a_group_names_its_members_and_says_what_it_needs
-    group = todo.command(["add"])&.groups&.first || flunk
+    group = todo.commands.find(["add"])&.groups&.first || flunk
 
     assert_equal(["source", ["text", "--file"]], [group.name, group.names])
     assert_equal([true, false], [group.required?, group.multiple?])
@@ -82,7 +82,7 @@ class UsageSpecPartsTest < Minitest::Test
 
   # An example has its command line, its heading, and its explanation.
   def test_an_example_has_its_line_and_its_heading
-    example = todo.command(["add"])&.examples&.first || flunk
+    example = todo.commands.find(["add"])&.examples&.first || flunk
 
     assert_equal(
       ["todo add 'Buy milk' --tag home", "Add an item with a tag", nil],

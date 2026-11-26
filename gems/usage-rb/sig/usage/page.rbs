@@ -28,8 +28,6 @@ module Usage
 
     def examples: () -> Array[Example]
 
-    def listing: () -> String
-
     def ending: () -> Array[String?]
   end
 end

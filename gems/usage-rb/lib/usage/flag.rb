@@ -6,15 +6,16 @@ module Usage
     # steep:ignore:end
     KEYS = %w[name usage help help_long help_first_line short long var global arg requires hide=false].freeze
     VALUE_KEYS = %w[name usage choices required=true double_dash="Optional" hide=false].freeze
-    CHOICE_KEYS = %w[choices strict].freeze
+    CHOICE_KEYS = %w[choices strict=true strict=false].freeze
     private_constant(:KEYS, :VALUE_KEYS, :CHOICE_KEYS)
 
     def self.read(object, command)
       where = "flag #{object[:name]} of #{command}"
       reader = Reader.new(object, where, KEYS)
       new(
-        **described(reader),
         **reader.descriptions,
+        short: reader.texts(:short),
+        long: reader.texts(:long),
         **valued(reader, where),
         requires: reader.texts(:requires),
         global: reader.boolean(:global)
@@ -41,15 +42,6 @@ module Usage
       short.map { |letter| "-#{letter}" } + long.map { |word| "--#{word}" }
     end
 
-    def self.described(reader)
-      {
-        name: reader.name,
-        short: reader.texts(:short),
-        long: reader.texts(:long),
-      }
-    end
-    private_class_method(:described)
-
     def self.valued(reader, where)
       value = reader.nested(:arg, VALUE_KEYS)
       var = reader.boolean(:var)
@@ -57,7 +49,12 @@ module Usage
       raise(SpecError, "#{where} repeats with no value, which usage-rb doesn't support") if var && !value
 
       choices = value&.nested(:choices, CHOICE_KEYS)
-      { value: value&.text(:name), choices: choices&.texts(:choices) || [], strict: !choices&.false?(:strict), var: }
+      {
+        value: value&.text(:name),
+        choices: choices&.texts(:choices) || [],
+        strict: !choices&.false?(:strict),
+        var:,
+      }
     end
     private_class_method(:valued)
   end

@@ -16,10 +16,6 @@ module Usage
       command.examples
     end
 
-    private def listing
-      "Subcommands:"
-    end
-
     private def ending
       []
     end

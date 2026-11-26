@@ -1,5 +1,6 @@
 module Usage
-  # Writes the entries of the help that have a form of their own: an example's lines, and a flag's row.
+  # Writes the entries of the help that have a form of their own: an example's lines, a flag's row, and the table of
+  # exit statuses.
   module Rows
     # The widest line of an example's explanation.
     EXAMPLE_WIDTH: Integer
@@ -9,6 +10,9 @@ module Usage
 
     # A table of flags, each with its switches, its value, its description, and its choices.
     def self.flags: (String title, Array[Flag] list) -> String?
+
+    # The table of the program's exit statuses, or `nil` when it has none.
+    def self.exit_statuses: (Array[ExitCode] codes) -> String?
 
     private def self.example_lines: (Example example) -> Array[String]
 
