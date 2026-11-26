@@ -15,7 +15,6 @@ module Usage
       examples
       subcommand_required
       effect
-      unknown_flags=null
       unknown_flags="error"
       args_override_self=true
       hide=false

@@ -31,7 +31,6 @@ module Usage
       exit_codes
       cmd
       unknown_env
-      unknown_flags=null
       unknown_flags="error"
       usage=""
       complete={}
