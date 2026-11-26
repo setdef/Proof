@@ -20,9 +20,8 @@ module Proof
     ].to_h.transform_keys(&:to_sym).freeze
     private_constant(:IDENTITY, :CONFIG)
 
-    def initialize(git:, head:)
+    def initialize(git:)
       @git = git
-      @head = head
     end
 
     def id
@@ -50,8 +49,18 @@ module Proof
     end
 
     private def commit(tree)
-      parents = [@head].compact.flat_map { |head| ["-p", head] }
+      parents = [head_id].compact.flat_map { |head| ["-p", head] }
       @git.run("commit-tree", tree, *parents, "-m", "Working tree, made by Proof", env: IDENTITY).chomp
+    end
+
+    private def head_id
+      # With --quiet, rev-parse exits 1 and prints nothing when HEAD names a branch that has no commit yet,
+      # and any other failure exits with another status.
+      @git.run("rev-parse", "--verify", "--quiet", "HEAD").chomp
+    rescue GitFailedError => e
+      raise unless e.status.exitstatus == 1
+
+      nil
     end
   end
 end

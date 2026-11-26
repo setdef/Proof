@@ -6,6 +6,11 @@ require_relative("git_fixtures")
 class GitProjectWorkingTreeTest < Minitest::Test
   include GitFixtures
 
+  # A git that fails with status 128 when it reads HEAD, and runs the real git for every other command.
+  DAMAGED_HEAD = "#!/bin/sh\ncase \"$*\" in \"rev-parse --verify --quiet HEAD\") " \
+    "echo 'fatal: damaged' >&2; exit 128 ;; esac\nexec git \"$@\"\n"
+  private_constant(:DAMAGED_HEAD)
+
   # Command design, "Which project and which code": "A working-tree run uses a working-tree commit made
   # without touching the clone", and the glossary's "working-tree commit". A change not committed is in it.
   def test_the_commit_holds_a_change_that_is_not_committed
@@ -127,12 +132,13 @@ class GitProjectWorkingTreeTest < Minitest::Test
   end
 
   # Only a HEAD with no commit means a commit with no parent. A git that fails some other way, here with
-  # status 128 as a damaged repository does, is an error, not a project with no commit.
+  # status 128 as a damaged repository does when it reads HEAD, is an error, not a project with no commit.
   def test_a_git_failure_that_is_not_a_missing_commit_is_not_taken_for_a_project_with_no_commit
+    folder = make_repository
     program = File.join(temporary_folder, "damaged-git")
-    File.write(program, "#!/bin/sh\ncase \"$1\" in config) exit 0 ;; esac\necho 'fatal: damaged' >&2\nexit 128\n")
+    File.write(program, DAMAGED_HEAD)
     File.chmod(0o755, program)
-    project = Proof::GitProject.new(root: temporary_folder, program:)
+    project = Proof::GitProject.new(root: folder, program:)
     error = assert_raises(Proof::GitFailedError) { project.working_tree_commit_id }
 
     assert_equal([128, "fatal: damaged\n"], [error.status.exitstatus, error.error_output])

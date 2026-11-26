@@ -4,8 +4,6 @@ module Proof
   # steep:ignore:start
   class GitProject < Data.define(:root, :program)
     # steep:ignore:end
-    include FileReading
-
     PARTIAL_SETTING = /^(extensions\.partialclone=.|remote\..+\.promisor=true$)/
     private_constant(:PARTIAL_SETTING)
 
@@ -24,7 +22,11 @@ module Proof
 
     def working_tree_commit_id
       refuse_a_partial_clone
-      WorkingTreeCommit.new(git:, head: head_id).id
+      WorkingTreeCommit.new(git:).id
+    end
+
+    def file_at(id, path)
+      CommittedFile.new(git:, commit: commit_id(id), path:).text
     end
 
     private def resolve(revision)
@@ -32,16 +34,6 @@ module Proof
       git.run("rev-parse", "--verify", "#{revision}^{commit}").chomp
     rescue GitFailedError
       raise(UnknownRevisionError.new(revision:, root:))
-    end
-
-    private def head_id
-      # With --quiet, rev-parse exits 1 and prints nothing when HEAD names a branch that has no commit yet,
-      # and any other failure exits with another status.
-      git.run("rev-parse", "--verify", "--quiet", "HEAD").chomp
-    rescue GitFailedError => e
-      raise unless e.status.exitstatus == 1
-
-      nil
     end
 
     private def git

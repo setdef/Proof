@@ -187,10 +187,13 @@ Options weighed:
 
 Proof runs the `git` program as a subprocess, with every inherited `GIT_*` variable removed so that a hook or a parent Git process can't redirect it.
 
+`Proof::Git` runs the program in a folder and raises `Proof::GitFailedError` when it fails. `Proof::GitProject` finds the project from a folder, refuses a partial clone, turns a revision into a commit ID, and gives the text of a file at a commit, which `Proof::CommittedFile` reads from the commit's tree. `Proof::WorkingTreeCommit` makes the working-tree commit, with the commit `HEAD` names as its parent, or none in a project with no commit yet.
+
 Options weighed:
 
 - Rugged: builds libgit2 from source, its certificate check can't see the certificate, and it has no check that a commit is complete, which [the decision on code](decisions/0003-code-travels-as-git-commits-through-the-server.md) needs.
 - The `git` gem: wraps the same program, and pulls in ActiveSupport.
+- Reading a file at a commit in a module that `Proof::GitProject` includes: the module would call the project's methods without a type to say so, to keep one class short.
 
 #### A submodule in a working-tree commit
 
