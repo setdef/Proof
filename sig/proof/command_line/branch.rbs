@@ -1,0 +1,15 @@
+module Proof
+  module CommandLine
+    # A command with subcommands, named with none of them: it has no help of its own to run.
+    class Branch
+      @command: Spec::Command
+      @messages: WordMessages
+
+      # Takes the command that has subcommands.
+      def initialize: (Spec::Command command) -> void
+
+      # Answers a request for help, or raises a Mistake when the command line names none of the subcommands or has extra words.
+      def parse: (Array[String] tail) -> HelpRequest
+    end
+  end
+end

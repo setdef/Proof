@@ -1,0 +1,14 @@
+module Proof
+  module CommandLine
+    module Tokens
+      # Whether the word looks like a flag.
+      def self.flag?: (String token) -> bool
+
+      # Writes several one-letter flags together as separate flags.
+      def self.expand: (String token) -> Array[String]
+
+      # Whether `token` is several one-letter flags written together, such as `-qd`, each among `switches`.
+      def self.cluster?: (String token, Array[String] switches) -> bool
+    end
+  end
+end

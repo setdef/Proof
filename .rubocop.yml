@@ -84,3 +84,9 @@ Style/InlineComment:
   # comment that the docs:examples task checks.
   Exclude:
     - "**/*.md"
+
+Style/HashLookupMethod:
+  # Hash#fetch raises for a command with no class, as the command line must never build, and Steep types
+  # Hash#[] as nilable, so Builder couldn't call .new on its result.
+  Exclude:
+    - "lib/proof/command_line/builder.rb"

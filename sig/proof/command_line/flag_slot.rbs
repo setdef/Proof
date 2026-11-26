@@ -1,0 +1,23 @@
+module Proof
+  module CommandLine
+    # Where a flag goes in a command's value, and how to read it from what the command line gave.
+    class FlagSlot < Data
+      # The flag this slot reads.
+      attr_reader item: Spec::Flag
+
+      def self.new: (item: Spec::Flag) -> instance
+                  | (Spec::Flag item) -> instance
+
+      # Takes the flag this slot reads.
+      def initialize: (Spec::Flag item) -> void
+
+      def entry: (Values values) -> [Symbol, top]
+
+      private
+
+      def member: () -> Symbol
+
+      def reader: () -> Symbol
+    end
+  end
+end

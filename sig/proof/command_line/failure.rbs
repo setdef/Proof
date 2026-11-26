@@ -1,0 +1,15 @@
+module Proof
+  module CommandLine
+    # The line for a command line that OptionParser refused.
+    class Failure
+      @messages: Messages
+      @switches: Array[String]
+
+      # Takes the messages of the command, and the flags its command line may carry.
+      def initialize: (Messages messages, Array[Spec::Flag] flags) -> void
+
+      # The line for the flag that OptionParser refused.
+      def message: (OptionParser::ParseError error) -> String
+    end
+  end
+end

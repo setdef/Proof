@@ -127,6 +127,13 @@ module Proof
         # ```
         def follow: (Array[String] words) -> Command?
 
+        # The names of the subcommands, in the spec's order.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["hook"])&.subcommand_names # => ["install", "uninstall"]
+        # ```
+        def subcommand_names: () -> Array[String]
+
         # The flags only this command has, in the spec's order. The global flags,
         # such as `--quiet`, are left out.
         #

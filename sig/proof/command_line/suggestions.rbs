@@ -1,0 +1,8 @@
+module Proof
+  module CommandLine
+    module Suggestions
+      # The names in `dictionary` nearest to `word`.
+      def self.for: (String word, Array[String] dictionary) -> Array[String]
+    end
+  end
+end

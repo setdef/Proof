@@ -1,0 +1,36 @@
+module Proof
+  module CommandLine
+    # The words the lines for mistakes are made of: each ends with the command to run next.
+    class Phrases
+      @command: String
+      @kind: String
+      @home: String
+
+      def self.alternatives: (Array[String] names) -> String
+
+      # The words that offer the nearest names.
+      def self.did_you_mean: (Array[String] suggestions) -> String
+
+      # A member of a group as a person reads it.
+      def self.member: (String name) -> String
+
+      # Takes the words that name the command.
+      def initialize: (Array[String] path) -> void
+
+      # The command as typed, such as `proof run`.
+      attr_reader command: String
+
+      # `command` or `subcommand`.
+      attr_reader kind: String
+
+      # What the command belongs to, or an empty string for a command of `proof` itself.
+      attr_reader home: String
+
+      private
+
+      def usage: () -> String
+
+      def ending: (String lead) -> String
+    end
+  end
+end

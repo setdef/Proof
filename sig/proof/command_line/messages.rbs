@@ -1,0 +1,24 @@
+module Proof
+  module CommandLine
+    # The text of each mistake in the flags of one command's command line.
+    class Messages < Phrases
+      # The line for a flag the command doesn't have.
+      def unknown_flag: (String switch, Array[String] suggestions) -> String
+
+      # The line for a flag given no value.
+      def missing_value: (String switch) -> String
+
+      # The line for a flag whose value looks like another flag.
+      def flag_for_value: (String switch, String value) -> String
+
+      # The line for a yes-or-no flag given a value.
+      def needless_value: (String switch) -> String
+
+      # The line for a value outside the flag's choices.
+      def bad_choice: (String switch, String value, Array[String] choices) -> String
+
+      # The line for a flag given without the flag it requires.
+      def missing_requirement: (String switch, String required) -> String
+    end
+  end
+end

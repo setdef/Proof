@@ -11,6 +11,32 @@ module Proof
   # says what is wrong. It starts no run, reads no file, and makes no network
   # call.
   module CommandLine
+    # Parses the words typed after `proof`, `ARGV` without the program's name,
+    # into the value of the command they name, or into a request for help.
+    #
+    # Global flags work before or after any subcommand. On `proof run`, the
+    # flags work anywhere before `--`, the words after `--` go to the task, and
+    # `:::` starts the next task. A mistake raises
+    # `Proof::CommandLine::Mistake`, and nothing is read or sent.
+    #
+    # - `argv`: Array of String, the words as the shell gave them.
+    #
+    # ```ruby
+    # invocation = Proof::CommandLine.parse(["-q", "run", "lint", "--", "--fix", ":::", "test"])
+    # invocation.global.quiet # => true
+    # invocation.command.tasks.map(&:name) # => ["lint", "test"]
+    # invocation.command.tasks.first&.words # => ["--fix"]
+    # ```
+    #
+    # A flag after the subcommand, a flag that takes a value, and a command with
+    # no flags all parse the same way:
+    #
+    # ```ruby
+    # Proof::CommandLine.parse(["cancel", "m3d8q"]).command.runs # => ["m3d8q"]
+    # Proof::CommandLine.parse(["run", "-h"]).path # => ["run"]
+    # ```
+    def self.parse: (Array[String] argv) -> (Invocation | HelpRequest)
+
     # The value of any command `proof` takes: one class for each command.
     type command = RunCommand
                  | WatchCommand

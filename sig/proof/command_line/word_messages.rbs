@@ -1,0 +1,30 @@
+module Proof
+  module CommandLine
+    # The text of each mistake in the commands and words of one command's command line.
+    class WordMessages < Phrases
+      # The line for a word that names no command.
+      def unknown_command: (String word, Array[String] suggestions) -> String
+
+      # The line for a command that can't run without a subcommand.
+      def needs_subcommand: (Array[String] names) -> String
+
+      # The line for a command given none of a group's members.
+      def missing_member: (Array[String] names) -> String
+
+      # The line for members of a group given together.
+      def together: (Array[String] names) -> String
+
+      # The line for an argument the command can't run without.
+      def missing_argument: (Spec::Arg argument) -> String
+
+      # The line for a word the command doesn't take.
+      def extra_word: (String? word) -> String
+
+      # The line for `:::` with no task before it.
+      def leading_tasks_marker: () -> String
+
+      # The line for `:::` with no task name after it.
+      def dangling_tasks_marker: () -> String
+    end
+  end
+end

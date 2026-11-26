@@ -1,0 +1,18 @@
+module Proof
+  module CommandLine
+    # A command with no subcommands: its flags and words make the value that a use case runs.
+    class Leaf
+      @spec: Spec
+      @command: Spec::Command
+      @path: Array[String]
+
+      # Takes the spec and a command that has no subcommands.
+      def initialize: (Spec spec, Spec::Command command) -> void
+
+      # Reads the command's flags and words, and answers its value or a request for help.
+      def parse: (Array[String] tokens, Array[String] tail) -> (Invocation | HelpRequest)
+
+      private def verify: (Values values, Array[String] words, Array[String] tail) -> void
+    end
+  end
+end

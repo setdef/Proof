@@ -57,6 +57,10 @@ module Proof
           subcommand(word)&.follow(rest)
         end
 
+        def subcommand_names
+          subcommands.map(&:name)
+        end
+
         def own_flags
           flags.reject(&:global?)
         end

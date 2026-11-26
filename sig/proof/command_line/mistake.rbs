@@ -1,0 +1,36 @@
+module Proof
+  module CommandLine
+    # Raised when a command line has a mistake in it.
+    #
+    # A person or an agent types a command line, and a flag with a typo, a
+    # missing task, or a value `proof` doesn't know is the commonest way for it
+    # to go wrong. Let through, the mistake would reach a use case as a value
+    # nobody checked, or as a run that starts with the wrong words.
+    #
+    # The message is the one line `proof` prints to standard error: it begins
+    # with `proof:`, says what is wrong, and ends with the command to run
+    # next. Exit with `Proof::CommandLine::Mistake::STATUS`, the status the spec
+    # gives to a mistake on the command line, and send nothing.
+    #
+    # Rescue it where the command line is parsed.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # begin
+    #   Proof::CommandLine.parse(["run", "test", "--oss", "linux"])
+    # rescue Proof::CommandLine::Mistake => mistake
+    #   mistake.message # => "proof: --oss isn't a flag of proof run. Did you mean --os? To list the flags, run: proof run --help"
+    # end
+    # ```
+    class Mistake < StandardError
+      # The exit status of a mistake on the command line, `2`.
+      STATUS: Integer
+
+      # Builds a mistake from the text after `proof: `.
+      #
+      # - `text`: String, what is wrong and the command to run next.
+      def initialize: (String text) -> void
+    end
+  end
+end

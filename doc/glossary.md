@@ -95,6 +95,13 @@ A named command defined in a project, which you run by name with `proof run NAME
 - Elsewhere: called a task in mise and Concourse, and a job in GitLab and GitHub Actions.
 - Don't say: job, which means a definition in some tools and one execution in others; check; step; pipeline; workflow; target.
 
+### task words
+
+The words that go to a **task** as they are: the words after `--` on `proof run`, and any plain word before it. `:::` ends one task's words and starts the name of the next task.
+
+- Elsewhere: called arguments in mise.
+- Don't say: arguments, which in Proof's docs means what a command takes, apart from its flags; params.
+
 ### project file
 
 The file `.config/proof.kdl` in a project. It contains what only Proof needs: which **OS** each task works on, the **labels** it requires, the **resources** it requests, its time limit, and which files the runner keeps as **artifacts**. It can also define tasks that `mise.toml` doesn't have. You don't need a project file: without one, Proof runs each mise task with Proof's defaults. Someone who doesn't use Proof can ignore the file.

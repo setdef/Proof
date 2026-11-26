@@ -16,6 +16,8 @@ target :lib do
   library "stringio"
   library "securerandom"
   library "erb"
+  library "optparse"
+  library "did_you_mean"
   library "open3"
   library "tmpdir"
 end

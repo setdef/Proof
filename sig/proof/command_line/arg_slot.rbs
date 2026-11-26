@@ -1,0 +1,23 @@
+module Proof
+  module CommandLine
+    # Where an argument goes in a command's value, and how to read it from what the command line gave.
+    class ArgSlot < Data
+      # The argument this slot reads.
+      attr_reader item: Spec::Arg
+
+      def self.new: (item: Spec::Arg) -> instance
+                  | (Spec::Arg item) -> instance
+
+      # Takes the argument this slot reads.
+      def initialize: (Spec::Arg item) -> void
+
+      def entry: (Values values) -> [Symbol, top]
+
+      private
+
+      def member: () -> Symbol
+
+      def reader: () -> Symbol
+    end
+  end
+end

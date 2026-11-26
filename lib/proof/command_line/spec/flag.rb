@@ -46,10 +46,6 @@ module Proof
           node.text("help")
         end
 
-        def help_long
-          node.text("help_long")
-        end
-
         def takes_value?
           node.node("arg").is_a?(Node)
         end

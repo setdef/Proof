@@ -81,16 +81,6 @@ class CommandLineSpecFlagTest < Minitest::Test
     assert_equal("Run on this operating system; repeat to run on several in parallel", flag(%w[run], "os").help)
   end
 
-  # proof.usage.kdl: the `long_help` of `--os`.
-  def test_a_flag_has_its_long_description_when_the_spec_gives_one
-    assert_includes(flag(%w[run], "os").help_long, "\"all\" runs once on every one of them.")
-  end
-
-  # proof.usage.kdl: `--commit` has no `long_help`.
-  def test_a_flag_has_no_long_description_when_the_spec_gives_none
-    assert_nil(flag(%w[run], "commit").help_long)
-  end
-
   # proof.usage.kdl: the four flags marked `global=#true`.
   def test_a_global_flag_is_marked_global_and_another_is_not
     assert_predicate(flag([], "debug"), :global?)

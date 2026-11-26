@@ -1,0 +1,26 @@
+# frozen_string_literal: true
+
+require "optparse"
+
+module Proof
+  # steep:ignore:start
+  module CommandLine
+    # steep:ignore:end
+    class Failure
+      def initialize(messages, flags)
+        @messages = messages
+        @switches = flags.flat_map(&:switches)
+      end
+
+      def message(error)
+        switch = error.args.first.to_s.split("=").first.to_s
+        case error
+        when OptionParser::MissingArgument then @messages.missing_value(switch)
+        when OptionParser::NeedlessArgument then @messages.needless_value(switch)
+        else @messages.unknown_flag(switch, Suggestions.for(switch, @switches))
+        end
+      end
+    end
+    private_constant(:Failure)
+  end
+end

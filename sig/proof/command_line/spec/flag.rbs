@@ -102,13 +102,6 @@ module Proof
         # ```
         def help: () -> String?
 
-        # The longer description, or `nil` when the spec has none.
-        #
-        # ```ruby
-        # Proof::CommandLine::Spec.load.root.flags.first&.help_long # => nil
-        # ```
-        def help_long: () -> String?
-
         # Whether the flag takes a value, as `--os linux` does.
         #
         # ```ruby
