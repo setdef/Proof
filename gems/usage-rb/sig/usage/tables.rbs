@@ -1,0 +1,20 @@
+module Usage
+  # The tables of one command's help: its subcommands, its arguments, its flags, and the global flags it takes.
+  class Tables
+    @spec: Spec
+    @command: Command
+    @listing: String
+
+    # Takes the spec, the command, and the title of the table of its subcommands.
+    def initialize: (Spec spec, Command command, String listing) -> void
+
+    # Each table, or `nil` for one with no rows.
+    def all: () -> Array[String?]
+
+    private
+
+    def commands: () -> String?
+
+    def globals: () -> Array[Flag]
+  end
+end

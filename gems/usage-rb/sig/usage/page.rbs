@@ -1,0 +1,35 @@
+module Usage
+  # The help of the program: the sections every help has, in order, with the program's own texts, its commands,
+  # its exit statuses, and the spec's closing text.
+  class Page
+    @spec: Spec
+    @command: Command
+
+    # The widest line of the title and the descriptions.
+    WIDTH: Integer
+
+    # Takes the spec and the command whose help to write.
+    def initialize: (Spec spec, Command command) -> void
+
+    # Each section of the help, or `nil` for one with nothing in it.
+    def sections: () -> Array[String?]
+
+    private
+
+    attr_reader command: Command
+
+    def title: () -> String?
+
+    def usage: () -> String
+
+    def about: () -> String
+
+    def description: () -> String?
+
+    def examples: () -> Array[Example]
+
+    def listing: () -> String
+
+    def ending: () -> Array[String?]
+  end
+end

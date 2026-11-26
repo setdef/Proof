@@ -1,0 +1,52 @@
+module Usage
+  # Writes the help of a program or one of its commands from the spec.
+  #
+  # Help written by hand beside a spec drifts from it: a flag added to the spec is missing from the help, or a
+  # description changes in one place only.
+  #
+  # This class writes each command's help from the spec, in one layout: the name and what it does, the longer
+  # description, the usage line, the examples, then a table each of subcommands, arguments, flags, and global flags.
+  # The program's help also lists the exit statuses and ends with the spec's closing text. Each flag shows its
+  # one-line description and its choices. Lines that run past 100 characters, and table cells past the table's 78,
+  # wrap at spaces.
+  #
+  # Use it to print what `-h` and `--help` ask for.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # spec = Usage::Spec.read(<<~JSON)
+  #   {"bin": "todo", "about": "Keep a list of things to do",
+  #    "cmd": {"subcommands": {"done": {"name": "done", "full_cmd": ["done"], "help": "Mark items done",
+  #      "args": [{"name": "item", "required": true, "var": true, "help": "The items, by number"}]}}}}
+  # JSON
+  # help = Usage::Help.new(spec)
+  # help.text(["done"]).lines.map(&:chomp)
+  # # => ["todo done - Mark items done", "", "Usage: todo done [FLAGS] <item...>", "", "Arguments:", "  <item...>  The items, by number"]
+  # ```
+  #
+  # A path that names no command gives the program's help:
+  #
+  # ```ruby
+  # help.text(["undo"]) == help.text([]) # => true
+  # ```
+  class Help
+    @spec: Spec
+
+    # Takes the spec to write help from.
+    #
+    # - `spec`: `Usage::Spec`, the program's interface.
+    def initialize: (Spec spec) -> void
+
+    # The help of the command that `path` names, or of the program when `path` is empty or names no command, ending
+    # in a newline.
+    #
+    # - `path`: Array of String, the words that name the command, such as `["remote", "add"]`.
+    #
+    # ```ruby
+    # help.text([]).include?("Commands:\n  done  Mark items done") # => true
+    # ```
+    def text: (Array[String] path) -> String
+  end
+end

@@ -1,0 +1,19 @@
+module Usage
+  # Writes the entries of the help that have a form of their own: an example's lines, and a flag's row.
+  module Rows
+    # The widest line of an example's explanation.
+    EXAMPLE_WIDTH: Integer
+
+    # The examples under their title, or `nil` when there are none.
+    def self.examples: (Array[Example] list) -> String?
+
+    # A table of flags, each with its switches, its value, its description, and its choices.
+    def self.flags: (String title, Array[Flag] list) -> String?
+
+    private def self.example_lines: (Example example) -> Array[String]
+
+    private def self.label: (Flag flag) -> String
+
+    private def self.text: (Flag flag) -> String
+  end
+end

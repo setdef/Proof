@@ -1,0 +1,18 @@
+module Usage
+  # Lays out the text of the help: wrapped lines, and titled tables of two columns.
+  module Layout
+    # The widest line of a table.
+    TABLE_WIDTH: Integer
+
+    # `words` as lines of `width` characters or fewer, broken at spaces.
+    def self.wrap: (String words, Integer width) -> Array[String]
+
+    # `text` with each line longer than `width` wrapped, and the others as they are. `nil` stays `nil`.
+    def self.paragraphs: (String? text, Integer width) -> String?
+
+    # The title, then a line for each row with the labels aligned, or `nil` when there are no rows.
+    def self.table: (String title, Array[[String, String]] rows) -> String?
+
+    private def self.row: (String label, String words, Integer gap) -> Array[String]
+  end
+end

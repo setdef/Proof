@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.version = File.read(File.expand_path("lib/usage/version.rb", __dir__))[/VERSION = "([^"]+)"/, 1]
   spec.authors = ["setdef"]
   spec.email = ["kerrick@setdef.com"]
-  spec.summary = "Reads the usage spec of a command-line interface, with no dependencies."
+  spec.summary = "Reads the usage spec of a command-line interface, and prints its help, with no dependencies."
   spec.description = spec.summary
   spec.homepage = "https://github.com/setdef/Proof/tree/trunk/gems/usage-rb"
   spec.license = "MIT"

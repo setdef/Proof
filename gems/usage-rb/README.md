@@ -1,6 +1,6 @@
 # usage-rb
 
-Read the [usage](https://usage.jdx.dev) spec that describes a Ruby program's command line.
+Read the [usage](https://usage.jdx.dev) spec that describes a Ruby program's command line, and print its help from it.
 
 A usage spec describes a program's commands, flags, and arguments once, in KDL, and usage generates the program's reference, man pages, and shell completions from it. usage-rb reads the JSON that `usage generate json` writes from the spec, with no dependencies beyond Ruby's standard library.
 
@@ -31,6 +31,21 @@ begin
 rescue Usage::SpecError => e
   e.message # => "the program sets aliases to [\"a\"], which usage-rb doesn't support"
 end
+```
+
+## Printing help
+
+`Usage::Help#text` writes the help of the command that a path names, or of the program for an empty path:
+
+```ruby
+require "usage"
+
+spec = Usage::Spec.read(<<~JSON)
+  {"bin": "todo", "about": "Keep a list of things to do",
+   "cmd": {"subcommands": {"add": {"name": "add", "full_cmd": ["add"], "help": "Add an item",
+                                   "args": [{"name": "text", "required": true, "help": "What to do"}]}}}}
+JSON
+Usage::Help.new(spec).text(["add"]).lines.first # => "todo add - Add an item\n"
 ```
 
 ## License

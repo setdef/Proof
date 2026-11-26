@@ -1,0 +1,17 @@
+module Usage
+  # The help of a command under the program: its own texts and its subcommands, with no exit statuses and no
+  # closing text.
+  class CommandPage < Page
+    private
+
+    def about: () -> String
+
+    def description: () -> String?
+
+    def examples: () -> Array[Example]
+
+    def listing: () -> String
+
+    def ending: () -> Array[String?]
+  end
+end
