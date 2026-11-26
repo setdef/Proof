@@ -12,10 +12,10 @@ class GitProjectSubmoduleTest < Minitest::Test
     line&.split&.values_at(0, 2)
   end
 
-  # Command design, "Which project and which code": "Submodules go at the commits the superproject
-  # records; their objects may live in the superproject's `.git/modules/NAME`, not in the submodule's
-  # checkout." The submodule's `.git` is a file that points there.
-  def test_a_submodule_is_in_the_commit_at_the_commit_the_project_records
+  # Command design, "Which project and which code": "Submodules go at the commits [their checkouts are at],
+  # as `git add -A` records them; their objects may live in the superproject's `.git/modules/NAME`, not in
+  # the submodule's checkout." The submodule's `.git` is a file that points there.
+  def test_a_submodule_is_in_the_commit_at_the_commit_its_checkout_is_at
     folder, recorded = make_project_with_submodule
 
     assert_equal(["160000", recorded], recorded_in(folder, working_tree_commit(folder)))
@@ -23,15 +23,25 @@ class GitProjectSubmoduleTest < Minitest::Test
     assert_path_exists(File.join(folder, "vendor", "sub", ".git"))
   end
 
-  # The same sentence, for a submodule whose checkout has moved on: a commit made there is not one the
-  # project records, so the working-tree commit keeps the commit that the project records.
-  def test_a_submodule_checkout_that_has_moved_on_stays_at_the_recorded_commit
+  # The same sentence, for a submodule whose checkout has moved on: a working-tree run sends the working
+  # tree as it is, so the commit holds the commit the checkout is at, a bump the project hasn't committed.
+  def test_a_submodule_checkout_that_has_moved_on_is_sent_at_the_commit_it_is_at
     folder, recorded = make_project_with_submodule
     commit_file(File.join(folder, "vendor", "sub"), "lib.txt", "2")
     moved = git(File.join(folder, "vendor", "sub"), "rev-parse", "HEAD").chomp
 
     refute_equal(recorded, moved)
-    assert_equal(["160000", recorded], recorded_in(folder, working_tree_commit(folder)))
+    assert_equal(["160000", moved], recorded_in(folder, working_tree_commit(folder)))
+  end
+
+  # How-proof-works, "How your code reaches a runner": "With `--commit REV`, that is the commit you named."
+  # The tree of the commit that was named is what runs, so a bump that isn't committed isn't in it.
+  def test_a_commit_that_is_named_keeps_the_submodule_commit_it_records
+    folder, recorded = make_project_with_submodule
+    commit_file(File.join(folder, "vendor", "sub"), "lib.txt", "2")
+    named = Proof::GitProject.find(folder).commit_id("HEAD")
+
+    assert_equal(["160000", recorded], recorded_in(folder, named))
   end
 
   # Command design, "Which project and which code": "Uncommitted changes inside a submodule are not sent."

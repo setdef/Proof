@@ -27,27 +27,9 @@ module Proof
       # index wouldn't know that a tracked file that .gitignore matches is tracked.
       env = { GIT_INDEX_FILE: index }
       @git.run("read-tree", @head, env:)
-      stage_working_tree(env)
+      @git.run("add", "--all", env:)
       tree = @git.run("write-tree", env:).chomp
       @git.run("commit-tree", tree, "-p", @head, "-m", "Working tree, made by Proof", env: IDENTITY).chomp
-    end
-
-    private def stage_working_tree(env)
-      recorded = submodules(env)
-      @git.run("add", "--all", env:)
-      pin(recorded, env)
-    end
-
-    private def submodules(env)
-      entries = @git.run("ls-files", "--stage", "-z", env:).split("\0")
-      entries.grep(/\A160000 /).to_h { |entry| [entry.split("\t", 2).last, entry] }
-    end
-
-    private def pin(recorded, env)
-      # git add --all moves each submodule to whatever commit its checkout is at, which is not a commit the
-      # project records, so the submodules still in the index go back to the commit HEAD records.
-      lines = recorded.slice(*submodules(env).keys).values.map { |entry| "#{entry}\0" }
-      @git.run("update-index", "-z", "--index-info", env:, input: lines.join)
     end
   end
 end
