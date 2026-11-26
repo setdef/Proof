@@ -44,15 +44,17 @@ module Proof
     #
     # ```ruby
     # path = "pool.kdl"
-    # node = Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n}\n", path:, error: Proof::PoolFileError).first
+    # node = Proof::KdlParser.parse("host nuc {\n  runner \" \"\n}\n", path:, error: Proof::PoolFileError).first
     # names = Proof::PoolFileNames.new(refusal: Proof::PoolFileRefusal.new(path:))
-    # names.refuse_children(node, "runner", "a runner's name") # => [node.children.first]
+    # begin
+    #   names.refuse_children(node, "runner", "a runner's name")
+    # rescue Proof::PoolFileError => e
+    #   e.line # => 2
+    # end
     # ```
     def refuse_children: (KdlNode node, String name, String what) -> void
 
     private
-
-    def refuse_all: (KdlNode child, String what) -> void
 
     @refusal: PoolFileRefusal
   end

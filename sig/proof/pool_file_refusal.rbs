@@ -21,6 +21,9 @@ module Proof
     # What a node takes, as a message words it, by the numbers of arguments.
     TAKES: Hash[Range[Integer?], String]
 
+    # What a message says of an earlier entry: its name and its line.
+    EARLIER: ^(KdlNode node) -> Hash[Symbol, kdl_value]
+
     # Words what a node has, for a message: none, two with "and", or three or
     # more with a serial comma, after `what`, such as "properties".
     KNOWN: ^(Array[Symbol] names, String what) -> String
@@ -52,6 +55,14 @@ module Proof
 
     # Refuses a child given a second time. `first` is the one before it.
     def repeated_child: (KdlNode child, KdlNode first) -> bot
+
+    # Refuses a second entry that has the name of an earlier one, such as a
+    # second host with a host's name. `first` is the earlier entry.
+    def repeated_entry: (KdlNode node, KdlNode first) -> bot
+
+    # Refuses a runner that an earlier host lists. `child` is the `runner` node
+    # that lists it again, and `host` is the earlier host.
+    def shared_runner: (KdlNode child, kdl_value runner, KdlNode host) -> bot
 
     # Refuses a node that lacks a property its form needs.
     def missing_property: (KdlNode node, String property) -> bot

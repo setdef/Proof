@@ -39,4 +39,12 @@ module PoolFileReaderHelper
     section = File.read(PAGE)[/^#{Regexp.escape(heading)}\n(.*?)(?=^## |\z)/m, 1]
     section.scan(/^```kdl\n(.*?)^```/m)[nth].first
   end
+
+  # The rows of the nth table in the page's section with this heading, each as the text of its two cells.
+  def page_table(heading, nth = 0)
+    section = File.read(PAGE)[/^#{Regexp.escape(heading)}\n(.*?)(?=^## |\z)/m, 1]
+    tables = section.scan(/^\| Written \| Result \|\n\| --- \| --- \|\n((?:\|.*\n)+)/)
+
+    tables[nth].first.lines.map { |row| row.strip.delete_prefix("|").delete_suffix("|").split(" | ", 2).map(&:strip) }
+  end
 end

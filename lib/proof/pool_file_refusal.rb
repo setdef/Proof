@@ -16,6 +16,10 @@ module Proof
       unknown_child: "a %<name>p node has no child %<child>p. %<known>s",
       repeated_child: "%<name>p is given twice, and the first is on line %<line>d. " \
         "Give every value as arguments to one %<name>p node",
+      repeated_entry: "a second %<name>s is named %<entry>p, and the first is on line %<line>d. " \
+        "Each %<name>s has one entry, so merge them into one",
+      shared_runner: "the runner %<runner>p is also on the host %<entry>p, whose entry starts on line %<line>d. " \
+        "A runner is one operating system on one host, so list it on one",
       missing_property: "a %<name>p node needs the property %<property>p",
       missing_child: "a %<name>p node needs a %<child>p child",
       blank_name: "%<what>s is not empty and not only spaces, not %<value>p",
@@ -28,7 +32,8 @@ module Proof
       else "Its #{what} are #{names.first(names.size - 1).join(', ')}, and #{names.last}"
       end
     end
-    private_constant(:MESSAGES, :KNOWN)
+    EARLIER = -> (node) { { entry: node.arguments.first, line: node.line } }
+    private_constant(:MESSAGES, :KNOWN, :EARLIER)
 
     def initialize(path:)
       super(path:, error: PoolFileError, messages: MESSAGES)
@@ -58,6 +63,14 @@ module Proof
 
     def repeated_child(child, first)
       say_of(child, :repeated_child, line: first.line)
+    end
+
+    def repeated_entry(node, first)
+      say_of(node, :repeated_entry, **EARLIER.call(first))
+    end
+
+    def shared_runner(child, runner, host)
+      say(child, :shared_runner, runner:, **EARLIER.call(host))
     end
 
     def missing_property(node, property)

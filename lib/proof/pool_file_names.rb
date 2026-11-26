@@ -14,11 +14,7 @@ module Proof
     end
 
     def refuse_children(node, name, what)
-      node.named(name).each { |child| refuse_all(child, what) }
-    end
-
-    private def refuse_all(child, what)
-      child.arguments.each { |value| refuse(child, what, value) }
+      node.pairs_named(name).each { |value, child| refuse(child, what, value) }
     end
   end
 end

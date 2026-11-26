@@ -16,6 +16,10 @@ module Proof
       children.select { |child| child.name == name }
     end
 
+    def pairs_named(name)
+      named(name).flat_map { |child| child.arguments.product([child]) }
+    end
+
     def arguments_named(name)
       named(name).flat_map(&:arguments)
     end
