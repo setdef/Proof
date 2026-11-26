@@ -58,8 +58,8 @@ module Proof
   end
 
   # Raised when an artifact pattern or a cache folder isn't a path relative to
-  # the workspace's root: it is empty, starts with `/`, has a folder named
-  # `..`, or isn't text.
+  # the workspace's root: it is empty, starts with `/`, contains `..`,
+  # or isn't text.
   class InvalidPathPatternError < Error
   end
 

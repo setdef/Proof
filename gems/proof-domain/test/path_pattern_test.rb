@@ -48,16 +48,20 @@ class PathPatternTest < Minitest::Test
   end
 
   # Project file reference, "Mistakes Proof catches": a path that "contains
-  # `..`" is refused, wherever `..` stands between slashes.
+  # `..`" is refused, wherever the two dots stand.
   def test_a_path_with_a_parent_folder_is_refused
     assert_refused(["..", "../pkg", "pkg/..", "pkg/../other", "a/b/../../c", "**/../x", "a\n/../b"])
   end
 
-  # Project file reference, "Mistakes Proof catches": a path that "contains
-  # `..`" is refused. A file name that merely has two dots in it, such as
-  # `v1..2.txt` or `...`, leaves the workspace nowhere, so it is not `..`.
-  def test_dots_inside_a_name_are_not_a_parent_folder
-    ["a..b", "v1..2.txt", "...", "..a", "a..", ".hidden"].each do |path|
+  # The same sentence: the page says "contains `..`", not "has a folder named
+  # `..`", so two dots inside a name are refused too.
+  def test_two_dots_inside_a_name_are_refused
+    assert_refused(["a..b", "v1..2.txt", "...", "..a", "a..", "pkg/a..b/c", "pkg/...", "x/..."])
+  end
+
+  # A single dot is not `..`, so a hidden file or folder and a file extension are kept.
+  def test_a_single_dot_is_kept
+    [".hidden", "a.b", "pkg/.cache/ccache", "pkg/a.b.c", "./pkg"].each do |path|
       assert_equal(path, Proof::PathPattern.new(path:).path)
     end
   end

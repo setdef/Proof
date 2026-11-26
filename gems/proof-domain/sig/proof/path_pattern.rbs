@@ -9,9 +9,9 @@ module Proof
   #
   # This class holds the path as written, such as `"pkg/*.gem"`, `"doc/api/**"`,
   # or `"tmp/engine/build"`, and refuses one that is empty, starts with `/`,
-  # or has a folder named `..`. It doesn't read the pattern: `*` and `**` are
-  # the runner's to match. A name that only has two dots in it, such as
-  # `"v1..2.txt"`, is no folder named `..` and is kept.
+  # or contains `..` anywhere, as the project file page says. A name such as
+  # `"v1..2.txt"` contains `..` and is refused too. It doesn't read the pattern:
+  # `*` and `**` are the runner's to match.
   #
   # Use it for each `artifact` pattern and each `cache` folder.
   #
@@ -29,7 +29,7 @@ module Proof
   # Proof::PathPattern.new(path: "/tmp/engine")
   # ```
   #
-  # So is a path that climbs out of the workspace:
+  # So is a path that contains `..`, such as one that climbs out of the workspace:
   #
   # ```ruby
   # # Wrong: raises Proof::InvalidPathPatternError
@@ -49,8 +49,8 @@ module Proof
     # Builds a pattern, and raises `Proof::InvalidPathPatternError` unless
     # `path` is a String, with bytes that are valid text in an
     # ASCII-compatible encoding, that isn't empty,
-    # doesn't start with `/`, and has no folder named `..`. The message lists
-    # what works.
+    # doesn't start with `/`, and doesn't contain `..`. The message lists what
+    # works.
     #
     # - `path`: String, such as `"pkg/*.gem"`.
     #
