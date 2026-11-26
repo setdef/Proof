@@ -61,7 +61,7 @@ task package memory="8GB"
 - **A label** is 1 to 63 ASCII letters, digits, `-`, `_`, or `.`, beginning and ending with a letter or a digit, with no space. Labels are compared without regard to case, so `GPU` is `gpu`. `gpu`, `cuda-12.4`, and `nested_kvm` are valid. `"nvidia gpu"`, `-gpu`, and `gpu!` are refused.
 - **A duration** is a quoted whole number from 1 and one unit, `s`, `m`, or `h`, in lowercase, with no space: `"90s"`, `"30m"`, and `"2h"` are valid. `"1h30m"`, `"1.5h"`, `"90 s"`, `"2H"`, `"1d"`, `"01m"`, and `"90"` are refused.
 - Proof refuses a file with a size, a duration, or a label that breaks these rules, with the line and the forms that work.
-- Proof also refuses a blank task name, an empty command, a child node given twice or with no arguments, a path that contains `..`, and a `.config/proof.kdl` that is a symbolic link.
+- Proof also refuses a task name or command that is empty or only white space, a child node given twice or with no arguments, a path that contains `..`, and a `.config/proof.kdl` that is a symbolic link.
 
 ## After you edit it
 

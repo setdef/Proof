@@ -49,14 +49,15 @@ class ProjectFileReaderReadingsTest < Minitest::Test
     end
   end
 
-  # The same item: "refuse a command that is empty or only spaces", with the way to run the mise task instead.
+  # The same item: "refuse a command that is empty or only spaces", which the page says as "empty or only white space",
+  # so a tab or a line break is refused too, with the way to run the mise task instead.
   def test_a_blank_command_is_refused
-    ["", "   "].each do |command|
+    [["", ""], ["   ", "   "], ["\\t", "\t"], ["\\n", "\n"]].each do |written, command|
       assert_refused(
-        "task a \"#{command}\"\n",
+        "task a \"#{written}\"\n",
         1,
-        "a task's command is not empty and not only spaces, such as \"make docs\", not #{command.inspect}. " \
-          "Leave the command out to run the mise task of the same name"
+        "a task's command is text with at least one character that isn't white space, " \
+          "such as \"make docs\", not #{command.inspect}. Leave the command out to run the mise task of the same name"
       )
     end
   end

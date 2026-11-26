@@ -178,8 +178,8 @@ Proof refuses a project file, with the line and the reason, when:
 - a value has the wrong type, such as `cpus="four"`;
 - an `os` node lists an operating system other than `linux`, `macos`, or `windows`;
 - a `label` breaks the [label rule](#labels), a size breaks the [size rule](#sizes), or a duration breaks the [duration rule](#durations);
-- two `task` entries have the same name, or a `task` has a blank name;
-- a task's command is empty or only spaces;
+- two `task` entries have the same name;
+- a `task`'s name or command is empty or only white space;
 - a child node is given twice in one entry, such as two `os` nodes: give every value as arguments to one node;
 - a child node has no arguments, such as a bare `label`: each takes one or more;
 - a `cache` or `artifact` path starts with `/` or contains `..` anywhere, so `v1..2.txt` is refused too. A Windows path such as `C:\x` isn't refused, because only a leading `/` makes a path absolute here;
