@@ -55,7 +55,7 @@ A run that passes in an empty workspace but fails in a reused one, or the other 
 
 ## A run was lost
 
-A run whose runner stayed out of contact with the server for 10 minutes, as when its host went away or lost its network, is `lost`, and `proof` exits with 75. A report that arrives later is refused. Proof never runs it again by itself. Run it again; if the same host keeps losing runs, `proof status` shows when it last connected.
+A run whose runner stayed out of contact with the server for 10 minutes, as when its host went away or lost its network, is `lost`, and `proof` exits with 75. The 10 minutes count only while the server is up, so a run is never `lost` because the server restarted or was upgraded. A report that arrives later is refused. Proof never runs it again by itself. Run it again; if the same host keeps losing runs, `proof status` shows when it last connected.
 
 The host's CPUs and memory stay held until its runner reports that the run's processes ended, or you revoke the runner, so a host that lost a run can look busy until then.
 

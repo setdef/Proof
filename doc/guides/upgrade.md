@@ -29,7 +29,7 @@ proof: restarted the server at 1.1.0
 proof: runners will upgrade between runs
 ```
 
-The server keeps queued runs across the restart. Runs going on at the time continue, and their output reaches the server once it's back.
+The server keeps queued runs across the restart. Runs going on at the time continue, and their output reaches the server once it's back. A restart never makes a run `lost`: the 10 minutes a runner may be out of contact count only while the server is up, however long the upgrade takes.
 
 ## The runners follow
 

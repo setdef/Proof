@@ -78,7 +78,7 @@ A run ends in one of the [run states](glossary.md#run-states). Whatever the reas
 - **Someone cancels it,** with `proof cancel` or Ctrl-C in `proof run`. The state is `canceled`.
 - **The runner stays out of contact with the server for 10 minutes,** as when its host goes away or loses its network. The state is `lost`, and `proof` exits with 75. A runner that reconnects sooner sends the output it kept, and the run ends as it would have. A report that arrives after the 10 minutes is refused, even a complete one, because `lost` is final. The host's CPUs and memory stay held until the runner reports that the run's processes ended, or you revoke the runner, so a host never runs more than it has.
 
-Ten minutes covers a laptop that changes networks or wakes from sleep, and an agent waiting on a dead host learns of it within 10 minutes.
+Ten minutes covers a laptop that changes networks or wakes from sleep, and an agent waiting on a dead host learns of it within 10 minutes. The 10 minutes count only while the server is up. A server that restarts or upgrades counts a runner as away only from the moment the server is back, so a server outage never makes a run `lost`. Counting through the outage would lose every run to any upgrade that took longer than 10 minutes.
 
 Proof never runs a run again by itself. A run that failed, timed out, or was lost stays that way, and you decide whether to run it again. The one retry comes before the command starts: when Git operations on a runner's workspace fail, the runner discards that workspace and tries the run once in another, and no command has run yet.
 

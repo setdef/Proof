@@ -172,7 +172,7 @@ A run is in exactly one of these states. The first two can change; the rest are 
 | `canceled` | Someone canceled the run, and the runner ended it. |
 | `lost` | The run ended without a status from its command, because the server lost contact with its runner for 10 minutes (the runner or its host went away) or Proof failed, or its command exited but its whole output never reached the server. |
 
-A `lost` run stays `lost`: the server refuses a report that arrives later, even a complete one. The host's CPUs and memory stay held until the runner reports that the run's processes ended, or the runner is revoked.
+The 10 minutes count only while the server is up, so a server restart or outage never makes a run `lost`. A `lost` run stays `lost`: the server refuses a report that arrives later, even a complete one. The host's CPUs and memory stay held until the runner reports that the run's processes ended, or the runner is revoked.
 
 A run that is `running` is doing one of these: fetching its code, waiting for a desktop or for a person to leave, running its command, or sending its output. `proof status` shows which.
 
