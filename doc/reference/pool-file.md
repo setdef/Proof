@@ -74,6 +74,23 @@ A label in `withhold` is 1 to 63 characters: ASCII letters, digits, `-`, `_`, an
 
 A size or a label that breaks its rule is a mistake in the file, and [what happens when the file has a mistake](#what-happens-when-the-file-has-a-mistake) applies, with the forms that work in the message.
 
+## Durations
+
+A duration in `active-for` and `poll` is a whole number from 1 and one of `s`, `m`, or `h`, in lowercase, with no space. In `retention`, a duration is a whole number of days, with the unit `d`. The [project file reference](project-file.md#durations) gives the whole rule.
+
+| Written | Result |
+| --- | --- |
+| `active-for "5m"`, `poll "90s"` | Valid. |
+| `retention output="30d"` | Valid. |
+| `active-for "1h30m"` | Refused: a duration has one unit. |
+| `poll "1.5m"` | Refused: the number is whole. |
+| `active-for "5 m"` | Refused: no space. |
+| `active-for "5M"` | Refused: the unit is lowercase. |
+| `active-for "1d"` | Refused: `d` is the unit of `retention` only. |
+| `retention output="14h"` | Refused: `retention` takes days. |
+
+A duration that breaks its rule is a mistake in the file, and [what happens when the file has a mistake](#what-happens-when-the-file-has-a-mistake) applies, with the forms that work in the message.
+
 ## `server`
 
 ```kdl
