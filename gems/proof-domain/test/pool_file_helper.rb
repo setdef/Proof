@@ -34,4 +34,24 @@ module PoolFileHelper
       withheld: withhold && Proof::LabelSet.of(*withhold)
     )
   end
+
+  # A host's entry with this name and these runners, and the settings that `host_settings` builds.
+  def host_entry(name, runners, **settings)
+    Proof::HostEntry.new(name:, runners:, settings: host_settings(**settings))
+  end
+
+  # The `defaults` node of the page's "A complete example".
+  def example_defaults
+    host_settings(budget: "100GB", share: [2, "4GB"], active_for: "5m")
+  end
+
+  # The `nuc` entry of the page's "A complete example".
+  def nuc_entry
+    host_entry("nuc", %w[nuc-linux], budget: "400GB")
+  end
+
+  # The `pc` entry of the page's "A complete example".
+  def pc_entry
+    host_entry("pc", %w[pc-windows pc-wsl], budget: "250GB", share: [4, "16GB"], withhold: %w[gpu])
+  end
 end

@@ -118,6 +118,18 @@ module Proof
   class InvalidHostSettingsError < Error
   end
 
+  # Raised when a host's entry in the pool file has a name that isn't a name,
+  # runners that aren't one or more runner names that differ, or settings that
+  # aren't `Proof::HostSettings`, or when a host has no budget in its entry or
+  # in `defaults`.
+  class InvalidHostEntryError < Error
+  end
+
+  # Raised when a resolved host lacks a setting, or has a setting, a name, or
+  # runners that its entry would refuse.
+  class InvalidResolvedHostError < Error
+  end
+
   # Raised when a source of randomness answers with anything but a whole
   # number from 0 up to, and not including, the limit it was asked for.
   class InvalidRandomSourceError < Error

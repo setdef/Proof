@@ -14,6 +14,10 @@ module Proof
       value.is_a?(String) && !value.empty?
     end
 
+    def self.names?(value)
+      value.is_a?(Array) && !value.empty? && value.all? { |name| named?(name) } && value.uniq.size == value.size
+    end
+
     def self.whole?(value, minimum)
       value.is_a?(Integer) && value >= minimum
     end

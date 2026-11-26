@@ -1,0 +1,90 @@
+module Proof
+  # One `host` entry of the pool file: the host's name, its runners, and the
+  # settings the entry gives.
+  #
+  # A host is one physical computer, and the server counts the CPUs and memory
+  # of all its runners as one host's. An entry that listed no runner would be a
+  # host with nothing to run, and one that listed a runner twice would count it
+  # twice. The entry gives some of the host's settings and leaves the rest to
+  # `defaults` and Proof's built-in defaults, so the entry alone doesn't say what
+  # the host gets.
+  #
+  # This class holds the name, the names of the runners in the order the file
+  # lists them, and the entry's settings. Ask it to resolve its settings
+  # against the file's `defaults`, and it gives the host with every setting. A
+  # host with no budget in its entry or in `defaults` is refused, because
+  # `proof runner approve` writes the budget and Proof has no built-in one.
+  #
+  # Use it as what the reader of the pool file builds from each `host` node.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # budget = Proof::Size.read("400GB", name: "budget")
+  # entry = Proof::HostEntry.new(name: "nuc", runners: ["nuc-linux"], settings: Proof::HostSettings.new(budget:))
+  # entry.runners # => ["nuc-linux"]
+  # host = entry.resolved(Proof::HostSettings.new)
+  # [host.budget.megabytes, host.keep_free.megabytes, host.share.cpus] # => [409_600, 25_600, 2]
+  # ```
+  #
+  # A host with no budget is refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidHostEntryError
+  # Proof::HostEntry.new(name: "nuc", runners: ["nuc-linux"]).resolved(Proof::HostSettings.new)
+  # ```
+  #
+  # A host with no runner is refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidHostEntryError
+  # Proof::HostEntry.new(name: "nuc", runners: [])
+  # ```
+  class HostEntry < Data
+    # For each member, the message when its value breaks the rule, and the rule.
+    RULES: Hash[Symbol, [String, MemberCheck::_Rule]]
+
+    # The host's name, as the entry writes it, frozen.
+    attr_reader name: String
+
+    # The names of the host's runners, in the order the entry lists them, in a
+    # frozen `Array`.
+    attr_reader runners: Array[String]
+
+    # The settings the entry gives. A setting the entry leaves out is `nil`.
+    attr_reader settings: HostSettings
+
+    def self.new: (name: String, runners: Array[String], ?settings: HostSettings) -> instance
+                | (String name, Array[String] runners, ?HostSettings settings) -> instance
+
+    # Builds an entry, and raises `Proof::InvalidHostEntryError` unless `name` is
+    # a String of at least one character, `runners` is an `Array` of one or
+    # more such names with no name twice, and `settings` is
+    # `Proof::HostSettings`.
+    #
+    # - `name`: String, such as `"pc"`.
+    # - `runners`: Array of String, such as `["pc-windows", "pc-wsl"]`.
+    # - `settings`: HostSettings. Defaults to settings that give nothing.
+    #
+    # ```ruby
+    # Proof::HostEntry.new(name: "pc", runners: ["pc-windows", "pc-wsl"]).runners.size # => 2
+    # ```
+    def initialize: (name: String, runners: Array[String], ?settings: HostSettings) -> void
+
+    # The host with every setting it gets: from this entry, then `defaults`,
+    # then Proof's built-in defaults. A single setting comes from the first of
+    # them that has one, and the withheld labels of all three add up. Raises
+    # `Proof::InvalidHostEntryError` when none of the three gives a budget.
+    #
+    # - `defaults`: HostSettings, the `defaults` node's settings.
+    #
+    # ```ruby
+    # entry = Proof::HostEntry.new(name: "nuc", runners: ["nuc-linux"])
+    # defaults = Proof::HostSettings.new(budget: Proof::Size.read("100GB", name: "budget"))
+    # entry.resolved(defaults).budget.megabytes # => 102_400
+    # ```
+    def resolved: (HostSettings defaults) -> ResolvedHost
+
+    NO_BUDGET: String
+  end
+end

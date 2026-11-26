@@ -62,6 +62,12 @@ module Proof
   class InvalidHostSettingsError < Error
   end
 
+  class InvalidHostEntryError < Error
+  end
+
+  class InvalidResolvedHostError < Error
+  end
+
   class InvalidRandomSourceError < Error
   end
 

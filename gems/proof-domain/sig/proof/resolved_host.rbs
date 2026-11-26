@@ -1,0 +1,85 @@
+module Proof
+  # A host with every setting it gets, after its entry, the pool file's
+  # `defaults`, and Proof's built-in defaults have each been asked.
+  #
+  # The server places runs by a host's share, and prunes workspaces by its
+  # budget. A host entry that left a setting out would make each of them ask
+  # three sources, in the same order, and fail the same way when none has an
+  # answer.
+  #
+  # This class holds the host's name and runners, and each of its five settings,
+  # none of them `nil`. A host with a setting missing, or with one of the wrong
+  # kind, can't exist.
+  #
+  # Use it as what `Proof::HostEntry#resolved` and
+  # `Proof::PoolFile#resolved_hosts` give the server.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # entry = Proof::HostEntry.new(
+  #   name: "pc", runners: ["pc-windows", "pc-wsl"],
+  #   settings: Proof::HostSettings.new(budget: Proof::Size.read("250GB", name: "budget"))
+  # )
+  # host = entry.resolved(Proof::HostSettings.new)
+  # [host.name, host.runners, host.budget.megabytes, host.active_for.seconds] # => ["pc", ["pc-windows", "pc-wsl"], 256_000, 300]
+  # ```
+  #
+  # A setting that is missing is refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidResolvedHostError
+  # Proof::ResolvedHost.new(
+  #   name: "nuc", runners: ["nuc-linux"], budget: nil, keep_free: Proof::Size.new(megabytes: 25_600),
+  #   share: Proof::Resources.new(cpus: 2, megabytes: 4096), active_for: Proof::Duration.new(seconds: 300),
+  #   withheld: Proof::LabelSet.of
+  # )
+  # ```
+  class ResolvedHost < Data
+    # The message for a missing setting, which `format` fills in with the
+    # setting's name.
+    MISSING: String
+
+    # The host's name, frozen.
+    attr_reader name: String
+
+    # The names of the host's runners, in a frozen `Array`.
+    attr_reader runners: Array[String]
+
+    # The disk space Proof may use on the host.
+    attr_reader budget: Size
+
+    # The disk space the host's runners always leave free.
+    attr_reader keep_free: Size
+
+    # The CPUs and memory Proof keeps free on the host for a person.
+    attr_reader share: Resources
+
+    # How long after the last use of the host's input devices a person still
+    # counts as active.
+    attr_reader active_for: Duration
+
+    # The labels the host's runners must not offer, possibly none.
+    attr_reader withheld: LabelSet
+
+    def self.new: (name: String, runners: Array[String], budget: Size, keep_free: Size, share: Resources, active_for: Duration, withheld: LabelSet) -> instance
+                | (String name, Array[String] runners, Size budget, Size keep_free, Resources share, Duration active_for, LabelSet withheld) -> instance
+
+    # Builds a resolved host, and raises `Proof::InvalidResolvedHostError`
+    # when a setting is `nil`, or when the name, the runners, or a setting is
+    # something that `Proof::HostEntry` and `Proof::HostSettings` refuse.
+    #
+    # - `name`: String, such as `"nuc"`.
+    # - `runners`: Array of String, one or more.
+    # - `budget`: Size.
+    # - `keep_free`: Size.
+    # - `share`: Resources. It may be 0 CPUs and 0 megabytes.
+    # - `active_for`: Duration.
+    # - `withheld`: LabelSet.
+    def initialize: (name: String, runners: Array[String], budget: Size, keep_free: Size, share: Resources, active_for: Duration, withheld: LabelSet) -> void
+
+    private
+
+    def entry_of: (String name, Array[String] runners, Hash[Symbol, Object] settings) -> HostEntry
+  end
+end

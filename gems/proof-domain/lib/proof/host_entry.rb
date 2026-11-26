@@ -1,0 +1,35 @@
+# frozen_string_literal: true
+
+require_relative("built_in_host_defaults")
+require_relative("host_settings")
+require_relative("member_check")
+require_relative("resolved_host")
+
+module Proof
+  # steep:ignore:start
+  class HostEntry < Data.define(:name, :runners, :settings)
+    # steep:ignore:end
+    RULES = {
+      name: ["a host entry's name is a name, not %p", MemberCheck.method(:named?)],
+      runners: ["a host entry's runners are one or more runner names that differ, not %p", MemberCheck.method(:names?)],
+      settings: ["a host entry's settings are host settings, not %p", HostSettings.method(:===)],
+    }.freeze
+    NO_BUDGET = "the host %p has no budget. Give its entry a budget, or give defaults one"
+    private_constant(:RULES, :NO_BUDGET)
+
+    def initialize(name:, runners:, settings: HostSettings.new)
+      problem = MemberCheck.problem(RULES, { name:, runners:, settings: })
+      raise(InvalidHostEntryError, problem) if problem
+
+      super(name: -name, runners: runners.dup.freeze, settings:)
+    end
+
+    def resolved(defaults)
+      # The entry's own value wins, then the defaults', then Proof's built-in value.
+      settled = settings.over(defaults).over(BuiltInHostDefaults::SETTINGS)
+      raise(InvalidHostEntryError, format(NO_BUDGET, name)) unless settled.budget
+
+      ResolvedHost.new(name:, runners:, **settled.to_h)
+    end
+  end
+end
