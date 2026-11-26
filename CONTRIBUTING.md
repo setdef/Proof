@@ -38,7 +38,7 @@ The command exits 0 when every check passes, with no errors and no warnings. It 
 | Tests | A failing test, or a line or branch no test runs (SimpleCov's minimum is 100% for each file) |
 | RuboCop | Any offense, with every cop on |
 | Steep | A type error, or `untyped` in a `.rbs` file |
-| RubyCritic | Nothing yet. It reports a score and has no floor |
+| RubyCritic | A file rated below A, a smell (from reek), duplication (from flay), or an overall score below 95. The failure names each file, its rating, and each smell |
 | REUSE | A file without an SPDX header |
 | RDoc coverage | A public class, module, constant, or method with no documentation |
 | CLI spec | `usage lint` finding a fault, or a generated reference that differs from the spec |

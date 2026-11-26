@@ -8,14 +8,31 @@
 require "inch/rake"
 require "rubocop/rake_task"
 require "rubycritic/rake_task"
+require_relative("../critic_faults")
 require_relative("reuse_fixer")
 
 RuboCop::RakeTask.new
 
-# Run rubycritic in a shell to prevent it from exiting the rake process
-desc "Run RubyCritic"
+# The floor for RubyCritic's overall score. It may rise, never fall.
+RUBYCRITIC_MINIMUM_SCORE = 95
+RUBYCRITIC_REPORT_DIR = "tmp/rubycritic"
+
+# RubyCritic runs in a shell so a failing score can't exit the rake process,
+# then the task reads its JSON report: every file must be rated A, with no
+# smell from reek or flay.
+desc "Run RubyCritic: every file rated A, no smells, no duplication, a score of at least #{RUBYCRITIC_MINIMUM_SCORE}"
 task :rubycritic do
-  sh("bundle exec rubycritic --no-browser lib sig")
+  report = File.join(RUBYCRITIC_REPORT_DIR, "report.json")
+  FileUtils.rm_f(report)
+  score_ok = system(
+    "bundle exec rubycritic --no-browser --format json --path #{RUBYCRITIC_REPORT_DIR} " \
+      "--minimum-score #{RUBYCRITIC_MINIMUM_SCORE} lib sig"
+  )
+  abort("RubyCritic wrote no report.") unless File.exist?(report)
+
+  faults = CriticFaults.in_report(File.read(report)).map { |fault| "  #{fault}" }
+  abort("RubyCritic faults:\n#{faults.join("\n")}") unless faults.empty?
+  abort("RubyCritic's score is below #{RUBYCRITIC_MINIMUM_SCORE}.") unless score_ok
 end
 
 Inch::Rake::Suggest.new("doc:suggest", "lib/**/*.rb", "sig/**/*.rbs") do |suggest|

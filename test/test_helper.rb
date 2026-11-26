@@ -13,6 +13,7 @@ SimpleCov.start do
   # A deprecated SimpleCov setting raises instead of warning.
   deprecations(:raise)
   cover("lib/**/*.rb")
+  cover("tasks/critic_faults.rb")
   enable_coverage(:branch)
   minimum_coverage(line: 100, branch: 100)
   coverage(:line) { minimum(100, per: :file) }
