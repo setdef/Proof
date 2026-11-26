@@ -26,7 +26,7 @@ module Proof
   # budget = Proof::Size.read("400GB", name: "budget")
   # nuc = Proof::HostEntry.new(name: "nuc", runners: ["nuc-linux"], settings: Proof::HostSettings.new(budget:))
   # file = Proof::PoolFile.new(hosts: [nuc])
-  # [file.port, file.resolved_hosts.map(&:name), file.resolved_hosts.first.budget.megabytes] # => [7443, ["nuc"], 409_600]
+  # [file.port.number, file.resolved_hosts.map(&:name), file.resolved_hosts.first.budget.megabytes] # => [7443, ["nuc"], 409_600]
   # ```
   #
   # A pool file with nothing has the defaults:
@@ -51,8 +51,8 @@ module Proof
     # The default of each member, for a part the pool file leaves out.
     DEFAULTS: Hash[Symbol, Object]
 
-    # The TCP port the server listens on, a whole number from 1 to 65535.
-    attr_reader port: Integer
+    # The TCP port the server listens on.
+    attr_reader port: Port
 
     # How long the server keeps what each run leaves.
     attr_reader retention: Retention
@@ -70,17 +70,16 @@ module Proof
     # `Array`.
     attr_reader repositories: Array[RepositoryEntry]
 
-    def self.new: (?port: Integer, ?retention: Retention, ?limits: Limits, ?defaults: HostSettings, ?hosts: Array[HostEntry], ?repositories: Array[RepositoryEntry]) -> instance
-                | (?Integer port, ?Retention retention, ?Limits limits, ?HostSettings defaults, ?Array[HostEntry] hosts, ?Array[RepositoryEntry] repositories) -> instance
+    def self.new: (?port: Port, ?retention: Retention, ?limits: Limits, ?defaults: HostSettings, ?hosts: Array[HostEntry], ?repositories: Array[RepositoryEntry]) -> instance
+                | (?Port port, ?Retention retention, ?Limits limits, ?HostSettings defaults, ?Array[HostEntry] hosts, ?Array[RepositoryEntry] repositories) -> instance
 
-    # Builds a pool file, and raises `Proof::InvalidPoolFileError` unless `port`
-    # is a whole number from 1 to 65535, each part is the kind it holds, no two
-    # hosts have one name, no runner is on two hosts, and no two repositories
-    # have one name. It raises `Proof::InvalidHostEntryError` for a host with no
-    # budget in its entry or in `defaults`. A keyword that isn't one of these
-    # raises `ArgumentError`.
+    # Builds a pool file, and raises `Proof::InvalidPoolFileError` unless each
+    # part is the kind it holds, no two hosts have one name, no runner is on two
+    # hosts, and no two repositories have one name. It raises
+    # `Proof::InvalidHostEntryError` for a host with no budget in its entry or
+    # in `defaults`. A keyword that isn't one of these raises `ArgumentError`.
     #
-    # - `port`: Integer. Defaults to 7443.
+    # - `port`: Port. Defaults to 7443.
     # - `retention`: Retention. Defaults to the page's defaults.
     # - `limits`: Limits. Defaults to the page's defaults.
     # - `defaults`: HostSettings. Defaults to settings that give nothing.
@@ -88,9 +87,9 @@ module Proof
     # - `repositories`: Array of RepositoryEntry. Defaults to none.
     #
     # ```ruby
-    # Proof::PoolFile.new(port: 8443).port # => 8443
+    # Proof::PoolFile.new(port: Proof::Port.new(number: 8443)).port.number # => 8443
     # ```
-    def initialize: (?port: Integer, ?retention: Retention, ?limits: Limits, ?defaults: HostSettings, ?hosts: Array[HostEntry], ?repositories: Array[RepositoryEntry]) -> void
+    def initialize: (?port: Port, ?retention: Retention, ?limits: Limits, ?defaults: HostSettings, ?hosts: Array[HostEntry], ?repositories: Array[RepositoryEntry]) -> void
 
     # Each host with every setting it gets, in the order the file has them: from
     # its entry, then `defaults`, then Proof's built-in defaults.

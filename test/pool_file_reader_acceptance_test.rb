@@ -20,7 +20,7 @@ class PoolFileReaderAcceptanceTest < Minitest::Test
     file = read(page_example("## A complete example"))
     limits = [file.limits.output, file.limits.artifacts].map(&:megabytes)
 
-    assert_equal([7443, [90, 14, 7], [1024, 16_384]], [file.port, days_kept(file.retention), limits])
+    assert_equal([7443, [90, 14, 7], [1024, 16_384]], [file.port.number, days_kept(file.retention), limits])
   end
 
   # The same prose: "On `nuc`, Proof may use 400 GB of disk. On `pc`, Proof may use 250 GB, ... and never offers the

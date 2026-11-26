@@ -74,6 +74,9 @@ module Proof
   class InvalidPoolFileError < Error
   end
 
+  class InvalidPortError < Error
+  end
+
   class InvalidRandomSourceError < Error
   end
 

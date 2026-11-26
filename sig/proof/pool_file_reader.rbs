@@ -23,7 +23,7 @@ module Proof
   #
   # ```ruby
   # file = Proof::PoolFileReader.read("server port=8443\nretention output=\"30d\"\n")
-  # [file.port, file.retention.output.seconds / 86_400, file.retention.runs.seconds / 86_400] # => [8443, 30, 90]
+  # [file.port.number, file.retention.output.seconds / 86_400, file.retention.runs.seconds / 86_400] # => [8443, 30, 90]
   # ```
   #
   # A mistake raises an error that names the line:
@@ -58,7 +58,7 @@ module Proof
     # Reads `text` as `Proof::PoolFileReader.read` does.
     #
     # ```ruby
-    # Proof::PoolFileReader.new(path: "pool.kdl").read("server port=8443\n").port # => 8443
+    # Proof::PoolFileReader.new(path: "pool.kdl").read("server port=8443\n").port.number # => 8443
     # ```
     def read: (String text) -> PoolFile
 

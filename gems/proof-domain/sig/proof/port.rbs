@@ -1,0 +1,57 @@
+module Proof
+  # A TCP port, a whole number from 1 to 65535.
+  #
+  # The pool file's `server` node writes the port the server listens on, and
+  # every runner and every computer where you run `proof` connects to it. A
+  # number outside the range, a decimal, or text can't be a port, and a port
+  # that can't be one is better refused where the file is read than found
+  # when the server fails to listen.
+  #
+  # This class holds the number and the rule. Use it for the pool file's
+  # `port`.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::Port.new(number: 7443).number # => 7443
+  # ```
+  #
+  # The least and the greatest port are ports:
+  #
+  # ```ruby
+  # [1, 65_535].map { |number| Proof::Port.new(number:).number } # => [1, 65_535]
+  # ```
+  #
+  # A number above 65535 is refused, and the message says what a port is:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidPortError
+  # Proof::Port.new(number: 65_536)
+  # ```
+  class Port < Data
+    # The message for a number that isn't a port, which `format` fills in with
+    # what the number was.
+    MESSAGE: String
+
+    # The greatest port, 65535.
+    LARGEST: Integer
+
+    # The port's number, a whole number from 1 to 65535.
+    attr_reader number: Integer
+
+    def self.new: (number: Integer) -> instance
+                | (Integer number) -> instance
+
+    # Builds a port, and raises `Proof::InvalidPortError` unless `number` is an
+    # Integer from 1 to 65535. A decimal, text, `nil`, `0`, and a negative
+    # number raise. The message says that the server's port is a whole number
+    # from 1 to 65535, and what it got.
+    #
+    # - `number`: Integer, a whole number from 1 to 65535.
+    #
+    # ```ruby
+    # Proof::Port.new(number: 80) == Proof::Port.new(number: 80) # => true
+    # ```
+    def initialize: (number: Integer) -> void
+  end
+end

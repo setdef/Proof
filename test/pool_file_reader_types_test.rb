@@ -21,7 +21,7 @@ class PoolFileReaderTypesTest < Minitest::Test
       assert_refused(
         "// the server\nserver port=#{written}\n",
         2,
-        domain_said(Proof::InvalidPoolFileError) { Proof::PoolFile.new(port: value) }
+        domain_said(Proof::InvalidPortError) { Proof::Port.new(number: value) }
       )
     end
   end

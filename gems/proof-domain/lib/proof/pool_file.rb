@@ -5,6 +5,7 @@ require_relative("host_settings")
 require_relative("limits")
 require_relative("member_check")
 require_relative("pool_names")
+require_relative("port")
 require_relative("repository_entry")
 require_relative("retention")
 
@@ -13,10 +14,7 @@ module Proof
   class PoolFile < Data.define(:port, :retention, :limits, :defaults, :hosts, :repositories)
     # steep:ignore:end
     RULES = {
-      port: [
-        "the server's port is a whole number from 1 to 65535, not %p",
-        -> (value) { MemberCheck.whole?(value, 1) && value <= 65_535 },
-      ],
+      port: ["a pool file's port is a Proof::Port, not %p", Port.method(:===)],
       retention: ["a pool file's retention is a Proof::Retention, not %p", Retention.method(:===)],
       limits: ["a pool file's limits are a Proof::Limits, not %p", Limits.method(:===)],
       defaults: ["a pool file's defaults are host settings, not %p", HostSettings.method(:===)],
@@ -30,7 +28,12 @@ module Proof
       ],
     }.freeze
     DEFAULTS = {
-      port: 7443, retention: Retention.new, limits: Limits.new, defaults: HostSettings.new, hosts: [], repositories: []
+      port: Port.new(number: 7443),
+      retention: Retention.new,
+      limits: Limits.new,
+      defaults: HostSettings.new,
+      hosts: [],
+      repositories: [],
     }.freeze
     private_constant(:RULES, :DEFAULTS)
 

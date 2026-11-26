@@ -21,12 +21,12 @@ class PoolFileReaderTest < Minitest::Test
   def test_the_server_has_its_port
     ports = %w[7443 8443 1 65535].map { |port| read("server port=#{port}\n").port }
 
-    assert_equal([7443, 8443, 1, 65_535], ports)
+    assert_equal([7443, 8443, 1, 65_535], ports.map(&:number))
   end
 
   # The same row: a `server` node with no `port` leaves the default.
   def test_a_server_node_with_no_port_has_the_default_port
-    assert_equal(7443, read("server\n").port)
+    assert_equal(7443, read("server\n").port.number)
   end
 
   # Pool file reference, "A complete example": `server`, `retention`, and `limits` are three nodes of one file, each of
@@ -35,7 +35,11 @@ class PoolFileReaderTest < Minitest::Test
     file = read("server port=8443\nretention output=\"30d\"\nlimits artifacts=\"2GB\"\n")
 
     assert_equal(
-      [8443, Proof::Retention.new(output: days("30d")), Proof::Limits.new(artifacts: size("2GB"))],
+      [
+        Proof::Port.new(number: 8443),
+        Proof::Retention.new(output: days("30d")),
+        Proof::Limits.new(artifacts: size("2GB")),
+      ],
       [file.port, file.retention, file.limits]
     )
   end

@@ -10,7 +10,7 @@ module Proof
   # This class builds each property's value with the domain's classes, so a
   # port, a duration, and a size have one rule each, and a value the domain
   # refuses is a refusal at the line of the node that gave it. It builds the
-  # `port`, the `Proof::Retention`, and the `Proof::Limits` of the file, and
+  # `Proof::Port`, the `Proof::Retention`, and the `Proof::Limits` of the file, and
   # leaves out what the file doesn't give, so the defaults stand.
   #
   # Use it from `Proof::PoolFileReader`.
@@ -36,7 +36,7 @@ module Proof
     # path = "pool.kdl"
     # nodes = Proof::KdlParser.parse("server port=8443\n", path:, error: Proof::PoolFileError)
     # by_name = nodes.group_by { |node| node.name.to_sym }
-    # Proof::PoolFileProperties.new(refusal: Proof::PoolFileRefusal.new(path:)).read(by_name) # => {port: 8443}
+    # Proof::PoolFileProperties.new(refusal: Proof::PoolFileRefusal.new(path:)).read(by_name) # => {port: Proof::Port.new(number: 8443)}
     # ```
     def read: (Hash[Symbol, Array[KdlNode]] by_name) -> Hash[Symbol, Object]
 

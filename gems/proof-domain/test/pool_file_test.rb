@@ -24,7 +24,7 @@ class PoolFileTest < Minitest::Test
     file = complete_example
     names = [file.hosts, file.repositories].map { |entries| entries.map(&:name) }
 
-    parts = [file.port, file.retention.runs, file.limits.output, file.defaults, names]
+    parts = [file.port.number, file.retention.runs, file.limits.output, file.defaults, names]
 
     assert_equal([7443, days("90d"), size("1GB"), example_defaults, [%w[nuc pc], %w[lota]]], parts)
   end
@@ -36,20 +36,23 @@ class PoolFileTest < Minitest::Test
     file = Proof::PoolFile.new
 
     assert_equal(
-      [7443, Proof::Retention.new, Proof::Limits.new, Proof::HostSettings.new, [], []],
+      [Proof::Port.new(number: 7443), Proof::Retention.new, Proof::Limits.new, Proof::HostSettings.new, [], []],
       [file.port, file.retention, file.limits, file.defaults, file.hosts, file.repositories]
     )
   end
 
-  # Pool file reference, "`server`": `port` is "A port number", the TCP port, so a whole number from 1 to 65535 is one.
-  def test_a_port_from_1_to_65535_is_accepted
-    assert_equal([1, 80, 7443, 65_535], [1, 80, 7443, 65_535].map { |port| Proof::PoolFile.new(port:).port })
+  # Pool file reference, "`server`": `port` is "A port number", so the pool file holds the port it is given.
+  def test_a_pool_file_holds_its_port
+    assert_equal(Proof::Port.new(number: 8443), Proof::PoolFile.new(port: Proof::Port.new(number: 8443)).port)
   end
 
-  # The same row: a port below 1 or above 65535, a decimal, and text are not port numbers.
-  def test_a_port_that_is_not_a_port_number_is_refused
-    [0, -1, 65_536, 70_000, 1.5, "7443", nil].each do |port|
-      assert_raises(Proof::InvalidPoolFileError, port.inspect) { Proof::PoolFile.new(port:) }
+  # The same row: a port number that isn't wrapped in a `Proof::Port` is not a port, so the rule for a port lives in
+  # one value.
+  def test_a_port_that_is_not_a_port_value_is_refused
+    [7443, "7443", nil].each do |port|
+      error = assert_raises(Proof::InvalidPoolFileError, port.inspect) { Proof::PoolFile.new(port:) }
+
+      assert_equal("a pool file's port is a Proof::Port, not #{port.inspect}", error.message)
     end
   end
 

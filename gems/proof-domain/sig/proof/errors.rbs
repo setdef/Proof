@@ -137,10 +137,14 @@ module Proof
   class InvalidRepositoryEntryError < Error
   end
 
-  # Raised when a pool file's port isn't a whole number from 1 to 65535, a part
-  # of it isn't the kind it holds, two hosts have one name, one runner is on two
-  # hosts, or two repositories have one name, each without regard to case.
+  # Raised when a pool file's port isn't a `Proof::Port`, a part of it isn't the
+  # kind it holds, two hosts have one name, one runner is on two hosts, or two
+  # repositories have one name, each without regard to case.
   class InvalidPoolFileError < Error
+  end
+
+  # Raised when a port isn't a whole number from 1 to 65535.
+  class InvalidPortError < Error
   end
 
   # Raised when a source of randomness answers with anything but a whole

@@ -3,7 +3,7 @@
 module Proof
   class PoolFileProperties
     BUILDERS = {
-      server: { port: -> (value) { PoolFile.new(port: value).port } },
+      server: { port: -> (value) { Port.new(number: value) } },
       retention: {
         runs: -> (value) { Duration.read(value, units: %i[d], name: "retention runs") },
         output: -> (value) { Duration.read(value, units: %i[d], name: "retention output") },
