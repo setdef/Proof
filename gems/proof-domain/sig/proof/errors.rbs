@@ -111,6 +111,13 @@ module Proof
   class InvalidLimitsError < Error
   end
 
+  # Raised when a host's settings hold something that isn't a setting: a
+  # budget or a keep-free space that is not a `Proof::Size`, a share that is not
+  # `Proof::Resources`, an active-for time that is not a `Proof::Duration`, or
+  # withheld labels that are not a `Proof::LabelSet`.
+  class InvalidHostSettingsError < Error
+  end
+
   # Raised when a source of randomness answers with anything but a whole
   # number from 0 up to, and not including, the limit it was asked for.
   class InvalidRandomSourceError < Error

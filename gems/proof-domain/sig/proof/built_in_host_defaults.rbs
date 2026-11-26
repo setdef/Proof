@@ -1,0 +1,29 @@
+module Proof
+  # The settings a host gets when neither its entry nor the `defaults` node
+  # gives one.
+  #
+  # A pool file with a host entry that is only a name, a runner, and a budget
+  # still has to say how much disk the host keeps free, how much of it a person
+  # keeps, and when a person is active. Without built-in values, every file
+  # would write all of them for every host.
+  #
+  # This module holds them, as the pool file page's table gives them: `"25GB"`
+  # kept free, a share of 2 CPUs and 4 GB, a person active for `"5m"`, and no
+  # labels withheld. It gives no budget, because `proof runner approve` writes
+  # each host's budget, so a host with no budget in its entry or in `defaults`
+  # is refused.
+  #
+  # Use it as the last source in the order of a host's settings.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # settings = Proof::BuiltInHostDefaults::SETTINGS
+  # [settings.keep_free.megabytes, settings.share.cpus, settings.active_for.seconds] # => [25_600, 2, 300]
+  # settings.budget # => nil
+  # ```
+  module BuiltInHostDefaults
+    # The built-in settings, a `Proof::HostSettings` with no budget.
+    SETTINGS: HostSettings
+  end
+end

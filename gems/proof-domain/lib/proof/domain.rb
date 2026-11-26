@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative("built_in_defaults")
+require_relative("built_in_host_defaults")
 require_relative("closest_host")
 require_relative("crockford")
 require_relative("domain/version")
@@ -8,6 +9,7 @@ require_relative("duration")
 require_relative("duration_text")
 require_relative("errors")
 require_relative("host")
+require_relative("host_settings")
 require_relative("in_memory/runs")
 require_relative("label")
 require_relative("label_set")

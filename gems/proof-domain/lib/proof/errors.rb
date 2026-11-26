@@ -59,6 +59,9 @@ module Proof
   class InvalidLimitsError < Error
   end
 
+  class InvalidHostSettingsError < Error
+  end
+
   class InvalidRandomSourceError < Error
   end
 
