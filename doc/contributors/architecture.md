@@ -51,6 +51,35 @@ Options weighed:
 
 - A record of plain fields with a version number: it meets every requirement in [the server design](design/server.md#runs-and-their-records), but it can't show afterwards how a run reached `succeeded`, and nothing in it fails when a field is edited by hand.
 
+#### The facts and the store of runs
+
+`Proof::Run` is built from its ID and its facts, and compared by its ID. Each fact is a `Data` value under `Proof::Run`, with the time on the server's clock as `at`:
+
+| Fact | Holds | Comes |
+| --- | --- | --- |
+| `Queued` | The queue position, the operating systems the run may go to, the labels it needs, and the CPUs and memory it requests | First, and only first |
+| `Placed` | The host and the runner | Once |
+| `CommandStarted` | Nothing more | Once, after `Placed` |
+| `CommandEnded` | An exit status or a signal, never both | Once, after `CommandStarted` |
+| `OutputCompleted` | The number of bytes | Once, after `CommandEnded` |
+| `ArtifactsKept` | Nothing more | Once, after `CommandEnded`, and never with `ArtifactsNotKept` |
+| `ArtifactsNotKept` | Why: `no_match`, `over_limit`, `refused_path`, or `short_of_space` | Once: for space after `Placed` and before `CommandStarted`, for any other reason after `CommandEnded` |
+| `CancelAsked` | Nothing more | Once, any time before a final state |
+| `Succeeded`, `Failed`, `TimedOut`, `OutOfMemory`, `Canceled`, `Lost` | Nothing more | Once, as the final state |
+| `ProcessesEnded` | Nothing more | Once, after `Lost`, the only fact a final state can be followed by |
+
+Each final state is allowed only after the facts it needs: `Succeeded` after a command that exited with 0, the whole output, and kept artifacts; `Failed` after the whole output and a status other than 0 or unkept artifacts, or after artifacts left unkept for space; `TimedOut` and `OutOfMemory` after the command started; `Canceled` after a cancel was asked for and the run was placed; `Lost` after the run was placed. A run holds its host's CPUs and memory while it is `running`, and while it is `lost` until its processes end. `Canceled` needs a placement, because the glossary's `canceled` is a run its runner ended, and a cancel asked for while the run is queued is still recorded. How a cancel by someone else ends, and whether a queued run can end `canceled` with no runner, are open in [issue #48](https://github.com/setdef/Proof/issues/48).
+
+The store of runs is the port `Proof::_Runs`. It adds a fact only at the version the caller read, the run's number of facts, refuses a second placement whatever the version, refuses a second run at one queue position, and rebuilds each run from its facts on every read. `Proof::InMemory::Runs` keeps the facts in a `Hash` behind a mutex. `Proof::Testing::RunsContract` is the Minitest module every store passes, with two tests that run two threads at once and one that reopens the store over the same storage.
+
+Options weighed:
+
+- One fact for every final state, with the state as a field: every rule about an ending would test the field, where with a class per state each rule checks for its class.
+- The run's settings from the project file, `Proof::RunSettings`, in `Queued`: they give every setting as optional, so placement would test for an OS that can't be missing, and they hold each task's command, which placement never reads. The use case that queues a run takes the operating systems, labels, and resources from them.
+- An exit status alone, with a signal written as 128 plus its number: a command that exits with 137 and one killed by signal 9 would be one fact.
+- A second `CancelAsked` for a second `TERM`: it records nothing new, and records are bounded per run.
+- A store that took Ruby objects instead of facts: nothing would rebuild a run on reading, so a record changed behind Proof's back would load.
+
 ### Placing a run
 
 Choosing a run's runner is a domain service. It checks the rules that span runs and hosts: a host's resources counted once across its runners, arrival order, labels, and the share. It then writes one fact to one run. Three things keep the decision safe:
@@ -65,6 +94,22 @@ Options weighed:
 
 - A consistency boundary per host that holds its resources: one placement would write to the host and to the run, so no single boundary would cover it.
 - One consistency boundary for the whole queue: every byte of output would wait on its lock.
+
+#### How placement decides
+
+`Proof::Placement` takes the store of runs, the hosts, and the server's clock by keyword: `runs:`, `hosts:`, and `clock:`. The port `Proof::_Hosts` gives each `Proof::Host` with its share, whether a person is active, and its runners. Each `Proof::Runner` has its OS, the labels it offers after the pool file withholds any, its capacity, and whether it is connected.
+
+- **What is free.** A host's capacity is the most any of its runners reports, of each resource. A new run on a runner can have what is free on the host, after every run the host holds on any of its runners and after what it keeps for a person, and no more than what is free on the runner, after the runs on that runner. The host keeps the memory of its share always, and its CPUs while a person is active. A run counts against a host only while the runner it was placed on is one of the host's, so revoking a runner releases what its runs held.
+- **`place_next`** places one run per call, so one decision is one unit of work. It takes the queued runs earliest first and places the first one that fits a connected runner of its OS, with every label it needs, and with its CPUs and memory free. Of the runners that fit, the one with the most memory free takes it, then the one with the most CPUs free, then the first by name.
+- **`wait_reasons`** gives each queued run that fits nowhere its nearest reason, from what stops it on each runner of its operating systems: runs holding the host, then a person active there, then no connected runner that could ever take it, then no runner with its labels. A run whose operating systems have no runner waits for one to connect. No reason yet says that a host needs someone to sign in, because nothing a runner reports says so.
+- **`check`** takes the fact that would queue a run, before it is stored, and raises `Proof::RunFitsNoHostError` when runners take the run's OS and labels but none could ever have its CPUs and memory free: its host's capacity less the memory of the share, within the runner's capacity. Its message says which host has the smallest worst shortfall, where a host's worst shortfall is the smallest fraction of a requested resource it could ever have free, and lists every resource that host lacks, each a `Proof::Shortfall`. A run with no runner of its OS, or no runner with its labels, waits instead.
+
+Options weighed:
+
+- Placing every run that fits in one call: the unit of work would hold its lock across many writes, and a failure part way through would leave some runs placed and others not.
+- The first runner that fits, by name: it fills one host before the next has any run, so a host someone uses fills while others have room.
+- A runner's capacity without the runs already on it: two runs that each fit WSL could go to it together and need more memory than it has.
+- A capacity for each host from a source of its own: nothing reports one, and a runner in a virtual machine never has more than its host, so the most any runner reports is the host's.
 
 ### Output and artifacts
 
