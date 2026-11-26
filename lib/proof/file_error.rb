@@ -4,6 +4,9 @@ module Proof
   # steep:ignore:start
   class FileError < Error
     # steep:ignore:end
+    QUOTED_AS = "memory=\"8GB\""
+    public_constant(:QUOTED_AS)
+
     attr_reader :path, :line, :reason
 
     def initialize(path:, line:, reason:)

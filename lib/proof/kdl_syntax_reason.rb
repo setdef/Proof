@@ -2,14 +2,14 @@
 
 module Proof
   # steep:ignore:start
-  class KdlSyntaxReason < Data.define(:error)
+  class KdlSyntaxReason < Data.define(:error, :quoted_as)
     # steep:ignore:end
-    QUOTE_HINT = ". If a value starts with a digit and continues with letters, put it in quotes, as in memory=\"8GB\""
+    QUOTE_HINT = ". If a value starts with a digit and continues with letters, put it in quotes, as in %s"
     private_constant(:QUOTE_HINT)
 
     def to_s
       reason = "this is not valid KDL 2: #{said} at column #{error.column}"
-      said.start_with?("unexpected IDENT") ? reason + QUOTE_HINT : reason
+      said.start_with?("unexpected IDENT") ? reason + format(QUOTE_HINT, quoted_as) : reason
     end
 
     private def said

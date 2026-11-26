@@ -8,7 +8,8 @@ module Proof
   # This class turns the gem's error into the reason that `Proof::ProjectFileError`
   # holds: it drops the position the gem puts at the end of its message, gives it
   # as a column, and adds the advice to quote a value when the gem found a
-  # word where it expected the end of a value.
+  # word where it expected the end of a value. The advice ends with an example
+  # of a quoted value, in the forms of the kind of file being read.
   #
   # Use it only to fill in a `Proof::ProjectFileError`.
   #
@@ -21,23 +22,28 @@ module Proof
   # rescue KDL::Error => e
   #   e
   # end
-  # Proof::KdlSyntaxReason.new(error:).to_s
+  # Proof::KdlSyntaxReason.new(error:, quoted_as: "memory=\"8GB\"").to_s
   # # => "this is not valid KDL 2: unexpected IDENT \"GB\" at column 22. If a value starts with a digit and continues with letters, put it in quotes, as in memory=\"8GB\""
   # ```
   class KdlSyntaxReason < Data
-    # The advice added when the gem found a word where a value should end.
+    # The advice added when the gem found a word where a value should end, which
+    # `format` fills in with an example of a quoted value.
     QUOTE_HINT: String
 
     # The error the gem raised.
     attr_reader error: KDL::Error
 
-    def self.new: (error: KDL::Error) -> instance
-                | (KDL::Error error) -> instance
+    # The example of a quoted value that the advice gives.
+    attr_reader quoted_as: String
+
+    def self.new: (error: KDL::Error, quoted_as: String) -> instance
+                | (KDL::Error error, String quoted_as) -> instance
 
     # Builds the reason for an error.
     #
     # - `error`: KDL::Error, what the gem raised.
-    def initialize: (error: KDL::Error) -> void
+    # - `quoted_as`: String, an example of a quoted value, for the advice.
+    def initialize: (error: KDL::Error, quoted_as: String) -> void
 
     # The reason, such as `this is not valid KDL 2: unexpected RBRACE "}" at column 3`.
     def to_s: () -> String

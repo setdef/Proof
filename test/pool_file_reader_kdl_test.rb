@@ -20,8 +20,8 @@ class PoolFileReaderKdlTest < Minitest::Test
     assert_refused(
       "limits output=1GB\n",
       1,
-      "this is not valid KDL 2: unexpected IDENT \"GB\" at column 16. " \
-        "If a value starts with a digit and continues with letters, put it in quotes, as in memory=\"8GB\""
+      "this is not valid KDL 2: unexpected IDENT \"GB\" at column 16. If a value starts with a digit and continues " \
+        "with letters, put it in quotes, as in budget \"400GB\" or limits output=\"1GB\""
     )
   end
 

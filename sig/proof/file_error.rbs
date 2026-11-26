@@ -29,6 +29,11 @@ module Proof
   # # => "pool.kdl: this is a symbolic link"
   # ```
   class FileError < Error
+    # An example of a quoted value that the advice to quote gives, in the forms
+    # of the kind of file. A subclass gives its own. Here, a project file's
+    # `memory="8GB"`.
+    QUOTED_AS: String
+
     # The path of the file, as the caller gave it.
     attr_reader path: String
 

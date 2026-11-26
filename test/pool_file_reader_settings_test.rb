@@ -41,13 +41,13 @@ class PoolFileReaderSettingsTest < Minitest::Test
   end
 
   # The same table: `budget 400GB` is "Refused: KDL reads `400GB` as the number 400 followed by `GB`", so the text is
-  # refused as text that is not KDL, with the quotes that work.
+  # refused as text that is not KDL, with the quotes that work, in the form of a budget and not of a task's memory.
   def test_an_unquoted_size_is_refused_with_the_way_to_quote_it
     assert_refused(
       defaults_with("budget 400GB"),
       2,
-      "this is not valid KDL 2: unexpected IDENT \"GB\" at column 13. " \
-        "If a value starts with a digit and continues with letters, put it in quotes, as in memory=\"8GB\""
+      "this is not valid KDL 2: unexpected IDENT \"GB\" at column 13. If a value starts with a digit and continues " \
+        "with letters, put it in quotes, as in budget \"400GB\" or limits output=\"1GB\""
     )
   end
 

@@ -21,5 +21,8 @@ module Proof
   # error.line # => 12
   # ```
   class PoolFileError < FileError
+    # The example of a quoted value in a pool file, in the form of an argument
+    # and of a property: `budget "400GB" or limits output="1GB"`.
+    QUOTED_AS: String
   end
 end

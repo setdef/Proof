@@ -28,11 +28,15 @@ module Proof
       parser = KdlLines::LinedParser.new(output_module: KdlLines::Output, parse_types: false)
       parser.parse(utf8_of(text)).nodes.map(&:to_kdl_node)
     rescue KDL::Error => e
-      raise(@error.new(path: @path, line: e.line, reason: KdlSyntaxReason.new(error: e).to_s))
+      raise(@error.new(path: @path, line: e.line, reason: syntax_reason(e)))
     rescue TypeError
       # The gem's tokenizer fails with a TypeError, and not its own error, for a string that a backslash ends the
       # text in, so the mistake is at the end of the text.
       raise(@error.new(path: @path, line: text.lines.size, reason: ENDS_TOO_SOON))
+    end
+
+    private def syntax_reason(error)
+      KdlSyntaxReason.new(error:, quoted_as: @error::QUOTED_AS).to_s
     end
 
     private def utf8_of(text)
