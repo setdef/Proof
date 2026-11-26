@@ -4,6 +4,8 @@ This project follows a strict and specific documentation style designed to be he
 
 **All agents and contributors must adhere to these standards.**
 
+The API documentation lives in the `.rbs` files under `sig/`, next to each declaration, and is written in Markdown. RDoc reads the `.rbs` files when you pass them as input, and then the HTML, `ri`, and `rake rdoc:coverage` all use those comments. A `.rb` file keeps only comments that say why the code is written as it is, or that explain a tricky part, and none sits directly above a `def`, `class`, or `module`: RDoc would take it as documentation.
+
 ## 1. Core Philosophy
 
 *   **Context, Problem, Solution (Alexandrian Form):** Do not just say *what* a class does. Explain *why* it exists. Start with the context, state the problem (the pain point without this tool), and then present the class as the solution.
@@ -22,19 +24,19 @@ Every public class must begin with a **Context-Problem-Solution** narrative.
 3.  **Problem (Narrative):** A sentence or two identifying the specific difficulty, complexity, or "pain" the user faces in this context without the class.
 4.  **Solution (Narrative):** A sentence explaining how this class solves that problem, often starting with "This class..." or "Use it to...".
 5.  **Usage (Narrative):** A concrete "Use it to..." sentence listing common applications.
-6.  **Example:** A comprehensive, copy-pasteable code example using `=== Examples`. Provide **multiple** examples to cover different use cases (e.g., basic usage vs. advanced configuration).
+6.  **Example:** A comprehensive, copy-pasteable code example under an `## Examples` heading, in a fenced `ruby` block. Provide **multiple** examples to cover different use cases (e.g., basic usage vs. advanced configuration).
 
 ### Example
 
 **Bad (Generic/Descriptive):**
-```ruby
+```rbs
 # A class for managing resources.
 # It allows the user to store objects by integer ID.
 # Supports adding, fetching, and closing.
 ```
 
 **Good (Alexandrian/Zinsser/Plain Language):**
-```ruby
+```rbs
 # Stores managed objects behind integer handles.
 #
 # Frontend JavaScript cannot hold Ruby objects. Serializing large
@@ -61,36 +63,35 @@ Every public class must begin with a **Context-Problem-Solution** narrative.
 
 ### Syntax Standards
 
-*   **Examples:** All public methods must include at least one usage example. Use `=== Example`.
-*   **Attributes:** Use `attr_reader` with documentation comments immediately preceding them.
-*   **Parameters:** Use strict RDoc definition lists `[name] description` for parameters in the `initialize` method.
-*   **Formatting:** Use `+code+` for simple identifiers (e.g., `+nil+`, `+rid+`) and `<tt>` tags for anything with spaces or punctuation (e.g., `<tt>plugin:image|new</tt>`).
-    *   Do **not** use backticks (\`) or markdown-style links `[text](url)`. RDoc does not render them correctly in all contexts.
+*   **Examples:** All public methods must include at least one usage example. Use an `## Example` heading and a fenced `ruby` block.
+*   **Attributes:** Declare `attr_reader` in the `.rbs` file, with the documentation comment immediately preceding it.
+*   **Parameters:** Use a Markdown bulleted list, one item for each parameter, with the name in backticks, for the `initialize` method. RDoc's `[name] description` lists render literally in `.rbs` comments.
+*   **Formatting:** Write the comments in Markdown. Use backticks for identifiers, values, and anything with spaces or punctuation (e.g., `` `nil` ``, `` `rid` ``, `` `plugin:image|new` ``), `**bold**` for emphasis, and `[text](url)` for links. RDoc's `+code+` and `<tt>` markup render literally.
     *   Do **not** use smart quotes.
 
 ### Example
 
-```ruby
+```rbs
 class Webview
   # The unique label identifying this webview.
-  attr_reader :label
+  attr_reader label: String
 
   # Creates a new Webview wrapper.
   #
-  # [label] String, unique among webviews (e.g., <tt>"main"</tt>).
-  # [native] Native::WebView handle from wry.
-  def initialize(label:, native:)
-    super
-  end
+  # - `label`: String, unique among webviews (e.g., `"main"`).
+  # - `native`: Native::WebView handle from wry.
+  def initialize: (label: String, native: Native::WebView) -> void
 end
 ```
 
 ## 4. RDoc Specifics
 
 *   **No Endless Methods:** Do **not** use Ruby 3.0+ endless method definitions (`def foo = bar`). RDoc currently has a bug where it fails to correctly parse the end of the method, causing subsequent methods to lose their visibility and comment attachment (they show up as undocumented public methods in `rake rdoc:coverage`). Always use standard `def ... end` blocks.
-*   **No YARD:** Do not use `@param`, `@return`, or other YARD tags. Use standard RDoc formats.
-*   **Directives:** Use `:nodoc:` for private or internal methods that should not appear in the API docs.
-*   **Headings:** Use `===` for section headers like `=== Examples`.
+*   **No YARD:** Do not use `@param`, `@return`, or other YARD tags. The types are in the `.rbs` signature, and the comment holds the prose.
+*   **Input:** RDoc reads `sig/**/*.rbs` only when it is passed as input beside `lib/**/*.rb`, as the `Rakefile` does. Without the `.rbs` files, the coverage report counts each item they document as undocumented.
+*   **Directives:** RDoc does not process `:nodoc:` or `:stopdoc:` in `.rbs` comments, and they show as text. Declare an internal method under `private` instead.
+*   **Headings:** Use Markdown headings, `##` and below, for section headers like `## Examples`.
+*   **Why-comments in `.rb`:** Put a comment that says why the code is written as it is inside the body. RDoc attaches a comment to the next `def`, `class`, `module`, or constant even across blank lines, so a blank line doesn't keep it out of the documentation.
 
 ## 5. Checklist for Agents
 
@@ -98,5 +99,6 @@ Before finalizing documentation, ask:
 1.  Did I explain the *problem* this code solves?
 2.  Are my sentences short and active? (Did I remove "allows the user to"?)
 3.  Is the code example valid and copy-pasteable?
-4.  Did I use `+code+` or `<tt>` for symbols and code values?
+4.  Did I use backticks for symbols and code values?
 5.  Did I document every attribute and parameter?
+6.  Is the comment in the `.rbs` file, with no comment above a definition in the `.rb` file?

@@ -1,3 +1,4 @@
 module Proof
+  # The version of Proof, always `0.X.Y`.
   VERSION: String
 end

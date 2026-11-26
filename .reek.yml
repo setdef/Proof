@@ -1,0 +1,7 @@
+---
+detectors:
+  IrresponsibleModule:
+    # Reek wants a comment above each class and module in lib/. The
+    # documentation of lib/ lives in sig/**/*.rbs, and a comment above a
+    # definition in a .rb file fails the docs:placement check.
+    enabled: false

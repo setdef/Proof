@@ -35,7 +35,7 @@ The command exits 0 when every check passes, with no errors and no warnings. It 
 | Steep | A type error, or `untyped` in a `.rbs` file |
 | RubyCritic | A file rated below A, a smell (from reek), duplication (from flay), or an overall score below 95. The failure names each file, its rating, and each smell |
 | REUSE | A file that `REUSE.toml` gives no copyright or license |
-| RDoc coverage | A public class, module, constant, or method with no documentation |
+| RDoc coverage | A public class, module, constant, or method with no documentation, counting the comments in `sig/**/*.rbs` |
 | CLI spec | `usage lint` finding a fault, or a generated reference that differs from the spec |
 
 Run one check while you work: `bundle exec rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `usage:lint`, or `usage:references`. `bundle exec rake lint:fix` corrects the RuboCop offenses it can.
@@ -55,7 +55,7 @@ Never edit either page by hand. If one differs from what the spec generates, `bu
 
 ## Write the change
 
-- Documentation follows [the style guide](doc/contributors/style-guide.md), and RDoc comments in Ruby files follow [the documentation style guide](doc/contributors/documentation_style.md).
+- Documentation follows [the style guide](doc/contributors/style-guide.md), and the API documentation in `sig/**/*.rbs` follows [the documentation style guide](doc/contributors/documentation_style.md).
 - Use the words in [the glossary](doc/glossary.md).
 - What Proof builds next, and what 1.0 leaves out, is in [the plan](doc/contributors/plan.md).
 - To propose a change, open an [issue](https://github.com/setdef/Proof/issues) that describes it, or a pull request with the change and its tests.

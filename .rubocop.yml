@@ -58,3 +58,20 @@ Style/DataInheritance:
   # count them. A constant defined in the block also lands in the enclosing
   # namespace. The class form costs one unnamed superclass.
   Enabled: false
+
+Style/Documentation:
+  inherit_mode:
+    merge:
+      - Exclude
+  # The documentation of lib/ lives in sig/**/*.rbs, so a class or module in
+  # lib/ carries no comment. The docs:placement task fails on one that does.
+  Exclude:
+    - "lib/**/*.rb"
+
+Style/DocumentationMethod:
+  inherit_mode:
+    merge:
+      - Exclude
+  # Same reason as Style/Documentation: lib/'s methods are documented in sig/.
+  Exclude:
+    - "lib/**/*.rb"
