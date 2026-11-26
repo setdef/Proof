@@ -113,7 +113,7 @@ There are three kinds of token, and Proof records the kind when it issues one. A
 
 A token for running work lets its holder run any command, as the runner account, on every runner in the pool: that is what running a task is. Give one only to people and agents you'd give an account on those hosts.
 
-The server's address and certificate fingerprint travel inside the codes `proof server setup` and `proof runner setup` print. So the command and the runners know they're talking to your server from their first connection, with no certificate authority involved.
+The codes `proof server setup` and `proof runner setup` print also prove the server. Before `proof login` sends a code, the server shows it knows that code. A runner trusts the server only after you approve it from a computer that already does. So the command and the runners know they're talking to your server from their first connection, with no certificate authority involved.
 
 ## Why Proof is built this way
 

@@ -59,7 +59,7 @@ What the server must guarantee, and the traps known so far. How to meet each req
 - Tokens are issued to one person, agent, or runner each, stored by Proof in files only their owner can read, and never accepted from a command-line argument or an environment variable.
 - **A token has one of three kinds: person, agent, or runner.** A person's may approve and revoke runners and cancel any run. An agent's may run, watch, download, and cancel its own runs. A runner's may do only a runner's work, because a runner's token never needs a person's powers. Each token carries its kind from the day it is issued, so changing the kinds later means issuing every token again.
 - One-time codes (approval and sign-in) are 8 characters of Crockford's Base32, grouped 4-4, valid once for 15 minutes, and void after 5 wrong attempts. Input is accepted in either case, with or without the hyphen, with `O` read as `0` and `I` or `L` as `1`.
-- The server makes its certificate itself. Its fingerprint travels inside the codes, so the command and runners pin it on first contact.
+- The server makes its certificate itself. The command and runners pin its key on first contact, and only after the server has proved it knows the code. Nothing a network attacker can see or fetch lets it forge that proof within a code's 15 minutes. A runner's code never leaves the runner and the computer that approves it, and a runner's token reaches nobody but the runner, even through an attacker in between.
 
 ## Versions
 

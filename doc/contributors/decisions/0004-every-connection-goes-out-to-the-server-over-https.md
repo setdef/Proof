@@ -26,7 +26,7 @@ Hosts are computers people own: behind home routers, on laptops that change netw
 
 Chosen: option 1, because a runner that connects out works from behind any router, and one HTTPS server can hold many followers on few connections. Option 2 lost because it needs a host reachable from outside, keys for every host, and an SSH daemon whose limits on concurrent sessions and handshakes many followers exhaust.
 
-The server's certificate fingerprint travels inside the codes that `proof server setup` and `proof runner setup` print, so the command and each runner can check the server's certificate on their first connection. How it works is in [How Proof works](../../how-proof-works.md#trust-and-tokens), and what it must guarantee is in [the server design](../design/server.md#tokens-and-codes).
+The one-time codes that `proof server setup` and `proof runner setup` print let the command and each runner check the server's key on their first connection. How it works is in [How Proof works](../../how-proof-works.md#trust-and-tokens), and what it must guarantee is in [the server design](../design/server.md#tokens-and-codes).
 
 Confidence: unbuilt. No recorded measurement compares the two options' cost per follower.
 
