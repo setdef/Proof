@@ -120,6 +120,10 @@ module Proof
   class InvalidHostError < Error
   end
 
+  # Raised when a wait reason's kind isn't one of `Proof::WaitReason::KINDS`.
+  class InvalidWaitReasonError < Error
+  end
+
   # Raised when a store of runs is given a new run whose ID a stored run
   # already has.
   class RunExistsError < Error

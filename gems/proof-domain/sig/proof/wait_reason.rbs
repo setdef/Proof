@@ -1,0 +1,106 @@
+module Proof
+  # What a queued run waits behind, as `proof status` shows it.
+  #
+  # A run that waits a long time without saying why looks hung, and an agent
+  # that thinks a run is hung cancels it, or moves it to another operating
+  # system to skip the queue. A queued run can wait for several reasons at
+  # once, on different hosts.
+  #
+  # This class holds one reason, its kind, the hosts it concerns, and, for
+  # runs in the way, their IDs. `of` finds the reason from what stops the run
+  # on each runner of its operating systems, and keeps the nearest one: runs
+  # in the way, then a person active, then no runner connected that could take
+  # it, then no runner with its labels. A run whose operating systems have no
+  # runner at all waits for one to connect.
+  #
+  # The kinds, in `KINDS`:
+  #
+  # - `:behind_runs`: runs hold the hosts it could fit. `hosts` names them,
+  #   and `runs` gives the runs that hold them.
+  # - `:person_active`: it fits its hosts only while nobody is active there.
+  #   `hosts` names them.
+  # - `:no_runner_connected`: no runner of its operating systems that could
+  #   ever take it is connected. `hosts` names those with such a runner.
+  # - `:no_label`: no runner of its operating systems offers every label it
+  #   needs. `hosts` names those whose runners lack one.
+  #
+  # Use it to say what each queued run waits behind.
+  #
+  # ## Examples
+  #
+  # A run for the PC's GPU waits while someone games there:
+  #
+  # ```ruby
+  # wsl = Proof::Runner.new(
+  #   name: "pc-wsl", os: Proof::OS.new(name: :linux), labels: Proof::LabelSet.of("gpu"),
+  #   capacity: Proof::Resources.request(cpus: 8, memory: "16GB"), connected: true
+  # )
+  # pc = Proof::Host.new(name: "pc", share: Proof::Resources.request(cpus: 4, memory: "4GB"), person_active: true, runners: [wsl])
+  # queued = Proof::Run::Queued.new(
+  #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+  #   labels: Proof::LabelSet.of("gpu"), resources: Proof::Resources.request(cpus: 8, memory: "8GB")
+  # )
+  # reason = Proof::WaitReason.of(queued, [pc], [])
+  # reason.kind # => :person_active
+  # reason.hosts # => ["pc"]
+  # ```
+  #
+  # With nobody there, it fits, and waits behind nothing:
+  #
+  # ```ruby
+  # Proof::WaitReason.of(queued, [pc.with(person_active: false)], []) # => nil
+  # ```
+  class WaitReason < Data
+    # The kinds of reason, nearest first.
+    KINDS: Array[Symbol]
+
+    # The kind of reason, one of `KINDS`.
+    attr_reader kind: Symbol
+
+    # The names of the hosts the reason concerns, in a frozen `Array`.
+    attr_reader hosts: Array[String]
+
+    # The IDs of the runs in the way, for `:behind_runs`, in queue order, in a
+    # frozen `Array`.
+    attr_reader runs: Array[RunId]
+
+    def self.new: (kind: Symbol, ?hosts: Array[String], ?runs: Array[RunId]) -> instance
+                | (Symbol kind, Array[String] hosts, Array[RunId] runs) -> instance
+
+    # What each run in `queued` that fits nowhere now waits behind, by run ID,
+    # in the order of `queued`. A run that fits now isn't there.
+    #
+    # - `queued`: an `Array` of queued runs.
+    # - `hosts`: an `Array` of `Proof::Host`.
+    # - `holding`: an `Array` of the runs that hold resources.
+    #
+    # ```ruby
+    # Proof::WaitReason.all([], [], []) # => {}
+    # ```
+    def self.all: (Array[Run] queued, Array[Host] hosts, Array[Run] holding) -> Hash[RunId, WaitReason]
+
+    # What the run `queued` describes waits behind, or `nil` when it fits a
+    # runner now.
+    #
+    # - `queued`: Run::Queued, the fact that the run was queued.
+    # - `hosts`: an `Array` of `Proof::Host`.
+    # - `holding`: an `Array` of the runs that hold resources.
+    #
+    # ```ruby
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :windows)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # Proof::WaitReason.of(queued, [], []).kind # => :no_runner_connected
+    # ```
+    def self.of: (Run::Queued queued, Array[Host] hosts, Array[Run] holding) -> WaitReason?
+
+    # Builds a reason, and raises `Proof::InvalidWaitReasonError` unless
+    # `kind` is one of `KINDS`.
+    #
+    # - `kind`: Symbol, such as `:behind_runs`.
+    # - `hosts`: an `Array` of host names, empty by default.
+    # - `runs`: an `Array` of run IDs, empty by default.
+    def initialize: (kind: Symbol, ?hosts: Array[String], ?runs: Array[RunId]) -> void
+  end
+end

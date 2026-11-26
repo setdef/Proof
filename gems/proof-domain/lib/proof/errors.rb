@@ -62,6 +62,9 @@ module Proof
   class InvalidHostError < Error
   end
 
+  class InvalidWaitReasonError < Error
+  end
+
   class RunExistsError < Error
     def initialize(id:)
       super("run #{id} is already stored")

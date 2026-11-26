@@ -1,0 +1,45 @@
+module Proof
+  # What stops a queued run on one runner, in one place.
+  #
+  # `Proof::WaitReason` asks this module about each runner of a run's
+  # operating systems, and keeps the nearest answer. A pair here is a host and
+  # one of its runners. It is a private constant of `Proof`.
+  module WaitCheck
+    # For each kind of verdict, the hosts with a runner of the run's operating
+    # systems that got it, each host once.
+    def self.verdicts: (Run::Queued queued, Array[Host] hosts, Array[Run] holding) -> Hash[Symbol, Array[Host]]
+
+    # Each host in `hosts` paired with each of its runners of the run's
+    # operating systems.
+    def self.pairs_of: (Run::Queued queued, Array[Host] hosts) -> Array[[Host, Runner]]
+
+    # Each host in `pairs` once, by name.
+    def self.hosts_of: (Array[[Host, Runner]] pairs) -> Array[Host]
+
+    # The nearest kind of reason among `verdicts`, or `:no_runner_connected`
+    # when there are none, as for a run whose operating systems have no
+    # runner.
+    def self.nearest: (Hash[Symbol, Array[Host]] verdicts) -> Symbol
+
+    # What stops the run `queued` describes on the runner of `pair`, checked
+    # in this order:
+    #
+    # - `:no_label`: the runner lacks a label the run needs.
+    # - `:no_runner_connected`: the runner isn't connected, or could never
+    #   have the run's CPUs and memory free.
+    # - then what `in_the_way` says.
+    def self.verdict: (Run::Queued queued, [Host, Runner] pair, Array[Run] holding) -> Symbol
+
+    # What stops `resources` on the runner of `pair`, which could have them
+    # some time:
+    #
+    # - `:fits`: nothing; the run fits there now.
+    # - `:behind_runs`: the run would fit if the runs holding the host ended.
+    # - `:person_active`: the run fits only while nobody is active there.
+    def self.in_the_way: (Resources resources, [Host, Runner] pair, Array[Run] holding) -> Symbol
+
+    # The IDs of the runs in `holding` that hold any of `hosts`, in queue
+    # order.
+    def self.holders: (Array[Host] hosts, Array[Run] holding) -> Array[RunId]
+  end
+end

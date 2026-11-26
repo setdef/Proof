@@ -1,0 +1,33 @@
+module Proof
+  # How placement chooses a runner for a run, in one place.
+  #
+  # `Proof::Placement` asks this module for the earliest queued run that fits
+  # now and where it goes. A pair here is a host and one of its runners. It is
+  # a private constant of `Proof`.
+  module RunnerChoice
+    # The earliest run in `queued` that fits now, with the host and runner it
+    # would go to, or `nil` when none fits. A run that fits nowhere doesn't
+    # hold up the runs behind it.
+    #
+    # - `queued`: an `Array` of queued runs, earliest queue position first.
+    # - `hosts`: an `Array` of `Proof::Host`.
+    # - `holding`: an `Array` of the runs that hold resources.
+    def self.first: (Array[Run] queued, Array[Host] hosts, Array[Run] holding) -> [Run, Host, Runner]?
+
+    # The host and runner the run `queued` describes would go to now, or
+    # `nil` when it fits nowhere. Of the connected runners that take the run
+    # and have its CPUs and memory free, after `holding` and the share, it is
+    # the one with the most memory free, then the most CPUs, then the first
+    # runner by name, since no two runners of a pool share a name.
+    def self.best: (Run::Queued queued, Array[Host] hosts, Array[Run] holding) -> [Host, Runner]?
+
+    # Whether the run `queued` describes fits the runner of `pair` now: the
+    # runner is connected and takes the run, and the run's CPUs and memory are
+    # free on the runner and its host, after `holding` and the share.
+    def self.fits?: (Run::Queued queued, [Host, Runner] pair, Array[Run] holding) -> bool
+
+    # The order placement weighs `pair` in, emptiest first: most memory free,
+    # then most CPUs free, then the runner's name.
+    def self.emptiest_first: ([Host, Runner] pair, Array[Run] holding) -> [Integer, Integer, String]
+  end
+end

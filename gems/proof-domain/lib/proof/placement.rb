@@ -1,32 +1,10 @@
 # frozen_string_literal: true
 
+require_relative("runner_choice")
+require_relative("wait_reason")
+
 module Proof
   class Placement
-    def self.first(queued, hosts, holding)
-      queued.each do |run|
-        found = spot(run.queued, hosts, holding)
-        return [run, *found] if found
-      end
-      nil
-    end
-
-    def self.spot(queued, hosts, holding)
-      fitting = hosts.flat_map(&:spots).select { |spot| fits?(queued, spot, holding) }
-      # The emptiest runner goes first, so runs spread out and each host keeps the most room for a person.
-      fitting.min_by { |spot| emptiest_first(spot, holding) }
-    end
-
-    def self.fits?(queued, spot, holding)
-      host, runner = spot
-      runner.connected && runner.takes?(queued) && queued.resources.fits_within?(host.free_on(runner, holding))
-    end
-
-    def self.emptiest_first(spot, holding)
-      host, runner = spot
-      free = host.free_on(runner, holding)
-      [-free.megabytes, -free.cpus, runner.name]
-    end
-
     def initialize(runs:, hosts:, clock:)
       @runs = runs
       @hosts = hosts
@@ -34,8 +12,12 @@ module Proof
     end
 
     def place_next
-      found = Placement.first(@runs.queued, @hosts.hosts, @runs.holding_resources)
+      found = RunnerChoice.first(@runs.queued, @hosts.hosts, @runs.holding_resources)
       place(*found) if found
+    end
+
+    def wait_reasons
+      WaitReason.all(@runs.queued, @hosts.hosts, @runs.holding_resources)
     end
 
     private def place(run, host, runner)
