@@ -1,0 +1,78 @@
+module Proof
+  module InMemory
+    # The checks a store of runs makes, over a `Hash` of each run's facts.
+    #
+    # `Proof::InMemory::Runs` holds a lock around every call, and the checks it
+    # makes inside the lock are the store's promises: a new run's ID and queue
+    # position are free, and a fact is added only at the version read and never
+    # as a second placement.
+    #
+    # This class makes those checks over the `Hash` it is given, and changes
+    # the `Hash` when they pass. It takes no lock itself, so call it inside
+    # one.
+    #
+    # Use it inside a lock, for one call to a store.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # table = {}
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # Proof::InMemory::Records.new(table).add(Proof::Run.new(id:, facts: [queued]))
+    # table.keys # => [id]
+    # ```
+    class Records
+      # Builds the checks over `table`.
+      #
+      # - `table`: a `Hash` from run ID to facts, which the checks change.
+      def initialize: (Hash[RunId, Array[Run::Fact]] table) -> void
+
+      # Every run in the table, rebuilt from its facts, earliest queue
+      # position first.
+      #
+      # ```ruby
+      # Proof::InMemory::Records.new({}).runs # => []
+      # ```
+      def runs: () -> Array[Run]
+
+      # Puts `run` in the table. Raises `Proof::RunExistsError` when its ID is
+      # in the table, and `Proof::QueuePositionTakenError` when its queue
+      # position is.
+      #
+      # ```ruby
+      # queued = Proof::Run::Queued.new(
+      #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+      #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+      # )
+      # run = Proof::Run.new(id: Proof::RunId.parse("20261125-0336-m3d8q"), facts: [queued])
+      # Proof::InMemory::Records.new({}).add(run) # => [queued]
+      # ```
+      def add: (Run run) -> Array[Run::Fact]
+
+      # Adds `fact` to the run with `id`, read at `read` facts, and gives the
+      # run with it. Raises as `Proof::_Runs#append` says.
+      #
+      # ```ruby
+      # at = Time.utc(2026, 11, 25, 3, 36)
+      # queued = Proof::Run::Queued.new(
+      #   at:, position: 1, os: [Proof::OS.new(name: :linux)],
+      #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+      # )
+      # id = Proof::RunId.parse("20261125-0336-m3d8q")
+      # records = Proof::InMemory::Records.new({ id => [queued] })
+      # records.append(id, Proof::Run::Placed.new(at:, host: "nuc", runner: "nuc-linux"), 1).state # => :running
+      # ```
+      def append: (RunId id, Run::Fact fact, Integer read) -> Run
+
+      private
+
+      def free: (Integer position) -> nil
+
+      def stored: (RunId id, Run::Fact fact, Integer read) -> Run
+    end
+  end
+end

@@ -84,3 +84,12 @@ Style/InlineComment:
   # comment that the docs:examples task checks.
   Exclude:
     - "**/*.md"
+
+ThreadSafety/NewThread:
+  inherit_mode:
+    merge:
+      - Exclude
+  # A contract module checks a store under two threads at once, as
+  # architecture.md requires of every store, so it starts the threads.
+  Exclude:
+    - "gems/proof-domain/lib/proof/testing/**/*.rb"

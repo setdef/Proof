@@ -1,0 +1,119 @@
+module Proof
+  # Stores that keep what they hold in memory, for tests and for a command
+  # that needs no storage.
+  module InMemory
+    # A store of runs in a `Hash`, which a restart empties.
+    #
+    # Placement and the use cases need a store of runs to test against, and a
+    # database in every test would make the tests slow and their failures
+    # hard to read.
+    #
+    # This class keeps each run's facts in a `Hash` keyed by run ID, behind a
+    # mutex, so two threads can use it at once. It rebuilds a run from its facts
+    # on every read, as a store on disk does. It passes
+    # `Proof::Testing::RunsContract`. Its cost grows with the number of runs,
+    # since every query rebuilds every run.
+    #
+    # Use it in tests, and as the model for a store of runs on disk.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # runs = Proof::InMemory::Runs.new
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: runs.next_position, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # runs.add(Proof::Run.new(id:, facts: [queued]))
+    # runs.queued.map(&:id) # => [id]
+    # placed = runs.append(id, Proof::Run::Placed.new(at: Time.utc(2026, 11, 25, 3, 36), host: "nuc", runner: "nuc-linux"), version: 1)
+    # placed.state # => :running
+    # runs.queued # => []
+    # ```
+    #
+    # A second placement is refused, whatever version it is given:
+    #
+    # ```ruby
+    # # Wrong: raises Proof::RunAlreadyPlacedError
+    # runs.append(id, Proof::Run::Placed.new(at: Time.utc(2026, 11, 25, 3, 36), host: "pc", runner: "pc-wsl"), version: 2)
+    # ```
+    #
+    # Pass another store's `records` to stand for the same storage after a
+    # restart:
+    #
+    # ```ruby
+    # Proof::InMemory::Runs.new(records: runs.records).find(id).state # => :running
+    # ```
+    class Runs
+      # Each stored run's facts, by run ID. Two stores given one `Hash` share
+      # what they store.
+      attr_reader records: Hash[RunId, Array[Run::Fact]]
+
+      # Builds a store that keeps its runs in `records`.
+      #
+      # - `records`: a `Hash` from run ID to facts, empty by default. Pass
+      #   another store's `records` to reopen what it stored.
+      def initialize: (?records: Hash[RunId, Array[Run::Fact]]) -> void
+
+      # Stores a new run, as `Proof::_Runs` says.
+      #
+      # ```ruby
+      # store = Proof::InMemory::Runs.new
+      # queued = Proof::Run::Queued.new(
+      #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+      #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+      # )
+      # store.add(Proof::Run.new(id: Proof::RunId.parse("20261125-0336-m3d8q"), facts: [queued])) # => nil
+      # ```
+      def add: (Run run) -> nil
+
+      # The stored run with `id`, rebuilt from its facts, or `nil`.
+      #
+      # ```ruby
+      # Proof::InMemory::Runs.new.find(Proof::RunId.parse("20261125-0336-m3d8q")) # => nil
+      # ```
+      def find: (RunId id) -> Run?
+
+      # Adds `fact` to the run with `id` at `version`, as `Proof::_Runs` says.
+      #
+      # ```ruby
+      # store = Proof::InMemory::Runs.new
+      # id = Proof::RunId.parse("20261125-0336-m3d8q")
+      # queued = Proof::Run::Queued.new(
+      #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+      #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+      # )
+      # store.add(Proof::Run.new(id:, facts: [queued]))
+      # store.append(id, Proof::Run::CancelAsked.new(at: Time.utc(2026, 11, 25, 3, 37)), version: 1).version # => 2
+      # ```
+      def append: (RunId id, Run::Fact fact, version: Integer) -> Run
+
+      # The queued runs, earliest queue position first.
+      #
+      # ```ruby
+      # Proof::InMemory::Runs.new.queued # => []
+      # ```
+      def queued: () -> Array[Run]
+
+      # The runs that hold their host's CPUs and memory, earliest queue
+      # position first.
+      #
+      # ```ruby
+      # Proof::InMemory::Runs.new.holding_resources # => []
+      # ```
+      def holding_resources: () -> Array[Run]
+
+      # One more than the largest stored queue position, or 1.
+      #
+      # ```ruby
+      # Proof::InMemory::Runs.new.next_position # => 1
+      # ```
+      def next_position: () -> Integer
+
+      private
+
+      def all: () -> Array[Run]
+    end
+  end
+end

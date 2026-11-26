@@ -107,6 +107,54 @@ module Proof
   class InvalidRunError < Error
   end
 
+  # Raised when a store of runs is given a new run whose ID a stored run
+  # already has.
+  class RunExistsError < Error
+    # Builds the error, with a message that names what it refuses.
+    #
+    # - `id`: RunId, the run that was given.
+    def initialize: (id: RunId) -> void
+  end
+
+  # Raised when a store of runs is given a new run whose queue position a
+  # stored run already has, so two runs would claim one place in arrival order.
+  class QueuePositionTakenError < Error
+    # Builds the error, with a message that names what it refuses.
+    #
+    # - `position`: Integer, the queue position that is taken.
+    def initialize: (position: Integer) -> void
+  end
+
+  # Raised when a store of runs is asked to add a fact to a run it doesn't
+  # have.
+  class UnknownRunError < Error
+    # Builds the error, with a message that names what it refuses.
+    #
+    # - `id`: RunId, the run that isn't stored.
+    def initialize: (id: RunId) -> void
+  end
+
+  # Raised when a store of runs is asked to add a fact at a version the run
+  # no longer has, because someone added a fact since it was read. Read the
+  # run again, and decide again.
+  class RunChangedError < Error
+    # Builds the error, with a message that gives both versions.
+    #
+    # - `id`: RunId, the run.
+    # - `version`: Integer, the number of facts it has.
+    # - `read`: Integer, the number it had when it was read.
+    def initialize: (id: RunId, version: Integer, read: Integer) -> void
+  end
+
+  # Raised when a store of runs is asked to add a second placement to a run,
+  # whatever version it was read at. A run is placed once.
+  class RunAlreadyPlacedError < Error
+    # Builds the error, with a message that names what it refuses.
+    #
+    # - `id`: RunId, the run that is placed.
+    def initialize: (id: RunId) -> void
+  end
+
   # Raised when the computer has no `git` program Proof can run. Install Git,
   # or fix `PATH`, and run again.
   class GitNotFoundError < Error

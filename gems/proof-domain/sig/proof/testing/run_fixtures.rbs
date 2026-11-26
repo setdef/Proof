@@ -1,0 +1,116 @@
+module Proof
+  module Testing
+    # The runs and facts the contracts for stores of runs build.
+    #
+    # Every contract test needs a run in some state, and the same few values
+    # recur: one run ID, one time, a run queued for Linux. Written in each test,
+    # they would hide what the test checks.
+    #
+    # This module builds them as module functions, so a test class that
+    # includes a contract gains no methods that could collide with its own.
+    #
+    # Use it in a contract test.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # require "proof/testing"
+    #
+    # run = Proof::Testing::RunFixtures.run(later: Proof::Testing::RunFixtures.lost)
+    # run.state # => :lost
+    # run.id.to_s # => "20261125-0336-m3d8q"
+    # ```
+    module RunFixtures
+      # The time of every fact the fixtures build.
+      AT: Time
+
+      # A run ID at `AT`'s minute, ending in `characters`.
+      #
+      # - `characters`: String, five Crockford Base32 characters.
+      #
+      # ```ruby
+      # require "proof/testing"
+      #
+      # Proof::Testing::RunFixtures.id("k7q2w").to_s # => "20261125-0336-k7q2w"
+      # ```
+      def self.id: (?String characters) -> RunId
+
+      # The fact that a run was queued for Linux, at `position`, with 2 CPUs
+      # and 4 GB.
+      #
+      # ```ruby
+      # require "proof/testing"
+      #
+      # Proof::Testing::RunFixtures.queued(3).position # => 3
+      # ```
+      def self.queued: (?Integer position) -> Run::Queued
+
+      # A run with the ID ending in `id`, queued at `position`, with the facts
+      # in `later` after that.
+      #
+      # ```ruby
+      # require "proof/testing"
+      #
+      # Proof::Testing::RunFixtures.run(position: 2).queued.position # => 2
+      # ```
+      def self.run: (?id: String, ?position: Integer, ?later: Array[Run::Fact]) -> Run
+
+      # The fact that a run was placed on `runner` of the host `nuc`.
+      #
+      # ```ruby
+      # require "proof/testing"
+      #
+      # Proof::Testing::RunFixtures.placed(runner: "nuc-wsl").runner # => "nuc-wsl"
+      # ```
+      def self.placed: (?runner: String) -> Run::Placed
+
+      # The facts of a placement and then `lost`.
+      #
+      # ```ruby
+      # require "proof/testing"
+      #
+      # Proof::Testing::RunFixtures.lost.size # => 2
+      # ```
+      def self.lost: () -> Array[Run::Fact]
+
+      # `runs`, after adding each run in `stored` to it.
+      #
+      # ```ruby
+      # require "proof/testing"
+      #
+      # runs = Proof::Testing::RunFixtures.storing(Proof::InMemory::Runs.new, Proof::Testing::RunFixtures.run)
+      # runs.next_position # => 2
+      # ```
+      def self.storing: (Proof::_Runs runs, *Run stored) -> Proof::_Runs
+
+      # `runs`, after adding five runs: two queued, at positions 2 and 5, one
+      # running at 3, one lost at 4, and one lost whose processes ended at 1.
+      #
+      # ```ruby
+      # require "proof/testing"
+      #
+      # Proof::Testing::RunFixtures.in_each_state(Proof::InMemory::Runs.new).next_position # => 6
+      # ```
+      def self.in_each_state: (Proof::_Runs runs) -> Proof::_Runs
+
+      # The last five characters of each run's ID, in order.
+      #
+      # ```ruby
+      # require "proof/testing"
+      #
+      # Proof::Testing::RunFixtures.characters([Proof::Testing::RunFixtures.run]) # => ["m3d8q"]
+      # ```
+      def self.characters: (Array[Run] runs) -> Array[String]
+
+      # The facts of the stored run with `id`, or none when `runs` has no such
+      # run.
+      #
+      # ```ruby
+      # require "proof/testing"
+      #
+      # Proof::Testing::RunFixtures.facts(Proof::InMemory::Runs.new) # => []
+      # ```
+      def self.facts: (Proof::_Runs runs, ?RunId id) -> Array[Run::Fact]
+    end
+  end
+end

@@ -1,0 +1,42 @@
+module Proof
+  # Where the server keeps runs, as the domain asks for it. A port: you pass an
+  # object that answers these, and the domain never opens storage itself.
+  #
+  # Each stored run is its list of facts. A store adds a fact only at the
+  # version the caller read, so two writers can't both decide from the same
+  # run, and it refuses a second placement whatever version it is given. It
+  # rebuilds a run from its facts on every read, so a record changed behind
+  # Proof's back raises `Proof::InvalidRunError` instead of loading.
+  #
+  # `Proof::InMemory::Runs` keeps runs in a `Hash`, and
+  # `Proof::Testing::RunsContract` is the Minitest module every store passes.
+  interface _Runs
+    # Stores a new run. Raises `Proof::RunExistsError` when a stored run has
+    # its ID, and `Proof::QueuePositionTakenError` when a stored run has its
+    # queue position.
+    def add: (Run run) -> void
+
+    # The stored run with `id`, rebuilt from its facts, or `nil`.
+    def find: (RunId id) -> Run?
+
+    # Adds `fact` after the run's facts, and gives the run with it. Raises
+    # `Proof::UnknownRunError` when no run has `id`,
+    # `Proof::RunAlreadyPlacedError` when `fact` is a second placement,
+    # `Proof::RunChangedError` when the run doesn't have `version` facts, and
+    # `Proof::InvalidRunError` when the fact breaks a rule. Nothing is stored
+    # when it raises.
+    def append: (RunId id, Run::Fact fact, version: Integer) -> Run
+
+    # The runs in the queue, earliest queue position first.
+    def queued: () -> Array[Run]
+
+    # The runs that hold their host's CPUs and memory, earliest queue position
+    # first: each `running` run, and each `lost` run whose processes haven't
+    # ended.
+    def holding_resources: () -> Array[Run]
+
+    # The queue position for the next run: one more than the largest stored,
+    # or 1 when none is.
+    def next_position: () -> Integer
+  end
+end

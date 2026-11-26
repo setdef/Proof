@@ -1,0 +1,59 @@
+module Proof
+  module Testing
+    # Calls to a store from several threads at once.
+    #
+    # A store's refusals matter most when two writers race: two placements of
+    # one run, or two runs at one queue position. One thread can't show that a
+    # store refuses the second of two calls that overlap.
+    #
+    # This module starts the threads, holds each until all exist, then lets
+    # them go together, and gives what each returned.
+    #
+    # Use it in a contract test that races two writers.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # require "proof/testing"
+    #
+    # runs = Proof::Testing::RunFixtures.storing(Proof::InMemory::Runs.new, Proof::Testing::RunFixtures.run)
+    # Proof::Testing::AtOnce.place(runs, 2).sort # => [:placed, :refused]
+    # ```
+    module AtOnce
+      # What `count` threads each placing the fixtures' run in `runs` got:
+      # `:placed`, or `:refused` for a placement the store refused.
+      #
+      # ```ruby
+      # require "proof/testing"
+      #
+      # runs = Proof::Testing::RunFixtures.storing(Proof::InMemory::Runs.new, Proof::Testing::RunFixtures.run)
+      # Proof::Testing::AtOnce.place(runs, 3).count(:placed) # => 1
+      # ```
+      def self.place: (Proof::_Runs runs, Integer count) -> Array[Symbol]
+
+      # What a thread for each of `ids`, each adding a run with that ID at
+      # queue position 1 to `runs`, got: `:added`, or `:refused` for a run the
+      # store refused.
+      #
+      # ```ruby
+      # require "proof/testing"
+      #
+      # Proof::Testing::AtOnce.add(Proof::InMemory::Runs.new, %w[k7q2w m3d8q]).sort # => [:added, :refused]
+      # ```
+      def self.add: (Proof::_Runs runs, Array[String] ids) -> Array[Symbol]
+
+      # What the block returned in each of `count` threads, which start
+      # together. The block gets the thread's number, from 0.
+      #
+      # ```ruby
+      # require "proof/testing"
+      #
+      # Proof::Testing::AtOnce.run(2) { |thread| :"thread_#{thread}" } # => [:thread_0, :thread_1]
+      # ```
+      def self.run: (Integer count) { (Integer thread) -> Symbol } -> Array[Symbol]
+
+      # A thread that waits on `start` before it calls the block with `thread`.
+      def self.waiting: (Thread::Queue start, Integer thread) { (Integer thread) -> Symbol } -> Thread
+    end
+  end
+end

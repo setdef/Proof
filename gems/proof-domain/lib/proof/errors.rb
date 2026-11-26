@@ -56,6 +56,36 @@ module Proof
   class InvalidRunError < Error
   end
 
+  class RunExistsError < Error
+    def initialize(id:)
+      super("run #{id} is already stored")
+    end
+  end
+
+  class QueuePositionTakenError < Error
+    def initialize(position:)
+      super("queue position #{position} is taken by another run")
+    end
+  end
+
+  class UnknownRunError < Error
+    def initialize(id:)
+      super("no run #{id} is stored")
+    end
+  end
+
+  class RunChangedError < Error
+    def initialize(id:, version:, read:)
+      super("run #{id} has #{version} facts, not the #{read} it had when it was read")
+    end
+  end
+
+  class RunAlreadyPlacedError < Error
+    def initialize(id:)
+      super("run #{id} is already placed")
+    end
+  end
+
   class GitNotFoundError < Error
   end
 

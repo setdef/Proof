@@ -1,0 +1,145 @@
+module Proof
+  # Minitest modules that check an adapter keeps its port's promises.
+  #
+  # Include a contract module in a `Minitest::Test` subclass, and define the
+  # factory methods its self-type names. These files load no Minitest: require
+  # them with `require "proof/testing"` after Minitest.
+  module Testing
+    # The assertions a contract module calls, which `Minitest::Test` has.
+    interface _Assertions
+      # Fails unless `actual` equals `expected`.
+      def assert_equal: (Object? expected, Object? actual) -> true
+
+      # Fails unless `actual` is `nil`.
+      def assert_nil: (Object? actual) -> true
+
+      # Fails unless `actual` is empty.
+      def assert_empty: (Object? actual) -> true
+
+      # Fails unless the block raises one of `kinds`, and gives the error.
+      def assert_raises: (*Class kinds) { () -> void } -> Exception
+    end
+
+    # What a test class that includes `Proof::Testing::RunsContract` defines.
+    interface _RunsFactory
+      # A new, empty store of runs, which shares nothing with the last.
+      def build_runs: () -> Proof::_Runs
+
+      # A new store over the same storage as `runs`, as after a restart.
+      def reopen_runs: (Proof::_Runs runs) -> Proof::_Runs
+    end
+
+    # The tests every store of runs passes, as `Proof::_Runs` describes.
+    #
+    # A store of runs is where placement's guarantees hold: it refuses a
+    # second placement, and a fact added at a version the run no longer has.
+    # A store on disk has to keep these promises under two threads at once,
+    # and after a restart, which tests of one store alone don't show.
+    #
+    # This module includes the five contracts that hold those tests. They call
+    # `build_runs` for a fresh store and `reopen_runs` for a store over the
+    # same storage, and two of them use two threads at once.
+    #
+    # Use it to check a store of runs.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # require "minitest"
+    # require "proof/testing"
+    #
+    # class InMemoryRunsTest < Minitest::Test
+    #   include Proof::Testing::RunsContract
+    #
+    #   def build_runs
+    #     Proof::InMemory::Runs.new
+    #   end
+    #
+    #   def reopen_runs(runs)
+    #     Proof::InMemory::Runs.new(records: runs.records)
+    #   end
+    # end
+    # InMemoryRunsTest.public_instance_methods.grep(/\Atest_runs_contract/).size # => 16
+    # ```
+    module RunsContract : Object, _RunsFactory, _Assertions
+      include RunsFindContract
+
+      include RunsAppendContract
+
+      include RunsRefusalContract
+
+      include RunsQueueContract
+
+      include RunsDurabilityContract
+    end
+
+    # The tests of finding and adding runs, which `RunsContract` includes.
+    module RunsFindContract : Object, _RunsFactory, _Assertions
+      # A store has no run it wasn't given.
+      def test_runs_contract_find_gives_nil_for_a_run_it_does_not_have: () -> void
+
+      # A stored run comes back with every fact.
+      def test_runs_contract_find_gives_the_run_with_its_facts: () -> void
+
+      # A second run with one ID is refused.
+      def test_runs_contract_add_refuses_an_id_in_use: () -> void
+
+      # A second run with one queue position is refused, and not stored.
+      def test_runs_contract_add_refuses_a_queue_position_in_use: () -> void
+    end
+
+    # The tests of adding a fact at a version, which `RunsContract` includes.
+    module RunsAppendContract : Object, _RunsFactory, _Assertions
+      # A fact added at the version read is stored and given back.
+      def test_runs_contract_append_adds_a_fact_at_the_version_read: () -> void
+
+      # A fact added at an older version is refused, and not stored.
+      def test_runs_contract_append_refuses_a_version_the_run_no_longer_has: () -> void
+
+      # A fact for a run the store doesn't have is refused.
+      def test_runs_contract_append_refuses_a_run_it_does_not_have: () -> void
+    end
+
+    # The tests of the facts a store refuses whatever version they come at,
+    # which `RunsContract` includes.
+    module RunsRefusalContract : Object, _RunsFactory, _Assertions
+      # A second placement is refused at the version the run has.
+      def test_runs_contract_append_refuses_a_second_placement_at_the_current_version: () -> void
+
+      # A second placement is refused at the version the run had before its
+      # first.
+      def test_runs_contract_append_refuses_a_second_placement_at_an_older_version: () -> void
+
+      # A fact that breaks a rule about runs is refused, and not stored.
+      def test_runs_contract_append_refuses_a_fact_that_breaks_a_rule: () -> void
+    end
+
+    # The tests of the queue and its positions, which `RunsContract` includes.
+    module RunsQueueContract : Object, _RunsFactory, _Assertions
+      # An empty store's next queue position is 1.
+      def test_runs_contract_next_position_is_one_for_an_empty_store: () -> void
+
+      # The next queue position is one more than the largest stored.
+      def test_runs_contract_next_position_follows_the_largest: () -> void
+
+      # The queue holds the queued runs only, and the runs that hold resources
+      # are the running ones and the lost ones whose processes haven't ended,
+      # each by queue position.
+      def test_runs_contract_queued_and_holding_resources_give_their_runs_by_position: () -> void
+    end
+
+    # The tests with two threads at once, and across a restart, which
+    # `RunsContract` includes.
+    module RunsDurabilityContract : Object, _RunsFactory, _Assertions
+      # Two threads placing one run at once store one placement.
+      def test_runs_contract_two_threads_placing_one_run_place_it_once: () -> void
+
+      # Two threads adding runs at one queue position at once store one run.
+      def test_runs_contract_two_threads_adding_runs_at_one_position_add_one: () -> void
+
+      # A store over the same storage, after a restart, has the same runs, the
+      # same queue, and the next position.
+      def test_runs_contract_reopening_after_a_restart_keeps_every_run: () -> void
+    end
+  end
+end
