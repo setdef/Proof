@@ -6,7 +6,13 @@ module Proof
   # as text, `"512MB"` or `"8GB"`, and the server compares amounts. Left as
   # text, `"1GB"` and `"1024MB"` look like two requests.
   #
-  # This class reads a size into whole megabytes, counting 1 GB as 1,024 MB.
+  # This class reads a size into whole megabytes. A size is a number, whole or
+  # decimal, an optional space, and a unit: `MB`, `GB`, `TB`, `MiB`, `GiB`, or
+  # `TiB`, in any case. Every unit counts in 1,024s, so 1 GB is 1,024 MB, and
+  # `MB` and `MiB` are one unit. A size that isn't a whole number of megabytes
+  # rounds up to the next whole megabyte, so a request is never smaller than
+  # what was written.
+  #
   # A request raises unless its CPUs are a whole number from 1 and its memory
   # is a size. A host's free amounts and its share can be 0 CPUs and 0
   # megabytes, so resources built from numbers accept a whole number of CPUs
@@ -23,17 +29,33 @@ module Proof
   # asked.fits_within?(Proof::Resources.request(cpus: 2, memory: "16GB")) # => false
   # ```
   #
-  # A size in gigabytes and the same size in megabytes are one request:
+  # A size in gigabytes and the same size in megabytes are one request, and so
+  # are sizes written with another case, a space, or `GiB`:
   #
   # ```ruby
   # Proof::Resources.request(cpus: 1, memory: "1GB") == Proof::Resources.request(cpus: 1, memory: "1024MB") # => true
+  # Proof::Resources.request(cpus: 1, memory: "8 gb") == Proof::Resources.request(cpus: 1, memory: "8GiB") # => true
   # ```
   #
-  # A request needs at least 1 CPU, and a size has no space and no other unit:
+  # A decimal size rounds up to the next whole megabyte:
+  #
+  # ```ruby
+  # Proof::Resources.request(cpus: 1, memory: "1.5GB").megabytes # => 1536
+  # Proof::Resources.request(cpus: 1, memory: "0.1GB").megabytes # => 103
+  # ```
+  #
+  # A request needs at least 1 CPU:
   #
   # ```ruby
   # # Wrong: raises Proof::InvalidResourcesError
-  # Proof::Resources.request(cpus: 0, memory: "8 GB")
+  # Proof::Resources.request(cpus: 0, memory: "8GB")
+  # ```
+  #
+  # A size needs a unit from the list, and at most one space:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidResourcesError
+  # Proof::Resources.request(cpus: 1, memory: "8G")
   # ```
   #
   # A host with every CPU in use has 0 CPUs free, and nothing asked for fits
@@ -44,6 +66,10 @@ module Proof
   # Proof::Resources.request(cpus: 1, memory: "1GB").fits_within?(busy) # => false
   # ```
   class Resources < Data
+    # The message for a memory that isn't a size, which `format` fills in with
+    # what the memory was.
+    MEMORY_MESSAGE: String
+
     # The number of CPUs, a whole number from 0.
     attr_reader cpus: Integer
 
@@ -55,16 +81,21 @@ module Proof
 
     # Builds a request from CPUs and a memory size as a project file writes it.
     # It raises `Proof::InvalidResourcesError` unless `cpus` is an Integer from
-    # 1, as a task's `cpus` is, and `memory` is whole digits then `MB` or `GB`,
-    # in capitals and with nothing else, such as `"512MB"`, `"8GB"`, or
-    # `"0GB"`. A number, `nil`, `"8 GB"`, `"8gb"`, `"1.5GB"`, and a string
-    # with a byte that isn't valid text raise as memory, and `0` raises as `cpus`.
+    # 1, as a task's `cpus` is, and `memory` is a number, whole or decimal with
+    # digits on both sides of the point, none or one space, and `MB`, `GB`, `TB`,
+    # `MiB`, `GiB`, or `TiB` in any case, such as `"512MB"`, `"8 gb"`,
+    # `"1.5GiB"`, or `"0GB"`. A decimal size rounds up to the next whole
+    # megabyte. A number, `nil`, `"8"`, `"8G"`, `"1e3MB"`, `"-1GB"`, `".5GB"`,
+    # `"8  GB"`, `"8GB "`, and a string with a byte that isn't valid text raise
+    # as memory, and `0` raises as `cpus`. The message lists the forms that
+    # work.
     #
     # - `cpus`: Integer, a whole number from 1.
     # - `memory`: String, such as `"4GB"`.
     #
     # ```ruby
     # Proof::Resources.request(cpus: 2, memory: "512MB").megabytes # => 512
+    # Proof::Resources.request(cpus: 2, memory: "1.5 tib").megabytes # => 1_572_864
     # ```
     def self.request: (cpus: Integer, memory: String) -> Resources
 

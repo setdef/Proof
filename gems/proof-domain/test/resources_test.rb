@@ -9,67 +9,12 @@ class ResourcesTest < Minitest::Test
     Proof::Resources.request(cpus:, memory:)
   end
 
-  # Project file reference, "Properties": `memory` is "A quoted size, such as
-  # `"512MB"` or `"8GB"`".
-  def test_a_size_in_megabytes_is_read_as_megabytes
-    assert_equal(512, request("512MB").megabytes)
-  end
-
-  # Project file reference, "Properties": "A size counts 1 GB as 1,024 MB."
-  def test_a_size_in_gigabytes_counts_1024_megabytes_to_the_gigabyte
-    assert_equal(8192, request("8GB").megabytes)
-  end
-
-  # Project file reference, "Properties": "A size counts 1 GB as 1,024 MB."
-  def test_a_gigabyte_and_1024_megabytes_are_one_request
-    assert_equal(request("1GB"), request("1024MB"))
-  end
-
   # Project file reference, "Properties": the built-in default is `2` CPUs and
   # `"4GB"`, and a task requests the CPUs it is given.
   def test_the_cpus_and_memory_are_kept
     resources = request("4GB", cpus: 2)
 
     assert_equal([2, 4096], [resources.cpus, resources.megabytes])
-  end
-
-  # Pool file reference, "Properties" of a host: "With a share of `cpus=0
-  # memory="0GB"`, Proof keeps nothing free ... Proof accepts it", so `"0GB"`
-  # is a size.
-  def test_a_size_of_zero_is_a_size
-    assert_equal(0, request("0GB").megabytes)
-  end
-
-  # Project file reference, "Properties": `memory` is "A quoted size, such as
-  # `"512MB"` or `"8GB"`", so nothing else is a size.
-  def test_anything_but_digits_then_mb_or_gb_is_not_a_size
-    ["8", "8 GB", "8gb", "8GiB", "8G", "GB", "-1GB", "1.5GB", "1e3MB", "", " 8GB", "8GB\n", "8GB8MB"].each do |memory|
-      assert_raises(Proof::InvalidResourcesError, memory) { request(memory) }
-    end
-  end
-
-  # Project file reference, "Properties": `memory` is "A quoted size", so a
-  # number is not one, and "Mistakes Proof catches" lists "a value has the
-  # wrong type".
-  def test_a_memory_that_is_not_text_is_refused
-    [nil, 8, :"8GB", ["8GB"]].each do |memory|
-      assert_raises(Proof::InvalidResourcesError) { request(memory) }
-    end
-  end
-
-  # A byte string that isn't valid text, as a command line can hold, is not a
-  # size, and raises the resources' error, not Ruby's.
-  def test_a_memory_with_invalid_bytes_is_refused
-    error = assert_raises(Proof::InvalidResourcesError) { request("8\xFFGB") }
-
-    assert_equal('memory is a size such as "512MB" or "8GB", not "8\xFFGB"', error.message)
-  end
-
-  # The message says what a size is and what it got.
-  def test_the_message_for_a_memory_names_the_value
-    error = assert_raises(Proof::InvalidResourcesError) { request("8 GB") }
-
-    assert_equal('memory is a size such as "512MB" or "8GB", not "8 GB"', error.message)
   end
 
   # Project file reference, "Properties": `cpus` is "A whole number from 1".

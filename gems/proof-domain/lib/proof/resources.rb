@@ -4,14 +4,18 @@ module Proof
   # steep:ignore:start
   class Resources < Data.define(:cpus, :megabytes)
     # steep:ignore:end
+    MEMORY_MESSAGE = "memory is a size: a number, whole or decimal, an optional space, and MB, GB, TB, " \
+      "MiB, GiB, or TiB in any case, such as \"512MB\", \"8 GB\", \"1.5gib\", or \"0.5TB\", not %p"
+    private_constant(:MEMORY_MESSAGE)
+
     def self.request(cpus:, memory:)
       raise(InvalidResourcesError, format("cpus is a whole number from 1, not %p", cpus)) unless
         cpus.is_a?(Integer) && cpus >= 1
-      raise(InvalidResourcesError, format("memory is a size such as \"512MB\" or \"8GB\", not %p", memory)) unless
-        memory.is_a?(String) && memory.valid_encoding? && memory.match?(/\A\d+(MB|GB)\z/)
 
-      amount = Integer(memory.delete_suffix("GB").delete_suffix("MB"), 10)
-      new(cpus:, megabytes: memory.end_with?("GB") ? amount * 1024 : amount)
+      megabytes = SizeText.megabytes(memory)
+      raise(InvalidResourcesError, format(MEMORY_MESSAGE, memory)) unless megabytes
+
+      new(cpus:, megabytes:)
     end
 
     def initialize(cpus:, megabytes:)
