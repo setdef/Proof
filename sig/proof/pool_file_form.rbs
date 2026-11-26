@@ -1,0 +1,146 @@
+module Proof
+  # What one node of the pool file takes: its arguments, its properties, and its
+  # children.
+  #
+  # KDL accepts any node with any arguments, properties, and children, and the
+  # pool file page lists what each node takes. Written as a check in each place
+  # that reads a node, that list would be in a dozen places and drift. A form
+  # holds it once, as data.
+  #
+  # This class holds the node's name and an example of how to write it, how many
+  # arguments it takes, the names of its properties and which it needs, the
+  # names of its children and which it needs, and whether it may be given again
+  # beside another of its name. It answers what a node lacks or has too much of,
+  # and refuses nothing itself. `Proof::PoolFileShape` checks a node against its
+  # form and refuses.
+  #
+  # Use it as the entries of `Proof::PoolFileForms`.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # form = Proof::PoolFileForm.new(name: :server, usage: "server port=7443", properties: [:port])
+  # [form.name, form.arguments, form.properties] # => [:server, 0..0, [:port]]
+  # ```
+  #
+  # A host takes one argument, its name, and needs a runner:
+  #
+  # ```ruby
+  # host = Proof::PoolFileForm.new(name: :host, usage: "host nuc { runner nuc-linux }", arguments: 1..1, needs: [:runner])
+  # host.needs # => [:runner]
+  # ```
+  class PoolFileForm < Data
+    # The list that a member leaves out has, which is empty.
+    NONE: Array[Symbol]
+
+    # What a member that a form leaves out has.
+    DEFAULTS: Hash[Symbol, Object]
+
+    # What a node takes, as a message words it, by the numbers of arguments.
+    TAKES: Hash[Range[Integer?], String]
+
+    # The node's name, such as `:host`.
+    attr_reader name: Symbol
+
+    # An example of the node, as the messages quote it.
+    attr_reader usage: String
+
+    # The numbers of arguments the node takes, such as `0..0`, `1..1`, or `1..`.
+    attr_reader arguments: Range[Integer?]
+
+    # The names of the properties the node has.
+    attr_reader properties: Array[Symbol]
+
+    # The names of the properties the node needs, which are among its properties.
+    attr_reader required: Array[Symbol]
+
+    # The names of the children the node has.
+    attr_reader children: Array[Symbol]
+
+    # The names of the children the node needs, which are among its children.
+    attr_reader needs: Array[Symbol]
+
+    # Whether the node may be given again beside another of its name.
+    attr_reader repeatable: bool
+
+    def self.new: (name: Symbol, usage: String, ?arguments: Range[Integer?], ?properties: Array[Symbol], ?required: Array[Symbol], ?children: Array[Symbol], ?needs: Array[Symbol], ?repeatable: bool) -> instance
+                | (Symbol name, String usage, Range[Integer?] arguments, Array[Symbol] properties, Array[Symbol] required, Array[Symbol] children, Array[Symbol] needs, bool repeatable) -> instance
+
+    # Builds a form. A member that is left out takes no arguments, has no
+    # properties or children, needs none, and may not be given again.
+    #
+    # - `name`: Symbol, the node's name.
+    # - `usage`: String, an example of the node.
+    # - `arguments`: Range of Integer. Defaults to `0..0`.
+    # - `properties`: Array of Symbol. Defaults to none.
+    # - `required`: Array of Symbol. Defaults to none.
+    # - `children`: Array of Symbol. Defaults to none.
+    # - `needs`: Array of Symbol. Defaults to none.
+    # - `repeatable`: bool. Defaults to `false`.
+    #
+    # ```ruby
+    # Proof::PoolFileForm.new(name: :budget, usage: "budget \"100GB\"", arguments: 1..1).repeatable # => false
+    # ```
+    def initialize: (name: Symbol, usage: String, **Object given) -> void
+
+    # Whether `node` has a number of arguments this form takes.
+    #
+    # - `node`: `Proof::KdlNode`.
+    #
+    # ```ruby
+    # node = Proof::KdlParser.parse("host nuc\n", path: "pool.kdl").first
+    # Proof::PoolFileForms[:host].takes?(node) # => true
+    # ```
+    def takes?: (KdlNode node) -> bool
+
+    # The first property of `node` that this form doesn't list, or `nil`.
+    #
+    # - `node`: `Proof::KdlNode`.
+    #
+    # ```ruby
+    # node = Proof::KdlParser.parse("server host=\"nuc\"\n", path: "pool.kdl").first
+    # Proof::PoolFileForms[:server].stray_property(node) # => "host"
+    # ```
+    def stray_property: (KdlNode node) -> String?
+
+    # The first property this form needs that `node` lacks, or `nil`.
+    #
+    # - `node`: `Proof::KdlNode`.
+    #
+    # ```ruby
+    # node = Proof::KdlParser.parse("share cpus=2\n", path: "pool.kdl").first
+    # Proof::PoolFileForms[:share].missing_property(node) # => "memory"
+    # ```
+    def missing_property: (KdlNode node) -> String?
+
+    # The first child this form needs that `node` lacks, or `nil`.
+    #
+    # - `node`: `Proof::KdlNode`.
+    #
+    # ```ruby
+    # node = Proof::KdlParser.parse("host nuc\n", path: "pool.kdl").first
+    # Proof::PoolFileForms[:host].missing_child(node) # => "runner"
+    # ```
+    def missing_child: (KdlNode node) -> String?
+
+    # What a message about the arguments of a node says: what this form takes,
+    # how to write it, and how many arguments the node has.
+    #
+    # - `count`: Integer, the node's number of arguments.
+    #
+    # ```ruby
+    # Proof::PoolFileForms[:server].facts(1) # => {takes: "no arguments", usage: "server port=7443", count: 1}
+    # ```
+    def facts: (Integer count) -> Hash[Symbol, String | Integer]
+
+    # Whether `child`'s name is not one of this form's children.
+    #
+    # - `child`: `Proof::KdlNode`.
+    #
+    # ```ruby
+    # child = Proof::KdlParser.parse("budget \"1GB\"\n", path: "pool.kdl").first
+    # Proof::PoolFileForms[:server].lacks_child?(child) # => true
+    # ```
+    def lacks_child?: (KdlNode child) -> bool
+  end
+end

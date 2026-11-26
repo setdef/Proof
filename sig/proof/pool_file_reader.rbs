@@ -8,8 +8,8 @@ module Proof
   # bad size, duration, or label on its own, but it has no line to name, and it
   # doesn't know which nodes and properties the file may have.
   #
-  # This class reads the text with `Proof::KdlParser`, refuses a node or property
-  # the pool file page doesn't list, builds each value with the domain's own
+  # This class reads the text with `Proof::KdlParser`, refuses a node, property,
+  # or child the pool file page doesn't list, builds each value with the domain's own
   # classes so that their rules are the file's rules, and raises
   # `Proof::PoolFileError` for every mistake, with the path, the line of the node
   # it is in, and what is wrong. It reads text and a path, and nothing else.
@@ -64,17 +64,10 @@ module Proof
 
     private
 
-    def parts_of: (Array[Array[KdlNode]] groups) -> Hash[Symbol, Object]
-
-    def single: (Array[KdlNode] nodes) -> KdlNode?
-
-    def part_of: (KdlNode node) -> Hash[Symbol, Object]
-
-    NODES: Hash[Symbol, ^(Hash[Symbol, Object]) -> Hash[Symbol, Object]]
+    def parts_of: (Hash[Symbol, Array[KdlNode]] by_name) -> Hash[Symbol, Object]
 
     @path: String
     @refusal: PoolFileRefusal
-    @shape: PoolFileShape
-    @properties: PoolFileProperties
+    @readers: Array[PoolFileProperties | PoolFileHosts]
   end
 end

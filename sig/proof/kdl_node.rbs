@@ -77,6 +77,26 @@ module Proof
     # ```
     def each_child: () { (KdlNode child, KdlNode? first) -> void } -> void
 
+    # The children with this name, in order.
+    #
+    # - `name`: String, a child's name.
+    #
+    # ```ruby
+    # node = Proof::KdlParser.parse("host a {\n  runner r1\n  budget \"1GB\"\n  runner r2\n}\n", path: "pool.kdl").first
+    # node.named("runner").map(&:line) # => [2, 4]
+    # ```
+    def named: (String name) -> Array[KdlNode]
+
+    # The arguments of every child with this name, in order, as one list.
+    #
+    # - `name`: String, a child's name.
+    #
+    # ```ruby
+    # node = Proof::KdlParser.parse("host a {\n  runner r1 r2\n  runner r3\n}\n", path: "pool.kdl").first
+    # node.arguments_named("runner") # => ["r1", "r2", "r3"]
+    # ```
+    def arguments_named: (String name) -> Array[kdl_value]
+
     # The children by name. A name given twice has its last child.
     #
     # ```ruby

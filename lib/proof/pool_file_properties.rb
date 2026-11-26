@@ -14,13 +14,24 @@ module Proof
         artifacts: -> (value) { Size.read(value, name: "limits artifacts") },
       },
     }.freeze
-    private_constant(:BUILDERS)
+    PARTS = {
+      server: -> (values) { values },
+      retention: -> (values) { { retention: Retention.new(**values) } },
+      limits: -> (values) { { limits: Limits.new(**values) } },
+    }.freeze
+    private_constant(:BUILDERS, :PARTS)
 
     def initialize(refusal:)
       @refusal = refusal
     end
 
-    def read(node)
+    def read(by_name)
+      nodes = PARTS.keys.filter_map { |name| by_name[name]&.first }
+      parts = nodes.map { |node| PARTS[node.name.to_sym].call(values_of(node)) }
+      parts.reduce({}, :merge)
+    end
+
+    private def values_of(node)
       node.properties.to_h { |name, value| pair(node, name.to_sym, value) }
     end
 

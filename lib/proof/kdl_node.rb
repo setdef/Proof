@@ -12,6 +12,14 @@ module Proof
       children.each_with_index { |child, index| yield(child, first_before(index)) }
     end
 
+    def named(name)
+      children.select { |child| child.name == name }
+    end
+
+    def arguments_named(name)
+      named(name).flat_map(&:arguments)
+    end
+
     def children_by_name
       children.to_h { |child| [child.name, child] }
     end

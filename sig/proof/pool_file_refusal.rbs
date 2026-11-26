@@ -7,15 +7,23 @@ module Proof
   # the file, so it sits in one place, where it can be read as a list.
   #
   # This class holds the file's path, and has one method for each refusal: a
-  # node the page doesn't list, a node given twice, a node with arguments or
-  # children it doesn't take, and a property it doesn't have. Each method
-  # raises, and never returns. It also turns what the domain refuses into the
-  # same error, at the line of the node it was building.
+  # node the page doesn't list, a node given twice, a node with arguments,
+  # properties, or children it doesn't take, a child with the wrong arguments, a
+  # blank name, and a part a node needs and lacks. Each method raises, and never
+  # returns. It also turns what the domain refuses into the same error, at the
+  # line of the node it was building.
   #
   # Use it from the classes that read a pool file's nodes.
   class PoolFileRefusal < FileRefusal
     # The messages, by name, for `format` to fill in.
     MESSAGES: Hash[Symbol, String]
+
+    # What a node takes, as a message words it, by the numbers of arguments.
+    TAKES: Hash[Range[Integer?], String]
+
+    # Words what a node has, for a message: none, two with "and", or three or
+    # more with a serial comma, after `what`, such as "properties".
+    KNOWN: ^(Array[Symbol] names, String what) -> String
 
     # Prepares to refuse as the file at `path`.
     #
@@ -29,16 +37,30 @@ module Proof
     # before it.
     def repeated_node: (KdlNode node, KdlNode first) -> bot
 
-    # Refuses arguments on a node that takes none, with its usage and how many
-    # it has.
-    def node_arguments: (KdlNode node, String usage, Integer count) -> bot
+    # Refuses a node with a number of arguments its form doesn't take, and says
+    # what it takes and how to write it. `count` is how many it has.
+    def node_arguments: (KdlNode node, PoolFileForm form, Integer count) -> bot
 
-    # Refuses a property that the node doesn't have, and lists the ones it has,
-    # as `known` words them.
-    def unknown_property: (KdlNode node, String property, String known) -> bot
+    # Refuses a property that the node's form doesn't list, and lists the ones
+    # it has. When the property is the name of a child, it says to write it as
+    # a child.
+    def unknown_property: (KdlNode node, String property, PoolFileForm form) -> bot
 
-    # Refuses a child of a node that has no children. `child` is the child.
-    def no_children: (KdlNode node, KdlNode child) -> bot
+    # Refuses a child that the parent's form doesn't list, and lists the ones it
+    # has.
+    def unknown_child: (KdlNode parent, KdlNode child, PoolFileForm form) -> bot
+
+    # Refuses a child given a second time. `first` is the one before it.
+    def repeated_child: (KdlNode child, KdlNode first) -> bot
+
+    # Refuses a node that lacks a property its form needs.
+    def missing_property: (KdlNode node, String property) -> bot
+
+    # Refuses a node that lacks a child its form needs.
+    def missing_child: (KdlNode node, String child) -> bot
+
+    # Refuses a name that is empty or only spaces. `what` says whose name it is.
+    def blank_name: (KdlNode node, String what, kdl_value value) -> bot
 
     private
 

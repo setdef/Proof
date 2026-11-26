@@ -26,7 +26,8 @@ module Proof
 
     # Runs the block, which builds domain values, and turns the error the domain
     # raises into this file's error at the line of `node`. It gives the block's
-    # value when the domain refuses nothing.
+    # value when the domain refuses nothing, and lets an error that is already a
+    # `Proof::FileError`, with its own line, pass through.
     #
     # - `node`: `Proof::KdlNode`, the node the block builds from.
     #

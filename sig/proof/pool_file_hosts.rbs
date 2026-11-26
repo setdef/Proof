@@ -1,0 +1,54 @@
+module Proof
+  # Reads the `defaults` node and the `host` nodes of the pool file.
+  #
+  # A host's entry is its name, its runners, and its settings, and a host with
+  # no budget in its entry or in `defaults` is a mistake in the file. The domain
+  # holds each rule, but it has no line to name, and KDL accepts a host with a
+  # blank name, or with no runner.
+  #
+  # This class checks the shape of each node with `Proof::PoolFileShape`,
+  # refuses a blank name and a host with no `runner` child, reads each node's
+  # settings with `Proof::PoolFileSettings`, builds each `Proof::HostEntry`, and
+  # refuses a host with no budget at the line of the host.
+  #
+  # Use it from `Proof::PoolFileReader`.
+  class PoolFileHosts
+    # The rule for a name that is empty or only spaces.
+    BLANK: ^(kdl_value value) -> bool
+
+    # Prepares to read with `refusal`.
+    #
+    # - `refusal`: `Proof::PoolFileRefusal`.
+    def initialize: (refusal: PoolFileRefusal) -> void
+
+    # The `defaults` and the hosts that the file gives: the settings of the
+    # `defaults` node, or settings that give nothing when the file has none, and
+    # the entry of each `host` node, in order, each checked against the defaults.
+    # Refuses a blank name, and a host with no budget at the line of the host.
+    #
+    # - `by_name`: Hash from a node's name as a symbol to the nodes of that name,
+    #   which `Proof::PoolFileShape` has checked.
+    #
+    # ```ruby
+    # path = "pool.kdl"
+    # text = "host nuc {\n  runner nuc-linux\n  budget \"400GB\"\n}\n"
+    # by_name = Proof::KdlParser.parse(text, path:, error: Proof::PoolFileError).group_by { |node| node.name.to_sym }
+    # Proof::PoolFileHosts.new(refusal: Proof::PoolFileRefusal.new(path:)).read(by_name)[:hosts].map(&:name) # => ["nuc"]
+    # ```
+    def read: (Hash[Symbol, Array[KdlNode]] by_name) -> Hash[Symbol, Object]
+
+    private
+
+    def settings_for: (KdlNode node) -> PoolFileSettings
+
+    def entry: (KdlNode node, HostSettings defaults) -> HostEntry
+
+    def refuse_blanks: (KdlNode node) -> void
+
+    def refuse_blank_in: (KdlNode node, String what) -> void
+
+    def refuse_blank: (KdlNode node, String what, kdl_value value) -> void
+
+    @refusal: PoolFileRefusal
+  end
+end

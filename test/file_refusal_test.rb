@@ -50,6 +50,15 @@ class FileRefusalTest < Minitest::Test
     assert_equal(["pool.kdl", 3, domain.message], [error.path, error.line, error.reason])
   end
 
+  # An error that already names a file and a line, as a block that reads a child node raises, passes through, so the
+  # line of the child is not replaced by the line of its parent.
+  def test_an_error_that_names_a_file_and_a_line_passes_through
+    inner = OtherFileError.new(path: "pool.kdl", line: 4, reason: "a child went wrong")
+    error = assert_raises(OtherFileError) { OddRefusal.new(path: "pool.kdl").checking(node) { raise(inner) } }
+
+    assert_same(inner, error)
+  end
+
   # A block that builds its value with no refusal gives the value.
   def test_a_block_with_no_refusal_gives_its_value
     assert_equal("gpu", OddRefusal.new(path: "pool.kdl").checking(node) { Proof::Label.new(name: "gpu").name })

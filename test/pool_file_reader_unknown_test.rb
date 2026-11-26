@@ -17,15 +17,15 @@ class PoolFileReaderUnknownTest < Minitest::Test
     ["limits max=\"1GB\"\n", 1, "a \"limits\" node has no property \"max\". Its properties are output and artifacts"],
   ].freeze
   ARGUMENTS = [
-    ["server 7443\n", "a \"server\" node has no arguments, as in server port=7443, and this one has 1"],
+    ["server 7443\n", "a \"server\" node takes no arguments, as in server port=7443, and this one has 1"],
     [
       "retention \"90d\" \"14d\"\n",
-      "a \"retention\" node has no arguments, as in retention runs=\"90d\" output=\"14d\" artifacts=\"7d\", " \
+      "a \"retention\" node takes no arguments, as in retention runs=\"90d\" output=\"14d\" artifacts=\"7d\", " \
         "and this one has 2",
     ],
     [
       "limits \"1GB\"\n",
-      "a \"limits\" node has no arguments, as in limits output=\"1GB\" artifacts=\"16GB\", and this one has 1",
+      "a \"limits\" node takes no arguments, as in limits output=\"1GB\" artifacts=\"16GB\", and this one has 1",
     ],
   ].freeze
   private_constant(:UNKNOWN_PROPERTIES, :ARGUMENTS)
@@ -36,7 +36,8 @@ class PoolFileReaderUnknownTest < Minitest::Test
     assert_refused(
       "server port=7443\n\nlimit output=\"1GB\"\n",
       3,
-      "there is no node \"limit\" in a pool file. A pool file has \"server\", \"retention\", and \"limits\" nodes"
+      "there is no node \"limit\" in a pool file. A pool file has \"server\", \"retention\", \"limits\", " \
+        "\"defaults\", and \"host\" nodes"
     )
   end
 
@@ -50,7 +51,7 @@ class PoolFileReaderUnknownTest < Minitest::Test
   # The same bullet, for a child of a node that has properties only.
   def test_a_child_of_a_node_that_has_properties_only_is_refused
     assert_refused(
-      "server port=7443 {\n  tls yes\n}\n", 2, "a \"server\" node has no children, and this one has \"tls\""
+      "server port=7443 {\n  tls yes\n}\n", 2, "a \"server\" node has no child \"tls\". It has no children"
     )
   end
 

@@ -1,5 +1,6 @@
 module Proof
-  # Builds the values of the properties of a node of the pool file.
+  # Builds the values of the nodes of the pool file that give their settings as
+  # properties: `server`, `retention`, and `limits`.
   #
   # `server port=7443`, `retention runs="90d"`, and `limits output="1GB"` give
   # their settings as properties. The domain owns what makes each value valid:
@@ -8,33 +9,40 @@ module Proof
   #
   # This class builds each property's value with the domain's classes, so a
   # port, a duration, and a size have one rule each, and a value the domain
-  # refuses is a refusal at the line of the node that gave it. It builds no
-  # property the node's form doesn't list, which `Proof::PoolFileShape`
-  # refuses first.
+  # refuses is a refusal at the line of the node that gave it. It builds the
+  # `port`, the `Proof::Retention`, and the `Proof::Limits` of the file, and
+  # leaves out what the file doesn't give, so the defaults stand.
   #
   # Use it from `Proof::PoolFileReader`.
   class PoolFileProperties
     # The builder of each property, by the node's name and the property's name.
     BUILDERS: Hash[Symbol, Hash[Symbol, ^(kdl_value) -> Object]]
 
+    # What each node sets in the file, from the values of its properties.
+    PARTS: Hash[Symbol, ^(Hash[Symbol, Object]) -> Hash[Symbol, Object]]
+
     # Prepares to build with `refusal`.
     #
     # - `refusal`: `Proof::PoolFileRefusal`.
     def initialize: (refusal: PoolFileRefusal) -> void
 
-    # The values of the properties of `node`, by the property's name as a
-    # symbol. A property the node lacks is left out.
+    # What the nodes of `by_name` that give properties set in the file: the
+    # port, the retention, and the limits, each only when the file has its node.
     #
-    # - `node`: `Proof::KdlNode`, a `server`, `retention`, or `limits` node.
+    # - `by_name`: Hash from a node's name as a symbol to the nodes of that name,
+    #   which `Proof::PoolFileShape` has checked.
     #
     # ```ruby
     # path = "pool.kdl"
-    # node = Proof::KdlParser.parse("server port=8443\n", path:, error: Proof::PoolFileError).first
-    # Proof::PoolFileProperties.new(refusal: Proof::PoolFileRefusal.new(path:)).read(node) # => {port: 8443}
+    # nodes = Proof::KdlParser.parse("server port=8443\n", path:, error: Proof::PoolFileError)
+    # by_name = nodes.group_by { |node| node.name.to_sym }
+    # Proof::PoolFileProperties.new(refusal: Proof::PoolFileRefusal.new(path:)).read(by_name) # => {port: 8443}
     # ```
-    def read: (KdlNode node) -> Hash[Symbol, Object]
+    def read: (Hash[Symbol, Array[KdlNode]] by_name) -> Hash[Symbol, Object]
 
     private
+
+    def values_of: (KdlNode node) -> Hash[Symbol, Object]
 
     def pair: (KdlNode node, Symbol key, kdl_value value) -> [Symbol, Object]
 

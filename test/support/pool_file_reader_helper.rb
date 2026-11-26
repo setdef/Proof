@@ -23,6 +23,11 @@ module PoolFileReaderHelper
     assert_equal("#{PATH}:#{line}: #{reason}", error.message)
   end
 
+  # Checks each refusal in a list of text, line, and reason.
+  def assert_refusals(refusals)
+    refusals.each { |text, line, reason| assert_refused(text, line, reason) }
+  end
+
   # What the domain says of a value it refuses, which is what the reader says of it at the node's line. The block
   # builds the value.
   def domain_said(error_class, &)
