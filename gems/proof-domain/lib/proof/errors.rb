@@ -65,8 +65,16 @@ module Proof
     end
   end
 
+  # steep:ignore:start
   class GitFailedError < Error
+    # steep:ignore:end
+    attr_reader :status, :error_output
+
     def initialize(subcommand:, status:, error_output:)
+      # The class line is ignored by Steep, which doesn't count attr_reader as defining the readers that
+      # the signature declares, and RuboCop rejects a method that only returns an instance variable.
+      @status = status
+      @error_output = error_output
       super("git #{subcommand} failed (#{status.to_s.sub(/\Apid \d+ /, '')}): #{error_output.strip}")
     end
   end

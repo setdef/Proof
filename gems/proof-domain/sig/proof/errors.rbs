@@ -95,6 +95,12 @@ module Proof
   # caller has no better word for why. A refusal Proof can explain, such as a
   # folder outside any repository, has an error class for that refusal.
   class GitFailedError < Error
+    # How git ended.
+    attr_reader status: Process::Status
+
+    # What git printed to standard error.
+    attr_reader error_output: String
+
     # Builds the error, with a message that gives the command, git's exit
     # status, and what git said.
     #

@@ -87,6 +87,14 @@ class GitTest < Minitest::Test
     )
   end
 
+  # A caller that rewrites the error for people reads the exit status and git's own words, not the message.
+  def test_a_failing_git_raises_with_its_status_and_error_output_to_read
+    error = assert_raises(Proof::GitFailedError) { Proof::Git.new(folder: temporary_folder).run("rev-parse", "HEAD") }
+
+    assert_equal(128, error.status.exitstatus)
+    assert_match(/not a git repository/i, error.error_output)
+  end
+
   # A git that a signal ends has no exit status, so the message gives the signal.
   def test_a_git_that_a_signal_ends_is_reported_by_the_signal
     program = File.join(temporary_folder, "killed-git")
