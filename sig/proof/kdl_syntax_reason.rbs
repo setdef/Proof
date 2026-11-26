@@ -1,0 +1,48 @@
+module Proof
+  # What a person reads when the `kdl` gem refuses text as KDL 2.
+  #
+  # The gem's message is for programmers: `unexpected IDENT "GB" (1:22)`. A
+  # person who wrote `memory=8GB` needs to know that KDL wants quotes there,
+  # and which column to look at.
+  #
+  # This class turns the gem's error into the reason that `Proof::ProjectFileError`
+  # holds: it drops the position the gem puts at the end of its message, gives it
+  # as a column, and adds the advice to quote a value when the gem found a
+  # word where it expected the end of a value.
+  #
+  # Use it only to fill in a `Proof::ProjectFileError`.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # error = begin
+  #   KDL::Parser.new.parse("task package memory=8GB\n")
+  # rescue KDL::Error => e
+  #   e
+  # end
+  # Proof::KdlSyntaxReason.new(error:).to_s
+  # # => "this is not valid KDL 2: unexpected IDENT \"GB\" at column 22. If a value starts with a digit and continues with letters, put it in quotes, as in memory=\"8GB\""
+  # ```
+  class KdlSyntaxReason < Data
+    # The advice added when the gem found a word where a value should end.
+    QUOTE_HINT: String
+
+    # The error the gem raised.
+    attr_reader error: KDL::Error
+
+    def self.new: (error: KDL::Error) -> instance
+                | (KDL::Error error) -> instance
+
+    # Builds the reason for an error.
+    #
+    # - `error`: KDL::Error, what the gem raised.
+    def initialize: (error: KDL::Error) -> void
+
+    # The reason, such as `this is not valid KDL 2: unexpected RBRACE "}" at column 3`.
+    def to_s: () -> String
+
+    private
+
+    def said: () -> String
+  end
+end

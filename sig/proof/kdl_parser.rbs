@@ -1,0 +1,59 @@
+module Proof
+  # Reads KDL 2 text into nodes that have their lines.
+  #
+  # Proof's project file is KDL 2, and a mistake in it has to name a line. The
+  # `kdl` gem reports a line only for a mistake in the text itself, such as a
+  # stray `=`. It keeps no line on a node, so a mistake in what the text says,
+  # such as a label with a space in it, would have no line to name.
+  #
+  # This module gives the gem's parser a node class that keeps the line of its
+  # name, and reads the text as KDL 2 only, with no fallback to KDL 1. It finds
+  # the line through the parser's private method that reads the next token, so
+  # `kdl` is pinned to patch releases of 2.2, and a test fails when a release
+  # changes how a node gets its line.
+  #
+  # Use it to read the project file's text before building the project file from
+  # its nodes.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # nodes = Proof::KdlParser.parse("defaults cpus=4\n\ntask test\n", path: ".config/proof.kdl")
+  # nodes.map { |node| [node.name, node.line] } # => [["defaults", 1], ["task", 3]]
+  # ```
+  #
+  # A text that is KDL 1 and not KDL 2 is refused, with its line:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::ProjectFileError
+  # Proof::KdlParser.parse("task test true\n", path: ".config/proof.kdl")
+  # ```
+  class KdlParser
+    # Reads `text` as KDL 2 and gives its nodes, in order. Slashdashed nodes
+    # (`/-`) are not in the result, and the nodes after one keep their own
+    # lines. Type annotations, such as `(i8)5`, change no value. Raises
+    # `Proof::ProjectFileError` for text that isn't KDL 2, with the line and
+    # column the gem reports, and with advice to put a value in quotes when the
+    # value starts with a digit and continues with letters.
+    #
+    # - `text`: String, the file's text.
+    # - `path`: String, the file's path, for the error.
+    def self.parse: (String text, path: String) -> Array[KdlNode]
+
+    # Prepares to read texts as the file at `path`.
+    #
+    # - `path`: String, the file's path, for the error.
+    def initialize: (path: String) -> void
+
+    # Reads `text` as `Proof::KdlParser.parse` does.
+    #
+    # ```ruby
+    # Proof::KdlParser.new(path: ".config/proof.kdl").parse("task test\n").size # => 1
+    # ```
+    def parse: (String text) -> Array[KdlNode]
+
+    private
+
+    @path: String
+  end
+end

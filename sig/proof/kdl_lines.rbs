@@ -1,0 +1,47 @@
+module Proof
+  # The classes that give the `kdl` gem's parser a line for each node.
+  #
+  # The gem reads KDL into nodes that keep no line. The parser knows the line of
+  # each token it reads, and builds a node right after it reads the node's name,
+  # so a node class that asks for the line of the last token read, and a parser
+  # that says which token that is, put the line on every node.
+  #
+  # `Proof::KdlParser` uses these, and nothing else does.
+  module KdlLines
+    LINE: Symbol
+
+    # A node that keeps the line of its name.
+    #
+    # The grammar builds it with the name alone, and the node takes the line
+    # from the token the parser read last. It never builds one outside a parse.
+    class LocatedNode < KDL::Node[LocatedNode]
+      # The line of the node's name.
+      attr_reader line: Integer
+
+      # Builds the node, with the line of the token the parser read last.
+      #
+      # - `name`: String, the node's name.
+      def initialize: (String name) -> void
+
+      # The node and its children as `Proof::KdlNode`s.
+      def to_kdl_node: () -> KdlNode
+    end
+
+    # The gem's KDL 2 parser, which notes the line of each token it reads where
+    # a `LocatedNode` can find it.
+    class LinedParser < KDL::Parser[LocatedNode]
+      private
+
+      def next_token: () -> [Symbol | false, KDL::Tokenizer::Token]
+    end
+
+    # The module that the grammar builds nodes, values, and a document through:
+    # the gem's own, with `Node` replaced by `LocatedNode`.
+    module Output
+      include KDL
+
+      # The class of every node the grammar builds.
+      Node: singleton(LocatedNode)
+    end
+  end
+end

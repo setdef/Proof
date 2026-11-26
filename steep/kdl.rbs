@@ -1,0 +1,54 @@
+# The parts of the kdl gem that Proof calls, which ships no signatures. Steep
+# checks Proof's calls against these, so a call the gem doesn't answer is an
+# error here and not in a run.
+module KDL
+  class Error < StandardError
+    attr_reader filename: String?
+    attr_reader line: Integer?
+    attr_reader column: Integer?
+  end
+
+  class ParseError < Error
+  end
+
+  class VersionMismatchError < Error
+  end
+
+  class Tokenizer
+    class Token
+      attr_reader line: Integer
+    end
+  end
+
+  class Value
+    def value: () -> (String | Numeric | bool | nil)
+  end
+
+  # The gem builds a node's children through the output module, so the type of
+  # a node's children follows the module: `C` is the class of the nodes it
+  # builds.
+  class Node[C]
+    attr_accessor name: String
+    attr_accessor arguments: Array[Value]
+    attr_accessor properties: Hash[String, Value]
+    attr_accessor children: Array[C]
+
+    def initialize: (String name) -> void
+  end
+
+  # Likewise for a document's nodes.
+  class Document[N]
+    attr_accessor nodes: Array[N]
+  end
+
+  # The parser builds nodes of the class its output module gives, `N`.
+  class Parser[N]
+    def initialize: (?output_module: Module, ?parse_types: bool) -> void
+
+    def parse: (String str, ?filename: String?) -> Document[N]
+
+    private
+
+    def next_token: () -> [Symbol | false, Tokenizer::Token]
+  end
+end

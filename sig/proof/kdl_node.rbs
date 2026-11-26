@@ -1,0 +1,69 @@
+module Proof
+  # What a node of KDL text holds, as Ruby values, with its line.
+  type kdl_value = String | Numeric | bool | nil
+
+  # One node of KDL text: its name, its arguments, its properties, its children,
+  # and the line where its name is.
+  #
+  # The `kdl` gem reads KDL into objects of its own, and keeps no line on a
+  # node. Proof needs the line of every node, to tell a person where a
+  # project file went wrong, and it needs nothing of the gem's other classes.
+  #
+  # This class holds what Proof reads from a node, as Ruby values: text,
+  # whole numbers, decimals, `true`, `false`, and `nil` for `#null`. Its
+  # children are nodes of this class.
+  #
+  # Use it as what `Proof::KdlParser.parse` returns.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # node = Proof::KdlParser.parse("task test cpus=4 {\n  os linux\n}\n", path: ".config/proof.kdl").first
+  # node.name # => "task"
+  # node.arguments # => ["test"]
+  # node.properties # => {"cpus" => 4}
+  # node.children.map(&:name) # => ["os"]
+  # node.children.first.line # => 2
+  # ```
+  class KdlNode < Data
+    # The node's name, as text.
+    attr_reader name: String
+
+    # The node's arguments, in order.
+    attr_reader arguments: Array[kdl_value]
+
+    # The node's properties, by name. A property given twice has the last value.
+    attr_reader properties: Hash[String, kdl_value]
+
+    # The nodes in the node's block, in order.
+    attr_reader children: Array[KdlNode]
+
+    # The line of the node's name, counting from 1.
+    attr_reader line: Integer
+
+    def self.new: (name: String, arguments: Array[kdl_value], properties: Hash[String, kdl_value], children: Array[KdlNode], line: Integer) -> instance
+                | (String name, Array[kdl_value] arguments, Hash[String, kdl_value] properties, Array[KdlNode] children, Integer line) -> instance
+
+    # Builds a node from what the parser read.
+    #
+    # - `name`: String, the node's name.
+    # - `arguments`: Array of text, numbers, `true`, `false`, and `nil`.
+    # - `properties`: Hash from a property's name to its value.
+    # - `children`: Array of `Proof::KdlNode`.
+    # - `line`: Integer, from 1, where the node's name is.
+    #
+    # ```ruby
+    # Proof::KdlNode.new(name: "os", arguments: ["linux"], properties: {}, children: [], line: 3).line # => 3
+    # ```
+    def initialize: (name: String, arguments: Array[kdl_value], properties: Hash[String, kdl_value], children: Array[KdlNode], line: Integer) -> void
+
+    # Whether the node has no properties and no children, so that everything
+    # it says is in its arguments.
+    #
+    # ```ruby
+    # node = Proof::KdlParser.parse("os linux macos\n", path: ".config/proof.kdl").first
+    # node.arguments_only? # => true
+    # ```
+    def arguments_only?: () -> bool
+  end
+end
