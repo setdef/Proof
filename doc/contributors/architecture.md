@@ -231,6 +231,29 @@ Options weighed:
 - `Kernel#syscall` on Linux with Fiddle elsewhere: two ways to do one thing.
 - A helper program in another language for each native call: a second language, which [the decision for Ruby](decisions/0001-proof-is-ruby-shipped-as-a-fledge-app.md) rules out without a reason only it can meet.
 
+### Ending a Linux run's processes and holding its memory
+
+The Linux runner ends what a run started with a subreaper and a process group, and holds the run to its memory with a systemd scope:
+
+- The runner makes itself the child subreaper by calling `prctl(PR_SET_CHILD_SUBREAPER, 1)` through Fiddle, with a plain, non-variadic signature, as [Native calls](#native-calls) says native calls go. An orphaned descendant is then reparented to the runner and stays a zombie, which `kill -0` still answers, until the runner reaps it with `Process.wait`.
+- The runner starts the command with `Process.spawn(..., pgroup: true)` and ends the group with `Process.kill` on the negative group ID: `TERM`, then `CONT` for a stopped process, then `KILL`, as [the runner design](design/runner.md#a-runs-end) escalates.
+- A process that leaves the group with `setsid` survives those signals. When its parent exits, it is an orphan and comes back to the runner, which holds it as a child to signal and reap.
+- The runner starts the command in `systemd-run --user --scope -p MemoryMax=… -p MemorySwapMax=0`, with `MemoryMax` set to the run's memory request and `MemorySwapMax` set to zero.
+- The runner reads a run's memory from `/proc/PID/smaps_rollup`, which has `Pss` and `SwapPss`, and which an account can read for its own processes, including those inside such a scope. The scope's `memory.current` and `memory.peak` are readable by the account too. Another account's processes aren't readable.
+
+These were measured in disposable virtual machines running Debian 13 (kernel 6.12, systemd 257) and Ubuntu 24.04.5 (kernel 6.8, systemd 255), on x86-64, with Ruby 4.1.0-preview1 and Fiddle 1.1.8, as an ordinary account with no sudo, over SSH, with no desktop. The results were the same on both systems. ARM64 is unmeasured.
+
+- With the subreaper call, an orphaned grandchild was reparented to the Ruby process and stayed a zombie until `Process.wait` reaped it. Without the call, the orphan went to PID 1 and `Process.wait` raised `ECHILD`.
+- `Process.kill("-TERM", pgid)`, `"-CONT"`, and `"-KILL"` ended every process in the group, including a stopped one. A process that called `setsid` was in its own session and group, and survived all three.
+- A Ruby process that allocated 400 MB in a scope with `MemoryMax=200M` was ended with `SIGKILL` within a second. The Ruby parent saw `termsig=9`, and the user journal said the scope failed with result `oom-kill`. On a host with 2 GB of swap, `MemoryMax=200M` alone didn't end it: the excess went to swap, and the process exited 0 after 1.5 to 20 seconds. With `MemorySwapMax=0` added, it was killed within 0.2 seconds.
+- The limit worked over SSH with no desktop. With lingering off, it worked while a login session existed. With lingering off and no session, it failed to start ("Failed to connect to bus"). With lingering on and no session, it worked.
+
+Options weighed:
+
+- `Kernel#syscall` for the subreaper call: ruled out under [Native calls](#native-calls), because it doesn't exist on macOS or Windows and its call numbers differ between x86-64 and ARM64 Linux.
+- A process group alone: a process that calls `setsid` escapes it, as measured.
+- `MemoryMax` alone: swap defeats it on a host that has swap, as measured.
+
 ### Run IDs and codes
 
 Crockford Base32 is written in the domain gem. The domain has no dependencies, and [the glossary](../glossary.md#run) says Proof reads a typed `o` as `0` and an `i` or `l` as `1`, so the decoder is part of the domain's rules.
