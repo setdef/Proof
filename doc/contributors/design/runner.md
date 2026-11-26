@@ -18,7 +18,8 @@ What the runner must guarantee, and the traps between a design that looks right 
 ## Memory
 
 - A run must not be able to take its host down. A host that swaps hard stops answering the server, its other runs, and SSH, before the kernel's out-of-memory killer acts.
-- Where a limit can be set without root, set it: a systemd user scope with `MemoryMax` on Linux (tested on Debian 13; it needs the account's user manager, so lingering must be on), a job object's memory limit on Windows (per Microsoft's documentation; untested). macOS has no limit an ordinary account can set: `RLIMIT_AS`, `RLIMIT_DATA`, and `RLIMIT_RSS` return `EINVAL` or aren't enforced (tested).
+- Where a limit can be set without root, set it: a systemd user scope with `MemoryMax` on Linux (tested on Debian 13 and Ubuntu 24.04; it needs the account's user manager, so lingering must be on), a job object's memory limit on Windows (per Microsoft's documentation; untested). macOS has no limit an ordinary account can set: `RLIMIT_AS`, `RLIMIT_DATA`, and `RLIMIT_RSS` return `EINVAL` or aren't enforced (tested).
+- **On a host with swap, a memory limit that doesn't also cover swap doesn't end a run.** The run's excess goes to swap and the run carries on, far past its request: the hard swapping the first requirement exists to prevent.
 - Where no limit can be set, end a run only when it holds more than it requested **and** the host is short: on Linux, pressure stall information (`/proc/pressure/memory`) and available memory are the signals. A run within its request is never ended.
 - Count a run's memory as its processes' proportional set size plus swap (`smaps_rollup`'s `Pss` and `SwapPss` on Linux), not resident size, which counts shared pages once per process.
 - A run ended for memory has the state `out_of_memory`, exits 137, says what to request next time, and is never rerun.
