@@ -1,0 +1,40 @@
+module Proof
+  # Reads the settings that a `defaults` or `task` node gives.
+  #
+  # Both nodes take the properties `cpus`, `memory`, and `timeout`, and the
+  # children `os`, `label`, `artifact`, and `cache`. The domain owns what makes
+  # each value valid, and `Proof::TaskSettings` owns how they combine. Writing
+  # those rules a second time in the reader would let the two drift.
+  #
+  # This class reads the properties and the children, and returns the
+  # `Proof::TaskSettings` that the domain builds from them. A value the domain
+  # refuses is a refusal at the line of the node that gave it.
+  #
+  # Use it from `Proof::ProjectFileReader` and `Proof::TaskReader`.
+  class ProjectFileSettings
+    # Prepares to read with `refusal`.
+    #
+    # - `refusal`: `Proof::ProjectFileSettingsRefusal`.
+    def initialize: (refusal: ProjectFileSettingsRefusal) -> void
+
+    # The settings of `node`. A property or child the node lacks gives no
+    # setting, as `nil`.
+    #
+    # - `node`: `Proof::KdlNode`, a `defaults` or `task` node.
+    #
+    # ```ruby
+    # path = ".config/proof.kdl"
+    # node = Proof::KdlParser.parse("defaults cpus=4 {\n  os linux\n}\n", path:).first
+    # refusal = Proof::ProjectFileSettingsRefusal.new(path:)
+    # settings = Proof::ProjectFileSettings.new(refusal:).read(node)
+    # [settings.cpus, settings.os.map(&:to_s)] # => [4, ["linux"]]
+    # ```
+    def read: (KdlNode node) -> TaskSettings
+
+    private
+
+    @refusal: ProjectFileSettingsRefusal
+    @properties: ProjectFileProperties
+    @lists: ProjectFileLists
+  end
+end

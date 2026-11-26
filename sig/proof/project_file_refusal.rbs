@@ -1,0 +1,56 @@
+module Proof
+  # Raises `Proof::ProjectFileError` for each way the shape of a project file
+  # can be wrong, with the message for it.
+  #
+  # A refusal names a file and a line, and the reader would repeat both at every
+  # place it refuses something. The wording is the person's whole help in fixing
+  # the file, so it sits in one place, where it can be read as a list.
+  #
+  # This class holds the file's path, and has one method for each refusal of a
+  # node as a whole: a node the page doesn't list, a second `defaults`, and a
+  # task entry with the wrong arguments. Each method raises, and never returns.
+  # It also turns what the domain refuses into the same error, at the line of the
+  # node it was building.
+  #
+  # Use it from the classes that read a project file's nodes.
+  class ProjectFileRefusal
+    # The messages, by name, for `format` to fill in.
+    MESSAGES: Hash[Symbol, String]
+
+    # Prepares to refuse as the file at `path`.
+    #
+    # - `path`: String, the file's path.
+    def initialize: (path: String) -> void
+
+    # Runs the block, which builds domain values, and turns the error the domain
+    # raises into a `Proof::ProjectFileError` at the line of `node`.
+    #
+    # - `node`: `Proof::KdlNode`, the node the block builds from.
+    def checking: [T] (KdlNode node) { () -> T } -> T
+
+    # Refuses a top-level node that isn't `defaults` or `task`.
+    def unknown_node: (KdlNode node) -> bot
+
+    # Refuses a second `defaults` node. `first` is the node before it.
+    def repeated_defaults: (KdlNode node, KdlNode first) -> bot
+
+    # Refuses a second `task` entry named `name`. `first` is the entry before it.
+    def repeated_task: (KdlNode node, KdlNode first) -> bot
+
+    # Refuses arguments on a `defaults` node.
+    def defaults_arguments: (KdlNode node) -> bot
+
+    # Refuses a `task` with no name, or with more than a name and a command.
+    def task_arguments: (KdlNode node, Integer count) -> bot
+
+    private
+
+    def say: (KdlNode node, Symbol key, *kdl_value values) -> bot
+
+    def messages: () -> Hash[Symbol, String]
+
+    def refuse: (KdlNode node, String reason) -> bot
+
+    @path: String
+  end
+end

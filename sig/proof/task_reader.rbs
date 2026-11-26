@@ -1,0 +1,58 @@
+module Proof
+  # Reads a `task` node into a `Proof::TaskEntry`.
+  #
+  # A `task` node is `task NAME` or `task NAME COMMAND`, plus the settings that
+  # `defaults` takes. KDL accepts a `task` with no name, or with five arguments.
+  #
+  # This class refuses a task with no name or with more than a name and a
+  # command. It reads the settings with `Proof::ProjectFileSettings` and builds the entry.
+  #
+  # Use it from `Proof::ProjectFileReader`.
+  class TaskReader
+    # Prepares to read with a refusal and a reader of settings.
+    #
+    # - `refusal`: `Proof::ProjectFileRefusal`.
+    # - `settings`: `Proof::ProjectFileSettings`.
+    def initialize: (refusal: ProjectFileRefusal, settings: ProjectFileSettings) -> void
+
+    # The entries that the `task` nodes give, in order. Refuses a second entry
+    # with the name of an earlier one, at the line of the second.
+    #
+    # - `nodes`: Array of `Proof::KdlNode`, the `task` nodes.
+    #
+    # ```ruby
+    # path = ".config/proof.kdl"
+    # nodes = Proof::KdlParser.parse("task test\ntask lint\n", path:)
+    # settings = Proof::ProjectFileSettings.new(refusal: Proof::ProjectFileSettingsRefusal.new(path:))
+    # reader = Proof::TaskReader.new(refusal: Proof::ProjectFileRefusal.new(path:), settings:)
+    # reader.read_all(nodes).map(&:name) # => ["test", "lint"]
+    # ```
+    def read_all: (Array[KdlNode] nodes) -> Array[TaskEntry]
+
+    # The entry that `node` gives.
+    #
+    # - `node`: `Proof::KdlNode`, a `task` node.
+    #
+    # ```ruby
+    # path = ".config/proof.kdl"
+    # node = Proof::KdlParser.parse("task docs \"make docs\"\n", path:).first
+    # settings = Proof::ProjectFileSettings.new(refusal: Proof::ProjectFileSettingsRefusal.new(path:))
+    # entry = Proof::TaskReader.new(refusal: Proof::ProjectFileRefusal.new(path:), settings:).read(node)
+    # [entry.name, entry.command] # => ["docs", "make docs"]
+    # ```
+    def read: (KdlNode node) -> TaskEntry
+
+    private
+
+    def words_of: (KdlNode node) -> [kdl_value, kdl_value]
+
+    def refuse_repeats_among: (Array[KdlNode] nodes) -> void
+
+    def refuse_repeat: (Array[KdlNode] same) -> void
+
+    def refuse_count: (KdlNode node) -> void
+
+    @refusal: ProjectFileRefusal
+    @settings: ProjectFileSettings
+  end
+end

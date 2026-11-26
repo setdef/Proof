@@ -65,5 +65,13 @@ module Proof
     # node.arguments_only? # => true
     # ```
     def arguments_only?: () -> bool
+
+    # The children by name. A name given twice has its last child.
+    #
+    # ```ruby
+    # node = Proof::KdlParser.parse("a {\n  os linux\n  label gpu\n}\n", path: ".config/proof.kdl").first
+    # node.children_by_name.keys # => ["os", "label"]
+    # ```
+    def children_by_name: () -> Hash[String, KdlNode]
   end
 end

@@ -1,0 +1,48 @@
+module Proof
+  # Reads the children of a `defaults` or `task` node: `os`, `label`,
+  # `artifact`, and `cache`.
+  #
+  # Each child takes one or more arguments, and a task has each at most once.
+  # `Proof::ProjectFileChildren` refuses what the page doesn't allow. The rest
+  # is what the arguments mean, and the domain owns that.
+  #
+  # This class builds each child's value with the domain's classes: operating
+  # systems, a set of labels, and path patterns for artifacts and caches. A
+  # value the domain refuses is a refusal at the line of the child.
+  #
+  # Use it from `Proof::ProjectFileSettings`.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # path = ".config/proof.kdl"
+  # node = Proof::KdlParser.parse("task test {\n  os linux macos\n  cache \"tmp/build\"\n}\n", path:).first
+  # lists = Proof::ProjectFileLists.new(refusal: Proof::ProjectFileSettingsRefusal.new(path:))
+  # lists.read(node).keys # => [:os, :caches]
+  # ```
+  class ProjectFileLists
+    # The member of `Proof::TaskSettings` that each child gives.
+    KEYS: Hash[Symbol, Symbol]
+
+    # What each child builds from its arguments.
+    BUILDERS: Hash[Symbol, ^(Array[kdl_value]) -> Object]
+
+    # Prepares to read with `refusal`.
+    #
+    # - `refusal`: `Proof::ProjectFileSettingsRefusal`.
+    def initialize: (refusal: ProjectFileSettingsRefusal) -> void
+
+    # The settings that the children of `node` give, by the name of the member
+    # of `Proof::TaskSettings`.
+    #
+    # - `node`: `Proof::KdlNode`, a `defaults` or `task` node.
+    def read: (KdlNode node) -> Hash[Symbol, Object]
+
+    private
+
+    def pair: (KdlNode child, Symbol key) -> [Symbol, Object]
+
+    @refusal: ProjectFileSettingsRefusal
+    @children: ProjectFileChildren
+  end
+end

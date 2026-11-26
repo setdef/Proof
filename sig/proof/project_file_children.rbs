@@ -1,0 +1,30 @@
+module Proof
+  # Checks the children of a `defaults` or `task` node.
+  #
+  # The page lists four children, `os`, `label`, `artifact`, and `cache`. KDL
+  # accepts anything else without complaint, so a misspelled child would be
+  # dropped, and a task would run on systems nobody meant.
+  #
+  # This class refuses a child the page doesn't list.
+  #
+  # Use it from `Proof::ProjectFileSettings`.
+  class ProjectFileChildren
+    # The names of the children the page lists.
+    NAMES: Array[String]
+
+    # Prepares to refuse as `refusal` does.
+    #
+    # - `refusal`: `Proof::ProjectFileSettingsRefusal`.
+    def initialize: (refusal: ProjectFileSettingsRefusal) -> void
+
+    # Refuses the first child of `node` that the page doesn't list, and returns
+    # when there is none.
+    #
+    # - `node`: `Proof::KdlNode`, a `defaults` or `task` node.
+    def refuse_mistakes_in: (KdlNode node) -> void
+
+    private
+
+    @refusal: ProjectFileSettingsRefusal
+  end
+end

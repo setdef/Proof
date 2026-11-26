@@ -1,0 +1,27 @@
+module Proof
+  # Raises `Proof::ProjectFileError` for each way the properties and children
+  # of a `defaults` or `task` node can be wrong, with the message for it.
+  #
+  # The properties and children are the same on both nodes, and the reader
+  # checks them in one place. Their refusals are a list of their own, apart
+  # from the refusals of a node as a whole.
+  #
+  # Use it from the classes that read a node's settings.
+  class ProjectFileSettingsRefusal < ProjectFileRefusal
+    # The messages, by name, for `format` to fill in.
+    MESSAGES: Hash[Symbol, String]
+
+    # Refuses a property that `defaults` and `task` don't have.
+    def unknown_property: (KdlNode node, String name) -> bot
+
+    # Refuses a property that is the name of a child, with the way to write it.
+    def property_that_is_a_child: (KdlNode node, String name) -> bot
+
+    # Refuses a child that `defaults` and `task` don't have.
+    def unknown_child: (KdlNode parent, KdlNode child) -> bot
+
+    private
+
+    def messages: () -> Hash[Symbol, String]
+  end
+end
