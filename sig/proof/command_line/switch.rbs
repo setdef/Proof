@@ -2,12 +2,12 @@ module Proof
   module CommandLine
     # One flag of a command, as OptionParser registers it, with what to do with the value it is given.
     class Switch
-      @flag: Spec::Flag
+      @flag: Usage::Flag
       @values: Values
       @messages: Messages
 
       # Takes a flag, the values to add to, and the messages of its command.
-      def initialize: (Spec::Flag flag, Values values, Messages messages) -> void
+      def initialize: (Usage::Flag flag, Values values, Messages messages) -> void
 
       # The arguments for `OptionParser#on`: each way to type the flag, and a value after the last when it takes one.
       def specs: () -> Array[String]

@@ -2,12 +2,12 @@ module Proof
   module CommandLine
     # A command with no subcommands: its flags and words make the value that a use case runs.
     class Leaf
-      @spec: Spec
-      @command: Spec::Command
+      @spec: Usage::Spec
+      @command: Usage::Command
       @path: Array[String]
 
       # Takes the spec and a command that has no subcommands.
-      def initialize: (Spec spec, Spec::Command command) -> void
+      def initialize: (Usage::Spec spec, Usage::Command command) -> void
 
       # Reads the command's flags and words, and answers its value or a request for help.
       def parse: (Array[String] tokens, Array[String] tail) -> (Parsed | HelpAsked)

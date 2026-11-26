@@ -1,0 +1,71 @@
+module Usage
+  # A set of flags and arguments of which a command takes one, or at least one.
+  #
+  # A command can take an item's text or a file of items, and needs one of the two. Left to each flag's own rules,
+  # nothing would see that both are missing, or that both were given.
+  #
+  # This class names the members of such a set, says whether one is required, and says whether more than one may
+  # come together.
+  #
+  # Use it to check that a command line gave the members it has to.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # source = Usage::Group.read({ name: "source", members: ["text", "--file"], required: true }, "command add")
+  # source.names # => ["text", "--file"]
+  # [source.required?, source.multiple?] # => [true, false]
+  # ```
+  class Group < Data
+    # The keys of a group's object that the gem reads.
+    KEYS: keys
+
+    # The group's name in the spec.
+    attr_reader name: String
+
+    # The members: an argument by its name, or a flag by a switch, such as `"text"` and `"--file"`.
+    attr_reader names: Array[String]
+
+    # Whether a member must be given.
+    attr_reader required: bool
+
+    # Whether more than one member may be given together.
+    attr_reader multiple: bool
+
+    def self.new: (name: String, names: Array[String], required: bool, multiple: bool) -> instance
+                | (String name, Array[String] names, bool required, bool multiple) -> instance
+
+    # Builds a group from its parts.
+    #
+    # - `name`: String, the group's name.
+    # - `names`: Array of String, the members.
+    # - `required`: bool, whether a member must be given.
+    # - `multiple`: bool, whether more than one may come together.
+    def initialize: (name: String, names: Array[String], required: bool, multiple: bool) -> void
+
+    # Reads a group from its object in the spec's JSON.
+    #
+    # - `object`: Hash, one entry of a command's `groups`.
+    # - `command`: String, where the group is, for the message of an error.
+    #
+    # ```ruby
+    # Usage::Group.read({ name: "source", members: ["text"] }, "command add").required? # => false
+    # ```
+    def self.read: (object object, String command) -> Group
+
+    # Whether a member must be given.
+    #
+    # ```ruby
+    # source.required? # => true
+    # ```
+    def required?: () -> bool
+
+    # Whether more than one member may be given together.
+    #
+    # ```ruby
+    # source.multiple? # => false
+    # ```
+    def multiple?: () -> bool
+  end
+end

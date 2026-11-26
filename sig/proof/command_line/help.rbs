@@ -4,11 +4,11 @@ module Proof
     class Help
       @tables: Tables
       @profile: Profiles::Program | Profiles::Subcommand
-      @command: Spec::Command
+      @command: Usage::Command
       @bin: String
 
       # Takes the spec and the command to write help for.
-      def initialize: (Spec spec, Spec::Command command) -> void
+      def initialize: (Usage::Spec spec, Usage::Command command) -> void
 
       # The help, ending in a newline.
       def text: () -> String

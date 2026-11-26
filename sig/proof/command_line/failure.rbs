@@ -6,7 +6,7 @@ module Proof
       @switches: Array[String]
 
       # Takes the messages of the command, and the flags its command line may carry.
-      def initialize: (Messages messages, Array[Spec::Flag] flags) -> void
+      def initialize: (Messages messages, Array[Usage::Flag] flags) -> void
 
       # The line for the flag that OptionParser refused.
       #

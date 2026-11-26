@@ -2,7 +2,7 @@ module Proof
   module CommandLine
     # Reads the flags of one command from its tokens, with Ruby's OptionParser.
     class Options
-      @flags: Array[Spec::Flag]
+      @flags: Array[Usage::Flag]
       @messages: Messages
       @values: Values
 
@@ -12,7 +12,7 @@ module Proof
       end
 
       # Takes the command, and the global flags that work on every command.
-      def initialize: (Spec::Command command, Array[Spec::Flag] globals) -> void
+      def initialize: (Usage::Command command, Array[Usage::Flag] globals) -> void
 
       # The values the flags in `tokens` gave, and the words between them.
       def parse: (Array[String] tokens) -> [Values, Array[String]]
@@ -23,7 +23,7 @@ module Proof
 
       def prepare: (Strict parser) -> void
 
-      def register: (Strict parser, Spec::Flag flag) -> void
+      def register: (Strict parser, Usage::Flag flag) -> void
     end
   end
 end

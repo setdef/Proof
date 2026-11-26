@@ -12,7 +12,7 @@ module Proof
       def missing_member: (Array[String] names) -> String
 
       # The line for an argument the command can't run without.
-      def missing_argument: (Spec::Arg argument) -> String
+      def missing_argument: (Usage::Arg argument) -> String
 
       # The line for a word the command doesn't take.
       def extra_word: (String? word) -> String

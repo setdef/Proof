@@ -1,0 +1,118 @@
+module Usage
+  # A program's command-line interface, read from the JSON of its usage spec.
+  #
+  # usage keeps a spec in KDL, and `usage generate json` writes it as JSON with the defaults filled in. Ruby reads
+  # that JSON as hashes of no known shape, so every reader of it would check each key's type again, and a key it
+  # missed would change nothing it does.
+  #
+  # This class reads the JSON once, into typed values: the program, its commands, and each command's flags and
+  # arguments. It raises `Usage::SpecError` for a text that isn't such JSON, for a key of the wrong type, and for
+  # anything the gem doesn't act on, so a spec it reads means what it says. A key the JSON leaves out takes usage's
+  # default.
+  #
+  # Use it to find a command by the words that name it.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # spec = Usage::Spec.read(<<~JSON)
+  #   {"bin": "todo", "about": "Keep a list of things to do",
+  #    "exit_codes": [{"code": 0, "help": "It worked."}],
+  #    "cmd": {"subcommands": {"list": {"name": "list", "full_cmd": ["list"], "help": "List the items"}}}}
+  # JSON
+  # spec.bin # => "todo"
+  # spec.command(["list"])&.help # => "List the items"
+  # spec.command(["lsit"]) # => nil
+  # ```
+  #
+  # A spec that uses something the gem doesn't act on is refused when it is read:
+  #
+  # ```ruby
+  # # Wrong: raises Usage::SpecError
+  # Usage::Spec.read('{"cmd": {"subcommands": {"list": {"name": "list", "aliases": ["ls"]}}}}')
+  # ```
+  class Spec < Data
+    # The keys of the program's object that the gem accepts. It accepts `name`, `version`, `author`, `license`,
+    # `repository`, and `min_usage_version`, which are for the documents usage writes, and reads none of them. It
+    # supports no completions, no configuration files, no usage line of the spec's own, and no `unknown_flags` but
+    # `"error"`.
+    KEYS: keys
+
+    # The keys of `unknown_env`.
+    ENV_KEYS: keys
+
+    # The program's name as typed, such as `"todo"`, or an empty String when the spec has none.
+    attr_reader bin: String
+
+    # The one-line description of the program, or an empty String.
+    attr_reader about: String
+
+    # The longer description, or `nil`.
+    attr_reader about_long: String?
+
+    # The text for the end of the program's help, from `after_long_help`, or `nil`.
+    attr_reader after_help: String?
+
+    # The program's examples, in the spec's order.
+    attr_reader examples: Array[Example]
+
+    # The statuses the program exits with, in the spec's order.
+    attr_reader exit_codes: Array[ExitCode]
+
+    # The program as a command with no name: its subcommands are the commands.
+    attr_reader root: Command
+
+    # The prefix of the environment variables the program refuses when it doesn't know them, or `nil`.
+    attr_reader env_prefix: String?
+
+    # The variables with that prefix the program accepts anyway.
+    attr_reader env_allowed: Array[String]
+
+    def self.new: (bin: String, about: String, about_long: String?, after_help: String?, examples: Array[Example], exit_codes: Array[ExitCode], root: Command, env_prefix: String?, env_allowed: Array[String]) -> instance
+                | (String bin, String about, String? about_long, String? after_help, Array[Example] examples, Array[ExitCode] exit_codes, Command root, String? env_prefix, Array[String] env_allowed) -> instance
+
+    # Builds a spec from its parts.
+    #
+    # - `bin`: String, the program's name as typed.
+    # - `about`: String, the one-line description.
+    # - `about_long`: String or `nil`, the longer description.
+    # - `after_help`: String or `nil`, the text for the end of the help.
+    # - `examples`: Array of `Usage::Example`, the program's examples.
+    # - `exit_codes`: Array of `Usage::ExitCode`, the statuses.
+    # - `root`: `Usage::Command`, the program as a command.
+    # - `env_prefix`: String or `nil`, the prefix of the variables to check.
+    # - `env_allowed`: Array of String, the variables with the prefix to accept.
+    def initialize: (bin: String, about: String, about_long: String?, after_help: String?, examples: Array[Example], exit_codes: Array[ExitCode], root: Command, env_prefix: String?, env_allowed: Array[String]) -> void
+
+    # Reads a spec from `text`, the JSON `usage generate json` writes, and raises `Usage::SpecError` for a text that
+    # isn't such JSON or that uses anything the gem doesn't act on.
+    #
+    # - `text`: String, the JSON document.
+    #
+    # ```ruby
+    # Usage::Spec.read("{}").root.subcommands # => []
+    # Usage::Spec.read('{"bin": "todo"}').about # => ""
+    # ```
+    def self.read: (String text) -> Spec
+
+    private def self.json: (String text) -> object
+
+    private def self.described: (Reader reader) -> { bin: String, about: String, about_long: String?, after_help: String? }
+
+    private def self.parts: (Reader reader) -> { examples: Array[Example], exit_codes: Array[ExitCode], root: Command }
+
+    private def self.environment: (Reader reader) -> { env_prefix: String?, env_allowed: Array[String] }
+
+    # The command that the words in `path` name, or `nil` when no command has that path. An empty `path` names the
+    # program itself.
+    #
+    # - `path`: Array of String, such as `["remote", "add"]`.
+    #
+    # ```ruby
+    # Usage::Spec.read("{}").command([])&.path # => []
+    # Usage::Spec.read("{}").command(["add"]) # => nil
+    # ```
+    def command: (Array[String] path) -> Command?
+  end
+end

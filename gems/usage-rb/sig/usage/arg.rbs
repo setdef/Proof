@@ -1,0 +1,84 @@
+module Usage
+  # One argument of a command: a word that isn't a flag.
+  #
+  # A command takes its words in order, some it can't run without and some that repeat. The usage line, the help,
+  # and the parser have to agree on which is which.
+  #
+  # This class holds an argument's name, whether it is required, and whether it takes more than one word.
+  #
+  # Use it to write a command's usage line and to give each word to its argument.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # items = Usage::Arg.read({ name: "item", required: true, var: true }, "command done")
+  # items.to_s # => "<item...>"
+  # [items.required?, items.repeatable?] # => [true, true]
+  # ```
+  class Arg < Data
+    # The keys of an argument's object that the gem accepts. A hidden argument, or one with other rules for `--`,
+    # isn't supported.
+    KEYS: keys
+
+    # The argument's name in the spec, such as `"item"`.
+    attr_reader name: String
+
+    # The one-line description, or `nil`.
+    attr_reader help: String?
+
+    # The longer description, or `nil`.
+    attr_reader help_long: String?
+
+    # Whether the command can't run without it.
+    attr_reader required: bool
+
+    # Whether it takes every word left, in place of one.
+    attr_reader var: bool
+
+    def self.new: (name: String, help: String?, help_long: String?, required: bool, var: bool) -> instance
+                | (String name, String? help, String? help_long, bool required, bool var) -> instance
+
+    # Builds an argument from its parts.
+    #
+    # - `name`: String, the argument's name in the spec.
+    # - `help`: String or `nil`, the one-line description.
+    # - `help_long`: String or `nil`, the longer description.
+    # - `required`: bool, whether the command can't run without it.
+    # - `var`: bool, whether it takes every word left.
+    def initialize: (name: String, help: String?, help_long: String?, required: bool, var: bool) -> void
+
+    # Reads an argument from its object in the spec's JSON, and raises `Usage::SpecError` when it uses anything the
+    # gem doesn't act on, such as a default or choices.
+    #
+    # - `object`: Hash, one entry of a command's `args`.
+    # - `command`: String, where the argument is, for the message of an error.
+    #
+    # ```ruby
+    # Usage::Arg.read({ name: "text" }, "command add").to_s # => "[text]"
+    # ```
+    def self.read: (object object, String command) -> Arg
+
+    # Whether the command can't run without it.
+    #
+    # ```ruby
+    # items.required? # => true
+    # ```
+    def required?: () -> bool
+
+    # Whether it takes every word left, in place of one.
+    #
+    # ```ruby
+    # items.repeatable? # => true
+    # ```
+    def repeatable?: () -> bool
+
+    # The argument as a usage line writes it: `<name>` when required, `[name]` when not, with `...` after the name
+    # when it repeats.
+    #
+    # ```ruby
+    # Usage::Arg.read({ name: "file", required: true }, "the program").to_s # => "<file>"
+    # ```
+    def to_s: () -> String
+  end
+end

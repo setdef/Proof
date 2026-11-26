@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 target :lib do
-  signature "sig", "steep", "gems/proof-domain/sig", "gems/proof-domain/steep"
+  signature "sig", "steep", "gems/proof-domain/sig", "gems/proof-domain/steep", "gems/usage-rb/sig"
   check "lib"
 
   configure_code_diagnostics(Steep::Diagnostic::Ruby.all_error)
@@ -29,6 +29,17 @@ target :domain do
   check "gems/proof-domain/lib"
 
   configure_code_diagnostics(Steep::Diagnostic::Ruby.all_error)
+end
+
+# The usage gem is checked alone too, with only its own signatures and the
+# standard library it loads, so it can name nothing of Proof's.
+target :usage do
+  signature "gems/usage-rb/sig"
+  check "gems/usage-rb/lib"
+
+  configure_code_diagnostics(Steep::Diagnostic::Ruby.all_error)
+
+  library "json"
 end
 
 target :tasks do

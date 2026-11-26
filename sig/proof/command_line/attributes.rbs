@@ -6,7 +6,7 @@ module Proof
       @values: Values
 
       # Takes the flags and arguments whose values the command holds, and the values the command line gave.
-      def initialize: (Array[Spec::Flag] flags, Array[Spec::Arg] args, Values values) -> void
+      def initialize: (Array[Usage::Flag] flags, Array[Usage::Arg] args, Values values) -> void
 
       # The command's members by name, each with what the command line gave.
       def to_h: () -> Hash[Symbol, CommandLine::attribute]

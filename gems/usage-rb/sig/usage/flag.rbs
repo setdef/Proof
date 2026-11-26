@@ -1,0 +1,147 @@
+module Usage
+  # One flag of a command, as the spec describes it.
+  #
+  # The parser and the help both ask what a flag is called, whether it takes a value, which values it accepts, and
+  # what it needs beside it. Asked of the JSON each time, the answers would differ wherever a key is left out.
+  #
+  # This class holds those answers, with usage's default for each key the JSON leaves out.
+  #
+  # Use it to list a command's switches and to check a value against a flag's choices.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # due = Usage::Flag.read(
+  #   { name: "due", short: ["d"], long: ["due"], arg: { name: "date" } },
+  #   "command add"
+  # )
+  # due.switches # => ["-d", "--due"]
+  # due.value # => "date"
+  # due.takes_value? # => true
+  # ```
+  #
+  # A flag can limit its value to choices, and accept others when the choices aren't strict:
+  #
+  # ```ruby
+  # tag = Usage::Flag.read(
+  #   { name: "tag", long: ["tag"], var: true,
+  #     arg: { name: "tag", choices: { choices: ["home", "work"], strict: false } } },
+  #   "command add"
+  # )
+  # [tag.choices, tag.strict?, tag.repeatable?] # => [["home", "work"], false, true]
+  # ```
+  class Flag < Data
+    # The keys of a flag's object that the gem accepts. A hidden flag isn't supported.
+    KEYS: keys
+
+    # The keys of the object that describes a flag's value. A value that may be left out, or one with other rules for
+    # `--`, isn't supported.
+    VALUE_KEYS: keys
+
+    # The keys of the object that lists a value's choices.
+    CHOICE_KEYS: keys
+
+    # The flag's name in the spec, such as `"dry-run"`.
+    attr_reader name: String
+
+    # The one-letter names, without the hyphen, such as `["n"]`.
+    attr_reader short: Array[String]
+
+    # The long names, without the hyphens, such as `["dry-run"]`.
+    attr_reader long: Array[String]
+
+    # The name of the value the flag takes, such as `"date"`, or `nil` for a yes-or-no flag.
+    attr_reader value: String?
+
+    # The one-line description, or `nil`.
+    attr_reader help: String?
+
+    # The longer description, or `nil`.
+    attr_reader help_long: String?
+
+    # The values the flag accepts, or an empty list when it takes any.
+    attr_reader choices: Array[String]
+
+    # Whether a value outside `choices` is a mistake. A flag with no choices is strict, and has nothing to check.
+    attr_reader strict: bool
+
+    # The switches that must come with this flag, such as `["--download"]`.
+    attr_reader requires: Array[String]
+
+    # Whether the flag may repeat, each time adding a value.
+    attr_reader var: bool
+
+    # Whether the flag works on every command under the one that has it.
+    attr_reader global: bool
+
+    def self.new: (name: String, short: Array[String], long: Array[String], value: String?, help: String?, help_long: String?, choices: Array[String], strict: bool, requires: Array[String], var: bool, global: bool) -> instance
+                | (String name, Array[String] short, Array[String] long, String? value, String? help, String? help_long, Array[String] choices, bool strict, Array[String] requires, bool var, bool global) -> instance
+
+    # Builds a flag from its parts.
+    #
+    # - `name`: String, the flag's name in the spec.
+    # - `short`: Array of String, the one-letter names.
+    # - `long`: Array of String, the long names.
+    # - `value`: String or `nil`, the name of the value.
+    # - `help`: String or `nil`, the one-line description.
+    # - `help_long`: String or `nil`, the longer description.
+    # - `choices`: Array of String, the values it accepts.
+    # - `strict`: bool, whether a value outside the choices is a mistake.
+    # - `requires`: Array of String, the switches that must come with it.
+    # - `var`: bool, whether it repeats.
+    # - `global`: bool, whether it works on every command under its own.
+    def initialize: (name: String, short: Array[String], long: Array[String], value: String?, help: String?, help_long: String?, choices: Array[String], strict: bool, requires: Array[String], var: bool, global: bool) -> void
+
+    # Reads a flag from its object in the spec's JSON, and raises `Usage::SpecError` when it uses anything the gem
+    # doesn't act on, such as a count, a default, or a value that may be left out.
+    #
+    # - `object`: Hash, one entry of a command's `flags`.
+    # - `command`: String, where the flag is, for the message of an error, such as `"command add"`.
+    #
+    # ```ruby
+    # # Wrong: raises Usage::SpecError
+    # Usage::Flag.read({ name: "color", long: ["color"], negate: "--no-color" }, "the program")
+    # ```
+    def self.read: (object object, String command) -> Flag
+
+    private def self.described: (Reader reader) -> { name: String, short: Array[String], long: Array[String] }
+
+    private def self.valued: (Reader reader, String where) -> { value: String?, choices: Array[String], strict: bool, var: bool }
+
+    # Whether the flag may repeat, each time adding a value.
+    #
+    # ```ruby
+    # due.repeatable? # => false
+    # ```
+    def repeatable?: () -> bool
+
+    # Whether the flag works on every command under the one that has it.
+    #
+    # ```ruby
+    # due.global? # => false
+    # ```
+    def global?: () -> bool
+
+    # Whether a value outside the choices is a mistake.
+    #
+    # ```ruby
+    # due.strict? # => true
+    # ```
+    def strict?: () -> bool
+
+    # Whether the flag takes a value, as `--due friday` does.
+    #
+    # ```ruby
+    # due.takes_value? # => true
+    # ```
+    def takes_value?: () -> bool
+
+    # Every way to type the flag: the short names with one hyphen, then the long names with two.
+    #
+    # ```ruby
+    # tag.switches # => ["--tag"]
+    # ```
+    def switches: () -> Array[String]
+  end
+end

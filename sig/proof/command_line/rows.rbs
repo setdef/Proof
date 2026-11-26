@@ -4,10 +4,10 @@ module Proof
     module Rows
       # A flag as a row of the help: its switches and value, and what it does.
       class FlagRow
-        @item: Spec::Flag
+        @item: Usage::Flag
 
         # Takes the thing to show.
-        def initialize: (Spec::Flag item) -> void
+        def initialize: (Usage::Flag item) -> void
 
         # What the row is called.
         def label: () -> String
@@ -18,10 +18,10 @@ module Proof
 
       # An argument as a row of the help.
       class ArgRow
-        @item: Spec::Arg
+        @item: Usage::Arg
 
         # Takes the thing to show.
-        def initialize: (Spec::Arg item) -> void
+        def initialize: (Usage::Arg item) -> void
 
         # What the row is called.
         def label: () -> String
@@ -32,10 +32,10 @@ module Proof
 
       # A command as a row of the help: its name and its one line.
       class CommandRow
-        @item: Spec::Command
+        @item: Usage::Command
 
         # Takes the thing to show.
-        def initialize: (Spec::Command item) -> void
+        def initialize: (Usage::Command item) -> void
 
         # What the row is called.
         def label: () -> String
@@ -46,10 +46,10 @@ module Proof
 
       # An exit status as a row of the help.
       class ExitRow
-        @item: Spec::ExitCode
+        @item: Usage::ExitCode
 
         # Takes the thing to show.
-        def initialize: (Spec::ExitCode item) -> void
+        def initialize: (Usage::ExitCode item) -> void
 
         # What the row is called.
         def label: () -> String

@@ -2,10 +2,10 @@ module Proof
   module CommandLine
     # Where a flag goes in a command's value, and how to read it from what the command line gave.
     class FlagSlot
-      @item: Spec::Flag
+      @item: Usage::Flag
 
       # Takes the flag this slot reads.
-      def initialize: (Spec::Flag item) -> void
+      def initialize: (Usage::Flag item) -> void
 
       # The member's name, and what the command line gave it.
       def entry: (Values values) -> [Symbol, CommandLine::attribute]

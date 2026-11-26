@@ -1,0 +1,25 @@
+module Usage
+  # Raised when a spec can't be read: it isn't the JSON `usage generate json` writes, or it uses something the gem
+  # doesn't act on.
+  #
+  # A spec is a promise about what a program accepts. A reader that skipped a part it doesn't know, such as a flag
+  # that counts or a default taken from the environment, would parse command lines the spec says mean something
+  # else, and nothing would show it.
+  #
+  # The message names the object and the key: the flag or command, what it sets, and that the gem doesn't support it.
+  #
+  # Rescue it where the program reads its spec, which is usually a bug in the spec or a sign the gem needs to grow.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # begin
+  #   Usage::Spec.read('{"cmd": {"flags": [{"name": "verbose", "long": ["verbose"], "count": true}]}}')
+  # rescue Usage::SpecError => e
+  #   e.message # => "flag verbose of the program has count, which usage-rb doesn't support"
+  # end
+  # ```
+  class SpecError < StandardError
+  end
+end

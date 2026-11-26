@@ -2,10 +2,10 @@ module Proof
   module CommandLine
     # Where an argument goes in a command's value, and how to read it from what the command line gave.
     class ArgSlot
-      @item: Spec::Arg
+      @item: Usage::Arg
 
       # Takes the argument this slot reads.
-      def initialize: (Spec::Arg item) -> void
+      def initialize: (Usage::Arg item) -> void
 
       # The member's name, and what the command line gave it.
       def entry: (Values values) -> [Symbol, CommandLine::attribute]

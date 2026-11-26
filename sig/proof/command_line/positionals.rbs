@@ -2,17 +2,17 @@ module Proof
   module CommandLine
     # Gives the plain words of a command line to the arguments of its command, in order.
     class Positionals
-      @args: Array[Spec::Arg]
+      @args: Array[Usage::Arg]
       @values: Values
       @messages: WordMessages
 
       # Takes the command and the values to give its arguments.
-      def initialize: (Spec::Command command, Values values) -> void
+      def initialize: (Usage::Command command, Values values) -> void
 
       # Gives each argument its words, or raises a Mistake when one is missing or a word is left over.
       def assign: (Array[String] words) -> void
 
-      private def take: (Spec::Arg arg, Array[String] remaining) -> Array[String]
+      private def take: (Usage::Arg arg, Array[String] remaining) -> Array[String]
     end
   end
 end

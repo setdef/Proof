@@ -1,0 +1,130 @@
+module Usage
+  # One command of a program, such as `remote add`, or the program itself, as the spec describes it.
+  #
+  # Parsing a command line and writing help start from the same questions: which flags a command has, which
+  # arguments, and which subcommands. Each answering from its own reading of the spec would drift.
+  #
+  # This class holds what the spec says of one command, and finds its subcommands by name.
+  #
+  # Use it to walk a program's commands, and to list the flags that are a command's own and the ones it passes on to
+  # every command under it.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # spec = Usage::Spec.read(<<~JSON)
+  #   {"cmd": {"flags": [{"name": "quiet", "short": ["q"], "long": ["quiet"], "global": true}],
+  #            "subcommands": {"remote": {"name": "remote", "full_cmd": ["remote"], "subcommand_required": true,
+  #              "subcommands": {"add": {"name": "add", "full_cmd": ["remote", "add"]}}}}}}
+  # JSON
+  # remote = spec.command(["remote"])
+  # remote&.subcommand_names # => ["add"]
+  # remote&.subcommand_required? # => true
+  # spec.root.global_flags.map(&:name) # => ["quiet"]
+  # ```
+  #
+  # A command can't have both arguments and subcommands, because the gem couldn't tell which a word is:
+  #
+  # ```ruby
+  # # Wrong: raises Usage::SpecError
+  # Usage::Spec.read('{"cmd": {"args": [{"name": "file"}], "subcommands": {"add": {"name": "add"}}}}')
+  # ```
+  class Command < Data
+    # The command's name, the last word of its path, or the program's name for the program itself.
+    attr_reader name: String
+
+    # The words that name the command, such as `["remote", "add"]`. Empty for the program itself.
+    attr_reader path: Array[String]
+
+    # The one-line description, or `nil`.
+    attr_reader help: String?
+
+    # The longer description, or `nil`.
+    attr_reader help_long: String?
+
+    # The arguments, in the order the command takes them.
+    attr_reader args: Array[Arg]
+
+    # The flags the spec lists under the command, its own and the global ones.
+    attr_reader flags: Array[Flag]
+
+    # The subcommands, in the spec's order.
+    attr_reader subcommands: Array[Command]
+
+    # The groups of flags and arguments, each of which the command takes one member of.
+    attr_reader groups: Array[Group]
+
+    # The command's examples.
+    attr_reader examples: Array[Example]
+
+    # Whether the command can't run without one of its subcommands.
+    attr_reader subcommand_required: bool
+
+    def self.new: (name: String, path: Array[String], help: String?, help_long: String?, args: Array[Arg], flags: Array[Flag], subcommands: Array[Command], groups: Array[Group], examples: Array[Example], subcommand_required: bool) -> instance
+                | (String name, Array[String] path, String? help, String? help_long, Array[Arg] args, Array[Flag] flags, Array[Command] subcommands, Array[Group] groups, Array[Example] examples, bool subcommand_required) -> instance
+
+    # Builds a command from its parts.
+    #
+    # - `name`: String, the last word of the path.
+    # - `path`: Array of String, the words that name the command.
+    # - `help`: String or `nil`, the one-line description.
+    # - `help_long`: String or `nil`, the longer description.
+    # - `args`: Array of `Usage::Arg`.
+    # - `flags`: Array of `Usage::Flag`.
+    # - `subcommands`: Array of `Usage::Command`.
+    # - `groups`: Array of `Usage::Group`.
+    # - `examples`: Array of `Usage::Example`.
+    # - `subcommand_required`: bool, whether a subcommand must follow.
+    def initialize: (name: String, path: Array[String], help: String?, help_long: String?, args: Array[Arg], flags: Array[Flag], subcommands: Array[Command], groups: Array[Group], examples: Array[Example], subcommand_required: bool) -> void
+
+    # Whether the command can't run without one of its subcommands.
+    #
+    # ```ruby
+    # spec.root.subcommand_required? # => false
+    # ```
+    def subcommand_required?: () -> bool
+
+    # The subcommand named `word`, or `nil` when there is none by that name.
+    #
+    # - `word`: String, as typed.
+    #
+    # ```ruby
+    # remote&.subcommand("add")&.path # => ["remote", "add"]
+    # remote&.subcommand("ad") # => nil
+    # ```
+    def subcommand: (String word) -> Command?
+
+    # The command that `words` name, starting from this one, or `nil` when none has that path. No words name this
+    # command itself.
+    #
+    # - `words`: Array of String, such as `["add"]`.
+    #
+    # ```ruby
+    # spec.root.follow(["remote", "add"])&.name # => "add"
+    # spec.root.follow(["remote", "rm"]) # => nil
+    # ```
+    def follow: (Array[String] words) -> Command?
+
+    # The names of the subcommands, in the spec's order.
+    #
+    # ```ruby
+    # spec.root.subcommand_names # => ["remote"]
+    # ```
+    def subcommand_names: () -> Array[String]
+
+    # The flags that are the command's alone, in the spec's order.
+    #
+    # ```ruby
+    # spec.root.own_flags # => []
+    # ```
+    def own_flags: () -> Array[Flag]
+
+    # The flags the command passes on to every command under it, in the spec's order.
+    #
+    # ```ruby
+    # spec.root.global_flags.map(&:switches) # => [["-q", "--quiet"]]
+    # ```
+    def global_flags: () -> Array[Flag]
+  end
+end

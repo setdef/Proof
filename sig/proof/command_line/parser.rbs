@@ -2,7 +2,7 @@ module Proof
   module CommandLine
     # Turns the words after `proof` into the value of a command, or a request for help, or raises a Mistake.
     class Parser
-      @spec: Spec
+      @spec: Usage::Spec
 
       HELP: Array[String]
 
@@ -10,7 +10,7 @@ module Proof
       def self.split: (Array[String] argv) -> [Array[String], Array[String]]
 
       # Takes the spec to parse against.
-      def initialize: (Spec spec) -> void
+      def initialize: (Usage::Spec spec) -> void
 
       # Parses the words after `proof`.
       def parse: (Array[String] argv) -> (Parsed | HelpAsked)

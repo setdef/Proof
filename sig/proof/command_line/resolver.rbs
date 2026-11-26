@@ -2,23 +2,23 @@ module Proof
   module CommandLine
     # Finds the command a command line names, and leaves the flags and words that belong to it.
     class Resolver
-      @command: Spec::Command
+      @command: Usage::Command
       @skipped: Array[String]
       @switches: Array[String]
 
       # Takes the spec whose commands to look for.
-      def initialize: (Spec spec) -> void
+      def initialize: (Usage::Spec spec) -> void
 
       # The command the `tokens` name, and the tokens that aren't words of its name. A resolver reads one command line.
-      def resolve: (Array[String] tokens) -> [Spec::Command, Array[String]]
+      def resolve: (Array[String] tokens) -> [Usage::Command, Array[String]]
 
       private
 
-      def consume: (String token) -> (Array[String] | Spec::Command)
+      def consume: (String token) -> (Array[String] | Usage::Command)
 
       def skip: (String token) -> Array[String]
 
-      def descend: (String word) -> Spec::Command
+      def descend: (String word) -> Usage::Command
 
       def refuse: (String token) -> bot
 

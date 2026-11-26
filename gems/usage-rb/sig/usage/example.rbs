@@ -1,0 +1,52 @@
+module Usage
+  # One example command line, with the heading and the explanation the spec gives it.
+  #
+  # Help that opens with examples teaches a command faster than a list of flags. The examples belong to the spec, so
+  # the help and the reference usage generates show the same ones.
+  #
+  # This class holds one example's command line and its text.
+  #
+  # Use it to print a command's examples in its help.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # example = Usage::Example.read({ code: "todo add 'Buy milk'", header: "Add an item" }, "command add")
+  # example.code # => "todo add 'Buy milk'"
+  # example.help # => nil
+  # ```
+  class Example < Data
+    # The keys of an example's object that the gem accepts. An example with a language isn't supported.
+    KEYS: keys
+
+    # The command line to show.
+    attr_reader code: String
+
+    # The heading, or `nil`.
+    attr_reader header: String?
+
+    # The explanation, or `nil`.
+    attr_reader help: String?
+
+    def self.new: (code: String, header: String?, help: String?) -> instance
+                | (String code, String? header, String? help) -> instance
+
+    # Builds an example from its parts.
+    #
+    # - `code`: String, the command line.
+    # - `header`: String or `nil`, the heading.
+    # - `help`: String or `nil`, the explanation.
+    def initialize: (code: String, header: String?, help: String?) -> void
+
+    # Reads an example from its object in the spec's JSON.
+    #
+    # - `object`: Hash, one entry of an `examples` list.
+    # - `command`: String, where the example is, for the message of an error.
+    #
+    # ```ruby
+    # Usage::Example.read({ code: "todo list" }, "the program").header # => nil
+    # ```
+    def self.read: (object object, String command) -> Example
+  end
+end

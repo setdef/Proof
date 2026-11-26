@@ -2,22 +2,22 @@ module Proof
   module CommandLine
     # Checks what a command takes together: a member of each required group, and the flag that another flag needs.
     class Checks
-      @command: Spec::Command
+      @command: Usage::Command
       @values: Values
       @messages: WordMessages
       @flag_messages: Messages
 
       # Takes the command and the values its flags and arguments gave.
-      def initialize: (Spec::Command command, Values values) -> void
+      def initialize: (Usage::Command command, Values values) -> void
 
       # Raises a Mistake unless a member of each required group was given and each flag has the flags it requires.
       def verify: () -> void
 
       private
 
-      def given_some: (Spec::Group group) -> void
+      def given_some: (Usage::Group group) -> void
 
-      def needs: (Spec::Flag flag) -> void
+      def needs: (Usage::Flag flag) -> void
     end
   end
 end

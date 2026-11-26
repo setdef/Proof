@@ -1,0 +1,47 @@
+module Usage
+  # A status the program exits with, and what it means.
+  #
+  # Scripts read a program's exit status, so each status has to mean one thing, and the help lists them.
+  #
+  # This class holds one status and its meaning.
+  #
+  # Use it to print the exit statuses in the program's help.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # code = Usage::ExitCode.read({ code: 2, help: "The command line has a mistake." })
+  # [code.status, code.help] # => [2, "The command line has a mistake."]
+  # ```
+  class ExitCode < Data
+    # The keys of an exit status's object that the gem reads.
+    KEYS: keys
+
+    # The exit status, such as `2`.
+    attr_reader status: Integer
+
+    # What the status means, or an empty String.
+    attr_reader help: String
+
+    def self.new: (status: Integer, help: String) -> instance
+                | (Integer status, String help) -> instance
+
+    # Builds an exit status from its parts.
+    #
+    # - `status`: Integer, the status.
+    # - `help`: String, what it means.
+    def initialize: (status: Integer, help: String) -> void
+
+    # Reads an exit status from its object in the spec's JSON, and raises `Usage::SpecError` when its code isn't a
+    # whole number.
+    #
+    # - `object`: Hash, one entry of `exit_codes`.
+    #
+    # ```ruby
+    # # Wrong: raises Usage::SpecError
+    # Usage::ExitCode.read({ code: "two" })
+    # ```
+    def self.read: (object object) -> ExitCode
+  end
+end

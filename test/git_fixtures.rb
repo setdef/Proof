@@ -35,7 +35,7 @@ module GitFixtures
   end
 
   private def printed(environment, script, arguments, unsetenv_others: false)
-    load_path = [File.expand_path("../lib", __dir__), File.expand_path("../gems/proof-domain/lib", __dir__)]
+    load_path = %w[lib gems/proof-domain/lib gems/usage-rb/lib].map { |path| File.expand_path("../#{path}", __dir__) }
     options = load_path.flat_map { |path| ["-I", path] }
     command = [RbConfig.ruby, *options, "-e", "require('proof'); #{script}", *arguments]
     output, error, status = Open3.capture3(environment, *command, unsetenv_others:)

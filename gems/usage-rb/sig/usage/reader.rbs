@@ -1,0 +1,52 @@
+module Usage
+  # Reads one object of the spec's JSON with the type each key has, and refuses any key the gem doesn't act on.
+  class Reader
+    @object: object
+    @where: String
+
+    # Takes the object, where it is in the spec for the messages of errors, and the keys the gem accepts there, and
+    # raises `Usage::SpecError` for any other key or value. A key whose value is `null` reads as left out.
+    def initialize: (object object, String where, keys keys) -> void
+
+    # The String under `name`, or an empty String.
+    def name: () -> String
+
+    # The one-line and the longer description.
+    def descriptions: () -> { help: String?, help_long: String? }
+
+    # The String under `key`, or `nil` when it is left out.
+    def text: (Symbol key) -> String?
+
+    # The Strings in the list under `key`, or an empty list when it is left out.
+    def texts: (Symbol key) -> Array[String]
+
+    # The `true` or `false` under `key`, or `false` when it is left out.
+    def boolean: (Symbol key) -> bool
+
+    # Whether `key` holds `false`, which a key left out doesn't.
+    def false?: (Symbol key) -> bool
+
+    # The whole number under `key`.
+    def number: (Symbol key) -> Integer
+
+    # The object under `key`, or an empty one when it is left out.
+    def object: (Symbol key) -> object
+
+    # A reader of the object under `key`, with the keys the gem accepts there, or `nil` when it is left out.
+    def nested: (Symbol key, keys keys) -> Reader?
+
+    # The objects in the list under `key`, or an empty list when it is left out.
+    def objects: (Symbol key) -> Array[object]
+
+    # The objects among the values of the object under `key`, in order, or an empty list when it is left out.
+    def members: (Symbol key) -> Array[object]
+
+    private
+
+    def list: (Symbol key) -> Array[json]
+
+    def hashes: (Array[json] items, Symbol key, String form) -> Array[object]
+
+    def refuse: (Symbol key, String form) -> bot
+  end
+end

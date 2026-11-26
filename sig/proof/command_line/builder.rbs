@@ -2,14 +2,14 @@ module Proof
   module CommandLine
     # Builds the value of a command, from the class that stands for it and what its flags and arguments gave.
     class Builder
-      @spec: Spec
-      @command: Spec::Command
+      @spec: Usage::Spec
+      @command: Usage::Command
       @values: Values
 
       CLASSES: Hash[Array[String], singleton(Data)]
 
       # Takes the spec, the command, and the values its flags and arguments gave.
-      def initialize: (Spec spec, Spec::Command command, Values values) -> void
+      def initialize: (Usage::Spec spec, Usage::Command command, Values values) -> void
 
       # The command's value with the global flags.
       def parsed: () -> Parsed
@@ -20,8 +20,8 @@ module Proof
 
       def command: () -> command
 
-      def construct: (singleton(GlobalFlags) klass, Array[Spec::Flag] flags, Array[Spec::Arg] args) -> GlobalFlags
-                   | (singleton(Data) klass, Array[Spec::Flag] flags, Array[Spec::Arg] args) -> command
+      def construct: (singleton(GlobalFlags) klass, Array[Usage::Flag] flags, Array[Usage::Arg] args) -> GlobalFlags
+                   | (singleton(Data) klass, Array[Usage::Flag] flags, Array[Usage::Arg] args) -> command
     end
   end
 end

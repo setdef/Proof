@@ -4,10 +4,10 @@ module Proof
     module Profiles
       # The help of `proof` itself.
       class Program
-        @spec: Spec
+        @spec: Usage::Spec
 
         # Takes the spec.
-        def initialize: (Spec spec) -> void
+        def initialize: (Usage::Spec spec) -> void
 
         # The first line of the help.
         def title: () -> String
@@ -16,7 +16,7 @@ module Proof
         def description: () -> String?
 
         # The program's examples.
-        def examples: () -> Array[Spec::Example]
+        def examples: () -> Array[Usage::Example]
 
         # The exit statuses, as rows.
         def exit_rows: () -> Array[_Row]
@@ -27,11 +27,11 @@ module Proof
 
       # The help of one command.
       class Subcommand
-        @spec: Spec
-        @command: Spec::Command
+        @spec: Usage::Spec
+        @command: Usage::Command
 
         # Takes the spec and the command.
-        def initialize: (Spec spec, Spec::Command command) -> void
+        def initialize: (Usage::Spec spec, Usage::Command command) -> void
 
         # The first line of the help.
         def title: () -> String
@@ -40,7 +40,7 @@ module Proof
         def description: () -> String?
 
         # The command's examples.
-        def examples: () -> Array[Spec::Example]
+        def examples: () -> Array[Usage::Example]
 
         # The exit statuses: none, because only the help of `proof` lists them.
         def exit_rows: () -> Array[_Row]

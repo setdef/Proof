@@ -2,10 +2,10 @@ module Proof
   module CommandLine
     # One example of the help, laid out as lines.
     class ExampleBlock
-      @item: Spec::Example
+      @item: Usage::Example
 
       # Takes the example.
-      def initialize: (Spec::Example item) -> void
+      def initialize: (Usage::Example item) -> void
 
       # The heading, the command line, and the explanation, each as a line.
       def lines: () -> Array[String]

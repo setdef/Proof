@@ -20,7 +20,8 @@ task :rubycritic do
   FileUtils.rm_f(report)
   score_ok = system(
     "bundle exec rubycritic --no-browser --format json --path #{RUBYCRITIC_REPORT_DIR} " \
-      "--minimum-score #{RUBYCRITIC_MINIMUM_SCORE} lib sig gems/proof-domain/lib gems/proof-domain/sig"
+      "--minimum-score #{RUBYCRITIC_MINIMUM_SCORE} lib sig " \
+      "gems/proof-domain/lib gems/proof-domain/sig gems/usage-rb/lib gems/usage-rb/sig"
   )
   abort("RubyCritic wrote no report.") unless File.exist?(report)
 
