@@ -1,11 +1,13 @@
 module Proof
   # Checks the children of a `defaults` or `task` node.
   #
-  # The page lists four children, `os`, `label`, `artifact`, and `cache`. KDL
-  # accepts anything else without complaint, so a misspelled child would be
-  # dropped, and a task would run on systems nobody meant.
+  # The page lists four children, `os`, `label`, `artifact`, and `cache`, each
+  # with one or more arguments, and each given once. KDL accepts anything else
+  # without complaint, so a misspelled child or a second `os` would be dropped or
+  # would override the first, and a task would run on systems nobody meant.
   #
-  # This class refuses a child the page doesn't list.
+  # This class refuses a child the page doesn't list, a child given twice, a
+  # child with no arguments, and a child with a property or a block.
   #
   # Use it from `Proof::ProjectFileSettings`.
   class ProjectFileChildren
@@ -17,13 +19,19 @@ module Proof
     # - `refusal`: `Proof::ProjectFileSettingsRefusal`.
     def initialize: (refusal: ProjectFileSettingsRefusal) -> void
 
-    # Refuses the first child of `node` that the page doesn't list, and returns
-    # when there is none.
+    # Refuses the first mistake among the children of `node`, in the order the
+    # file has them, and returns when there is none.
     #
     # - `node`: `Proof::KdlNode`, a `defaults` or `task` node.
     def refuse_mistakes_in: (KdlNode node) -> void
 
     private
+
+    def check: (KdlNode parent, KdlNode child, KdlNode? first) -> void
+
+    def refuse_unknown: (KdlNode parent, KdlNode child) -> void
+
+    def refuse_shape: (KdlNode child) -> void
 
     @refusal: ProjectFileSettingsRefusal
   end

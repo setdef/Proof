@@ -2,10 +2,12 @@ module Proof
   # Reads a `task` node into a `Proof::TaskEntry`.
   #
   # A `task` node is `task NAME` or `task NAME COMMAND`, plus the settings that
-  # `defaults` takes. KDL accepts a `task` with no name, or with five arguments.
+  # `defaults` takes. A blank name or command would reach a runner as a task
+  # that can't run, and KDL accepts both.
   #
   # This class refuses a task with no name or with more than a name and a
-  # command. It reads the settings with `Proof::ProjectFileSettings` and builds the entry.
+  # command, and a name or a command that is empty or only spaces. It reads the
+  # settings with `Proof::ProjectFileSettings` and builds the entry.
   #
   # Use it from `Proof::ProjectFileReader`.
   class TaskReader
@@ -51,6 +53,10 @@ module Proof
     def refuse_repeat: (Array[KdlNode] same) -> void
 
     def refuse_count: (KdlNode node) -> void
+
+    def refuse_blank: (KdlNode node, kdl_value name, kdl_value command) -> void
+
+    BLANK: ^(kdl_value) -> bool
 
     @refusal: ProjectFileRefusal
     @settings: ProjectFileSettings

@@ -2,6 +2,9 @@
 
 module Proof
   class TaskReader
+    BLANK = -> (value) { value.is_a?(String) && value.match?(/\A[[:space:]]*\z/) }
+    private_constant(:BLANK)
+
     def initialize(refusal:, settings:)
       @refusal = refusal
       @settings = settings
@@ -32,12 +35,18 @@ module Proof
     private def words_of(node)
       refuse_count(node)
       name, command = node.arguments
+      refuse_blank(node, name, command)
       [name, command]
     end
 
     private def refuse_count(node)
       count = node.arguments.size
       @refusal.task_arguments(node, count) unless (1..2).cover?(count)
+    end
+
+    private def refuse_blank(node, name, command)
+      @refusal.blank_name(node, name) if BLANK.call(name)
+      @refusal.blank_command(node, command) if BLANK.call(command)
     end
   end
 end

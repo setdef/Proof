@@ -10,7 +10,22 @@ module Proof
     end
 
     def refuse_mistakes_in(node)
-      node.children.each { |child| @refusal.unknown_child(node, child) unless NAMES.include?(child.name) }
+      node.each_child { |child, first| check(node, child, first) }
+    end
+
+    private def check(parent, child, first)
+      refuse_unknown(parent, child)
+      @refusal.repeated_child(child, first) if first
+      refuse_shape(child)
+    end
+
+    private def refuse_unknown(parent, child)
+      @refusal.unknown_child(parent, child) unless NAMES.include?(child.name)
+    end
+
+    private def refuse_shape(child)
+      @refusal.child_without_arguments(child) if child.arguments.empty?
+      @refusal.child_with_more(child) unless child.arguments_only?
     end
   end
 end

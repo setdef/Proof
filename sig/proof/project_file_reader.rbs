@@ -48,9 +48,9 @@ module Proof
     # Reads `text` as a project file. Raises `Proof::ProjectFileError` for text
     # that isn't KDL 2, for a node, property, or child the page doesn't list,
     # for a value the domain refuses, for two `task` entries with one name or
-    # two `defaults` nodes, and for a `task` with no name or more than a name and
-    # a command. An empty text, or one with only comments, is a project file
-    # with nothing in it.
+    # two `defaults` nodes, for a child given twice or with no arguments, and
+    # for a task name or command that is blank. An empty text, or one with
+    # only comments, is a project file with nothing in it.
     #
     # - `text`: String, the file's text.
     # - `path`: String, the file's path, for the errors. Defaults to

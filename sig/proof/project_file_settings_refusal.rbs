@@ -20,6 +20,15 @@ module Proof
     # Refuses a child that `defaults` and `task` don't have.
     def unknown_child: (KdlNode parent, KdlNode child) -> bot
 
+    # Refuses a child given a second time. `first` is the one before it.
+    def repeated_child: (KdlNode child, KdlNode first) -> bot
+
+    # Refuses a child with no arguments.
+    def child_without_arguments: (KdlNode child) -> bot
+
+    # Refuses a child that has a property or a block of its own.
+    def child_with_more: (KdlNode child) -> bot
+
     private
 
     def messages: () -> Hash[Symbol, String]

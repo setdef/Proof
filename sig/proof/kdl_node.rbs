@@ -66,6 +66,17 @@ module Proof
     # ```
     def arguments_only?: () -> bool
 
+    # Yields each child in order, with the first child before it that has the
+    # same name, or `nil` when it is the first of its name.
+    #
+    # ```ruby
+    # node = Proof::KdlParser.parse("a {\n  os linux\n  label gpu\n  os macos\n}\n", path: ".config/proof.kdl").first
+    # pairs = []
+    # node.each_child { |child, first| pairs << [child.line, first&.line] }
+    # pairs # => [[2, nil], [3, nil], [4, 2]]
+    # ```
+    def each_child: () { (KdlNode child, KdlNode? first) -> void } -> void
+
     # The children by name. A name given twice has its last child.
     #
     # ```ruby
@@ -73,5 +84,9 @@ module Proof
     # node.children_by_name.keys # => ["os", "label"]
     # ```
     def children_by_name: () -> Hash[String, KdlNode]
+
+    private
+
+    def first_before: (Integer index) -> KdlNode?
   end
 end
