@@ -26,8 +26,9 @@ module Proof
   class InvalidLabelSetError < Error
   end
 
-  # Raised when a number of CPUs isn't a whole number from 1, or an amount of
-  # memory isn't a size such as `"512MB"` or `"8GB"`.
+  # Raised when a number of CPUs isn't a whole number (from 1 for a request,
+  # from 0 for any other resources), or an amount of memory isn't a size such
+  # as `"512MB"` or `"8GB"`.
   class InvalidResourcesError < Error
   end
 

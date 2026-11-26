@@ -6,9 +6,11 @@ module Proof
   # as text, `"512MB"` or `"8GB"`, and the server compares amounts. Left as
   # text, `"1GB"` and `"1024MB"` look like two requests.
   #
-  # This class reads a size into whole megabytes, counting 1 GB as 1,024 MB,
-  # and raises unless the CPUs are a whole number from 1 and the memory is a
-  # size. Ask a request whether it fits within what a host has free.
+  # This class reads a size into whole megabytes, counting 1 GB as 1,024 MB.
+  # A request raises unless its CPUs are a whole number from 1 and its memory
+  # is a size. A host's free amounts and its share can be 0 CPUs and 0
+  # megabytes, so resources built from numbers accept a whole number of CPUs
+  # from 0. Ask a request whether it fits within what a host has free.
   #
   # Use it for a task's request, a flag's request, and a host's free amounts.
   #
@@ -33,8 +35,16 @@ module Proof
   # # Wrong: raises Proof::InvalidResourcesError
   # Proof::Resources.request(cpus: 0, memory: "8 GB")
   # ```
+  #
+  # A host with every CPU in use has 0 CPUs free, and nothing asked for fits
+  # within it:
+  #
+  # ```ruby
+  # busy = Proof::Resources.new(cpus: 0, megabytes: 4096)
+  # Proof::Resources.request(cpus: 1, memory: "1GB").fits_within?(busy) # => false
+  # ```
   class Resources < Data
-    # The number of CPUs, a whole number from 1.
+    # The number of CPUs, a whole number from 0.
     attr_reader cpus: Integer
 
     # The memory in megabytes, a whole number from 0.
@@ -44,10 +54,11 @@ module Proof
                 | (Integer cpus, Integer megabytes) -> instance
 
     # Builds a request from CPUs and a memory size as a project file writes it.
-    # It raises `Proof::InvalidResourcesError` unless `memory` is whole digits
-    # then `MB` or `GB`, in capitals and with nothing else, such as `"512MB"`,
-    # `"8GB"`, or `"0GB"`. A number, `nil`, `"8 GB"`, `"8gb"`, and `"1.5GB"`
-    # raise.
+    # It raises `Proof::InvalidResourcesError` unless `cpus` is an Integer from
+    # 1, as a task's `cpus` is, and `memory` is whole digits then `MB` or `GB`,
+    # in capitals and with nothing else, such as `"512MB"`, `"8GB"`, or
+    # `"0GB"`. A number, `nil`, `"8 GB"`, `"8gb"`, and `"1.5GB"` raise as
+    # memory, and `0` raises as `cpus`.
     #
     # - `cpus`: Integer, a whole number from 1.
     # - `memory`: String, such as `"4GB"`.
@@ -58,11 +69,16 @@ module Proof
     def self.request: (cpus: Integer, memory: String) -> Resources
 
     # Builds resources from CPUs and megabytes, and raises
-    # `Proof::InvalidResourcesError` unless `cpus` is an Integer from 1 and
-    # `megabytes` is an Integer from 0.
+    # `Proof::InvalidResourcesError` unless `cpus` and `megabytes` are each an
+    # Integer from 0. Zero CPUs and zero megabytes are a host with nothing free,
+    # or a share that keeps nothing.
     #
-    # - `cpus`: Integer, a whole number from 1.
+    # - `cpus`: Integer, a whole number from 0.
     # - `megabytes`: Integer, a whole number from 0.
+    #
+    # ```ruby
+    # Proof::Resources.new(cpus: 0, megabytes: 0).cpus # => 0
+    # ```
     def initialize: (cpus: Integer, megabytes: Integer) -> void
 
     # Whether these resources fit within `available`: no more CPUs and no
