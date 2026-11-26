@@ -1,6 +1,6 @@
 # Add a Windows PC
 
-Set up a runner on a Windows PC, and a second one in its WSL (the Windows Subsystem for Linux), so tasks that need Windows run there, and Linux tasks can use the PC too. Proof counts the two runners as one host, so together they never get more work than the PC can do.
+Set up a runner on a Windows PC, and a second one in its WSL (the Windows Subsystem for Linux), so tasks that need Windows run there, and Linux tasks can use the PC too. Proof counts the two runners as one host, so together they never get more work than the PC can do. WSL can have less memory than the PC, so Proof places a run on the WSL runner only if it fits what WSL has.
 
 This page runs commands on two computers, as two accounts:
 

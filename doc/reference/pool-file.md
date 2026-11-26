@@ -140,7 +140,7 @@ One entry for each physical computer. `proof status` shows the host under `NAME`
 
 | Child | Default | Meaning |
 | --- | --- | --- |
-| `runner` | Written by `proof runner approve` | The runners on this host. The server counts their CPUs, memory, and disk as one host's, so the server never gives a Windows PC and its WSL more runs together than the PC can run. |
+| `runner` | Written by `proof runner approve` | The runners on this host. The server counts their CPUs, memory, and disk as one host's, so the server never gives a Windows PC and its WSL more runs together than the PC can run. A run must also fit the runner's capacity: WSL can have less memory than the PC, and the server doesn't place a run on the WSL runner that doesn't fit what WSL has. |
 | `budget` | Half the host's free disk space when `proof runner approve` adds the host, written into its entry | The disk space Proof may use on this host for workspaces and caches. When Proof's files exceed it, the host's runners delete the workspaces used least recently, never one in use. |
 | `keep-free` | `"25GB"` | The disk space the host's runners always leave free, whatever the budget, so a disk that fills for other reasons never fills completely because of Proof. |
 | `share` | `cpus=2 memory="4GB"` | The CPUs and memory Proof keeps free on this host for a person. The memory is free always, and the CPUs only while a person is active there. Runs go on with the rest, and runs that need the person's display, GPU, or speakers wait. |

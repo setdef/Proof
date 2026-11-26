@@ -40,7 +40,8 @@ A run waits in the queue until the server can place it on a runner. Among the ru
 
 - the runner's operating system is one the project file lists for the task, any operating system when it lists none, or the one you named with `--os`;
 - the runner has every label the task needs;
-- the runner's host has the CPUs and memory the run requests free, counting every runner on that host together, and leaving the host's memory share free, and its CPU share free while a person is active.
+- the runner's host has the CPUs and memory the run requests free, counting every runner on that host together, and leaving the host's memory share free, and its CPU share free while a person is active;
+- the run fits the runner's capacity, which can be less than its host's: a runner in a virtual machine, such as WSL, can have less memory than the PC.
 
 The server counts resources per **host**, not per runner. A Windows PC with WSL is one host, and the server never gives its two runners more runs together than the PC can run.
 
