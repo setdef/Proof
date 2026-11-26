@@ -1,0 +1,56 @@
+module Proof
+  # The `git` program, run as a subprocess in one folder.
+  #
+  # Proof sends code as Git commits, and Git is how it makes them. A Git
+  # process that inherits a `GIT_*` variable obeys it. A pre-push hook, for
+  # example, runs with `GIT_DIR` set, and every Git command that Proof ran
+  # there would act on the hook's repository, whichever folder Proof named.
+  #
+  # This class leaves every `GIT_*` variable that Proof inherited out of the
+  # environment it gives git, passes each argument to git as it is, and raises
+  # a `Proof::Error` for a git that is missing or fails. No shell reads the
+  # arguments, so a branch named `$(rm -rf ~)` is only a name.
+  #
+  # Use it as the one place where Proof starts git.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::Git.new(folder: Dir.pwd).run("--version").start_with?("git version") # => true
+  # ```
+  #
+  # A variable that a hook sets changes nothing:
+  #
+  # ```ruby
+  # ENV["GIT_DIR"] = "/nowhere"
+  # Proof::Git.new(folder: Dir.pwd).run("--version").start_with?("git version") # => true
+  # ```
+  class Git
+    # Prepares to run git in `folder`.
+    #
+    # - `folder`: String, the working folder of each run.
+    # - `program`: String, the git program's name or path.
+    def initialize: (folder: String, ?program: String) -> void
+
+    # Runs git with `arguments` and returns what it printed to standard
+    # output. Raises `Proof::GitFailedError` when git exits with a status
+    # other than 0, and `Proof::GitNotFoundError` when the computer has no
+    # such program.
+    #
+    # - `arguments`: each a String, passed to git as one argument.
+    # - `env`: Hash, variables to set for this run, named by symbols, such as `GIT_INDEX_FILE`.
+    # - `input`: String, written to git's standard input.
+    #
+    # ```ruby
+    # Proof::Git.new(folder: Dir.pwd).run("hash-object", "--stdin", input: "hi\n") # => "45b983be36b73c0788dc9cbcb76cbb80fc7bb057\n"
+    # ```
+    def run: (*String arguments, ?env: Hash[Symbol, String], ?input: String) -> String
+
+    private
+
+    @folder: String
+    @program: String
+
+    def capture: (Array[String] arguments, Hash[Symbol, String] env, String input) -> [String, String, Process::Status]
+  end
+end

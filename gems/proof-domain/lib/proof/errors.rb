@@ -21,4 +21,13 @@ module Proof
 
   class InvalidRandomSourceError < Error
   end
+
+  class GitNotFoundError < Error
+  end
+
+  class GitFailedError < Error
+    def initialize(subcommand:, status:, error_output:)
+      super("git #{subcommand} failed (#{status.to_s.sub(/\Apid \d+ /, '')}): #{error_output.strip}")
+    end
+  end
 end

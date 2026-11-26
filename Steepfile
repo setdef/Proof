@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 target :lib do
-  signature "sig"
+  signature "sig", "steep", "gems/proof-domain/sig", "gems/proof-domain/steep"
   check "lib"
 
   configure_code_diagnostics(Steep::Diagnostic::Ruby.all_error)
@@ -16,6 +16,7 @@ target :lib do
   library "stringio"
   library "securerandom"
   library "erb"
+  library "open3"
 end
 
 # The domain gem is checked alone, with only its own signatures, so a type

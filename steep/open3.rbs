@@ -1,0 +1,6 @@
+# Steep's Open3 signature lacks the +chdir:+ option that Open3 passes on to
+# Process.spawn, and takes no environment that unsets a variable with nil.
+module Open3
+  def self.capture3: (Hash[String, String?] env, *String command, ?stdin_data: String, ?chdir: String) -> [String, String, Process::Status]
+                   | ...
+end

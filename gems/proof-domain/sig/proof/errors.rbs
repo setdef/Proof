@@ -41,4 +41,22 @@ module Proof
   # number from 0 up to, and not including, the limit it was asked for.
   class InvalidRandomSourceError < Error
   end
+
+  # Raised when the computer has no `git` program Proof can run. Install Git,
+  # or fix `PATH`, and run again.
+  class GitNotFoundError < Error
+  end
+
+  # Raised when the `git` program ends with a status other than 0 and the
+  # caller has no better word for why. A refusal Proof can explain, such as a
+  # folder outside any repository, has an error class for that refusal.
+  class GitFailedError < Error
+    # Builds the error, with a message that gives the command, git's exit
+    # status, and what git said.
+    #
+    # - `subcommand`: String, the git command that failed, such as `"rev-parse"`.
+    # - `status`: Process::Status, how git ended.
+    # - `error_output`: String, what git printed to standard error.
+    def initialize: (subcommand: String, status: Process::Status, error_output: String) -> void
+  end
 end
