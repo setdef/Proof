@@ -1,0 +1,29 @@
+module Proof
+  module CommandLine
+    # Writes the help of one command from the spec.
+    class Help
+      @tables: Tables
+      @profile: Profiles::Program | Profiles::Subcommand
+      @command: Spec::Command
+      @bin: String
+
+      # Takes the spec and the command to write help for.
+      def initialize: (Spec spec, Spec::Command command) -> void
+
+      # The help, ending in a newline.
+      def text: () -> String
+
+      private
+
+      def title: () -> String
+
+      def description: () -> String?
+
+      def usage: () -> String
+
+      def subcommands: () -> String?
+
+      def examples: () -> String?
+    end
+  end
+end

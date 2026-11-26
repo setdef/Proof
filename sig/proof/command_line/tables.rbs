@@ -1,0 +1,28 @@
+module Proof
+  module CommandLine
+    # The tables of the help: the commands, the arguments, the flags, and the exit statuses.
+    class Tables
+      @command: Spec::Command
+      @globals: Array[Spec::Flag]
+      @exit_rows: Array[_Row]
+
+      # Takes the command, the global flags, and the rows of exit statuses.
+      def initialize: (Spec::Command command, Array[Spec::Flag] globals, Array[_Row] exit_rows) -> void
+
+      # Each table that has rows, as text.
+      def sections: () -> Array[String?]
+
+      private
+
+      def listing: () -> String?
+
+      def arguments: () -> String?
+
+      def flags: () -> String?
+
+      def globals: () -> String?
+
+      def exit_codes: () -> String?
+    end
+  end
+end

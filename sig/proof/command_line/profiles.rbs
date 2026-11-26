@@ -1,0 +1,63 @@
+module Proof
+  module CommandLine
+    # What differs between the help of `proof` and the help of a command.
+    module Profiles
+      # The help of `proof` itself.
+      class Program < Data
+        # The spec.
+        attr_reader spec: Spec
+
+        def self.new: (spec: Spec) -> instance
+                    | (Spec spec) -> instance
+
+        # Takes the spec.
+        def initialize: (Spec spec) -> void
+
+        # The first line of the help.
+        def title: () -> String
+
+        # The longer description, or `nil`.
+        def description: () -> String?
+
+        # The program's examples.
+        def examples: () -> Array[Spec::Example]
+
+        # The exit statuses, as rows.
+        def exit_rows: () -> Array[_Row]
+
+        # The text for the end of the help, or `nil`.
+        def ending: () -> String?
+      end
+
+      # The help of one command.
+      class Subcommand < Data
+        # The spec.
+        attr_reader spec: Spec
+
+        # The command.
+        attr_reader command: Spec::Command
+
+        def self.new: (spec: Spec, command: Spec::Command) -> instance
+                    | (Spec spec, Spec::Command command) -> instance
+
+        # Takes the spec and the command.
+        def initialize: (Spec spec, Spec::Command command) -> void
+
+        # The first line of the help.
+        def title: () -> String
+
+        # The longer description, or `nil`.
+        def description: () -> String?
+
+        # The command's examples.
+        def examples: () -> Array[Spec::Example]
+
+        # The exit statuses: none, because only the help of `proof` lists them.
+        def exit_rows: () -> Array[_Row]
+
+        # The text for the end of the help: none.
+        def ending: () -> String?
+      end
+    end
+  end
+end

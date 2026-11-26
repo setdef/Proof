@@ -7,6 +7,11 @@ require_relative("../test_helper")
 
 # Checks that `proof`'s parser and `usage explain` agree on every command line the CLI spec defines: whether it is
 # accepted, which command it runs, and what each word binds to.
+#
+# usage can't say four things the parser does, so the unit tests check them alone: the nearest flag in the line for an
+# unknown flag (flag_mistakes_test.rb), the words of every other line (word_mistakes_test.rb), `:::` with no task
+# before it or no name after it (word_mistakes_test.rb), and the help that `proof` alone prints
+# (global_flags_test.rb), where usage accepts it as a command line with nothing in it.
 class CommandLineContractTest < Minitest::Test
   SPEC = Proof::CommandLine::Spec.load
   CASES = CommandLineContract::Cases.new(SPEC).all

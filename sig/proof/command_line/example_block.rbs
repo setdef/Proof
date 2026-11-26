@@ -1,0 +1,24 @@
+module Proof
+  module CommandLine
+    # One example of the help, laid out as lines.
+    class ExampleBlock < Data
+      # The example.
+      attr_reader item: Spec::Example
+
+      def self.new: (item: Spec::Example) -> instance
+                  | (Spec::Example item) -> instance
+
+      # Takes the example.
+      def initialize: (Spec::Example item) -> void
+
+      # The heading, the command line, and the explanation, each as a line.
+      def lines: () -> Array[String]
+
+      private
+
+      def header: () -> Array[String]
+
+      def text: () -> Array[String]
+    end
+  end
+end

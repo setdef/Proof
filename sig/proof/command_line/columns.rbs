@@ -1,0 +1,40 @@
+module Proof
+  module CommandLine
+    # A row of two columns: what to call something, and what to say about it.
+    interface _Row
+      # What the row is called.
+      def label: () -> String
+
+      # What the row says.
+      def text: () -> String
+    end
+
+    # Lays out a titled list of rows in two columns, wrapping the second.
+    class Columns
+      @title: String
+      @rows: Array[_Row]
+      @gap: Integer
+
+      WIDTH: Integer
+
+      # Wraps `words` into lines of fewer than `width` characters.
+      def self.wrap: (String words, Integer width) -> Array[String]
+
+      # Wraps each line of `text` longer than `width` characters, and leaves the others as they are. `nil` stays `nil`.
+      def self.paragraphs: (String? text, Integer width) -> String?
+
+      # The titled rows, or `nil` when there are none.
+      def self.table: (String title, Array[_Row] rows) -> String?
+
+      # Takes the title and the rows.
+      def initialize: (String title, Array[_Row] rows) -> void
+
+      # The title, then each row, with the labels aligned.
+      def text: () -> String
+
+      private
+
+      def row: (String label, String words) -> Array[String]
+    end
+  end
+end

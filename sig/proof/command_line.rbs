@@ -37,6 +37,20 @@ module Proof
     # ```
     def self.parse: (Array[String] argv) -> (Invocation | HelpRequest)
 
+    # The help for the command at `path`, as `proof` prints it to standard
+    # output when asked: what the command does, how to use it, its examples,
+    # and its flags, arguments, and subcommands, all read from the spec. An
+    # empty `path` is `proof` itself, and a path that names no command
+    # gives the help of `proof`.
+    #
+    # - `path`: Array of String, the words that name the command, as `Proof::CommandLine::HelpRequest#path` gives them.
+    #
+    # ```ruby
+    # Proof::CommandLine.help(["watch"]).lines.first # => "proof watch - Stream a run's output until it ends, and exit with its status\n"
+    # Proof::CommandLine.help(["server"]).include?("Usage: proof server [FLAGS] <SUBCOMMAND>") # => true
+    # ```
+    def self.help: (Array[String] path) -> String
+
     # The value of any command `proof` takes: one class for each command.
     type command = RunCommand
                  | WatchCommand
