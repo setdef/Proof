@@ -16,6 +16,9 @@ module Usage
     end
 
     def self.table(title, rows)
+      # OptionParser's summary doesn't wrap a description, indents a flag with no short name to line up with the
+      # others, and moves a label wider than its column to a line of its own. It has no table of subcommands or
+      # arguments either, so every table is laid out here.
       widths = rows.map { |label, _| label.length }
       gap = (widths.max || return) + 4
       [title, *rows.flat_map { |label, words| row(label, words, gap) }].join("\n")
