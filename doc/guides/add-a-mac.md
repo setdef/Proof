@@ -39,7 +39,7 @@ The runner has to start when the Mac starts, so it runs as a launchd daemon, and
 ```console
 proof@mac % proof runner setup server.home.arpa
 proof: checking mac for a macOS runner
-proof: checked: the runner starts when the Mac starts
+proof: checked: the runner's launchd daemon is installed
 proof: installed mise for the runner
 proof: started the runner mac-macos as a launchd daemon that runs as this account
 proof: mac-macos asks to join server.home.arpa as code 7WQK-M2HD
@@ -68,7 +68,7 @@ A launchd daemon has no window server: a run there can draw offscreen, but a win
 
    ```console
    proof@mac % proof runner setup server.home.arpa --desktop
-   proof: mac-macos now runs work that opens windows in this account's signed-in session
+   proof: mac-macos runs work that opens windows in this account's session
    proof: mac-macos now offers the label desktop
    ```
 

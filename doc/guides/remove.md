@@ -37,6 +37,8 @@ proof: uninstall the runner nuc-linux? This deletes its workspaces and caches. [
 proof: stopped the runner, and deleted its service, workspaces, caches, and mise
 ```
 
+On a Mac, the runner is a launchd daemon, and removing one needs an administrator. `proof runner uninstall` first prints the commands for an administrator to run to stop and remove the daemon, and deletes the rest when you run it again. `proof server uninstall` does the same for the server.
+
 Then, as yourself, delete Proof's account, with its home folder and the unpacked archive in it:
 
 ```console
