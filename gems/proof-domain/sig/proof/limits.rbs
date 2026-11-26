@@ -1,0 +1,60 @@
+module Proof
+  # The most the server keeps from one run, as the pool file's `limits` node
+  # gives it.
+  #
+  # A command can print without end, and a build can write artifacts without
+  # end. With no limit, one run fills the server's disk and every other run
+  # fails with it.
+  #
+  # This class holds two sizes: the most output the server keeps from one run,
+  # and the most artifacts. A value that isn't given keeps its default: `"1GB"`
+  # of output and `"16GB"` of artifacts.
+  #
+  # Use it as what the reader of the pool file builds from `limits`.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # limits = Proof::Limits.new
+  # [limits.output.megabytes, limits.artifacts.megabytes] # => [1024, 16_384]
+  # ```
+  #
+  # A value that is given replaces its default, and the other keeps its own:
+  #
+  # ```ruby
+  # half = Proof::Size.read("512mb", name: "limits output")
+  # Proof::Limits.new(output: half).output.megabytes # => 512
+  # Proof::Limits.new(output: half).artifacts.megabytes # => 16_384
+  # ```
+  #
+  # A value that isn't a `Proof::Size` is refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidLimitsError
+  # Proof::Limits.new(output: 512)
+  # ```
+  class Limits < Data
+    # For each member, the message when its value breaks the rule, and the rule.
+    RULES: Hash[Symbol, [String, MemberCheck::_Rule]]
+
+    # The most output the server keeps from one run.
+    attr_reader output: Size
+
+    # The most artifacts the server keeps from one run.
+    attr_reader artifacts: Size
+
+    def self.new: (?output: Size, ?artifacts: Size) -> instance
+                | (?Size output, ?Size artifacts) -> instance
+
+    # Builds the limits, and raises `Proof::InvalidLimitsError` unless each
+    # value is a `Proof::Size`. A value left out keeps its default.
+    #
+    # - `output`: Size, defaults to 1 GB.
+    # - `artifacts`: Size, defaults to 16 GB.
+    #
+    # ```ruby
+    # Proof::Limits.new == Proof::Limits.new(output: Proof::Size.new(megabytes: 1024)) # => true
+    # ```
+    def initialize: (?output: Size, ?artifacts: Size) -> void
+  end
+end

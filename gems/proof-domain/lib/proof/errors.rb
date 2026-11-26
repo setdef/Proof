@@ -56,6 +56,9 @@ module Proof
   class InvalidRetentionError < Error
   end
 
+  class InvalidLimitsError < Error
+  end
+
   class InvalidRandomSourceError < Error
   end
 

@@ -107,6 +107,10 @@ module Proof
   class InvalidRetentionError < Error
   end
 
+  # Raised when a limit of the pool file isn't a `Proof::Size`.
+  class InvalidLimitsError < Error
+  end
+
   # Raised when a source of randomness answers with anything but a whole
   # number from 0 up to, and not including, the limit it was asked for.
   class InvalidRandomSourceError < Error
