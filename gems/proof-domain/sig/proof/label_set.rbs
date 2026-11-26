@@ -8,8 +8,7 @@ module Proof
   # A set holds each label once, in no order, so two sets with the same labels
   # are equal. Ask a runner's set whether it offers every label of a task's set.
   #
-  # Use it for a runner's labels, for a task's `label` entries, and for the
-  # labels of a run.
+  # Use it for a runner's labels and for a task's `label` entries.
   #
   # ## Examples
   #
