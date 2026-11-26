@@ -22,6 +22,12 @@ class RunEndTest < Minitest::Test
     assert_breaks(SUCCEEDS, queued, placed, started, exited, ended(:succeeded))
   end
 
+  # Runner design, "Output and status": "Output that is cut off makes the run
+  # `lost`, whatever the exit status", even when its artifacts were kept.
+  def test_a_run_with_kept_artifacts_but_not_its_whole_output_does_not_succeed
+    assert_breaks(SUCCEEDS, queued, placed, started, exited, kept, ended(:succeeded))
+  end
+
   # Server design, "Artifacts": "A run whose command exited 0 but whose
   # artifacts couldn't be kept is `failed`, never `succeeded`."
   def test_a_run_whose_artifacts_were_not_kept_does_not_succeed
