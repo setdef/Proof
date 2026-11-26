@@ -170,7 +170,9 @@ A run is in exactly one of these states. The first two can change; the rest are 
 | `timed_out` | The run reached its time limit, and the runner ended it. |
 | `out_of_memory` | The run held more memory than it requested while its host ran short, and the runner ended it. |
 | `canceled` | Someone canceled the run, and the runner ended it. |
-| `lost` | The run ended without a status from its command, because its runner or host went away or Proof failed, or its command exited but its whole output never reached the server. |
+| `lost` | The run ended without a status from its command, because the server lost contact with its runner for 10 minutes (the runner or its host went away) or Proof failed, or its command exited but its whole output never reached the server. |
+
+A `lost` run stays `lost`: the server refuses a report that arrives later, even a complete one. The host's CPUs and memory stay held until the runner reports that the run's processes ended, or the runner is revoked.
 
 A run that is `running` is doing one of these: fetching its code, waiting for a desktop or for a person to leave, running its command, or sending its output. `proof status` shows which.
 

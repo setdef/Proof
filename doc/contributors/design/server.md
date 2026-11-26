@@ -18,6 +18,7 @@ What the server must guarantee, and the traps known so far. How to meet each req
 ## Runs and their records
 
 - Proof never runs a run's command again by itself: not after the command fails or times out, and not after the run is `lost`. The one retry is before the command starts, when the runner's workspace is broken ([runner design](runner.md#workspaces)), and no command has run then. A lost run's `proof` exits 75, and a lost run of a pushed commit shows as `lost` in `proof status`.
+- **A run whose runner stays unreachable past a deadline becomes `lost`,** so an agent never waits forever on a dead host. A run may still be going on a host the server can't reach. Final states stay final, so a complete report that arrives after `lost` is refused. The host's resources stay held until the runner reports that the run's processes ended, or the runner is revoked, so a host is never offered more than it has while a lost run may still use it.
 - A run's record holds its ID, task, commit, runner, state, exit status, resource use, and times. It never holds the command's arguments or environment, which can carry secrets and grow without bound.
 - Records are bounded per run, kept for the pool file's `retention`, and written so that concurrent writers can't interleave or lose them.
 - Times are recorded from the server's clock; clocks on hosts and where `proof` runs can differ.

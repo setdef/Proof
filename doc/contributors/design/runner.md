@@ -34,7 +34,7 @@ What the runner must guarantee, and the traps between a design that looks right 
 ## Output and status
 
 - The runner owns the command's output pipe. It merges standard output and standard error in the order the command wrote them, because people and agents read a run top to bottom.
-- It keeps a copy of the output, so output survives the loss of the connection to the server, and sends the copy when the connection returns.
+- It keeps a copy of the output, so output survives the loss of the connection to the server, and sends the copy when the connection returns. When the server has already made the run `lost`, it refuses the copy, and the runner still ends everything the run started and reports that it ended, so the server can release the host's resources.
 - A run counts as `succeeded` only when the server has the whole output, as the runner counted it: its length, and an end marker after the last byte. Output that is cut off makes the run `lost`, whatever the exit status.
 - No step may wait forever on a reader. A consumer that stops reading gets a bounded wait, then the runner says so and carries on.
 - Bound every read: a command can print hundreds of megabytes in a second.
