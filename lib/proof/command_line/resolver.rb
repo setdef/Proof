@@ -21,7 +21,7 @@ module Proof
       end
 
       private def skip(token)
-        refuse(token) unless @switches.include?(token) || Tokens.cluster?(token, @switches)
+        refuse(token) unless Tokens.known?(token, @switches)
         @skipped << token
       end
 
@@ -30,8 +30,12 @@ module Proof
       end
 
       private def refuse(token)
-        switch = token.split("=").first.to_s
-        raise(Mistake, Messages.new(@command.path).unknown_flag(switch, Suggestions.for(switch, @switches)))
+        messages = Messages.new(@command.path)
+        # No global flag takes a value, so a long one written with "=" is a flag that exists, given a value.
+        raise(Mistake, messages.needless_value(Tokens.flag_name(token))) if Tokens.valued?(token, @switches)
+
+        switch = Tokens.typed(token, @switches)
+        raise(Mistake, messages.unknown_flag(switch, Suggestions.for(switch, @switches)))
       end
 
       private def refuse_word(word)

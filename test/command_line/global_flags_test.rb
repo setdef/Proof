@@ -60,4 +60,44 @@ class CommandLineGlobalFlagsTest < Minitest::Test
   def test_help_after_the_dashes_goes_to_the_task
     assert_equal([task("test", "-h")], command("run", "test", "--", "-h").tasks)
   end
+
+  # OptionParser reads -q=1 as -q, -=, and -1, so after the command the word typed is named. Before it, the same.
+  def test_a_short_global_flag_with_an_equals_sign_before_the_command_is_named_as_typed
+    words = %w[-q=1 -qd=1 -h=1 -q=]
+
+    assert_equal(
+      words.map { |word| "proof: #{word} isn't a flag of proof. To list the flags, run: proof --help" },
+      words.map { |word| mistake(word, "status") }
+    )
+  end
+
+  # proof.usage.kdl: the four global flags and --help take no value, before the command as after it.
+  def test_a_long_global_flag_with_a_value_before_the_command_is_refused
+    flags = %w[--quiet --debug --no-color --no-input --help]
+    lines = flags.map { |flag| "proof: #{flag} takes no value. To see its usage, run: proof --help" }
+
+    assert_equal(
+      [lines, lines],
+      [flags.map { |flag| mistake("#{flag}=1", "status") }, flags.map { |flag| mistake("#{flag}=", "status") }]
+    )
+  end
+
+  # A value between the words that name a command is a mistake of the command the words have reached.
+  def test_a_global_flag_with_a_value_between_the_words_of_a_command_is_refused
+    assert_equal(
+      "proof: --quiet takes no value. To see its usage, run: proof runner --help",
+      mistake("runner", "--quiet=1", "list")
+    )
+  end
+
+  # A flag proof doesn't have is named without its value, as it is after the command.
+  def test_an_unknown_flag_with_a_value_before_the_command_is_named_without_the_value
+    assert_equal(
+      [
+        "proof: --quite isn't a flag of proof. Did you mean --quiet? To list the flags, run: proof --help",
+        "proof: -x isn't a flag of proof. To list the flags, run: proof --help",
+      ],
+      [mistake("--quite=1", "status"), mistake("-x=1", "status")]
+    )
+  end
 end
