@@ -61,6 +61,12 @@ class RunIdTest < Minitest::Test
     end
   end
 
+  # Glossary, "run": the characters come from Crockford's Base32, so the Kelvin
+  # sign, which Unicode lowercases to `k`, is not one.
+  def test_the_kelvin_sign_is_not_one_of_the_characters
+    assert_raises(Proof::InvalidRunIdError) { run_id("m3d8\u212A") }
+  end
+
   # Glossary, "run": "Proof reads a typed `o` as `0` and an `i` or `l` as `1`."
   def test_a_typed_o_i_or_l_is_read_as_zero_or_one
     assert_equal("m3081", run_id("M3O8L").characters)

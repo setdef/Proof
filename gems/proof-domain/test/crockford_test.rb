@@ -68,6 +68,14 @@ class CrockfordTest < Minitest::Test
     end
   end
 
+  # Crockford's Base32 reads either case of the ASCII letters only: Unicode
+  # lowercasing turns the Kelvin sign (U+212A) into `k`, which a person never
+  # typed as one.
+  def test_a_character_that_only_unicode_lowercases_to_a_symbol_is_outside_the_alphabet
+    assert_nil(Proof::Crockford.read("\u212A"))
+    assert_nil(Proof::Crockford.read("m3d\u212A8"))
+  end
+
   # A byte string that isn't valid text, as a command line can hold, is not an error.
   def test_text_that_is_not_valid_is_outside_the_alphabet
     assert_nil(Proof::Crockford.read("m3d\xFF8"))

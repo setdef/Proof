@@ -8,7 +8,7 @@ module Proof
     def self.read(text)
       return unless text.valid_encoding?
 
-      reading = text.downcase.tr("oil", "011")
+      reading = text.downcase(:ascii).tr("oil", "011")
       reading if /\A[0-9a-hjkmnp-tv-z]*\z/.match?(reading)
     end
 
