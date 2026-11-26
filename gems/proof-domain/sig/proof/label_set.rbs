@@ -42,7 +42,9 @@ module Proof
     def self.of: (*String names) -> LabelSet
 
     # Builds a set, and raises `Proof::InvalidLabelSetError` unless `labels`
-    # is an `Array` or `Set` of `Proof::Label` values. A set of strings raises.
+    # is an `Array` or `Set` of `Proof::Label` values. A set of strings raises,
+    # and so does any other collection, even an empty one such as `{}` or
+    # `(1..0)`.
     #
     # - `labels`: an `Array` or `Set` of `Proof::Label`.
     def initialize: (labels: Array[Label] | Set[Label]) -> void

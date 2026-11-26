@@ -76,6 +76,15 @@ class LabelSetTest < Minitest::Test
     end
   end
 
+  # A set is built from an `Array` or a `Set` only. Any other Enumerable with
+  # no labels in it, such as an empty hash or an empty range, would pass a
+  # check that every element is a label, so it is refused by its type.
+  def test_an_enumerable_that_is_neither_an_array_nor_a_set_is_refused_even_when_empty
+    [{}, (1..0), [].each, [].lazy].each do |given|
+      assert_raises(Proof::InvalidLabelSetError) { Proof::LabelSet.new(labels: given) }
+    end
+  end
+
   # A name that can't be a label raises the label's error.
   def test_a_name_that_is_not_a_label_is_refused_where_the_set_is_built_from_names
     assert_raises(Proof::InvalidLabelError) { labels("gpu", "") }

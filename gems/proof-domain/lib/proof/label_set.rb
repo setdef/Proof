@@ -9,7 +9,7 @@ module Proof
     end
 
     def initialize(labels:)
-      unless labels.is_a?(Enumerable) && labels.all?(Label)
+      unless [Array, Set].any? { |kind| labels.is_a?(kind) } && labels.all?(Label)
         raise(InvalidLabelSetError, format("a set of labels holds only labels, not %p", labels))
       end
 
