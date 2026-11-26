@@ -63,7 +63,7 @@ class CommandLineGlobalFlagsTest < Minitest::Test
 
   # OptionParser reads -q=1 as -q, -=, and -1, so after the command the word typed is named. Before it, the same.
   def test_a_short_global_flag_with_an_equals_sign_before_the_command_is_named_as_typed
-    words = %w[-q=1 -qd=1 -h=1 -q=]
+    words = %w[-q=1 -qd=1 -h=1 -q= -= -=1]
 
     assert_equal(
       words.map { |word| "proof: #{word} isn't a flag of proof. To list the flags, run: proof --help" },

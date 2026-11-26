@@ -33,8 +33,9 @@ module Proof
 
       def self.typed(token, switches)
         name = flag_name(token)
-        # A short flag written with "=" is named as typed, as Options names it, since "=" isn't a letter of it.
-        known?(name, switches) ? named("-=", [token]) : name
+        # A short flag written with "=" is named as typed, as Options names it, since "=" isn't a letter of it. Cut
+        # at "=", -=1 would be "-", which no one typed.
+        (name == "-" || known?(name, switches)) ? token : name
       end
 
       def self.known?(token, switches)

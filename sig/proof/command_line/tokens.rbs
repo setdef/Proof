@@ -24,7 +24,7 @@ module Proof
       # The name to give for a word that isn't a flag among `switches`, as the person typed it.
       #
       # The flag's name, without a value, unless the word is one or several short flags among `switches` written
-      # with `=`, such as `-q=1`, which is named whole.
+      # with `=`, such as `-q=1`, or begins with `-=`, such as `-=1`, which is named whole.
       def self.typed: (String token, Array[String] switches) -> String
 
       # Whether `token` is one of `switches`, or several one-letter flags written together that are each among them.
