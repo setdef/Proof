@@ -76,6 +76,35 @@ class GitProjectRevisionTest < Minitest::Test
     )
   end
 
+  # Older Git marks a partial clone with `extensions.partialclone` and no `promisor` setting on a remote.
+  def test_a_repository_with_the_older_partial_clone_setting_is_refused
+    folder = make_repository
+    commit_file(folder)
+    git(folder, "config", "extensions.partialclone", "origin")
+
+    assert_raises(Proof::PartialCloneError) { Proof::GitProject.find(folder).commit_id("HEAD") }
+  end
+
+  # The setting that current Git writes for each remote a partial clone came from, with no other sign of one.
+  def test_a_repository_with_a_promisor_remote_is_refused
+    folder = make_repository
+    commit_file(folder)
+    git(folder, "config", "remote.origin.promisor", "true")
+
+    assert_raises(Proof::PartialCloneError) { Proof::GitProject.find(folder).commit_id("HEAD") }
+  end
+
+  # A remote that isn't a promisor, and a setting with no value, don't make a clone partial.
+  def test_settings_that_are_not_signs_of_a_partial_clone_are_not_refused
+    folder = make_repository
+    commit = commit_file(folder)
+    git(folder, "config", "remote.origin.promisor", "false")
+    git(folder, "config", "remote.origin.url", "https://example.com/promisor=true")
+    git(folder, "config", "extensions.partialclone", "")
+
+    assert_equal(commit, Proof::GitProject.find(folder).commit_id("HEAD"))
+  end
+
   # The same requirement from the other side: a full clone, even of a local repository, is sent.
   def test_a_full_clone_is_not_refused
     source = make_repository("source")
