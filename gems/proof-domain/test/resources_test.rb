@@ -57,6 +57,14 @@ class ResourcesTest < Minitest::Test
     end
   end
 
+  # A byte string that isn't valid text, as a command line can hold, is not a
+  # size, and raises the resources' error, not Ruby's.
+  def test_a_memory_with_invalid_bytes_is_refused
+    error = assert_raises(Proof::InvalidResourcesError) { request("8\xFFGB") }
+
+    assert_equal('memory is a size such as "512MB" or "8GB", not "8\xFFGB"', error.message)
+  end
+
   # The message says what a size is and what it got.
   def test_the_message_for_a_memory_names_the_value
     error = assert_raises(Proof::InvalidResourcesError) { request("8 GB") }

@@ -27,6 +27,14 @@ class LabelTest < Minitest::Test
     end
   end
 
+  # A byte string that isn't valid text, as a command line can hold, is not a
+  # label, and raises the label's error, not Ruby's.
+  def test_text_with_invalid_bytes_is_refused
+    error = assert_raises(Proof::InvalidLabelError) { Proof::Label.new(name: "gp\xFFu") }
+
+    assert_equal('a label is a String with something in it, not "gp\xFFu"', error.message)
+  end
+
   # The message says what a label is and what it got.
   def test_the_message_names_the_value
     error = assert_raises(Proof::InvalidLabelError) { Proof::Label.new(name: :gpu) }

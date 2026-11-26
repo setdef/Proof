@@ -6,7 +6,7 @@ module Proof
     # steep:ignore:end
     def initialize(name:)
       raise(InvalidLabelError, format("a label is a String with something in it, not %p", name)) unless
-        name.is_a?(String) && /\S/.match?(name)
+        name.is_a?(String) && name.valid_encoding? && /\S/.match?(name)
 
       super(name: -name)
     end

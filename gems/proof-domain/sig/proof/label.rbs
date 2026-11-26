@@ -34,7 +34,7 @@ module Proof
 
     # Builds a label, and raises `Proof::InvalidLabelError` unless `name` is a
     # string with a character other than whitespace in it. A symbol, `nil`,
-    # and the empty string raise.
+    # the empty string, and a string with a byte that isn't valid text raise.
     #
     # - `name`: String, such as `"gpu"`.
     def initialize: (name: String) -> void

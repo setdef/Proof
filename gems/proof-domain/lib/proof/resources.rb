@@ -8,7 +8,7 @@ module Proof
       raise(InvalidResourcesError, format("cpus is a whole number from 1, not %p", cpus)) unless
         cpus.is_a?(Integer) && cpus >= 1
       raise(InvalidResourcesError, format("memory is a size such as \"512MB\" or \"8GB\", not %p", memory)) unless
-        memory.is_a?(String) && /\A\d+(MB|GB)\z/.match?(memory)
+        memory.is_a?(String) && memory.valid_encoding? && memory.match?(/\A\d+(MB|GB)\z/)
 
       amount = Integer(memory.delete_suffix("GB").delete_suffix("MB"), 10)
       new(cpus:, megabytes: memory.end_with?("GB") ? amount * 1024 : amount)

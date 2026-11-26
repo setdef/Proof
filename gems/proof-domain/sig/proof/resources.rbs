@@ -57,8 +57,8 @@ module Proof
     # It raises `Proof::InvalidResourcesError` unless `cpus` is an Integer from
     # 1, as a task's `cpus` is, and `memory` is whole digits then `MB` or `GB`,
     # in capitals and with nothing else, such as `"512MB"`, `"8GB"`, or
-    # `"0GB"`. A number, `nil`, `"8 GB"`, `"8gb"`, and `"1.5GB"` raise as
-    # memory, and `0` raises as `cpus`.
+    # `"0GB"`. A number, `nil`, `"8 GB"`, `"8gb"`, `"1.5GB"`, and a string
+    # with a byte that isn't valid text raise as memory, and `0` raises as `cpus`.
     #
     # - `cpus`: Integer, a whole number from 1.
     # - `memory`: String, such as `"4GB"`.
