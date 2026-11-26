@@ -10,10 +10,11 @@ module Proof
 
     MESSAGE = "timeout is a duration: a whole number from 1 and then s, m, or h in lowercase, " \
       "with no space, such as \"90s\", \"30m\", or \"2h\", not %p"
-    private_constant(:MESSAGE)
+    UNITS = %i[s m h].freeze
+    private_constant(:MESSAGE, :UNITS)
 
     def self.read(text)
-      seconds = DurationText.seconds(text)
+      seconds = DurationText.seconds(text, UNITS)
       raise(InvalidTimeLimitError, format(MESSAGE, text)) unless seconds
 
       new(seconds:)

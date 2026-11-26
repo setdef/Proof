@@ -7,22 +7,24 @@ module Proof
   # what a time limit is. It is a private constant of `Proof`, so the domain has
   # no public name for it: read a duration with `Proof::TimeLimit.read`.
   #
-  # A duration is a whole number from 1 and one unit, with no space: `s` for
-  # seconds, `m` for minutes, or `h` for hours, in lowercase.
+  # A duration is a whole number from 1 and one unit, with no space, in
+  # lowercase. Each caller names the units it accepts, from `d` for days, `h`
+  # for hours, `m` for minutes, and `s` for seconds. A unit that the caller
+  # doesn't name is refused, even when it is one of these four.
   module DurationText
-    # The form of a duration, with the number and the unit as named groups.
-    FORM: Regexp
-
     # The seconds in one of each unit, by the unit's letter as a symbol.
     SECONDS: Hash[Symbol, Integer]
 
-    # The seconds in `text`, or `nil` when `text` isn't a duration in the form
-    # above. A value that isn't text, text with a byte that isn't valid text,
-    # and text in an encoding that isn't ASCII-compatible, such as UTF-16, give
-    # `nil`.
+    # The seconds in `text`, or `nil` when `text` isn't a duration in one of
+    # the units in `units`. A value that isn't text, text with a byte that
+    # isn't valid text, and text in an encoding that isn't ASCII-compatible,
+    # such as UTF-16, give `nil`.
     #
     # - `text`: Object, such as `"90s"`. Any value is accepted, and only a
     #   String in the form gives a number.
-    def self.seconds: (Object text) -> Integer?
+    # - `units`: Array of Symbol, the units that count, such as `[:s, :m, :h]`.
+    def self.seconds: (Object text, Array[Symbol] units) -> Integer?
+
+    private def self.form: (Array[Symbol] units) -> Regexp
   end
 end
