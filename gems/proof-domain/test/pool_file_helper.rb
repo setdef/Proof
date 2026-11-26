@@ -54,4 +54,22 @@ module PoolFileHelper
   def pc_entry
     host_entry("pc", %w[pc-windows pc-wsl], budget: "250GB", share: [4, "16GB"], withhold: %w[gpu])
   end
+
+  # A repository's entry with this name and URL, and these branches and tasks, as the page's examples write them.
+  def repository_entry(name, url, branches:, tasks:, **optional)
+    poll = optional[:poll]
+
+    Proof::RepositoryEntry.new(name:, url:, branches:, tasks:, **optional, **(poll ? { poll: duration(poll) } : {}))
+  end
+
+  # The `lota` entry of the page's "A complete example".
+  def lota_entry
+    repository_entry(
+      "lota",
+      "https://github.com/setdef/Lota.git",
+      credentials_file: "~/.config/proof/credentials/lota",
+      branches: %w[trunk],
+      tasks: %w[test package]
+    )
+  end
 end

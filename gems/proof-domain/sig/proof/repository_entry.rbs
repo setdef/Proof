@@ -1,0 +1,100 @@
+module Proof
+  # One `repository` entry of the pool file: a repository whose pushed commits
+  # Proof runs tasks on, in place of hosted CI.
+  #
+  # The server fetches the repository's branches and runs the tasks on each new
+  # commit. An entry without a URL has nothing to fetch, one without a branch
+  # watches nothing, and one without a task runs nothing, and each would look
+  # like a working entry. A private repository needs a token, which the server
+  # reads from a file and never from the pool file itself.
+  #
+  # This class holds the entry's name, its clone URL, the path of its
+  # credentials file or `nil` for a public repository, the branches to watch,
+  # the tasks to run, and how often the server fetches. The path of the
+  # credentials file is kept as written, with any `~` in it, because the server
+  # expands it when it reads the file.
+  #
+  # Use it as what the reader of the pool file builds from each `repository`
+  # node.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # lota = Proof::RepositoryEntry.new(
+  #   name: "lota",
+  #   url: "https://github.com/setdef/Lota.git",
+  #   credentials_file: "~/.config/proof/credentials/lota",
+  #   branches: ["trunk"],
+  #   tasks: ["test", "package"]
+  # )
+  # [lota.branches, lota.tasks, lota.poll.seconds] # => [["trunk"], ["test", "package"], 60]
+  # ```
+  #
+  # A public repository needs no credentials file:
+  #
+  # ```ruby
+  # public_lota = Proof::RepositoryEntry.new(
+  #   name: "lota", url: "https://github.com/setdef/Lota.git", branches: ["trunk", "release"], tasks: ["test"]
+  # )
+  # public_lota.credentials_file # => nil
+  # ```
+  #
+  # An entry with no branch is refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidRepositoryEntryError
+  # Proof::RepositoryEntry.new(name: "lota", url: "https://github.com/setdef/Lota.git", branches: [], tasks: ["test"])
+  # ```
+  class RepositoryEntry < Data
+    # The rule for a credentials file: a name, or nothing.
+    PATH_OR_NOTHING: ^(Object value) -> bool
+
+    # The rule for branches and tasks: one or more names that differ.
+    NAMES: ^(Object value) -> bool
+
+    # For each member, the message when its value breaks the rule, and the rule.
+    RULES: Hash[Symbol, [String, MemberCheck::_Rule]]
+
+    # The repository's name, as the entry writes it, frozen.
+    attr_reader name: String
+
+    # The repository's clone URL, as written.
+    attr_reader url: String
+
+    # The path of the file that holds a read-only token, as written, or `nil`
+    # for a repository that needs none.
+    attr_reader credentials_file: String?
+
+    # The branches to watch, in the order the entry lists them, in a frozen
+    # `Array`.
+    attr_reader branches: Array[String]
+
+    # The tasks to run on each new commit, in the order the entry lists them, in
+    # a frozen `Array`.
+    attr_reader tasks: Array[String]
+
+    # How often the server fetches the branches.
+    attr_reader poll: Duration
+
+    def self.new: (name: String, url: String, branches: Array[String], tasks: Array[String], ?credentials_file: String?, ?poll: Duration) -> instance
+                | (String name, String url, String? credentials_file, Array[String] branches, Array[String] tasks, Duration poll) -> instance
+
+    # Builds an entry, and raises `Proof::InvalidRepositoryEntryError` unless
+    # `name` and `url` are each a String of at least one character,
+    # `credentials_file` is such a String or `nil`, `branches` and `tasks` are
+    # each an `Array` of one or more such names with no name twice, and `poll`
+    # is a `Proof::Duration`.
+    #
+    # - `name`: String, such as `"lota"`.
+    # - `url`: String, the repository's clone URL.
+    # - `branches`: Array of String, such as `["trunk"]`.
+    # - `tasks`: Array of String, such as `["test", "package"]`.
+    # - `credentials_file`: String or `nil`. Defaults to `nil`.
+    # - `poll`: Duration. Defaults to one minute.
+    #
+    # ```ruby
+    # Proof::RepositoryEntry.new(name: "lota", url: "https://example.com/lota.git", branches: ["trunk"], tasks: ["test"]).name # => "lota"
+    # ```
+    def initialize: (name: String, url: String, branches: Array[String], tasks: Array[String], ?credentials_file: String?, ?poll: Duration) -> void
+  end
+end

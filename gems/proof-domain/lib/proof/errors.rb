@@ -68,6 +68,9 @@ module Proof
   class InvalidResolvedHostError < Error
   end
 
+  class InvalidRepositoryEntryError < Error
+  end
+
   class InvalidRandomSourceError < Error
   end
 

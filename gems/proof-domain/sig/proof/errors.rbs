@@ -130,6 +130,13 @@ module Proof
   class InvalidResolvedHostError < Error
   end
 
+  # Raised when a repository's entry in the pool file has a name or a URL that
+  # isn't a name, a credentials file that isn't a path or nothing, branches or
+  # tasks that aren't one or more names that differ, or a poll that isn't a
+  # `Proof::Duration`.
+  class InvalidRepositoryEntryError < Error
+  end
+
   # Raised when a source of randomness answers with anything but a whole
   # number from 0 up to, and not including, the limit it was asked for.
   class InvalidRandomSourceError < Error
