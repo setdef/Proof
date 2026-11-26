@@ -19,6 +19,8 @@ The last line `proof run` prints is the result, and `proof` exits with the statu
 | 143 | Proof received `TERM`, as when an agent harness stops it, and canceled the run. | Nothing, unless the harness stopped it by mistake. |
 | Anything else | The task's command exited with it. | Read the output: the failure is the task's. |
 
+With several runs, such as `--os all`, `proof` exits with one status for all of them: [Exit status with several runs](several-operating-systems.md#exit-status-with-several-runs) gives the order.
+
 When `proof` itself fails, it prints no result line, saves a debug log under `~/.local/state/proof/`, and prints a link to a new issue with the details filled in.
 
 ## Read the whole output

@@ -45,6 +45,8 @@ Words for the task follow `--`, as with `cargo run` and `npm run`: `proof run te
 | 141, 143 | Proof canceled the run because its output pipe closed (141) or it received `TERM` (143). | Run it again without a pipe, and don't stop it early. |
 | Any other | The task failed. | Fix your change. Never treat it as the pool's fault. |
 
+With several runs, as with `--os all`, `proof` exits with the first of these that applies: 130, 141, or 143 when Proof canceled the runs; the status of the first failing run, in the order of the `--os` flags; 78; 75; 0. A 75 then means no run failed and the pool lost at least one, so run the same command once more. An earlier run's failure hides the status of a later one, such as 124, so read each run's result line, not only the exit status.
+
 A run Proof can't vouch for never reports 0: a pass you see happened.
 
 ## Keep the result

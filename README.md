@@ -37,7 +37,7 @@ proof: exit=0 run=20261125-0336-m3d8q task=package runner=nuc-linux queued=0s ra
 proof: exit=0 run=20261125-0336-p9x2k task=package runner=pc-windows queued=0s ran=0s artifacts=1
 ```
 
-Lines that start with `proof:` are Proof's, written to standard error. The task's output goes to standard output, each line marked with the runner it came from when more than one run is going. Each run ends with one result line, with its exit status and its full ID, for an agent to read. `proof` exits with the worst of the runs' statuses, here 0. Anywhere Proof asks for a run's ID, its last five characters are enough: `proof logs m3d8q`. A script that needs more than the result lines can pass `--json`, and Proof then prints one JSON object per run in their place.
+Lines that start with `proof:` are Proof's, written to standard error. The task's output goes to standard output, each line marked with the runner it came from when more than one run is going. Each run ends with one result line, with its exit status and its full ID, for an agent to read. Here every run succeeded, so `proof` exits with 0. When runs fail, it exits with one status chosen in [a fixed order](doc/guides/several-operating-systems.md#exit-status-with-several-runs). Anywhere Proof asks for a run's ID, its last five characters are enough: `proof logs m3d8q`. A script that needs more than the result lines can pass `--json`, and Proof then prints one JSON object per run in their place.
 
 ## Compatibility
 

@@ -75,7 +75,17 @@ proof watch m3d8q
 Sends your working tree as it is, with uncommitted changes and untracked files that Git doesn't
 ignore, or the commit you name with --commit, and runs a task or a script there. Streams the
 output while it runs and exits with the run's status. With several --os flags, runs one run per
-operating system in parallel and exits with the worst status.
+operating system in parallel and exits with the first of these that applies:
+
+1. 130, 141, or 143, when Proof canceled the runs: you pressed Ctrl-C, standard output was closed,
+   or Proof received TERM.
+2. The status of the first failing run, in the order of the --os flags, not the order the runs
+   finish. With --os all, the order is linux, macos, windows.
+3. 78, when a run succeeded but Proof couldn't keep its artifacts.
+4. 75, when the pool failed after Proof sent the runs, as when a runner's host went away.
+5. 0.
+
+A refusal, 2, comes before anything is sent, so it never mixes with these.
 
 Proof's flags work anywhere before `--`. The words for the task follow `--`, as they do for
 `cargo run` and `npm run`, and go to the task as they are, so they mean what they mean to mise. A

@@ -57,7 +57,34 @@ task "test:gui" {
 }
 ```
 
-Now `proof run test:gui` never goes to Windows, and `proof run test:gui --os all` runs once on Linux and once on macOS, in parallel, exiting with the worse of the two statuses.
+Now `proof run test:gui` never goes to Windows, and `proof run test:gui --os all` runs once on Linux and once on macOS, in parallel. [Exit status with several runs](#exit-status-with-several-runs) says which status `proof` exits with.
+
+## Exit status with several runs
+
+With several runs, from several `--os` flags or from `--os all`, `proof` exits with one status: the first of these that applies.
+
+| Order | Status | When | Why it comes here |
+| --- | --- | --- | --- |
+| 1 | 130, 141, or 143 | Proof canceled the runs: you pressed Ctrl-C, standard output was closed, or Proof received `TERM`. | The whole command was stopped, so no status says how the tasks fared. |
+| 2 | The status of the first failing run | A task failed. | A task's failure is a definite answer that running again won't change. |
+| 3 | 78 | A run succeeded, but Proof couldn't keep its artifacts. | A mistake in the project's configuration, which a person has to fix. |
+| 4 | 75 | The pool failed after Proof sent the runs. | Running again may fix it. |
+| 5 | 0 | Every run succeeded. | |
+
+"First" follows the order of the `--os` flags, not the order the runs finish. With `--os all`, the order is `linux`, `macos`, `windows`. A refusal, status 2, comes before anything is sent, so it never mixes with these.
+
+For example, when the `test` task fails with 1 on Linux and times out with 124 on Windows, the status depends on the order of the flags:
+
+```console
+$ proof run test --os linux --os windows
+$ echo $?
+1
+$ proof run test --os windows --os linux
+$ echo $?
+124
+```
+
+A status of 75 means no run failed but the pool lost at least one, so run the same command again.
 
 ## Try a task somewhere new
 
