@@ -92,7 +92,7 @@ A name can appear in only one `task` entry. Task names follow mise's rules, so `
 | `memory` | A quoted [size](#sizes), such as `"512MB"`, `"8GB"`, or `"1.5 GiB"` | `"4GB"` | The memory the task requests. The server places a run only where this much is free, and the runner holds the run to it. |
 | `timeout` | A quoted duration, such as `"90s"`, `"30m"`, or `"2h"` | `"60m"` | How long a run may take. After this long, the runner ends the run, and its state is `timed_out`. |
 
-A request larger than every host in the pool has is refused before anything is sent, with the largest host's size in the message.
+A request larger than every host in the pool has is refused before anything is sent. The message says which host fits the most of the request and what that host lacks.
 
 ### Sizes
 

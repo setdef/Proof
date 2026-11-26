@@ -49,7 +49,7 @@ The server places each run by these rules alone. It has no priorities, and it ne
 
 From its placement until it ends, a run is `running`, even before its command starts. `proof status` shows what it is doing then: fetching its code, waiting for a desktop or for a person to leave, running its command, or sending its output.
 
-Proof refuses a run that no host could ever run, such as one that requests more memory than any host has, before it sends anything, and says which host comes closest.
+Proof refuses a run that no host could ever run, such as one that requests more memory than any host has, before it sends anything, and says which host fits the most of the request and what that host lacks, so the message says what to change.
 
 ## What a runner gives each run
 
