@@ -51,7 +51,10 @@ class ProofLoadTest < Minitest::Test
     Dir.mktmpdir { |folder| Proof::Sqlite::Runs.new(path: File.join(folder, "runs.db")).close }
     puts($LOADED_FEATURES - before)
   RUBY
-  private_constant(:LIB, :KDL_GEMS, :STORE_GEMS, :REQUIRE_PROOF, :PARSE, :OPEN_STORE)
+  # A gem's folder in a path, such as `rom-sql` in `.../gems/rom-sql-3.7.0/lib/rom/sql.rb`. The name stops at the first
+  # slash, because a system's gem folder holds a `gems` folder of its own: `.../gems/4.1.0/gems/rom-sql-3.7.0/`.
+  GEM_FOLDER = %r{/gems/([^/]+)-\d[^/]*/}
+  private_constant(:LIB, :KDL_GEMS, :STORE_GEMS, :REQUIRE_PROOF, :PARSE, :OPEN_STORE, :GEM_FOLDER)
 
   # Architecture, "Command line": "no KDL read at run time and no `kdl` gem, so the command starts on Ruby's standard
   # library alone." Requiring Proof loads none of the gems that `kdl` brings.
@@ -78,6 +81,20 @@ class ProofLoadTest < Minitest::Test
     assert_includes(kdl_gems_in(loaded_by(PARSE)), "kdl")
   end
 
+  # The check above finds a gem in either layout, because a check that finds none passes whether or not the store loads
+  # its gems.
+  def test_a_gem_is_found_in_a_bundle_folder_and_in_a_system_gem_folder
+    paths = %w[
+      /work/vendor/bundle/ruby/4.1.0/gems/dry-core-1.2.0/lib/dry/core.rb
+      /opt/ruby/lib/ruby/gems/4.1.0/gems/rom-sql-3.7.0/lib/rom/sql.rb
+      /opt/ruby/lib/ruby/gems/4.1.0/gems/sqlite3-2.10.2-x86_64-linux-gnu/lib/sqlite3.rb
+      /opt/ruby/lib/ruby/gems/4.1.0/gems/kdl-2.2.0/lib/kdl.rb
+      /opt/ruby/lib/ruby/4.1.0/json.rb
+    ]
+
+    assert_equal(%w[dry-core rom-sql sqlite3], storage_gems_in(paths))
+  end
+
   # The files that +code+ added to a fresh Ruby process, with Proof's lib folder on the load path.
   def loaded_by(code)
     out, err, status = Open3.capture3(RbConfig.ruby, "-I", LIB, "-e", code)
@@ -96,7 +113,7 @@ class ProofLoadTest < Minitest::Test
   # The names among +paths+ that are a gem the store loads, found by the gem's folder, because `sequel` and `sqlite3`
   # name files in other gems too.
   def storage_gems_in(paths)
-    folders = paths.filter_map { |path| path[%r{/gems/(.+?)-\d[^/]*/}, 1] }
+    folders = paths.filter_map { |path| path[GEM_FOLDER, 1] }
     folders & STORE_GEMS
   end
 end
