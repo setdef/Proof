@@ -50,6 +50,9 @@ module Proof
   class InvalidDurationError < Error
   end
 
+  class InvalidSizeError < Error
+  end
+
   class InvalidRandomSourceError < Error
   end
 

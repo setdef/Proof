@@ -1,0 +1,76 @@
+module Proof
+  # An amount of memory or disk space in whole megabytes, as the pool file
+  # writes a host's budget, the space it keeps free, and the limits on a run.
+  #
+  # The server compares amounts. Left as text, `"1GB"` and `"1024MB"` look like
+  # two amounts, and a mistake in a size needs to say which setting it is in.
+  # The message of `Proof::Resources` says "memory", which is wrong for a
+  # budget.
+  #
+  # This class reads a size into whole megabytes. A size is a number, whole or
+  # decimal, an optional space, and a unit: `MB`, `GB`, `TB`, `MiB`, `GiB`, or
+  # `TiB`, in any case. Every unit counts in 1,024s, so 1 GB is 1,024 MB, and
+  # `MB` and `MiB` are one unit. A size that isn't a whole number of megabytes
+  # rounds up to the next whole megabyte. A size can be 0.
+  #
+  # Use it for a pool file's `budget`, `keep-free`, and `limits`.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::Size.read("400GB", name: "budget").megabytes # => 409_600
+  # Proof::Size.read("1.5TB", name: "budget").megabytes # => 1_572_864
+  # Proof::Size.read("0.1GB", name: "keep-free").megabytes # => 103
+  # ```
+  #
+  # A size in gigabytes and the same size in megabytes are one size:
+  #
+  # ```ruby
+  # Proof::Size.read("1GB", name: "limits output") == Proof::Size.read("1024 mb", name: "limits output") # => true
+  # ```
+  #
+  # A unit that isn't in the list is refused, and the message names the setting:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidSizeError
+  # Proof::Size.read("400G", name: "budget")
+  # ```
+  class Size < Data
+    # The message for a size that isn't in the form, which `format` fills in
+    # with the setting's name and what the size was.
+    MESSAGE: String
+
+    # The amount in megabytes, a whole number from 0.
+    attr_reader megabytes: Integer
+
+    def self.new: (megabytes: Integer) -> instance
+                | (Integer megabytes) -> instance
+
+    # Reads a size as the pool file writes it. Raises `Proof::InvalidSizeError`
+    # unless `text` is a number, whole or decimal with digits on both sides of
+    # the point, none or one space, and `MB`, `GB`, `TB`, `MiB`, `GiB`, or `TiB`
+    # in any case, such as `"512MB"`, `"8 gb"`, `"1.5GiB"`, or `"0GB"`. A
+    # number, `nil`, `"8"`, `"400G"`, `"1e3MB"`, `"-1GB"`, `".5GB"`, `"8  GB"`,
+    # `"8GB "`, a string with a byte that isn't valid text, and a string in an
+    # encoding that isn't ASCII-compatible, such as UTF-16, raise. The message
+    # names the setting and lists the forms that work.
+    #
+    # - `text`: String, such as `"400GB"`.
+    # - `name`: String, the setting, for the message, such as `"budget"`.
+    #
+    # ```ruby
+    # Proof::Size.read("512mb", name: "limits output").megabytes # => 512
+    # ```
+    def self.read: (Object text, name: String) -> Size
+
+    # Builds a size from a number of megabytes, and raises
+    # `Proof::InvalidSizeError` unless `megabytes` is an Integer from 0.
+    #
+    # - `megabytes`: Integer, a whole number from 0.
+    #
+    # ```ruby
+    # Proof::Size.new(megabytes: 1024) == Proof::Size.read("1GB", name: "budget") # => true
+    # ```
+    def initialize: (megabytes: Integer) -> void
+  end
+end

@@ -96,6 +96,12 @@ module Proof
   class InvalidDurationError < Error
   end
 
+  # Raised when a size isn't a number, whole or decimal, an optional space, and
+  # `MB`, `GB`, `TB`, `MiB`, `GiB`, or `TiB` in any case, such as `"512MB"` or
+  # `"1.5 GiB"`. The message names the setting and the forms that work.
+  class InvalidSizeError < Error
+  end
+
   # Raised when a source of randomness answers with anything but a whole
   # number from 0 up to, and not including, the limit it was asked for.
   class InvalidRandomSourceError < Error
