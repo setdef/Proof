@@ -66,7 +66,7 @@ With several runs, from several `--os` flags or from `--os all`, `proof` exits w
 | Order | Status | When | Why it comes here |
 | --- | --- | --- | --- |
 | 1 | 130, 141, or 143 | Proof canceled the runs: you pressed Ctrl-C, standard output was closed, or Proof received `TERM`. | The whole command was stopped, so no status says how the tasks fared. |
-| 2 | The status of the first run whose command failed | A task failed. | A task's failure is a definite answer that running again won't change. |
+| 2 | The status of the first run whose command failed, or 130 for the first run that someone else canceled | A task failed, or someone else, or the pool, canceled a run. | A task's failure and a cancel that someone made on purpose are definite answers that running again won't change. |
 | 3 | 78 | A run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, or the server was short of space and the command never started. | A mistake in configuration, or a full server disk, which a person has to fix. |
 | 4 | 75 | The pool failed, as when a runner's host went away. | Running again may fix it. |
 | 5 | 0 | Every run succeeded. | |
@@ -84,7 +84,18 @@ $ echo $?
 124
 ```
 
-A status of 75 means no run failed but the pool did, so run the same command again.
+A run that someone else canceled counts as 130 in the same order. When the `test` task fails with 1 on Linux and someone cancels the Windows run, the status depends on the order of the flags, as in the example above:
+
+```console
+$ proof run test --os linux --os windows
+$ echo $?
+1
+$ proof run test --os windows --os linux
+$ echo $?
+130
+```
+
+A status of 75 means no run failed and nobody canceled one, but the pool did, so run the same command again.
 
 ## Try a task somewhere new
 

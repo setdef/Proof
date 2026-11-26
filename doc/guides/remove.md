@@ -23,6 +23,8 @@ proof: revoked nuc-linux
 proof: removed host nuc from the pool file, since it has no other runner
 ```
 
+Revoking cancels the runs going on that runner on the pool's behalf, so their `proof` exits 130, not 75. Status 75 stays for a host that went away without being revoked, which running the command again may fix.
+
 A revoked runner can't connect again, even if its host comes back. To use the host again later, set it up again, and approve it with its new code.
 
 Revoking a runner also releases the CPUs and memory on its host that a `lost` run of that runner held. Until its runner reports that the run's processes ended, or you revoke it, the host stays held for that run and can look busy: [A run was lost](troubleshooting.md#a-run-was-lost) says why.

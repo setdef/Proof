@@ -42,11 +42,11 @@ Words for the task follow `--`, as with `cargo run` and `npm run`: `proof run te
 | 78 | Failed because of the artifacts: the command passed but Proof couldn't keep them, because a pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never ran. | Fix the pattern or the build, or keep fewer files. When the message says the server is short of space, tell the human, who has to free it. |
 | 124 | The run hit its time limit. | Read the end of the output to see what was slow. Raise the limit only if the work is legitimately long. |
 | 137 | The run held more memory than it requested while its host ran short. | Request what the message says it held: `--memory 12GB` for one run, and tell the human so the task's `memory` in `.config/proof.kdl` can change. |
-| 130 | The run was canceled: a human pressed Ctrl-C, or someone else, or the pool, canceled it. The result line says who. | Stop. Tell the human the run was canceled and who canceled it, and run it again only if they ask. Don't retry it: someone stopped it on purpose. |
+| 130 | The run was canceled: a human pressed Ctrl-C, or someone else, or the pool, canceled it, as when its runner was stopped or revoked. The result line says who. | Stop. Tell the human the run was canceled and who canceled it, and run it again only if they ask. Don't retry it: someone stopped it on purpose. |
 | 141, 143 | Proof canceled the run because its output pipe closed (141), or it received `TERM` (143). | Run it again without a pipe, and don't stop it early. |
 | Any other | The task failed. | Fix your change. Never treat it as the pool's fault. |
 
-With several runs, as with `--os all`, `proof` exits with the first of these that applies: 130, 141, or 143 when Proof canceled the runs; the status of the first run whose command failed, in the order of the `--os` flags; 78; 75; 0. A 75 then means no run failed but the pool did, so run the same command once more. An earlier run's failure hides the status of a later one, such as 124, so read each run's result line, not only the exit status.
+With several runs, as with `--os all`, `proof` exits with the first of these that applies: 130, 141, or 143 when Proof canceled the runs; the status of the first run, in the order of the `--os` flags, whose command failed or that someone else canceled, which counts as 130; 78; 75; 0. A 75 then means no run failed and nobody canceled one, but the pool did, so run the same command once more. An earlier run's failure hides the status of a later one, such as 124, so read each run's result line, not only the exit status.
 
 A run Proof can't vouch for never reports 0: a pass you see happened.
 

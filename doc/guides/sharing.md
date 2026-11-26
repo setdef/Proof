@@ -51,7 +51,7 @@ $ proof runner stop
 $ proof runner start
 ```
 
-Runs going on that host when it stops are canceled, and their `proof` exits 75.
+Runs going on that host when it stops are canceled on the pool's behalf, and their `proof` exits 130, not 75. The pool stopped them on purpose, so running the same command again is your call, not a retry.
 
 ## Sound
 

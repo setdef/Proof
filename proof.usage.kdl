@@ -58,8 +58,9 @@ operating system in parallel and exits with the first of these that applies:
 
 1. 130, 141, or 143, when Proof canceled the runs: you pressed Ctrl-C, standard output was closed,
    or Proof received TERM.
-2. The status of the first run whose command failed, in the order of the --os flags, not the order the runs
-   finish. With --os all, the order is linux, macos, windows.
+2. The status of the first run whose command failed, or that someone else canceled, which counts as 130,
+   in the order of the --os flags, not the order the runs finish. With --os all, the order is linux,
+   macos, windows.
 3. 78, when a run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, or the server was short of space and the command never started.
 4. 75, when the pool failed, as when a runner's host went away.
 5. 0.
