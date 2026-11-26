@@ -45,7 +45,7 @@ Options weighed:
 
 ### A run as a consistency boundary
 
-A run is stored as an append-only list of facts, each with the server's time. The run's constructor checks every rule about a run, including when the run is rebuilt from storage. A record changed behind Proof's back therefore fails to load, instead of reporting a pass. The list also shows afterwards how a run reached `succeeded`. Which states a run can pass through, and what each ending needs, are still open in [issue #42](https://github.com/setdef/Proof/issues/42); the facts are the same whichever way it is settled.
+A run is stored as an append-only list of facts, each with the server's time. The run's constructor checks every rule about a run, including when the run is rebuilt from storage. A record changed behind Proof's back therefore fails to load, instead of reporting a pass. The list also shows afterwards how a run reached `succeeded`. Which states a run can pass through, and what each ending needs, are in [the server design](design/server.md#runs-and-their-records) and [the runner design](design/runner.md#a-runs-end), and the facts record them.
 
 Options weighed:
 
@@ -59,7 +59,7 @@ Choosing a run's runner is a domain service. It checks the rules that span runs 
 - The server's unit of work serializes placement decisions.
 - A host's resources in use are computed from its runs, and never stored on the host, so there is no second copy to disagree with the runs.
 
-How placement orders and counts is still open in [issue #43](https://github.com/setdef/Proof/issues/43); [the server design](design/server.md#placement) says what must hold.
+How placement orders and counts is in [the server design](design/server.md#placement), which says what must hold.
 
 Options weighed:
 
