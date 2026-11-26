@@ -50,7 +50,7 @@ you@laptop $ proof verify
 
 ## When someone uses the PC
 
-A PC has one display and one console session at a time. When a person signs in to their account and uses it, the `proof` account's session loses the display. While that lasts:
+A PC has one display and one console session at a time. When a person signs in to their account and uses the PC, Proof places no new run that needs the display. While that lasts:
 
 - runs that need the `desktop` label, or the PC's GPU, wait;
 - other Windows runs and every WSL run go on, with the share the pool file keeps free for the person;
