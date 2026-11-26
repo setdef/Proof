@@ -5,7 +5,7 @@ require_relative("test_helper")
 # Checks the artifact patterns and cache folders a task names.
 class PathPatternTest < Minitest::Test
   MESSAGE = "a path is relative to the workspace's root, so it is not empty, doesn't start with /, " \
-    "and has no folder named .., such as \"pkg/*.gem\" or \"tmp/engine/build\", not %p"
+    "and doesn't contain .., such as \"pkg/*.gem\" or \"tmp/engine/build\", not %p"
   private_constant(:MESSAGE)
 
   # Each path that has to be refused, as the test names it.
