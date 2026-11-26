@@ -10,7 +10,9 @@ module Proof
     # each fiber has a connection of its own, and with a busy handler that
     # sleeps in Ruby, so a thread or fiber that waits for the write lock lets
     # the others run. It puts the file in write-ahead mode, so a read doesn't
-    # wait for a write. It runs the migrations, and builds the ROM container.
+    # wait for a write. It runs the migrations under the file's write lock, so two
+    # processes that open a new file together migrate it once, and builds the ROM
+    # container.
     #
     # Use it through `Proof::Sqlite::Runs`.
     module Database
@@ -24,6 +26,31 @@ module Proof
       #
       # - `path`: String, the file's path. A file that isn't there is made.
       def self.open: (String path) -> ROM::Container
+
+      # How many times `write_ahead` asks for the mode before it gives up.
+      WRITE_AHEAD_ATTEMPTS: Integer
+
+      # Puts the file in write-ahead mode through `connection`. SQLite refuses
+      # the change, without waiting, while another connection is changing the
+      # mode, as two processes do that open a new file together, so this asks
+      # again every 5 milliseconds, up to `attempts` times, and raises
+      # `SQLite3::BusyException` after that.
+      #
+      # - `connection`: SQLite3::Database, a connection the file just opened.
+      # - `attempts`: Integer, how many times to ask. Defaults to
+      #   `WRITE_AHEAD_ATTEMPTS`.
+      #
+      # ```ruby
+      # require "sqlite3"
+      # require "tmpdir"
+      # connection = SQLite3::Database.new(File.join(Dir.mktmpdir, "mode.db"))
+      # Proof::Sqlite::Database.write_ahead(connection)
+      # connection.journal_mode # => "wal"
+      # ```
+      def self.write_ahead: (SQLite3::Database connection, ?attempts: Integer) -> void
+
+      # Runs the migrations the file hasn't had, holding the file's write lock.
+      private def self.migrate: (ROM::SQL::Gateway gateway) -> void
     end
   end
 end

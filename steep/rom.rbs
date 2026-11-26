@@ -50,6 +50,9 @@ module ROM
 
     # A connection to a SQL database.
     class Gateway
+      # The Sequel database behind the gateway.
+      def connection: () -> Sequel::Database
+
       # Runs each migration of the folder the configuration names that hasn't
       # run, and no other.
       def run_migrations: () -> void

@@ -15,8 +15,10 @@ module Proof
           sleep(0.005)
           attempts < 1000
         end
-        connection.journal_mode = "wal"
+        write_ahead(connection)
       end
+      WRITE_AHEAD_ATTEMPTS = 200
+      public_constant(:WRITE_AHEAD_ATTEMPTS)
       private_constant(:MIGRATIONS, :ON_CONNECT)
 
       def self.open(path)
@@ -27,9 +29,28 @@ module Proof
           :sql, Sequel.sqlite(path, after_connect: ON_CONNECT), migrator: { path: MIGRATIONS }
         )
         configuration.register_relation(Facts)
-        configuration.gateways[:default].run_migrations
+        migrate(configuration.gateways[:default])
         ROM.container(configuration)
       end
+
+      def self.write_ahead(connection, attempts: WRITE_AHEAD_ATTEMPTS)
+        connection.journal_mode = "wal"
+      rescue SQLite3::BusyException
+        # SQLite refuses a connection that asks for the mode while another connection is changing it, without calling
+        # the busy handler, so a file that two processes open as it is made needs another try.
+        raise if attempts == 1
+
+        sleep(0.005)
+        write_ahead(connection, attempts: attempts - 1)
+      end
+
+      def self.migrate(gateway)
+        # Two processes that open a new file together would both find it unmigrated, and both create its table or both
+        # write the migrator's version. A write lock held from the check to the end of the migrations makes the second
+        # wait, and then find nothing to run.
+        gateway.connection.transaction(mode: :immediate) { gateway.run_migrations }
+      end
+      private_class_method(:migrate)
     end
   end
 end

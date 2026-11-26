@@ -14,6 +14,10 @@ module Sequel
 
   # A connection to a database, and the pool of connections behind it.
   class Database
+    # Runs the block in a transaction, which begins with the write lock when
+    # `mode` is `:immediate`, and commits when the block ends.
+    def transaction: (?mode: Symbol) { () -> void } -> void
+
     # Creates the table `name`, with the columns and indexes of the block.
     def create_table: (Symbol name) { () [self: Schema::CreateTableGenerator] -> void } -> void
 
