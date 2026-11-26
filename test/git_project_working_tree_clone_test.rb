@@ -68,17 +68,19 @@ class GitProjectWorkingTreeCloneTest < Minitest::Test
   end
 
   # A computer with no Git identity, or a configuration that signs commits, still works: Proof gives the
-  # commit an author and a committer, so nothing in the person's configuration can stop it.
+  # commit an author and a committer, so nothing in the person's configuration can stop it. The process
+  # that makes the commit has only the environment this test gives it, and a home folder with no identity
+  # and a signing program that fails, so the result doesn't depend on the computer that runs the test.
   def test_the_commit_needs_no_git_identity_and_is_not_signed
     folder = make_repository
     commit_file(folder)
     home = temporary_folder
     File.write(File.join(home, ".gitconfig"), "[commit]\n\tgpgsign = true\n[gpg]\n\tprogram = false\n")
-    # PATH holds only the system's git, so a wrapper in a person's bin folder can't supply an identity.
-    hook = variables(HOME: home, XDG_CONFIG_HOME: home, GIT_CONFIG_NOSYSTEM: 1, PATH: "/usr/bin:/bin")
-    commit = printed_in_hook(hook, COMMIT, folder)
+    commit = printed_in_clean_environment(variables(HOME: home, XDG_CONFIG_HOME: home), COMMIT, folder)
 
     assert_equal("Proof <proof@proof.invalid>", git(folder, "log", "-1", "--format=%an <%ae>", commit).chomp)
+    assert_equal("Proof <proof@proof.invalid>", git(folder, "log", "-1", "--format=%cn <%ce>", commit).chomp)
+    refute_match(/^gpgsig/, git(folder, "cat-file", "commit", commit))
   end
 
   # Command design, "Which project and which code": "`git commit-tree` with `HEAD` as parent." A

@@ -23,10 +23,22 @@ module GitFixtures
   # +arguments+ in ARGV, with the +hook+ variables set, as a Git hook sets them
   # for the programs it starts.
   def printed_in_hook(hook, script, *arguments)
+    printed(hook, script, arguments)
+  end
+
+  # What a Ruby process prints when it loads Proof and runs +script+, as +printed_in_hook+ does, but with
+  # only +PATH+ and +named+ in its environment. Nothing else of the environment that runs the tests reaches
+  # it, such as a variable that an agent's harness sets or a person's Git identity, so the result is the
+  # same on every computer that has Git.
+  def printed_in_clean_environment(named, script, *arguments)
+    printed(variables(PATH: ENV.fetch("PATH")).merge(named), script, arguments, unsetenv_others: true)
+  end
+
+  private def printed(environment, script, arguments, unsetenv_others: false)
     load_path = [File.expand_path("../lib", __dir__), File.expand_path("../gems/proof-domain/lib", __dir__)]
     options = load_path.flat_map { |path| ["-I", path] }
     command = [RbConfig.ruby, *options, "-e", "require('proof'); #{script}", *arguments]
-    output, error, status = Open3.capture3(hook, *command)
+    output, error, status = Open3.capture3(environment, *command, unsetenv_others:)
 
     assert_predicate(status, :success?, error)
     output
