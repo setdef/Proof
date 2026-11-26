@@ -4,7 +4,7 @@ What the server must guarantee, and the traps known so far. How to meet each req
 
 ## Placement
 
-- Count CPUs, memory, and disk per **host**, summing every runner on it. Two runners on one host must never be offered the host's resources twice.
+- Count CPUs and memory per **host**, summing every runner on it; a host's disk is its budget, not a resource that placement counts. Two runners on one host must never be offered the host's resources twice.
 - A run must fit its runner's capacity as well as its host's free resources. A runner in a virtual machine, such as WSL, can have less memory than its host, so a run that fits the host but not the runner must not be placed on that runner. The runner reports its capacity.
 - A run is placed only where its operating system, every label it needs, and its requested resources fit. Among the runs that fit now, the one that arrived first goes first, and a run that fits nowhere doesn't hold up the runs behind it. There are no priorities and no preemption.
 - **A large request can wait indefinitely** behind runs that request less and keep taking the resources it needs, because nothing shares fairly. `proof status` is where that wait shows.
