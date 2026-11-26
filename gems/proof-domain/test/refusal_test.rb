@@ -36,14 +36,14 @@ class RefusalTest < Minitest::Test
     assert_equal("pc", refusal_over(small, close)&.host)
   end
 
-  # Server design, "Placement": "ranking by the sum of the shortfalls" fails,
-  # so a host short of two resources by a little doesn't beat one short of one
-  # by less, even when its shortfalls add up to more.
+  # Server design, "Placement": "ranking by the sum of the shortfalls" fails.
+  # A host short of two resources by 30% each has shortfalls that add up to
+  # more than another's 50% of one, and still fits more of the request.
   def test_the_worst_shortfall_decides_not_their_sum
     one_short = host("nuc", runner("nuc-linux", has: [10, "5GB"]))
-    both_short = host("pc", runner("pc-wsl", has: [4, "4GB"]))
+    both_short = host("pc", runner("pc-wsl", has: [7, "7GB"]))
 
-    assert_equal("nuc", refusal_over(one_short, both_short, asks: [10, "10GB"])&.host)
+    assert_equal("pc", refusal_over(one_short, both_short, asks: [10, "10GB"])&.host)
   end
 
   # Server design, "Placement": "The message lists every resource that host
@@ -100,6 +100,16 @@ class RefusalTest < Minitest::Test
     hold(holding("hhhhh", "nuc", "nuc-linux", asks: [8, "32GB"]))
 
     assert_nil(refusal_over(host("nuc", runner("nuc-linux", has: [8, "32GB"]))))
+  end
+
+  # A run that fits one host is not refused because another host is too small
+  # for it, in whichever order the hosts come.
+  def test_a_run_that_fits_one_host_is_not_refused_for_a_small_host
+    big = host("nuc", runner("nuc-linux", has: [16, "32GB"]))
+    small = host("pc", runner("pc-wsl", has: [2, "4GB"]))
+
+    assert_nil(refusal_over(small, big))
+    assert_nil(refusal_over(big, small))
   end
 
   # Server design, "Placement": "Keep a run queued when its operating system

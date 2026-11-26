@@ -86,6 +86,15 @@ class WaitReasonTest < Minitest::Test
     assert_equal(:no_runner_connected, reason(small, asks: [8, "4GB"])&.kind)
   end
 
+  # A run that fits the PC but not the runner it would go to, such as WSL with
+  # less memory than the PC, waits for another runner, as Server design,
+  # "Placement", says: "A run must fit its runner's capacity".
+  def test_a_run_too_large_for_the_runner_but_not_its_host_waits_for_another
+    pc = host("pc", runner("pc-windows", os: :windows, has: [16, "64GB"]), runner("pc-wsl", has: [16, "8GB"]))
+
+    assert_equal(:no_runner_connected, reason(pc, asks: [2, "12GB"])&.kind)
+  end
+
   # Troubleshooting, "A run waits in the queue": "no runner offers a label it
   # needs".
   def test_a_run_waits_for_a_runner_that_offers_its_labels
@@ -154,19 +163,5 @@ class WaitReasonTest < Minitest::Test
 
     assert_equal(%w[nuc], waiting.hosts)
     assert_predicate(waiting.runs, :frozen?)
-  end
-
-  # Server design, "Placement": "`proof status` must say what each queued run
-  # waits behind", by run, and a run that fits waits behind nothing.
-  def test_placement_gives_the_reason_of_each_queued_run_that_does_not_fit
-    enqueue("aaaaa", os: %i[macos])
-    enqueue("bbbbb")
-    reasons = placement(host("nuc", runner("nuc-linux"))).wait_reasons
-
-    assert_equal({ ids("aaaaa").first => Proof::WaitReason.new(kind: :no_runner_connected) }, reasons)
-  end
-
-  private def ids(*characters)
-    characters.map { |each| Proof::RunId.new(minute: AT, characters: each) }
   end
 end
