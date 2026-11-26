@@ -76,7 +76,7 @@ A run ends in one of the [run states](glossary.md#run-states). Whatever the reas
 - **Someone cancels it,** with `proof cancel` or Ctrl-C in `proof run`. The state is `canceled`.
 - **The runner or its host goes away.** The state is `lost`, and `proof` exits with 75.
 
-Proof never runs a run again by itself. A run that failed, timed out, or was lost stays that way, and you decide whether to run it again.
+Proof never runs a run again by itself. A run that failed, timed out, or was lost stays that way, and you decide whether to run it again. The one retry comes before the command starts: when Git operations on a runner's workspace fail, the runner discards that workspace and tries the run once in another, and no command has run yet.
 
 ## How output reaches you
 
