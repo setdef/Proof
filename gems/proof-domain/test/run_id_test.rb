@@ -88,24 +88,35 @@ class RunIdTest < Minitest::Test
   end
 
   # Glossary, "run": the example `20261125-0336-k7q2w` has a year of four
-  # digits, so a year of three or five digits can't be written that way.
-  def test_a_year_of_other_than_four_digits_is_refused
-    [Time.utc(999, 12, 31, 23, 59), Time.utc(10_000, 1, 1)].each do |minute|
+  # digits, so a year before 0 or after 9999, which `%Y` writes as a sign or
+  # as five digits, can't be written that way.
+  def test_a_year_that_does_not_write_as_four_digits_is_refused
+    [Time.utc(-1, 12, 31, 23, 59), Time.utc(10_000, 1, 1)].each do |minute|
       assert_raises(Proof::InvalidRunIdError) { run_id(minute:) }
     end
   end
 
-  # The years at the ends of the four-digit range are IDs.
+  # Years 0 to 9999 all write as four digits, with leading zeros below 1000,
+  # so each is an ID.
   def test_the_first_and_last_four_digit_years_are_allowed
-    assert_equal("10000101-0000-m3d8q", run_id(minute: Time.utc(1000, 1, 1)).to_s)
+    assert_equal("00000101-0000-m3d8q", run_id(minute: Time.utc(0, 1, 1)).to_s)
+    assert_equal("09991231-2359-m3d8q", run_id(minute: Time.utc(999, 12, 31, 23, 59)).to_s)
     assert_equal("99991231-2359-m3d8q", run_id(minute: Time.utc(9999, 12, 31, 23, 59)).to_s)
+  end
+
+  # A year below 1000 reads back from its four digits as the same ID.
+  def test_a_year_below_1000_reads_back
+    id = run_id(minute: Time.utc(999, 12, 31, 23, 59))
+
+    assert_equal(id, Proof::RunId.parse(id.to_s))
+    assert_equal(Time.utc(0, 1, 1), Proof::RunId.parse("00000101-0000-m3d8q").minute)
   end
 
   # The message says what the minute is and what it got.
   def test_the_message_for_a_minute_names_the_value
     error = assert_raises(Proof::InvalidRunIdError) { run_id(minute: nil) }
 
-    assert_equal("the minute of a run ID is a Time in the years 1000 to 9999, not nil", error.message)
+    assert_equal("the minute of a run ID is a Time in the years 0 to 9999, not nil", error.message)
   end
 
   # The message says what the characters are and what they got.

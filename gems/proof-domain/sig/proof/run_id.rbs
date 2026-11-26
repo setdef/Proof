@@ -84,7 +84,7 @@ module Proof
     # Builds an ID from a minute and five characters. The minute is converted
     # to UTC and loses its seconds. The characters are read as Crockford's
     # Base32. Raises `Proof::InvalidRunIdError` unless `minute` is a `Time` in
-    # the years 1000 to 9999 and `characters` is five symbols of the alphabet.
+    # the years 0 to 9999 and `characters` is five symbols of the alphabet.
     #
     # - `minute`: Time, in any zone.
     # - `characters`: String, five symbols in either case.

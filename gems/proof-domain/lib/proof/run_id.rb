@@ -29,8 +29,8 @@ module Proof
     end
 
     private def utc_minute(moment)
-      unless moment.is_a?(Time) && moment.getutc.year.between?(1000, 9999)
-        raise(InvalidRunIdError, format("the minute of a run ID is a Time in the years 1000 to 9999, not %p", moment))
+      unless moment.is_a?(Time) && moment.getutc.year.between?(0, 9999)
+        raise(InvalidRunIdError, format("the minute of a run ID is a Time in the years 0 to 9999, not %p", moment))
       end
 
       Time.at(Integer(moment).div(60) * 60, in: "UTC").freeze
