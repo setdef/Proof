@@ -82,15 +82,6 @@ module Proof
     def initialize: (root: String) -> void
   end
 
-  # Raised when a project has no commits, so it has no `HEAD` to base a commit
-  # of its working tree on.
-  class NoCommitsError < Error
-    # Builds the error, with a message that says why and what to do next.
-    #
-    # - `root`: String, the project's root.
-    def initialize: (root: String) -> void
-  end
-
   # Raised when the `git` program ends with a status other than 0 and the
   # caller has no better word for why. A refusal Proof can explain, such as a
   # folder outside any repository, has an error class for that refusal.

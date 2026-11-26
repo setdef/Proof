@@ -13,9 +13,11 @@ module Proof
   # tracked, so it would drop it. A submodule goes in at the commit its
   # checkout is at, as `git add --all` records it, including a commit that
   # the project hasn't recorded yet. Changes to files inside the submodule
-  # are not sent. The commit's one parent is `HEAD`. Its author and committer
-  # are `Proof <proof@proof.invalid>`, so a computer with no Git identity can
-  # make it, and its configuration can't sign it.
+  # are not sent. The commit's one parent is `HEAD`, and a project with no
+  # commit yet has no `HEAD`, so its commit has no parent and its index starts
+  # empty. Its author and committer are `Proof <proof@proof.invalid>`, so a
+  # computer with no Git identity can make it, and its configuration can't
+  # sign it.
   #
   # `Proof::GitProject#working_tree_commit_id` uses it. Make one of this class
   # only through that method, which checks that the clone is whole first.
@@ -42,8 +44,10 @@ module Proof
     # Prepares to make a commit on top of `head`.
     #
     # - `git`: Proof::Git, running in the project's root.
-    # - `head`: String, the full ID of the commit that is `HEAD`.
-    def initialize: (git: Git, head: String) -> void
+    # - `head`: String or `nil`, the full ID of the commit that is `HEAD`, or
+    #   `nil` when the project has no commit yet. The commit then has no
+    #   parent.
+    def initialize: (git: Git, head: String?) -> void
 
     # Makes the commit and returns its full ID.
     def id: () -> String
@@ -51,8 +55,10 @@ module Proof
     private
 
     @git: Git
-    @head: String
+    @head: String?
 
     def commit_tree_of: (String index) -> String
+
+    def commit: (String tree) -> String
   end
 end

@@ -87,4 +87,54 @@ class GitProjectWorkingTreeTest < Minitest::Test
       tree(folder, working_tree_commit(folder))
     )
   end
+
+  # A project with no commit yet has no `HEAD` to be the parent, and a run in a new repository is not
+  # refused for that: its working-tree commit has no parent, and holds the files that Git doesn't ignore.
+  def test_a_project_with_no_commit_gets_a_commit_with_no_parent
+    folder = make_repository
+    write_file(folder, ".gitignore", "*.log\n")
+    write_file(folder, "a.txt", "1")
+    write_file(folder, "debug.log", "noise")
+    commit = working_tree_commit(folder)
+
+    assert_equal([".gitignore", "a.txt"], tree(folder, commit).map(&:first))
+    assert_equal([commit], git(folder, "rev-list", "--parents", "-n1", commit).split)
+  end
+
+  # The same sentence, for a project whose first commit is still to come and that has nothing in it.
+  def test_a_project_with_no_commit_and_no_file_gets_a_commit_of_an_empty_tree
+    folder = make_repository
+    commit = working_tree_commit(folder)
+
+    assert_empty(tree(folder, commit))
+    assert_equal([commit], git(folder, "rev-list", "--parents", "-n1", commit).split)
+  end
+
+  # Command design, "Which project and which code": "The clone's index, `HEAD`, and branches stay exactly
+  # as they were." In a project with no commit, that includes the branch that `HEAD` points to, which stays
+  # without a commit.
+  def test_making_the_commit_in_a_project_with_no_commit_leaves_the_clone_as_it_was
+    folder = make_repository
+    write_file(folder, "a.txt", "1")
+    git(folder, "add", "a.txt")
+    write_file(folder, "a.txt", "2")
+    state = -> { [File.binread(File.join(folder, ".git", "index")), File.read(File.join(folder, ".git", "HEAD"))] }
+    before = state.call
+    working_tree_commit(folder)
+
+    assert_equal(before, state.call)
+    assert_equal(["ref: refs/heads/trunk\n", ""], [before.last, git(folder, "for-each-ref")])
+  end
+
+  # Only a HEAD with no commit means a commit with no parent. A git that fails some other way, here with
+  # status 128 as a damaged repository does, is an error, not a project with no commit.
+  def test_a_git_failure_that_is_not_a_missing_commit_is_not_taken_for_a_project_with_no_commit
+    program = File.join(temporary_folder, "damaged-git")
+    File.write(program, "#!/bin/sh\ncase \"$1\" in config) exit 0 ;; esac\necho 'fatal: damaged' >&2\nexit 128\n")
+    File.chmod(0o755, program)
+    project = Proof::GitProject.new(root: temporary_folder, program:)
+    error = assert_raises(Proof::GitFailedError) { project.working_tree_commit_id }
+
+    assert_equal([128, "fatal: damaged\n"], [error.status.exitstatus, error.error_output])
+  end
 end

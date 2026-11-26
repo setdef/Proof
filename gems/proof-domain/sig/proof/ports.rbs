@@ -36,9 +36,10 @@ module Proof
 
     # The full ID of a new commit that holds the project's working tree as it
     # is, with the changes not yet committed and the untracked files that Git
-    # doesn't ignore. Making it leaves the project's index, `HEAD`, and
-    # branches as they were. Raises `Proof::NoCommitsError` when the project
-    # has no commit, and `Proof::PartialCloneError` when it is a partial clone.
+    # doesn't ignore. Its parent is `HEAD`, and it has no parent when the
+    # project has no commit yet. Making it leaves the project's index, `HEAD`,
+    # and branches as they were. Raises `Proof::PartialCloneError` when the
+    # project is a partial clone.
     def working_tree_commit_id: () -> String
   end
 end

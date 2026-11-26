@@ -44,6 +44,20 @@ class GitProjectRevisionTest < Minitest::Test
     )
   end
 
+  # How-proof-works, "How your code reaches a runner": with `--commit REV` the run needs the commit you named,
+  # and a project with no commit has none, so each revision is refused with the cause.
+  def test_a_revision_in_a_project_with_no_commit_is_refused
+    folder = make_repository
+    write_file(folder, "a.txt", "1")
+    project = Proof::GitProject.find(folder)
+
+    %w[HEAD trunk].each do |revision|
+      error = assert_raises(Proof::UnknownRevisionError) { project.commit_id(revision) }
+
+      assert_match(/\A#{revision} is not a commit in #{Regexp.escape(folder)}\./, error.message)
+    end
+  end
+
   # A tree is a revision to Git but not a commit, and a run needs a commit.
   def test_a_tree_is_refused_as_a_revision
     folder = make_repository

@@ -56,15 +56,6 @@ module Proof
     end
   end
 
-  class NoCommitsError < Error
-    def initialize(root:)
-      super(
-        "#{root} has no commits yet, so there is no HEAD to base the working tree on. " \
-          "Make a first commit with git commit, and run proof again."
-      )
-    end
-  end
-
   # steep:ignore:start
   class GitFailedError < Error
     # steep:ignore:end

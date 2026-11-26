@@ -83,28 +83,8 @@ class GitProjectWorkingTreeCloneTest < Minitest::Test
     refute_match(/^gpgsig/, git(folder, "cat-file", "commit", commit))
   end
 
-  # Command design, "Which project and which code": "`git commit-tree` with `HEAD` as parent." A
-  # repository with no commit has no `HEAD`, so it is refused, with the cause.
-  def test_a_repository_with_no_commit_is_refused
-    folder = make_repository
-    write_file(folder, "a.txt", "1")
-    error = assert_raises(Proof::NoCommitsError) { working_tree_commit(folder) }
-
-    assert_equal(
-      [
-        "#{folder} has no commits yet, so there is no HEAD to base the working tree on.",
-        "Make a first commit with git commit, and run proof again.",
-      ].join(" "),
-      error.message
-    )
-  end
-
   # Command design, "Which project and which code": a partial clone is refused for the working tree too.
   def test_a_partial_clone_is_refused
     assert_raises(Proof::PartialCloneError) { working_tree_commit(make_partial_clone) }
-  end
-
-  def test_the_refusal_is_a_proof_error
-    assert_operator(Proof::NoCommitsError, :<, Proof::Error)
   end
 end

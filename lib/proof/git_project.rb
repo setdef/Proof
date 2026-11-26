@@ -29,9 +29,13 @@ module Proof
     end
 
     private def head_id
-      git.run("rev-parse", "--verify", "HEAD^{commit}").chomp
-    rescue GitFailedError
-      raise(NoCommitsError.new(root:))
+      # With --quiet, rev-parse exits 1 and prints nothing when HEAD names a branch that has no commit yet,
+      # and any other failure exits with another status.
+      git.run("rev-parse", "--verify", "--quiet", "HEAD").chomp
+    rescue GitFailedError => e
+      raise unless e.status.exitstatus == 1
+
+      nil
     end
 
     private def git
