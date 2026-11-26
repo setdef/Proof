@@ -41,11 +41,18 @@ class NameTest < Minitest::Test
     assert_equal("a host's name is #{TEXT}, such as nuc, not %p", Proof::Name.message("a host's name", "nuc"))
   end
 
-  # Reading a name gives it back, and a name that isn't one is refused with the message for that kind of name and the
-  # value, as `p` shows it.
-  def test_reading_a_name_gives_the_name_and_refuses_a_blank_one_with_the_message
-    assert_equal("nuc", Proof::Name.read("nuc", what: "a host's name", example: "nuc").text)
+  # Reading a name gives back a frozen copy of its text, so a change to the string it was given doesn't rename it.
+  def test_reading_a_name_gives_back_a_frozen_copy_of_its_text
+    given = +"nuc"
+    name = Proof::Name.read(given, what: "a host's name", example: "nuc")
+    given << "x"
 
+    assert_equal("nuc", name)
+    assert_predicate(name, :frozen?)
+  end
+
+  # A name that isn't one is refused with the message for that kind of name and the value, as `p` shows it.
+  def test_reading_a_value_that_is_not_a_name_is_refused_with_the_message
     [[" ", "\" \""], ["", "\"\""], [nil, "nil"], [:nuc, ":nuc"]].each do |value, shown|
       error = assert_raises(Proof::InvalidNameError) do
         Proof::Name.read(value, what: "a runner's name", example: "nuc-linux")
@@ -53,29 +60,6 @@ class NameTest < Minitest::Test
 
       assert_equal("a runner's name is #{TEXT}, such as nuc-linux, not #{shown}", error.message)
     end
-  end
-
-  # A name built from text holds a frozen copy of the text, so a change to the string it was given doesn't rename it.
-  def test_a_name_holds_a_frozen_copy_of_its_text
-    given = +"nuc"
-    name = Proof::Name.new(text: given)
-    given << "x"
-
-    assert_equal("nuc", name.text)
-    assert_predicate(name.text, :frozen?)
-  end
-
-  # A name built directly is checked with a message of its own, since nothing says whose name it is.
-  def test_a_name_built_directly_is_refused_when_it_is_blank
-    error = assert_raises(Proof::InvalidNameError) { Proof::Name.new(text: " ") }
-
-    assert_equal("a name is #{TEXT}, such as nuc, not \" \"", error.message)
-  end
-
-  # Two names of the same text are equal.
-  def test_names_of_one_text_are_equal
-    assert_equal(Proof::Name.new(text: "nuc"), Proof::Name.new(text: "nuc"))
-    refute_equal(Proof::Name.new(text: "nuc"), Proof::Name.new(text: "NUC"))
   end
 
   # Every error the domain raises is a Proof::Error.

@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
-  class Name < Data.define(:text)
-    # steep:ignore:end
+  module Name
     TEXT = "text with at least one character that isn't white space"
     BLANK = /\A[[:space:]]*\z/
     private_constant(:BLANK)
@@ -21,13 +19,10 @@ module Proof
     def self.read(value, what:, example:)
       raise(InvalidNameError, format(message(what, example), value)) unless valid?(value)
 
-      new(text: value)
-    end
-
-    def initialize(text:)
-      raise(InvalidNameError, format(Name.message("a name", "nuc"), text)) unless Name.valid?(text)
-
-      super(text: -text)
+      # valid? has found a String, which Steep can't know.
+      # steep:ignore:start
+      -value
+      # steep:ignore:end
     end
   end
 end
