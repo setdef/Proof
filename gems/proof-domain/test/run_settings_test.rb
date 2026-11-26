@@ -46,7 +46,9 @@ class RunSettingsTest < Minitest::Test
   # Project file reference, "`task`": a task runs `mise run NAME` or its command,
   # so each task name has a command that is text or none, and a run has a task.
   def test_commands_that_are_not_names_with_text_or_none_are_refused
-    [{}, nil, [["test", nil]], named(["test", 1]), { test: nil }, named(["test", :make])].each do |commands|
+    bad = [{}, nil, [["test", nil]], named(["test", 1]), { test: nil }, named(["test", :make]), named([" ", nil])]
+
+    bad.each do |commands|
       assert_raises(Proof::InvalidRunSettingsError, commands.inspect) { Proof::RunSettings.new(settings: full, commands:) }
     end
   end

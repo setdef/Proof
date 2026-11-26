@@ -71,7 +71,7 @@ module Proof
                 | (String name, Resources share, bool person_active, Array[Runner] runners) -> instance
 
     # Builds a host, and raises `Proof::InvalidHostError` unless `name` is a
-    # String of at least one character, `share` is `Proof::Resources`,
+    # name, as `Proof::Name` says, `share` is `Proof::Resources`,
     # `person_active` is `true` or `false`, and `runners` is an `Array` of
     # `Proof::Runner` with different names. A host may have no runners, and
     # then it has nothing free.

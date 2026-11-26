@@ -8,8 +8,8 @@ module Proof
   #
   # This class holds the file's path, and has one method for each refusal: a
   # node the page doesn't list, a node given twice, a node with arguments,
-  # properties, or children it doesn't take, a child with the wrong arguments, a
-  # blank name, and a part a node needs and lacks. Each method raises, and never
+  # properties, or children it doesn't take, a child with the wrong arguments,
+  # and a part a node needs and lacks. Each method raises, and never
   # returns. It also turns what the domain refuses into the same error, at the
   # line of the node it was building.
   #
@@ -81,13 +81,6 @@ module Proof
     # - `kind`: String, `"property"` or `"child"`.
     # - `missing`: String, the name of what the node lacks.
     def missing: (KdlNode node, String kind, String missing) -> bot
-
-    # Refuses a name that is empty or only white space, and says what a name is
-    # and gives one that works.
-    #
-    # - `name`: Array of two Strings: whose name it is, such as `"a host's
-    #   name"`, and a name that works for it, such as `"nuc"`.
-    def blank_name: (KdlNode node, Array[String] name, kdl_value value) -> bot
 
     private
 

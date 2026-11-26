@@ -2,6 +2,7 @@
 
 require_relative("duration")
 require_relative("member_check")
+require_relative("name")
 
 module Proof
   # steep:ignore:start
@@ -10,11 +11,23 @@ module Proof
     PATH_OR_NOTHING = -> (value) { value.nil? || MemberCheck.named?(value) }
     NAMES = MemberCheck.method(:names?)
     RULES = {
-      name: ["a repository's name is a name, not %p", MemberCheck.method(:named?)],
-      url: ["a repository's url is a name, not %p", MemberCheck.method(:named?)],
-      credentials_file: ["a repository's credentials file is a path or nothing, not %p", PATH_OR_NOTHING],
-      branches: ["a repository's branches are one or more branch names that differ, not %p", NAMES],
-      tasks: ["a repository's tasks are one or more task names that differ, not %p", NAMES],
+      name: [Name.message("a repository's name", "lota"), MemberCheck.method(:named?)],
+      url: [Name.message("a repository's url", "https://github.com/setdef/Lota.git"), MemberCheck.method(:named?)],
+      credentials_file: [
+        "a repository's credentials file is #{Name::TEXT}, such as ~/.config/proof/credentials/lota, or nothing, " \
+          "not %p",
+        PATH_OR_NOTHING,
+      ],
+      branches: [
+        "a repository's branches are one or more branch names that differ, each #{Name::TEXT}, " \
+          "such as [\"trunk\"], not %p",
+        NAMES,
+      ],
+      tasks: [
+        "a repository's tasks are one or more task names that differ, each #{Name::TEXT}, " \
+          "such as [\"test\"], not %p",
+        NAMES,
+      ],
       poll: ["a repository's poll is a duration, not %p", Duration.method(:===)],
     }.freeze
     private_constant(:PATH_OR_NOTHING, :NAMES, :RULES)

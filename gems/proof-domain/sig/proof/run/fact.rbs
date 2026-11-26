@@ -47,13 +47,13 @@ module Proof
 
       # A name, frozen, or the error. Raises `Proof::InvalidFactError` with
       # `message`, filled in by `format` with `value`, when `value` isn't a
-      # String with at least one character.
+      # name, as `Proof::Name` says.
       #
       # - `value`: Object, what a fact was given.
       # - `message`: String, with one `%p` for the value.
       #
       # ```ruby
-      # Proof::Run::Fact.name_of("nuc", "a host is a name, not %p") # => "nuc"
+      # Proof::Run::Fact.name_of("nuc", "a host's name is not %p") # => "nuc"
       # ```
       def self.name_of: (Object value, String message) -> String
 

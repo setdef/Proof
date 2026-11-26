@@ -9,8 +9,8 @@ module Proof
 
       def initialize(at:, host:, runner:)
         super(
-          at:, host: Fact.name_of(host, "a placed run's host is a name, not %p"),
-          runner: Fact.name_of(runner, "a placed run's runner is a name, not %p"))
+          at:, host: Fact.name_of(host, Name.message("a placed run's host", "nuc")),
+          runner: Fact.name_of(runner, Name.message("a placed run's runner", "nuc-linux")))
       end
 
       def on?(host_name, runner_names)

@@ -30,7 +30,8 @@ class RunnerTest < Minitest::Test
   # Each value a runner holds is checked.
   def test_a_runner_with_a_value_of_the_wrong_kind_is_refused
     good = runner("nuc-linux").to_h
-    bad = [{ name: "" }, { os: :linux }, { labels: ["kvm"] }, { capacity: "32GB" }, { connected: nil }]
+    names = ["", " ", "\t"].map { |name| { name: } }
+    bad = [*names, { os: :linux }, { labels: ["kvm"] }, { capacity: "32GB" }, { connected: nil }]
 
     bad.each { |values| assert_raises(Proof::InvalidRunnerError) { Proof::Runner.new(**good, **values) } }
   end
@@ -40,5 +41,15 @@ class RunnerTest < Minitest::Test
     error = assert_raises(Proof::InvalidRunnerError) { runner("nuc-linux", connected: "yes") }
 
     assert_equal('whether a runner is connected is true or false, not "yes"', error.message)
+  end
+
+  # The message for a name says what a name is and gives one that works.
+  def test_the_message_for_a_blank_name_says_what_a_name_is
+    error = assert_raises(Proof::InvalidRunnerError) { runner(" ") }
+
+    assert_equal(
+      "a runner's name is text with at least one character that isn't white space, such as nuc-linux, not \" \"",
+      error.message
+    )
   end
 end

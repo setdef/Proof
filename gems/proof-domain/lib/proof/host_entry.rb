@@ -3,6 +3,7 @@
 require_relative("built_in_host_defaults")
 require_relative("host_settings")
 require_relative("member_check")
+require_relative("name")
 require_relative("resolved_host")
 
 module Proof
@@ -10,9 +11,10 @@ module Proof
   class HostEntry < Data.define(:name, :runners, :settings)
     # steep:ignore:end
     RULES = {
-      name: ["a host entry's name is a name, not %p", MemberCheck.method(:named?)],
+      name: [Name.message("a host's name", "nuc"), MemberCheck.method(:named?)],
       runners: [
-        "a host entry's runners are one or more runner names that differ without regard to case, not %p",
+        "a host entry's runners are one or more runner names that differ without regard to case, " \
+          "each #{Name::TEXT}, such as [\"nuc-linux\"], not %p",
         MemberCheck.method(:distinct_names?),
       ],
       settings: ["a host entry's settings are host settings, not %p", HostSettings.method(:===)],

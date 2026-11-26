@@ -7,8 +7,10 @@ require_relative("test_helper")
 class HostEntryTest < Minitest::Test
   include PoolFileHelper
 
-  RUNNERS = "a host entry's runners are one or more runner names that differ without regard to case"
-  private_constant(:RUNNERS)
+  RUNNERS = "a host entry's runners are one or more runner names that differ without regard to case, " \
+    "each #{Proof::Name::TEXT}, such as [\"nuc-linux\"]".freeze
+  NAME = "a host's name is #{Proof::Name::TEXT}, such as nuc".freeze
+  private_constant(:RUNNERS, :NAME)
 
   # Pool file reference, "A complete example": `host nuc` has the runner `nuc-linux` and a budget of `"400GB"`, and
   # `host pc` has `pc-windows` and `pc-wsl`, a budget of `"250GB"`, a share, and `withhold gpu`.
@@ -45,9 +47,10 @@ class HostEntryTest < Minitest::Test
 
   # Pool file reference, "`host`": `host NAME`, so a name is text of at least one character, and so is each runner.
   def test_a_name_or_a_runner_that_is_not_text_is_refused
-    refused = [[5, %w[a]], ["", %w[a]], [nil, %w[a]], ["nuc", [5]], ["nuc", [""]], ["nuc", "nuc-linux"], ["nuc", nil]]
+    names = [5, "", " ", "\t", nil].map { |name| [name, %w[a]] }
+    runner_lists = [[5], [""], [" "], %W[a \t], "nuc-linux", nil].map { |runners| ["nuc", runners] }
 
-    refused.each do |name, runners|
+    (names + runner_lists).each do |name, runners|
       assert_raises(Proof::InvalidHostEntryError, [name, runners].inspect) { Proof::HostEntry.new(name:, runners:) }
     end
   end
@@ -60,8 +63,9 @@ class HostEntryTest < Minitest::Test
   # The messages name what is wrong and what it got.
   def test_the_messages_name_the_member
     messages = [
-      [{ name: 5, runners: %w[a] }, "a host entry's name is a name, not 5"],
+      *[5, " "].map { |name| [{ name:, runners: %w[a] }, "#{NAME}, not #{name.inspect}"] },
       [{ name: "a", runners: [] }, "#{RUNNERS}, not []"],
+      [{ name: "a", runners: [" "] }, "#{RUNNERS}, not [\" \"]"],
       [{ name: "a", runners: %w[a], settings: 1 }, "a host entry's settings are host settings, not 1"],
     ]
 

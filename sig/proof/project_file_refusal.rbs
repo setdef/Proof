@@ -40,9 +40,6 @@ module Proof
     # Refuses a `task` with no name, or with more than a name and a command.
     def task_arguments: (KdlNode node, Integer count) -> bot
 
-    # Refuses a task name that is empty or only white space.
-    def blank_name: (KdlNode node, kdl_value name) -> bot
-
     # Refuses a command that is empty or only spaces.
     def blank_command: (KdlNode node, kdl_value command) -> bot
   end

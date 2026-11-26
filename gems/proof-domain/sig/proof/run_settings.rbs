@@ -47,8 +47,8 @@ module Proof
 
     # Builds a run's settings, and raises `Proof::InvalidRunSettingsError`
     # unless `settings` is a `Proof::TaskSettings` that gives every setting, and
-    # `commands` is a Hash with at least one entry, whose keys are Strings and
-    # whose values are Strings or `nil`.
+    # `commands` is a Hash with at least one entry, whose keys are task names, as
+    # `Proof::Name` says, and whose values are Strings or `nil`.
     #
     # - `settings`: `Proof::TaskSettings`, with no setting `nil`.
     # - `commands`: Hash, task name to command or `nil`.

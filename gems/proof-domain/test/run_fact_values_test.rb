@@ -33,14 +33,28 @@ class RunFactValuesTest < Minitest::Test
   def test_a_placement_with_an_empty_host_is_refused
     error = assert_raises(Proof::InvalidFactError) { placed(host: "") }
 
-    assert_equal(%(a placed run's host is a name, not ""), error.message)
+    assert_equal(
+      %(a placed run's host is text with at least one character that isn't white space, such as nuc, not ""),
+      error.message
+    )
   end
 
   # A runner has a name too.
   def test_a_placement_with_a_missing_runner_is_refused
     error = assert_raises(Proof::InvalidFactError) { placed(runner: nil) }
 
-    assert_equal("a placed run's runner is a name, not nil", error.message)
+    assert_equal(
+      "a placed run's runner is text with at least one character that isn't white space, such as nuc-linux, not nil",
+      error.message
+    )
+  end
+
+  # A name of only white space is no more a name than an empty one.
+  def test_a_placement_with_a_host_or_runner_of_only_white_space_is_refused
+    [" ", "\t", "\u00A0"].each do |blank|
+      assert_raises(Proof::InvalidFactError, blank.inspect) { placed(host: blank) }
+      assert_raises(Proof::InvalidFactError, blank.inspect) { placed(runner: blank) }
+    end
   end
 
   # Glossary, "end marker": "the number of bytes it sent", from 0.

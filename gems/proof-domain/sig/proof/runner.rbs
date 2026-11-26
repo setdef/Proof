@@ -69,7 +69,7 @@ module Proof
                 | (String name, OS os, LabelSet labels, Resources capacity, bool connected) -> instance
 
     # Builds a runner, and raises `Proof::InvalidRunnerError` unless `name` is
-    # a String of at least one character, `os` is a `Proof::OS`, `labels` is a
+    # a name, as `Proof::Name` says, `os` is a `Proof::OS`, `labels` is a
     # `Proof::LabelSet`, `capacity` is `Proof::Resources`, and `connected` is
     # `true` or `false`.
     #

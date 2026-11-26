@@ -7,8 +7,9 @@ module Proof
   # runs `mise run NAME` on the runner. An entry with a command defines the
   # task, and Proof runs that command instead.
   #
-  # This class holds the three, and refuses a name or a command that isn't
-  # text, and settings that aren't `Proof::TaskSettings`. It leaves a
+  # This class holds the three, and refuses a name that isn't a name, as
+  # `Proof::Name` says, a command that isn't text, and settings that aren't
+  # `Proof::TaskSettings`. It leaves a
   # command exactly as written, so the runner's shell reads it.
   #
   # Use it for each `task` node of a project file.
@@ -32,11 +33,16 @@ module Proof
   # Proof::TaskEntry.new(name: "test").command # => nil
   # ```
   #
-  # A name that isn't text is refused:
+  # A name that isn't text, or is only white space, is refused:
   #
   # ```ruby
   # # Wrong: raises Proof::InvalidTaskEntryError
   # Proof::TaskEntry.new(name: :test)
+  # ```
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidTaskEntryError
+  # Proof::TaskEntry.new(name: "  ")
   # ```
   class TaskEntry < Data
     # The name you run with `proof run NAME`.
@@ -53,8 +59,8 @@ module Proof
                 | (String name, ?String? command, ?TaskSettings settings) -> instance
 
     # Builds an entry, and raises `Proof::InvalidTaskEntryError` unless `name`
-    # is a String, `command` is a String or `nil`, and `settings` is a
-    # `Proof::TaskSettings`. A name or a command that is empty is kept as
+    # is a name, as `Proof::Name` says, `command` is a String or `nil`, and
+    # `settings` is a `Proof::TaskSettings`. A command that is empty is kept as
     # written.
     #
     # - `name`: String, such as `"test"` or `"lint:ruby"`.

@@ -20,8 +20,6 @@ module Proof
     end
 
     private def refuse_blanks(node)
-      @names.refuse(node, :repository, node.arguments.first)
-      @names.refuse(node, :url, node.properties["url"])
       BLANKS.each { |kind| @names.refuse_children(node, kind) }
     end
   end

@@ -1,21 +1,23 @@
 module Proof
-  # Checks the names in a pool file for a name that is empty or only white
-  # space.
+  # Checks the arguments of a node's children for a name that is empty or only
+  # white space, at the line of the child.
   #
-  # KDL accepts `host ""` and `runner "  "`, and a host with a blank name would
-  # show in `proof status` under a name nobody can type, and a blank branch would
-  # watch nothing. The domain's check of a name accepts a name of spaces, so
-  # the reader refuses it first, at the line of the node that gave it.
+  # KDL accepts `runner "  "`, and a runner with a blank name would show in
+  # `proof status` under a name nobody can type, and a blank branch would watch
+  # nothing. The domain refuses a blank name, with no line to name, since a
+  # host's entry holds all its runners. A runner, a credentials file, a branch,
+  # and a task are each written in a child node, so the reader asks the
+  # domain's `Proof::Name` about each one, and refuses it at the line of that
+  # child, with the domain's message. A host's name and a repository's name
+  # and URL are written on the node, and the entry the reader builds refuses a
+  # blank one at that line.
   #
-  # This class refuses a value that is text of no characters or only white space, in
-  # a node's argument or in the arguments of its children of one name. It checks
-  # nothing else: a value that isn't text is the domain's to refuse.
+  # This class checks the text in the arguments of a node's children of one
+  # name. It checks nothing else: a value that isn't text is the domain's to
+  # refuse.
   #
   # Use it from `Proof::PoolFileHosts` and `Proof::PoolFileRepositories`.
   class PoolFileNames
-    # The rule for a name that is empty or only white space.
-    BLANK: ^(kdl_value value) -> bool
-
     # For each kind of name, whose name it is for the message, and a name that
     # works.
     KINDS: Hash[Symbol, Array[String]]
@@ -24,21 +26,6 @@ module Proof
     #
     # - `refusal`: `Proof::PoolFileRefusal`.
     def initialize: (refusal: PoolFileRefusal) -> void
-
-    # Refuses `value` when it is text that is empty or only white space, at the
-    # line of `node`.
-    #
-    # - `node`: `Proof::KdlNode`, the node that gave the value.
-    # - `kind`: Symbol, which name it is: a key of `KINDS`, such as `:host`.
-    # - `value`: the value.
-    #
-    # ```ruby
-    # path = "pool.kdl"
-    # node = Proof::KdlParser.parse("host nuc\n", path:, error: Proof::PoolFileError).first
-    # names = Proof::PoolFileNames.new(refusal: Proof::PoolFileRefusal.new(path:))
-    # names.refuse(node, :host, "nuc") # => nil
-    # ```
-    def refuse: (KdlNode node, Symbol kind, kdl_value value) -> void
 
     # Refuses each argument of each child of `node` named `kind` that is text of
     # no characters or only white space, at the line of that child.

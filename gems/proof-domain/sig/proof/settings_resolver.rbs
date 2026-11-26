@@ -91,8 +91,9 @@ module Proof
 
     # The settings of a run of these tasks, as `Proof::RunSettings`. Raises
     # `Proof::InvalidRunSettingsError` unless `task_names` is an Array or Set of
-    # one or more Strings, and `Proof::NoSharedOSError` when the tasks have no operating
-    # system in common. A name given twice counts once.
+    # one or more Strings, `Proof::InvalidTaskEntryError` when a name isn't a
+    # name, as `Proof::Name` says, and `Proof::NoSharedOSError` when the tasks
+    # have no operating system in common. A name given twice counts once.
     #
     # - `task_names`: Array of String, the names after `proof run`, in the order
     #   typed, such as `["lint", "test"]`.

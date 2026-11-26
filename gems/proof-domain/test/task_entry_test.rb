@@ -44,6 +44,15 @@ class TaskEntryTest < Minitest::Test
     end
   end
 
+  # Project file reference, "Mistakes Proof catches": "a `task` has a blank name", so a name that is empty or only white
+  # space is refused by the entry itself, and a command of those is kept as written.
+  def test_a_blank_name_is_refused
+    ["", " ", "\t", "\u3000"].each do |name|
+      assert_raises(Proof::InvalidTaskEntryError, name.inspect) { Proof::TaskEntry.new(name:) }
+    end
+    assert_equal(" ", Proof::TaskEntry.new(name: "docs", command: " ").command)
+  end
+
   # Project file reference, "`task`": the command is the text after the name, so
   # a command that is not text is refused.
   def test_a_command_that_is_not_text_is_refused
@@ -63,7 +72,9 @@ class TaskEntryTest < Minitest::Test
   def test_the_message_names_the_value
     error = assert_raises(Proof::InvalidTaskEntryError) { Proof::TaskEntry.new(name: 1) }
 
-    assert_equal("a task entry has a name that is text, not 1", error.message)
+    assert_equal(
+      "a task's name is text with at least one character that isn't white space, such as test, not 1", error.message
+    )
   end
 
   # Every error the domain raises is a Proof::Error.

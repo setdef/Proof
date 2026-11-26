@@ -7,7 +7,8 @@ module Proof
   # `Proof`, so the domain has no public name for it.
   module TaskCommands
     # Whether `commands` is a Hash with at least one entry, whose keys are all
-    # Strings and whose values are each a String or `nil`.
+    # names, as `Proof::Name` says, and whose values are each a String or
+    # `nil`.
     #
     # - `commands`: Object, any value.
     def self.valid?: (Object commands) -> bool

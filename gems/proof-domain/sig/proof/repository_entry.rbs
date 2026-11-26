@@ -80,10 +80,9 @@ module Proof
                 | (String name, String url, String? credentials_file, Array[String] branches, Array[String] tasks, Duration poll) -> instance
 
     # Builds an entry, and raises `Proof::InvalidRepositoryEntryError` unless
-    # `name` and `url` are each a String of at least one character,
-    # `credentials_file` is such a String or `nil`, `branches` and `tasks` are
-    # each an `Array` of one or more such names with no name twice, and `poll`
-    # is a `Proof::Duration`.
+    # `name` and `url` are each a name, as `Proof::Name` says, `credentials_file`
+    # is a name or `nil`, `branches` and `tasks` are each an `Array` of one or
+    # more names with no name twice, and `poll` is a `Proof::Duration`.
     #
     # - `name`: String, such as `"lota"`.
     # - `url`: String, the repository's clone URL.

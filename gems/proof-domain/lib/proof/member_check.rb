@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative("name")
+
 module Proof
   module MemberCheck
     def self.problem(rules, members)
@@ -11,7 +13,7 @@ module Proof
     end
 
     def self.named?(value)
-      value.is_a?(String) && !value.empty?
+      Name.valid?(value)
     end
 
     def self.names?(value)

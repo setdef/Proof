@@ -18,7 +18,6 @@ module Proof
     end
 
     private def entry(node, defaults)
-      @names.refuse(node, :host, node.arguments.first)
       @names.refuse_children(node, :runner)
       # The entry is resolved only to refuse a host with no budget, and the value is the entry.
       @refusal.checking(node) { settings_for(node).entry.tap { |host| host.resolved(defaults) } }

@@ -59,8 +59,8 @@ module Proof
                 | (String name, Array[String] runners, ?HostSettings settings) -> instance
 
     # Builds an entry, and raises `Proof::InvalidHostEntryError` unless `name` is
-    # a String of at least one character, `runners` is an `Array` of one or
-    # more such names with no name twice, without regard to case, and
+    # a name, as `Proof::Name` says, `runners` is an `Array` of one or more
+    # names with no name twice, without regard to case, and
     # `settings` is `Proof::HostSettings`.
     #
     # - `name`: String, such as `"pc"`.

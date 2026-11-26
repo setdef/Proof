@@ -8,24 +8,38 @@ class RepositoryEntryTest < Minitest::Test
   include PoolFileHelper
 
   LOTA = "https://github.com/setdef/Lota.git"
+  TEXT = Proof::Name::TEXT
+  CREDENTIALS = "a repository's credentials file is #{TEXT}, such as ~/.config/proof/credentials/lota, " \
+    "or nothing".freeze
+  BRANCHES = "a repository's branches are one or more branch names that differ, each #{TEXT}, " \
+    "such as [\"trunk\"]".freeze
+  TASKS = "a repository's tasks are one or more task names that differ, each #{TEXT}, such as [\"test\"]".freeze
   MESSAGES = {
-    { name: 5 } => "a repository's name is a name, not 5",
-    { url: 5 } => "a repository's url is a name, not 5",
-    { credentials_file: 5 } => "a repository's credentials file is a path or nothing, not 5",
-    { branches: [] } => "a repository's branches are one or more branch names that differ, not []",
-    { tasks: [] } => "a repository's tasks are one or more task names that differ, not []",
+    { name: 5 } => "a repository's name is #{TEXT}, such as lota, not 5",
+    { name: " " } => "a repository's name is #{TEXT}, such as lota, not \" \"",
+    { url: 5 } => "a repository's url is #{TEXT}, such as https://github.com/setdef/Lota.git, not 5",
+    { url: "\t" } => "a repository's url is #{TEXT}, such as https://github.com/setdef/Lota.git, not \"\\t\"",
+    { credentials_file: 5 } => "#{CREDENTIALS}, not 5",
+    { credentials_file: " " } => "#{CREDENTIALS}, not \" \"",
+    { branches: [] } => "#{BRANCHES}, not []",
+    { branches: [" "] } => "#{BRANCHES}, not [\" \"]",
+    { tasks: [] } => "#{TASKS}, not []",
+    { tasks: ["\t"] } => "#{TASKS}, not [\"\\t\"]",
     { poll: 5 } => "a repository's poll is a duration, not 5",
   }.freeze
   NOT_NAMES = [
     { branches: [5] },
     { branches: [""] },
+    { branches: [" "] },
+    { branches: %W[trunk \t] },
     { branches: %w[trunk trunk] },
     { tasks: [5] },
     { tasks: [""] },
+    { tasks: [" "] },
     { tasks: %w[test test] },
     { tasks: "test" },
   ].freeze
-  private_constant(:LOTA, :MESSAGES, :NOT_NAMES)
+  private_constant(:LOTA, :TEXT, :CREDENTIALS, :BRANCHES, :TASKS, :MESSAGES, :NOT_NAMES)
 
   # The members of an entry, as the page's table lists them.
   def members_of(entry)
@@ -89,9 +103,9 @@ class RepositoryEntryTest < Minitest::Test
   # Pool file reference, "`repository`": `repository NAME`, so a name is text of at least one character, and the
   # credentials file is a path or nothing, and the poll is a duration.
   def test_a_name_a_credentials_file_and_a_poll_of_the_wrong_kind_are_refused
-    refused = [
-      { name: 5 }, { name: "" }, { credentials_file: 5 }, { credentials_file: "" }, { poll: "1m" }, { poll: nil }
-    ]
+    names = [5, "", " "].map { |name| { name: } }
+    credentials = [5, "", "\t"].map { |credentials_file| { credentials_file: } }
+    refused = [*names, { url: " " }, *credentials, { poll: "1m" }, { poll: nil }]
 
     refused.each do |change|
       given = { name: "lota", url: LOTA, branches: %w[trunk], tasks: %w[test] }.merge(change)

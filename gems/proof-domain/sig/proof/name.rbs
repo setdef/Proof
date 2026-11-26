@@ -1,0 +1,108 @@
+module Proof
+  # The name of a host, a runner, a repository, a branch, or a task: text with
+  # at least one character that isn't white space.
+  #
+  # A pool file or a project file can hold `host ""` or `task "  "`, and KDL
+  # accepts both. A host with a blank name would show in `proof status` under a
+  # name nobody can type, a blank branch would watch nothing, and a blank task
+  # would run nothing. Every value that holds a name refuses one, so a blank
+  # name can't exist.
+  #
+  # This class holds the rule and the message, so the values that hold a name
+  # and the readers of the pool file and the project file get both from one
+  # place. A reader asks for a name with `read`, which names whose name it is
+  # and gives a name that works, so the message tells the person what to write.
+  #
+  # Use it from a value that holds a name, and from a reader that refuses a
+  # blank name at its own line.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::Name.new(text: "nuc-linux").text # => "nuc-linux"
+  # ```
+  #
+  # A name written with a space in the middle is a name:
+  #
+  # ```ruby
+  # Proof::Name.valid?("my host") # => true
+  # ```
+  #
+  # A name of only spaces or tabs is not:
+  #
+  # ```ruby
+  # Proof::Name.valid?("  ") # => false
+  # Proof::Name.valid?("\t") # => false
+  # ```
+  #
+  # A blank name is refused, and the message says what a name is and gives one
+  # that works:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidNameError
+  # Proof::Name.read(" ", what: "a host's name", example: "nuc")
+  # ```
+  class Name < Data
+    # What a name is, for a message: text with at least one character that
+    # isn't white space.
+    TEXT: String
+
+    # The rule for a blank name: no character that isn't white space.
+    BLANK: Regexp
+
+    # The text of the name, frozen.
+    attr_reader text: String
+
+    def self.new: (text: String) -> instance
+                | (String text) -> instance
+
+    # Whether `value` is a name: a String, with valid text in an encoding that
+    # is ASCII-compatible, that has at least one character that isn't white
+    # space. White space is what Ruby's `[[:space:]]` matches, so a tab and a
+    # no-break space are white space too. A value that isn't a String, text
+    # with a byte that isn't valid, and text in an encoding that isn't
+    # ASCII-compatible, such as UTF-16, are not names.
+    #
+    # - `value`: Object, any value.
+    #
+    # ```ruby
+    # Proof::Name.valid?("nuc") # => true
+    # Proof::Name.valid?("") # => false
+    # Proof::Name.valid?(:nuc) # => false
+    # ```
+    def self.valid?: (Object value) -> bool
+
+    # The message for a value that isn't a name, with one `%p` for `format` to
+    # fill in with the value.
+    #
+    # - `what`: String, whose name it is, such as `"a host's name"`.
+    # - `example`: String, a name that works for it, such as `"nuc"`.
+    #
+    # ```ruby
+    # Proof::Name.message("a host's name", "nuc") # => "a host's name is text with at least one character that isn't white space, such as nuc, not %p"
+    # ```
+    def self.message: (String what, String example) -> String
+
+    # Reads a name, and raises `Proof::InvalidNameError` unless `value` is one.
+    # The message says whose name it is, what a name is, and gives one that
+    # works.
+    #
+    # - `value`: Object, what a file wrote.
+    # - `what`: String, whose name it is, such as `"a host's name"`.
+    # - `example`: String, a name that works for it, such as `"nuc"`.
+    #
+    # ```ruby
+    # Proof::Name.read("nuc", what: "a host's name", example: "nuc").text # => "nuc"
+    # ```
+    def self.read: (Object value, what: String, example: String) -> Name
+
+    # Builds a name, and raises `Proof::InvalidNameError` unless `text` is one.
+    #
+    # - `text`: String, such as `"nuc-linux"`.
+    #
+    # ```ruby
+    # Proof::Name.new(text: "trunk") == Proof::Name.read("trunk", what: "a branch's name", example: "trunk") # => true
+    # ```
+    def initialize: (text: String) -> void
+  end
+end

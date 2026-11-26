@@ -124,9 +124,20 @@ class HostTest < Minitest::Test
 
   # Each value a host holds is checked.
   def test_a_host_with_a_value_of_the_wrong_kind_is_refused
-    bad = [{ name: nil }, { name: "" }, { name: :nuc }, { share: "4GB" }, { person_active: 1 }]
+    names = [nil, "", " ", "\t", :nuc].map { |name| { name: } }
+    bad = [*names, { share: "4GB" }, { person_active: 1 }]
 
     bad.each { |values| assert_raises(Proof::InvalidHostError) { Proof::Host.new(**good_values, **values) } }
+  end
+
+  # The message for a name says what a name is and gives one that works.
+  def test_the_message_for_a_blank_name_says_what_a_name_is
+    error = assert_raises(Proof::InvalidHostError) { Proof::Host.new(**good_values, name: " ") }
+
+    assert_equal(
+      "a host's name is text with at least one character that isn't white space, such as nuc, not \" \"",
+      error.message
+    )
   end
 
   # A host's runners are an Array of runners, and two runners of one host have

@@ -22,7 +22,7 @@ module Proof
     # placed.runner # => "pc-wsl"
     # ```
     #
-    # A name has at least one character:
+    # A name has at least one character that isn't white space:
     #
     # ```ruby
     # # Wrong: raises Proof::InvalidFactError
@@ -44,7 +44,7 @@ module Proof
                   | (Time at, String host, String runner) -> instance
 
       # Builds the fact. Raises `Proof::InvalidFactError` unless `host` and
-      # `runner` are each a String of at least one character.
+      # `runner` are each a name, as `Proof::Name` says.
       #
       # - `at`: Time, from the server's clock.
       # - `host`: String, such as `"pc"`.

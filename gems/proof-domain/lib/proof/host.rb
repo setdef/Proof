@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative("member_check")
+require_relative("name")
 require_relative("resources")
 require_relative("room")
 require_relative("runner")
@@ -8,7 +9,7 @@ require_relative("runner")
 module Proof
   class Host < Data.define(:name, :share, :person_active, :runners)
     RULES = {
-      name: ["a host's name is a name, not %p", MemberCheck.method(:named?)],
+      name: [Name.message("a host's name", "nuc"), MemberCheck.method(:named?)],
       share: ["a host's share is resources, not %p", Resources.method(:===)],
       person_active: ["whether a person is active is true or false, not %p", MemberCheck.method(:flag?)],
       runners: ["a host's runners are a list of runners with different names, not %p", Runner.method(:listed?)],

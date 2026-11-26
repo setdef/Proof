@@ -23,8 +23,6 @@ module Proof
       shared_runner: "the runner %<runner>p is also on the host %<entry>p, whose entry starts on line %<line>d. " \
         "A runner is one operating system on one host, so list it on one",
       missing: "a %<name>p node needs the %<kind>s %<missing>p, as in %<usage>s",
-      blank_name: "%<what>s is text with at least one character that isn't white space, such as %<example>s, " \
-        "not %<value>p",
     }.freeze
     KNOWN = lambda do |names, kind|
       # One name takes "only" and the singular, two take "and" with no comma, and three or more take a serial comma.
@@ -86,11 +84,6 @@ module Proof
 
     def missing(node, kind, missing)
       say_of(node, :missing, kind:, missing:, usage: PoolFileForms.of(node).usage)
-    end
-
-    def blank_name(node, name, value)
-      what, example = name
-      say(node, :blank_name, what:, example:, value:)
     end
 
     private def say_of(node, key, **values)

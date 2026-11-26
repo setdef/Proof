@@ -7,7 +7,7 @@ module Proof
   # blank name, or with no runner.
   #
   # This class checks the shape of each node with `Proof::PoolFileShape`,
-  # refuses a blank name and a host with no `runner` child, reads each node's
+  # refuses a blank runner name and a host with no `runner` child, reads each node's
   # settings with `Proof::PoolFileSettings`, builds each `Proof::HostEntry`, and
   # refuses a host with no budget at the line of the host.
   #
@@ -21,7 +21,8 @@ module Proof
     # The `defaults` and the hosts that the file gives: the settings of the
     # `defaults` node, or settings that give nothing when the file has none, and
     # the entry of each `host` node, in order, each checked against the defaults.
-    # Refuses a blank name, and a host with no budget at the line of the host.
+    # Refuses a blank name at its line, and a host with no budget at the line of
+    # the host.
     #
     # - `by_name`: Hash from a node's name as a symbol to the nodes of that name,
     #   which `Proof::PoolFileShape` has checked.

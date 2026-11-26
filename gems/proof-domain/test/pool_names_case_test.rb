@@ -70,7 +70,7 @@ class PoolNamesCaseTest < Minitest::Test
 
       assert_equal(
         "a host entry's runners are one or more runner names that differ without regard to case, " \
-          "not #{runners.inspect}",
+          "each #{Proof::Name::TEXT}, such as [\"nuc-linux\"], not #{runners.inspect}",
         error.message
       )
     end

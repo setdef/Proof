@@ -18,15 +18,15 @@ module Proof
     # - `members`: a `Hash` from member to its value.
     def self.problem: (Hash[Symbol, [String, _Rule]] rules, Hash[Symbol, Object] members) -> String?
 
-    # Whether `value` is a String of at least one character.
+    # Whether `value` is a name, as `Proof::Name` says.
     def self.named?: (Object value) -> bool
 
-    # Whether `value` is an `Array` of one or more names, each a String of at
-    # least one character, with no name twice.
+    # Whether `value` is an `Array` of one or more names, as `Proof::Name`
+    # says, with no name twice.
     def self.names?: (Object value) -> bool
 
-    # Whether `value` is an `Array` of one or more names, each a String of at
-    # least one character, with no two that differ only in case. It compares as
+    # Whether `value` is an `Array` of one or more names, as `Proof::Name`
+    # says, with no two that differ only in case. It compares as
     # `Proof::Label` does, with `String#casecmp?`.
     def self.distinct_names?: (Object value) -> bool
 
