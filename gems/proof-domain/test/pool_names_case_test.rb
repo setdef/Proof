@@ -31,6 +31,30 @@ class PoolNamesCaseTest < Minitest::Test
     end
   end
 
+  # The same sentence for an accented letter, which has a case too: two hosts that differ only in it are one name, and
+  # `String#casecmp?` folds them, where `String#casecmp` would not.
+  def test_hosts_that_differ_only_in_the_case_of_an_accented_letter_are_refused
+    message = refusal_of_hosts(host_entry("Ünal", %w[a]), host_entry("ünal", %w[b]))
+
+    assert_equal("two hosts are named \"Ünal\". Each host has one entry, so merge them into one", message)
+  end
+
+  # The same for repositories.
+  def test_repositories_that_differ_only_in_the_case_of_an_accented_letter_are_refused
+    error = assert_raises(Proof::InvalidPoolFileError) do
+      Proof::PoolFile.new(repositories: [repository_named("Édith"), repository_named("édith")])
+    end
+
+    assert_equal(
+      "two repositories are named \"Édith\". Each repository has one entry, so merge them into one", error.message
+    )
+  end
+
+  # The same for the runners of one host.
+  def test_runners_that_differ_only_in_the_case_of_an_accented_letter_are_refused
+    assert_raises(Proof::InvalidHostEntryError) { Proof::HostEntry.new(name: "pc", runners: %w[É é]) }
+  end
+
   # The same for repositories.
   def test_two_repositories_that_differ_only_in_case_are_refused_as_one_name_written_twice
     error = assert_raises(Proof::InvalidPoolFileError) do
