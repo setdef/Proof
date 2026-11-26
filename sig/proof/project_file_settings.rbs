@@ -28,7 +28,7 @@ module Proof
     #
     # ```ruby
     # path = ".config/proof.kdl"
-    # node = Proof::KdlParser.parse("defaults cpus=4 {\n  os linux\n}\n", path:).first
+    # node = Proof::KdlParser.parse("defaults cpus=4 {\n  os linux\n}\n", path:, error: Proof::ProjectFileError).first
     # settings = Proof::ProjectFileSettings.new(refusal: Proof::ProjectFileRefusal.new(path:)).read(node)
     # [settings.cpus, settings.os.map(&:to_s)] # => [4, ["linux"]]
     # ```
@@ -37,7 +37,7 @@ module Proof
     #
     # ```ruby
     # path = ".config/proof.kdl"
-    # node = Proof::KdlParser.parse("task test {\n  label \"nvidia gpu\"\n}\n", path:).first
+    # node = Proof::KdlParser.parse("task test {\n  label \"nvidia gpu\"\n}\n", path:, error: Proof::ProjectFileError).first
     # begin
     #   Proof::ProjectFileSettings.new(refusal: Proof::ProjectFileRefusal.new(path:)).read(node)
     # rescue Proof::ProjectFileError => e

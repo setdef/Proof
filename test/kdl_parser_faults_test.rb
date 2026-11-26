@@ -70,7 +70,7 @@ class KdlParserFaultsTest < Minitest::Test
   def test_text_in_another_encoding_is_read_as_utf8
     ["task caf\u00E9\n".b, "task caf\u00E9\n".dup.force_encoding(Encoding::US_ASCII)].each do |text|
       assert_equal([["task", 1]], lines(text))
-      assert_equal(["caf\u00E9"], Proof::KdlParser.parse(text, path: PATH).first.arguments)
+      assert_equal(["caf\u00E9"], Proof::KdlParser.parse(text, path: PATH, error: Proof::ProjectFileError).first.arguments)
     end
   end
 

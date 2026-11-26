@@ -43,7 +43,8 @@ module Proof
     #
     # ```ruby
     # # Wrong: raises Proof::PoolFileError
-    # Proof::PoolFileRefusal.new(path: "pool.kdl").unknown_node(Proof::KdlParser.parse("cluster\n", path: "pool.kdl").first)
+    # node = Proof::KdlParser.parse("cluster\n", path: "pool.kdl", error: Proof::PoolFileError).first
+    # Proof::PoolFileRefusal.new(path: "pool.kdl").unknown_node(node)
     # ```
     def unknown_node: (KdlNode node) -> bot
 

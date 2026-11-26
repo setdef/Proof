@@ -19,7 +19,7 @@ module Proof
   # ## Examples
   #
   # ```ruby
-  # nodes = Proof::KdlParser.parse("defaults cpus=4\n\ntask test\n", path: ".config/proof.kdl")
+  # nodes = Proof::KdlParser.parse("defaults cpus=4\n\ntask test\n", path: ".config/proof.kdl", error: Proof::ProjectFileError)
   # nodes.map { |node| [node.name, node.line] } # => [["defaults", 1], ["task", 3]]
   # ```
   #
@@ -27,15 +27,14 @@ module Proof
   #
   # ```ruby
   # # Wrong: raises Proof::ProjectFileError
-  # Proof::KdlParser.parse("task test true\n", path: ".config/proof.kdl")
+  # Proof::KdlParser.parse("task test true\n", path: ".config/proof.kdl", error: Proof::ProjectFileError)
   # ```
   class KdlParser
     # Reads `text` as KDL 2 and gives its nodes, in order. Slashdashed nodes
     # (`/-`) are not in the result, and the nodes after one keep their own
     # lines. Type annotations, such as `(i8)5`, change no value. Raises
-    # the `error` class, `Proof::ProjectFileError` unless the caller names
-    # another, for text that isn't KDL 2, with the line and
-    # column the gem reports, and with advice to put a value in quotes when the
+    # the `error` class for text that isn't KDL 2, with the line and column
+    # the gem reports, and with advice to put a value in quotes when the
     # value starts with a digit and continues with letters, giving the example of
     # a quoted value that the `error` class has in `QUOTED_AS`. The text is read as
     # UTF-8, whatever encoding the string has, and a byte that isn't UTF-8 is a
@@ -47,20 +46,19 @@ module Proof
     # - `text`: String, the file's text.
     # - `path`: String, the file's path, for the error.
     # - `error`: the `Proof::FileError` subclass to raise, which is the error of
-    #   the kind of file being read. Defaults to `Proof::ProjectFileError`.
-    def self.parse: (String text, path: String, ?error: singleton(FileError)) -> Array[KdlNode]
+    #   the kind of file being read, such as `Proof::PoolFileError`.
+    def self.parse: (String text, path: String, error: singleton(FileError)) -> Array[KdlNode]
 
     # Prepares to read texts as the file at `path`.
     #
     # - `path`: String, the file's path, for the error.
-    # - `error`: the `Proof::FileError` subclass to raise. Defaults to
-    #   `Proof::ProjectFileError`.
-    def initialize: (path: String, ?error: singleton(FileError)) -> void
+    # - `error`: the `Proof::FileError` subclass to raise.
+    def initialize: (path: String, error: singleton(FileError)) -> void
 
     # Reads `text` as `Proof::KdlParser.parse` does.
     #
     # ```ruby
-    # Proof::KdlParser.new(path: ".config/proof.kdl").parse("task test\n").size # => 1
+    # Proof::KdlParser.new(path: ".config/proof.kdl", error: Proof::ProjectFileError).parse("task test\n").size # => 1
     # ```
     def parse: (String text) -> Array[KdlNode]
 

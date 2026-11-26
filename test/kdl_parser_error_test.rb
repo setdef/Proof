@@ -37,11 +37,6 @@ class KdlParserErrorTest < Minitest::Test
     assert_equal(2, error.line)
   end
 
-  # Without a named error class, the reader raises the project file's, as it always did.
-  def test_the_default_error_is_the_project_file_error
-    assert_raises(Proof::ProjectFileError) { Proof::KdlParser.parse("a b=\n", path: ".config/proof.kdl") }
-  end
-
   # Reading a text with no mistake gives its nodes, whatever error class the caller names.
   def test_a_text_with_no_mistake_gives_its_nodes
     nodes = Proof::KdlParser.parse("server port=7443\n", path: "other.kdl", error: OtherFileError)

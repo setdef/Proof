@@ -23,14 +23,14 @@ module Proof
   # ```ruby
   # path = "pool.kdl"
   # check = Proof::KdlFormCheck.new(forms: Proof::PoolFileForms, refusal: Proof::PoolFileRefusal.new(path:))
-  # check.check(Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n}\n", path:)).size # => 1
+  # check.check(Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n}\n", path:, error: Proof::PoolFileError)).size # => 1
   # ```
   #
   # A node the file doesn't have is refused at its line:
   #
   # ```ruby
   # # Wrong: raises Proof::PoolFileError
-  # check.check(Proof::KdlParser.parse("cluster\n", path:))
+  # check.check(Proof::KdlParser.parse("cluster\n", path:, error: Proof::PoolFileError))
   # ```
   class KdlFormCheck
     # Prepares to check against `forms`, and to refuse with `refusal`.

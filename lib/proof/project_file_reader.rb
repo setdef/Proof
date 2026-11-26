@@ -23,7 +23,8 @@ module Proof
     end
 
     def read(text)
-      nodes = KdlFormCheck.new(forms: ProjectFileForms, refusal: @refusal).check(KdlParser.parse(text, path: @path))
+      parsed = KdlParser.parse(text, path: @path, error: ProjectFileError)
+      nodes = KdlFormCheck.new(forms: ProjectFileForms, refusal: @refusal).check(parsed)
       by_name = nodes.group_by(&:name)
       ProjectFile.new(defaults: defaults_of(by_name["defaults"]&.first), entries: tasks_of(by_name.fetch("task", [])))
     end

@@ -33,7 +33,7 @@ module Proof
     #
     # ```ruby
     # refusal = Proof::ProjectFileRefusal.new(path: ".config/proof.kdl")
-    # node = Proof::KdlParser.parse("task test\n", path: ".config/proof.kdl").first
+    # node = Proof::KdlParser.parse("task test\n", path: ".config/proof.kdl", error: Proof::ProjectFileError).first
     # refusal.checking(node) { Proof::Label.new(name: "gpu").name } # => "gpu"
     # ```
     def checking: [T] (KdlNode node) { () -> T } -> T

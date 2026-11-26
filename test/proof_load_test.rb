@@ -41,7 +41,7 @@ class ProofLoadTest < Minitest::Test
   PARSE = <<~RUBY
     before = $LOADED_FEATURES.dup
     require("proof")
-    Proof::KdlParser.parse("task test\\n", path: ".config/proof.kdl")
+    Proof::KdlParser.parse("task test\\n", path: ".config/proof.kdl", error: Proof::ProjectFileError)
     puts($LOADED_FEATURES - before)
   RUBY
   OPEN_STORE = <<~RUBY

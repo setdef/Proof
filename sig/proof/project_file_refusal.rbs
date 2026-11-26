@@ -34,7 +34,7 @@ module Proof
     #
     # ```ruby
     # path = ".config/proof.kdl"
-    # node = Proof::KdlParser.parse("defaults linux\n", path:).first
+    # node = Proof::KdlParser.parse("defaults linux\n", path:, error: Proof::ProjectFileError).first
     # begin
     #   Proof::ProjectFileRefusal.new(path:).node_arguments(node, 1)
     # rescue Proof::ProjectFileError => e

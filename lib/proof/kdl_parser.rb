@@ -15,11 +15,11 @@ module Proof
     ENDS_TOO_SOON = "this is not valid KDL 2: the text ends in the middle of a string"
     private_constant(:NOT_UTF8, :ENDS_TOO_SOON)
 
-    def self.parse(text, path:, error: ProjectFileError)
+    def self.parse(text, path:, error:)
       new(path:, error:).parse(text)
     end
 
-    def initialize(path:, error: ProjectFileError)
+    def initialize(path:, error:)
       @path = path
       @error = error
     end

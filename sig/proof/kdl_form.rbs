@@ -88,7 +88,7 @@ module Proof
     # - `node`: `Proof::KdlNode`.
     #
     # ```ruby
-    # node = Proof::KdlParser.parse("host nuc\n", path: "pool.kdl").first
+    # node = Proof::KdlParser.parse("host nuc\n", path: "pool.kdl", error: Proof::PoolFileError).first
     # Proof::PoolFileForms[:host].takes?(node) # => true
     # ```
     def takes?: (KdlNode node) -> bool
@@ -98,7 +98,7 @@ module Proof
     # - `node`: `Proof::KdlNode`.
     #
     # ```ruby
-    # node = Proof::KdlParser.parse("server host=\"nuc\"\n", path: "pool.kdl").first
+    # node = Proof::KdlParser.parse("server host=\"nuc\"\n", path: "pool.kdl", error: Proof::PoolFileError).first
     # Proof::PoolFileForms[:server].stray_property(node) # => "host"
     # ```
     def stray_property: (KdlNode node) -> String?
@@ -108,7 +108,7 @@ module Proof
     # - `node`: `Proof::KdlNode`.
     #
     # ```ruby
-    # node = Proof::KdlParser.parse("share cpus=2\n", path: "pool.kdl").first
+    # node = Proof::KdlParser.parse("share cpus=2\n", path: "pool.kdl", error: Proof::PoolFileError).first
     # Proof::PoolFileForms[:share].missing_property(node) # => "memory"
     # ```
     def missing_property: (KdlNode node) -> String?
@@ -118,7 +118,7 @@ module Proof
     # - `node`: `Proof::KdlNode`.
     #
     # ```ruby
-    # node = Proof::KdlParser.parse("host nuc\n", path: "pool.kdl").first
+    # node = Proof::KdlParser.parse("host nuc\n", path: "pool.kdl", error: Proof::PoolFileError).first
     # Proof::PoolFileForms[:host].missing_child(node) # => "runner"
     # ```
     def missing_child: (KdlNode node) -> String?
@@ -146,7 +146,7 @@ module Proof
     # - `child`: `Proof::KdlNode`.
     #
     # ```ruby
-    # child = Proof::KdlParser.parse("budget \"1GB\"\n", path: "pool.kdl").first
+    # child = Proof::KdlParser.parse("budget \"1GB\"\n", path: "pool.kdl", error: Proof::PoolFileError).first
     # Proof::PoolFileForms[:server].lacks_child?(child) # => true
     # ```
     def lacks_child?: (KdlNode child) -> bool

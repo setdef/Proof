@@ -121,7 +121,7 @@ class KdlParserTest < Minitest::Test
 
   # The values of a node are Ruby's: the text, the whole number, the decimal, `#true`, `#false`, and `#null`.
   def test_values_are_ruby_values
-    node = Proof::KdlParser.parse("a \"x\" 3 1.5 #true #false #null k=\"v\" n=2\n", path: PATH).first
+    node = Proof::KdlParser.parse("a \"x\" 3 1.5 #true #false #null k=\"v\" n=2\n", path: PATH, error: Proof::ProjectFileError).first
 
     assert_equal(["x", 3, 1.5, true, false, nil], node.arguments)
     assert_equal([%w[k v], ["n", 2]], node.properties.to_a)
@@ -129,13 +129,15 @@ class KdlParserTest < Minitest::Test
 
   # A value that has a type annotation is read as the value, not converted to the annotation's type.
   def test_a_type_annotation_converts_nothing
-    node = Proof::KdlParser.parse("a (date)\"2026-11-26\" (i8)5\n", path: PATH).first
+    node = Proof::KdlParser.parse("a (date)\"2026-11-26\" (i8)5\n", path: PATH, error: Proof::ProjectFileError).first
 
     assert_equal(["2026-11-26", 5], node.arguments)
   end
 
   # Only the text of the file is read: an empty file and a file of comments have no nodes.
   def test_a_text_with_no_nodes_has_none
-    assert_equal([[], []], [Proof::KdlParser.parse("", path: PATH), Proof::KdlParser.parse("// none\n", path: PATH)])
+    parsed = ["", "// none\n"].map { |text| Proof::KdlParser.parse(text, path: PATH, error: Proof::ProjectFileError) }
+
+    assert_equal([[], []], parsed)
   end
 end

@@ -18,7 +18,7 @@ module Proof
   # ## Examples
   #
   # ```ruby
-  # node = Proof::KdlParser.parse("task test cpus=4 {\n  os linux\n}\n", path: ".config/proof.kdl").first
+  # node = Proof::KdlParser.parse("task test cpus=4 {\n  os linux\n}\n", path: ".config/proof.kdl", error: Proof::ProjectFileError).first
   # node.name # => "task"
   # node.arguments # => ["test"]
   # node.properties # => {"cpus" => 4}
@@ -63,7 +63,7 @@ module Proof
     # - `nodes`: Array of `Proof::KdlNode`, such as the nodes of a file.
     #
     # ```ruby
-    # nodes = Proof::KdlParser.parse("host a\nhost b\nserver\n", path: "pool.kdl")
+    # nodes = Proof::KdlParser.parse("host a\nhost b\nserver\n", path: "pool.kdl", error: Proof::PoolFileError)
     # pairs = []
     # Proof::KdlNode.each_after_first(nodes) { |node, first| pairs << [node.line, first&.line] }
     # pairs # => [[1, nil], [2, 1], [3, nil]]
@@ -76,7 +76,7 @@ module Proof
     # same name, or `nil` when it is the first of its name.
     #
     # ```ruby
-    # node = Proof::KdlParser.parse("a {\n  os linux\n  label gpu\n  os macos\n}\n", path: ".config/proof.kdl").first
+    # node = Proof::KdlParser.parse("a {\n  os linux\n  label gpu\n  os macos\n}\n", path: ".config/proof.kdl", error: Proof::ProjectFileError).first
     # pairs = []
     # node.each_child { |child, first| pairs << [child.line, first&.line] }
     # pairs # => [[2, nil], [3, nil], [4, 2]]
@@ -88,7 +88,7 @@ module Proof
     # - `name`: String, a child's name.
     #
     # ```ruby
-    # node = Proof::KdlParser.parse("host a {\n  runner r1\n  budget \"1GB\"\n  runner r2\n}\n", path: "pool.kdl").first
+    # node = Proof::KdlParser.parse("host a {\n  runner r1\n  budget \"1GB\"\n  runner r2\n}\n", path: "pool.kdl", error: Proof::PoolFileError).first
     # node.named("runner").map(&:line) # => [2, 4]
     # ```
     def named: (String name) -> Array[KdlNode]
@@ -99,7 +99,7 @@ module Proof
     # - `name`: String, a child's name.
     #
     # ```ruby
-    # node = Proof::KdlParser.parse("host a {\n  runner r1 r2\n  runner r3\n}\n", path: "pool.kdl").first
+    # node = Proof::KdlParser.parse("host a {\n  runner r1 r2\n  runner r3\n}\n", path: "pool.kdl", error: Proof::PoolFileError).first
     # node.pairs_named("runner").map { |argument, child| [argument, child.line] } # => [["r1", 2], ["r2", 2], ["r3", 3]]
     # ```
     def pairs_named: (String name) -> Array[[kdl_value, KdlNode]]
@@ -109,7 +109,7 @@ module Proof
     # - `name`: String, a child's name.
     #
     # ```ruby
-    # node = Proof::KdlParser.parse("host a {\n  runner r1 r2\n  runner r3\n}\n", path: "pool.kdl").first
+    # node = Proof::KdlParser.parse("host a {\n  runner r1 r2\n  runner r3\n}\n", path: "pool.kdl", error: Proof::PoolFileError).first
     # node.arguments_named("runner") # => ["r1", "r2", "r3"]
     # ```
     def arguments_named: (String name) -> Array[kdl_value]

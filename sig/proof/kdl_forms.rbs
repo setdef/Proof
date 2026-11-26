@@ -49,7 +49,7 @@ module Proof
     # - `node`: `Proof::KdlNode`, a node the file has.
     #
     # ```ruby
-    # Proof::PoolFileForms.of(Proof::KdlParser.parse("limits\n", path: "pool.kdl").first).name # => :limits
+    # Proof::PoolFileForms.of(Proof::KdlParser.parse("limits\n", path: "pool.kdl", error: Proof::PoolFileError).first).name # => :limits
     # ```
     def of: (KdlNode node) -> KdlForm
 
@@ -58,7 +58,7 @@ module Proof
     # - `node`: `Proof::KdlNode`.
     #
     # ```ruby
-    # Proof::PoolFileForms.top?(Proof::KdlParser.parse("budget \"1GB\"\n", path: "pool.kdl").first) # => false
+    # Proof::PoolFileForms.top?(Proof::KdlParser.parse("budget \"1GB\"\n", path: "pool.kdl", error: Proof::PoolFileError).first) # => false
     # ```
     def top?: (KdlNode node) -> bool
 
@@ -67,7 +67,7 @@ module Proof
     # - `node`: `Proof::KdlNode`, a node the file has.
     #
     # ```ruby
-    # Proof::PoolFileForms.once?(Proof::KdlParser.parse("runner nuc-linux\n", path: "pool.kdl").first) # => false
+    # Proof::PoolFileForms.once?(Proof::KdlParser.parse("runner nuc-linux\n", path: "pool.kdl", error: Proof::PoolFileError).first) # => false
     # ```
     def once?: (KdlNode node) -> bool
   end
