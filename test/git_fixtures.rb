@@ -12,24 +12,20 @@ require "tmpdir"
 module GitFixtures
   IDENTITY = %w[-c user.name=Tester -c user.email=tester@example.com -c commit.gpgsign=false].freeze
   ALLOW_LOCAL_CLONES = %w[-c protocol.file.allow=always].freeze
-  HOOK_SCRIPT = <<~RUBY
-    require("proof")
-    folder, program, *arguments = ARGV
-    print(Proof::Git.new(folder:, program:).run(*arguments))
-  RUBY
-  private_constant(:IDENTITY, :ALLOW_LOCAL_CLONES, :HOOK_SCRIPT)
+  private_constant(:IDENTITY, :ALLOW_LOCAL_CLONES)
 
   # The variables of a process, as Ruby's environment holds them: names and values are strings.
   def variables(**named)
     named.to_h { |name, value| [name.to_s, value.to_s] }
   end
 
-  # What a Ruby process prints when Proof's `Proof::Git` runs +arguments+ in
-  # +folder+ with the +hook+ variables set, as a Git hook sets them for the
-  # programs it starts. The first of the +arguments+ is the program.
-  def printed_in_hook(hook, folder, *arguments)
+  # What a Ruby process prints when it loads Proof and runs +script+ with
+  # +arguments+ in ARGV, with the +hook+ variables set, as a Git hook sets them
+  # for the programs it starts.
+  def printed_in_hook(hook, script, *arguments)
     load_path = [File.expand_path("../lib", __dir__), File.expand_path("../gems/proof-domain/lib", __dir__)]
-    command = [RbConfig.ruby, *load_path.flat_map { |path| ["-I", path] }, "-e", HOOK_SCRIPT, folder, *arguments]
+    options = load_path.flat_map { |path| ["-I", path] }
+    command = [RbConfig.ruby, *options, "-e", "require('proof'); #{script}", *arguments]
     output, error, status = Open3.capture3(hook, *command)
 
     assert_predicate(status, :success?, error)

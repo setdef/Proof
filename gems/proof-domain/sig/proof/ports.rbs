@@ -18,4 +18,15 @@ module Proof
     # A whole number from 0 up to, and not including, `limit`.
     def rand: (Integer limit) -> Integer
   end
+
+  # A project, the Git repository a run's code comes from, as the domain asks
+  # for it. A port: you pass an object that answers these, and the domain never
+  # runs Git itself.
+  #
+  # The `proof` command finds the project from a folder, so an object of this
+  # kind stands for one project that was found.
+  interface _Project
+    # The absolute path of the project's root, the folder that holds `.git`.
+    def root: () -> String
+  end
 end

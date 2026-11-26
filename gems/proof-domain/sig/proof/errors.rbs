@@ -47,6 +47,11 @@ module Proof
   class GitNotFoundError < Error
   end
 
+  # Raised when a folder isn't inside a Git repository, so there is no project
+  # to find. Proof never guesses which project you meant.
+  class NotInRepositoryError < Error
+  end
+
   # Raised when the `git` program ends with a status other than 0 and the
   # caller has no better word for why. A refusal Proof can explain, such as a
   # folder outside any repository, has an error class for that refusal.

@@ -1,0 +1,64 @@
+module Proof
+  # A project that lives in a Git repository on this computer, found from a
+  # folder inside it.
+  #
+  # Proof sends code as Git commits, so a run needs a Git repository to start
+  # from. A person, or an agent whose shell has drifted into another
+  # project's folder, runs `proof` from wherever they are. Guessing the
+  # project from a name or a parent folder could send the wrong code.
+  #
+  # This class asks Git for the repository's root, and raises
+  # `Proof::NotInRepositoryError` when the folder has none. It runs Git
+  # through `Proof::Git`, so a `GIT_DIR` that a hook set can't point it at
+  # another repository. It implements the domain's `_Project` port.
+  #
+  # Use it to find the project of the current folder, or of the folder you give
+  # with `-C`.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "tmpdir"
+  # Dir.mktmpdir do |folder|
+  #   system("git", "init", "--quiet", folder)
+  #   Proof::GitProject.find(folder).root == File.realpath(folder)
+  # end
+  # # => true
+  # ```
+  #
+  # A folder outside any repository raises:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::NotInRepositoryError
+  # Dir.mktmpdir { |folder| Proof::GitProject.find(folder) }
+  # ```
+  class GitProject < Data
+    # The message for a folder that doesn't exist, as a `format` string.
+    NOT_A_FOLDER: String
+
+    # The message for a folder outside any repository, as a `format` string.
+    NOT_IN_REPOSITORY: String
+
+    # The project's root, as an absolute path with symbolic links resolved.
+    attr_reader root: String
+
+    # The git program's name or path.
+    attr_reader program: String
+
+    # Builds the project of the repository at `root`. Use `find` to look for
+    # one from a folder.
+    #
+    # - `root`: String, the project's root.
+    # - `program`: String, the git program's name or path.
+    def self.new: (root: String, program: String) -> instance
+                | (String root, String program) -> instance
+
+    # Finds the project that contains `folder`. Raises
+    # `Proof::NotInRepositoryError` when `folder` doesn't exist, isn't inside a
+    # Git repository, or is a bare repository, which has no working tree.
+    #
+    # - `folder`: String, a folder inside the project.
+    # - `program`: String, the git program's name or path.
+    def self.find: (String folder, ?program: String) -> GitProject
+  end
+end

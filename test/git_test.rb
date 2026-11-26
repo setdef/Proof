@@ -6,6 +6,9 @@ require_relative("git_fixtures")
 class GitTest < Minitest::Test
   include GitFixtures
 
+  RUN = "folder, program, *arguments = ARGV; print(Proof::Git.new(folder:, program:).run(*arguments))"
+  private_constant(:RUN)
+
   # Architecture, "Git": "Proof runs the `git` program as a subprocess".
   def test_it_runs_git_in_the_folder_it_is_given
     folder = make_repository
@@ -21,7 +24,7 @@ class GitTest < Minitest::Test
     File.write(program, "#!/bin/sh\nenv\n")
     File.chmod(0o755, program)
     hook = variables(GIT_DIR: "a", GIT_WORK_TREE: "b", GIT_INDEX_FILE: "c", GIT_X: "d", GITHUB_NOTE: "kept")
-    printed = printed_in_hook(hook, temporary_folder, program).lines
+    printed = printed_in_hook(hook, RUN, temporary_folder, program).lines
 
     assert_empty(printed.grep(/\AGIT_/))
     assert_includes(printed, "GITHUB_NOTE=kept\n")
@@ -35,7 +38,7 @@ class GitTest < Minitest::Test
     other = make_repository("other")
     hook = variables(GIT_DIR: File.join(other, ".git"), GIT_WORK_TREE: other)
 
-    assert_equal(".git\n", printed_in_hook(hook, folder, "git", "rev-parse", "--git-dir"))
+    assert_equal(".git\n", printed_in_hook(hook, RUN, folder, "git", "rev-parse", "--git-dir"))
   end
 
   # The same sentence, for a variable given for one run: Proof sets `GIT_INDEX_FILE`
