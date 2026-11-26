@@ -2,11 +2,9 @@
 
 module Proof
   class PoolFileHosts
-    BLANK = -> (value) { value.is_a?(String) && value.match?(/\A[[:space:]]*\z/) }
-    private_constant(:BLANK)
-
     def initialize(refusal:)
       @refusal = refusal
+      @names = PoolFileNames.new(refusal:)
     end
 
     def read(by_name)
@@ -20,22 +18,10 @@ module Proof
     end
 
     private def entry(node, defaults)
-      refuse_blanks(node)
+      @names.refuse(node, "a host's name", node.arguments.first)
+      @names.refuse_children(node, "runner", "a runner's name")
       # The entry is resolved only to refuse a host with no budget, and the value is the entry.
       @refusal.checking(node) { settings_for(node).entry.tap { |host| host.resolved(defaults) } }
-    end
-
-    private def refuse_blanks(node)
-      refuse_blank(node, "a host's name", node.arguments.first)
-      node.named("runner").each { |child| refuse_blank_in(child, "a runner's name") }
-    end
-
-    private def refuse_blank_in(node, what)
-      node.arguments.each { |value| refuse_blank(node, what, value) }
-    end
-
-    private def refuse_blank(node, what, value)
-      @refusal.blank_name(node, what, value) if BLANK.call(value)
     end
   end
 end

@@ -1,0 +1,59 @@
+module Proof
+  # Checks the names in a pool file for a name that is empty or only spaces.
+  #
+  # KDL accepts `host ""` and `runner "  "`, and a host with a blank name would
+  # show in `proof status` under a name nobody can type, and a blank branch would
+  # watch nothing. The domain's check of a name accepts a name of spaces, so
+  # the reader refuses it first, at the line of the node that gave it.
+  #
+  # This class refuses a value that is text of no characters or only spaces, in
+  # a node's argument or in the arguments of its children of one name. It checks
+  # nothing else: a value that isn't text is the domain's to refuse.
+  #
+  # Use it from `Proof::PoolFileHosts` and `Proof::PoolFileRepositories`.
+  class PoolFileNames
+    # The rule for a name that is empty or only spaces.
+    BLANK: ^(kdl_value value) -> bool
+
+    # Prepares to refuse with `refusal`.
+    #
+    # - `refusal`: `Proof::PoolFileRefusal`.
+    def initialize: (refusal: PoolFileRefusal) -> void
+
+    # Refuses `value` when it is text that is empty or only spaces, at the line
+    # of `node`.
+    #
+    # - `node`: `Proof::KdlNode`, the node that gave the value.
+    # - `what`: String, whose name it is, such as `"a host's name"`.
+    # - `value`: the value.
+    #
+    # ```ruby
+    # path = "pool.kdl"
+    # node = Proof::KdlParser.parse("host nuc\n", path:, error: Proof::PoolFileError).first
+    # names = Proof::PoolFileNames.new(refusal: Proof::PoolFileRefusal.new(path:))
+    # names.refuse(node, "a host's name", "nuc") # => nil
+    # ```
+    def refuse: (KdlNode node, String what, kdl_value value) -> void
+
+    # Refuses each argument of each child of `node` named `name` that is text of
+    # no characters or only spaces, at the line of that child.
+    #
+    # - `node`: `Proof::KdlNode`, the parent.
+    # - `name`: String, the children's name, such as `"runner"`.
+    # - `what`: String, whose name each argument is, such as `"a runner's name"`.
+    #
+    # ```ruby
+    # path = "pool.kdl"
+    # node = Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n}\n", path:, error: Proof::PoolFileError).first
+    # names = Proof::PoolFileNames.new(refusal: Proof::PoolFileRefusal.new(path:))
+    # names.refuse_children(node, "runner", "a runner's name") # => [node.children.first]
+    # ```
+    def refuse_children: (KdlNode node, String name, String what) -> void
+
+    private
+
+    def refuse_all: (KdlNode child, String what) -> void
+
+    @refusal: PoolFileRefusal
+  end
+end

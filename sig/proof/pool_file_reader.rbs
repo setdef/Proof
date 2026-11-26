@@ -68,6 +68,6 @@ module Proof
 
     @path: String
     @refusal: PoolFileRefusal
-    @readers: Array[PoolFileProperties | PoolFileHosts]
+    @readers: Array[PoolFileProperties | PoolFileHosts | PoolFileRepositories]
   end
 end

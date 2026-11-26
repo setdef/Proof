@@ -54,6 +54,26 @@ class PoolFileFormsTest < Minitest::Test
     assert_equal([%i[cpus memory]] * 2, [form(:share).properties, form(:share).required])
   end
 
+  # Pool file reference, "`repository`": `repository NAME url="URL"` has one argument, its name, and the property `url`,
+  # which is "Required", and the children `credentials-file`, `branch`, `task`, and `poll`, where `branch` and `task`
+  # are "Required" too.
+  def test_a_repository_needs_a_url_a_branch_and_a_task
+    repository = form(:repository)
+
+    assert_equal(
+      [1..1, %i[url], %i[url], %i[credentials-file branch task poll], %i[branch task]],
+      [repository.arguments, repository.properties, repository.required, repository.children, repository.needs]
+    )
+  end
+
+  # The same sections: `task TASK...` is given in several nodes in the complete example, and `branch BRANCH...` is
+  # given once, so `task` may be repeated and `branch` may not.
+  def test_a_task_may_be_repeated_and_a_branch_may_not
+    arguments = %i[branch task poll].map { |name| form(name).arguments }
+
+    assert_equal([[1.., 1.., 1..1], true, false], [arguments, form(:task).repeatable, form(:branch).repeatable])
+  end
+
   # A name that the page doesn't list has no form.
   def test_a_name_the_page_does_not_list_has_no_form
     assert_nil(form(:cluster))

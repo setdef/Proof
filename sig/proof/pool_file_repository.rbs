@@ -1,0 +1,43 @@
+module Proof
+  # Builds the `Proof::RepositoryEntry` of one `repository` node.
+  #
+  # A repository node gives its URL as a property, its credentials file, its
+  # branches, its tasks, and its poll as children, and the tasks as several
+  # nodes. The domain owns what makes each valid: a name, a path, and a
+  # duration. Writing those rules a second time in the reader would let the two
+  # drift.
+  #
+  # This class gathers the node's parts and builds the entry with the domain's
+  # classes. A poll the node lacks leaves the default of one minute. The
+  # domain's refusals come out of the entry, and a poll that isn't a duration is
+  # refused at the line of its child.
+  #
+  # Use it from `Proof::PoolFileRepositories`.
+  class PoolFileRepository
+    # Prepares to build the entry of `node`.
+    #
+    # - `node`: `Proof::KdlNode`, a `repository` node that `Proof::PoolFileShape`
+    #   has checked.
+    # - `refusal`: `Proof::PoolFileRefusal`.
+    def initialize: (node: KdlNode, refusal: PoolFileRefusal) -> void
+
+    # The entry of the node. Raises `Proof::InvalidRepositoryEntryError` for what
+    # the domain refuses, and `Proof::PoolFileError` for a poll that isn't a
+    # duration.
+    #
+    # ```ruby
+    # path = "pool.kdl"
+    # text = "repository lota url=\"https://example.com/lota.git\" {\n  branch trunk\n  task test\n}\n"
+    # node = Proof::KdlParser.parse(text, path:, error: Proof::PoolFileError).first
+    # Proof::PoolFileRepository.new(node:, refusal: Proof::PoolFileRefusal.new(path:)).entry.tasks # => ["test"]
+    # ```
+    def entry: () -> RepositoryEntry
+
+    private
+
+    def poll: () -> Hash[Symbol, Duration]
+
+    @node: KdlNode
+    @refusal: PoolFileRefusal
+  end
+end

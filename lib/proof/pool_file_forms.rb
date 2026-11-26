@@ -30,6 +30,22 @@ module Proof
       ),
       PoolFileForm.new(name: :"active-for", usage: "active-for \"5m\"", arguments: 1..1),
       PoolFileForm.new(name: :withhold, usage: "withhold gpu desktop", arguments: 1..),
+      PoolFileForm.new(
+        name: :repository,
+        usage: "repository lota url=\"https://github.com/setdef/Lota.git\" { branch trunk; task test }",
+        arguments: 1..1,
+        properties: %i[url],
+        required: %i[url],
+        children: %i[credentials-file branch task poll],
+        needs: %i[branch task],
+        repeatable: true
+      ),
+      PoolFileForm.new(
+        name: :"credentials-file", usage: "credentials-file \"~/.config/proof/credentials/lota\"", arguments: 1..1
+      ),
+      PoolFileForm.new(name: :branch, usage: "branch trunk release", arguments: 1..),
+      PoolFileForm.new(name: :task, usage: "task test package", arguments: 1.., repeatable: true),
+      PoolFileForm.new(name: :poll, usage: "poll \"1m\"", arguments: 1..1),
     ].freeze
     BY_NAME = ALL.to_h { |form| [form.name, form] }
     BY_NAME.freeze

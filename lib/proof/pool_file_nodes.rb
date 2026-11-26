@@ -2,7 +2,7 @@
 
 module Proof
   class PoolFileNodes
-    TOP = %i[server retention limits defaults host].freeze
+    TOP = %i[server retention limits defaults host repository].freeze
     private_constant(:TOP)
 
     def initialize(nodes:, refusal:)

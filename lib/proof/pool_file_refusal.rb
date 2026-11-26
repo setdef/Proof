@@ -6,7 +6,7 @@ module Proof
   class PoolFileRefusal < FileRefusal
     MESSAGES = {
       unknown_node: "there is no node %p in a pool file. A pool file has \"server\", \"retention\", \"limits\", " \
-        "\"defaults\", and \"host\" nodes",
+        "\"defaults\", \"host\", and \"repository\" nodes",
       repeated_node: "a pool file has at most one %<name>p node, and the first is on line %<line>d. " \
         "Merge them into one",
       node_arguments: "a %<name>p node takes %<takes>s, as in %<usage>s, and this one has %<count>d",

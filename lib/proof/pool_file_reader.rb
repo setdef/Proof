@@ -12,7 +12,7 @@ module Proof
     def initialize(path:)
       @path = path
       @refusal = PoolFileRefusal.new(path:)
-      @readers = [PoolFileProperties.new(refusal: @refusal), PoolFileHosts.new(refusal: @refusal)]
+      @readers = [PoolFileProperties, PoolFileHosts, PoolFileRepositories].map { |kind| kind.new(refusal: @refusal) }
     end
 
     def read(text)

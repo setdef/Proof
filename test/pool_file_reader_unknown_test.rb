@@ -37,7 +37,7 @@ class PoolFileReaderUnknownTest < Minitest::Test
       "server port=7443\n\nlimit output=\"1GB\"\n",
       3,
       "there is no node \"limit\" in a pool file. A pool file has \"server\", \"retention\", \"limits\", " \
-        "\"defaults\", and \"host\" nodes"
+        "\"defaults\", \"host\", and \"repository\" nodes"
     )
   end
 

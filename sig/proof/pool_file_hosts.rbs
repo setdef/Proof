@@ -13,9 +13,6 @@ module Proof
   #
   # Use it from `Proof::PoolFileReader`.
   class PoolFileHosts
-    # The rule for a name that is empty or only spaces.
-    BLANK: ^(kdl_value value) -> bool
-
     # Prepares to read with `refusal`.
     #
     # - `refusal`: `Proof::PoolFileRefusal`.
@@ -43,12 +40,7 @@ module Proof
 
     def entry: (KdlNode node, HostSettings defaults) -> HostEntry
 
-    def refuse_blanks: (KdlNode node) -> void
-
-    def refuse_blank_in: (KdlNode node, String what) -> void
-
-    def refuse_blank: (KdlNode node, String what, kdl_value value) -> void
-
     @refusal: PoolFileRefusal
+    @names: PoolFileNames
   end
 end
