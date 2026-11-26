@@ -24,6 +24,10 @@ module Usage
   # The version of the gem, `MAJOR.MINOR.PATCH`.
   VERSION: String
 
+  # The version of usage whose specs the gem reads, such as `"7.4.1"`. A spec whose `min_usage_version` is newer is
+  # refused, because a newer usage may write what the gem has never seen.
+  USAGE_VERSION: String
+
   # A value in the JSON that `usage generate json` writes.
   type json = String | Integer | Float | bool | nil | Array[json] | Hash[Symbol, json]
 

@@ -33,8 +33,9 @@ module Usage
   # Usage::Spec.read('{"cmd": {"subcommands": {"list": {"name": "list", "aliases": ["ls"]}}}}')
   # ```
   class Spec < Data
-    # The keys of the program's object that the gem accepts. It accepts `name`, `version`, `author`, `license`,
-    # `repository`, and `min_usage_version`, which are for the documents usage writes, and reads none of them. It
+    # The keys of the program's object that the gem accepts. It accepts `name`, `version`, `author`, `license`, and
+    # `repository`, which are for the documents usage writes, and reads none of them. It refuses a `min_usage_version`
+    # newer than `Usage::USAGE_VERSION`. It
     # supports no completions, no configuration files, no usage line of the spec's own, and no `unknown_flags` but
     # `"error"`.
     KEYS: keys
@@ -97,6 +98,8 @@ module Usage
     def self.read: (String text) -> Spec
 
     private def self.json: (String text) -> object
+
+    private def self.check_usage_version: (String? wanted) -> void
 
     private def self.described: (Reader reader) -> { bin: String, about: String, about_long: String?, after_help: String? }
 

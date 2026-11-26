@@ -41,6 +41,7 @@ module Usage
 
     def self.read(text)
       reader = Reader.new(json(text), "the program", KEYS)
+      check_usage_version(reader.text(:min_usage_version))
       new(**described(reader), **parts(reader), **environment(reader))
     end
 
@@ -51,6 +52,17 @@ module Usage
       raise(SpecError, "a usage spec is JSON, and this text isn't: #{e.message}")
     end
     private_class_method(:json)
+
+    def self.check_usage_version(wanted)
+      return unless wanted
+      raise(SpecError, "the program has min_usage_version that isn't a version") unless Gem::Version.correct?(wanted)
+      # A newer usage may write keys or values this gem has never seen, and would read differently.
+      return if Gem::Version.new(wanted) <= Gem::Version.new(USAGE_VERSION)
+
+      setting = "the program sets min_usage_version to #{wanted.inspect}"
+      raise(SpecError, "#{setting}, which usage-rb doesn't support: it reads specs of usage #{USAGE_VERSION}")
+    end
+    private_class_method(:check_usage_version)
 
     def self.described(reader)
       {

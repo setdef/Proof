@@ -42,11 +42,11 @@ end
 - Each flag: its short and long names, help and long help, a value that is required, with `choices` (strict or not), `requires`, `var` with a value, and `global`.
 - `unknown_flags "error"`, with the program treating a flag it doesn't know as a mistake.
 
-It accepts and ignores `name`, `version`, `author`, `license`, `repository`, and `min_usage_version` of the program, and `effect` of a command, because they describe the documents usage writes and change nothing it does.
+It accepts and ignores `name`, `version`, `author`, `license`, and `repository` of the program, and `effect` of a command, because they describe the documents usage writes and change nothing it does.
 
 ### What it refuses
 
-A spec that uses any other part of usage's spec is refused, naming the part. Among them are command aliases, hidden commands, flags, and arguments, `default`, `env`, `negate`, `count`, `required`, and `deprecated` of a flag, `default`, `env`, and `choices` of an argument, a flag value that may be left out, `var` on a flag with no value, configuration files, completions, `mount`, `restart_token`, `default_subcommand`, any `unknown_flags` but `"error"`, and a command with both arguments and subcommands.
+A spec that uses any other part of usage's spec is refused, naming the part. Among them are command aliases, hidden commands, flags, and arguments, `default`, `env`, `negate`, `count`, `required`, and `deprecated` of a flag, `default`, `env`, and `choices` of an argument, a flag value that may be left out, `var` on a flag with no value, configuration files, completions, `mount`, `restart_token`, `default_subcommand`, any `unknown_flags` but `"error"`, a `min_usage_version` newer than usage 7.4.1, whose specs it reads, and a command with both arguments and subcommands.
 
 ## Printing help
 

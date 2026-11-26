@@ -48,6 +48,22 @@ class UsageSpecRefusalTest < Minitest::Test
     )
   end
 
+  # A spec that needs a newer usage than the one whose specs the gem reads may use what the gem has never seen.
+  def test_a_spec_that_needs_a_newer_usage_is_refused
+    assert_equal(
+      'the program sets min_usage_version to "7.5.0", which usage-rb doesn\'t support: it reads specs of usage 7.4.1',
+      refusal('{"min_usage_version": "7.5.0"}')
+    )
+    assert_equal("the program has min_usage_version that isn't a version", refusal('{"min_usage_version": "two"}'))
+  end
+
+  # A spec for the usage the gem reads, or an older one, is read.
+  def test_a_spec_for_the_same_or_an_older_usage_is_read
+    specs = %w[7.4.1 2.0.0 7.4.1-rc.1].map { |each| %({"bin": "t", "min_usage_version": "#{each}"}) }
+
+    assert_equal(%w[t t t], specs.map { |text| read(text).bin })
+  end
+
   # usage writes these defaults into every spec's JSON.
   def test_the_defaults_usage_writes_are_accepted
     defaults = '"hide": false, "aliases": [], "mounts": [], "unknown_flags": null, "args_override_self": true'

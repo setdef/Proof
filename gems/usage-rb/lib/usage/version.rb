@@ -2,5 +2,6 @@
 
 module Usage
   VERSION = "0.1.0"
-  public_constant(:VERSION)
+  USAGE_VERSION = "7.4.1"
+  public_constant(:VERSION, :USAGE_VERSION)
 end
