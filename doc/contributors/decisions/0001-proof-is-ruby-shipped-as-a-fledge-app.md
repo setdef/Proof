@@ -30,7 +30,7 @@ Chosen: option 1, because it keeps the whole project in the language its maintai
 
 A helper in another language is allowed only for something Ruby can't do on a platform, such as a Windows launcher that creates a desktop per run.
 
-Confidence: Fledge builds self-contained apps for Linux, Windows, and macOS, per its README. Nothing yet shows that Proof's native calls (process groups, job objects, input idle time) work through Fledge's Ruby, which has no Fiddle. No recorded comparison shows option 1 beats option 2 on anything but the maintainers' language.
+Confidence: Fledge builds self-contained apps for Linux, Windows, and macOS, per its README. Fledge's runtimes ship Fiddle as a bundled gem, and Fledge's tests call native code through it in built apps on macOS and Linux. Nothing yet shows that Proof's own native calls (process groups, job objects, input idle time) work through it, and no Proof code has called Win32 through it yet. No recorded comparison shows option 1 beats option 2 on anything but the maintainers' language.
 
 ### Consequences
 

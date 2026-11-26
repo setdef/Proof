@@ -8,7 +8,7 @@
 min_version = "2026.10.11"
 
 # jdx/ruby marks 4.1.0-preview1 as a prerelease, and mise doesn't look for a
-# precompiled Ruby among prereleases. precompiled_url names jdx/ruby's asset
+# precompiled Ruby among prereleases. precompiled_url is jdx/ruby's asset
 # for each version and platform, so mise downloads the build it would
 # download for a release. ruby.compile = false makes the install fail when
 # that download fails, where mise would otherwise compile Ruby from source
@@ -19,8 +19,8 @@ ruby.precompiled_url = "https://github.com/jdx/ruby/releases/download/{version}/
 ruby.compile = false
 
 [tools]
-# The Ruby that Fledge's apps carry, so Proof is developed and tested on the
-# Ruby it ships with. Windows isn't set up yet.
+# The Ruby that Fledge's apps carry, which is the Ruby Proof ships on.
+# Windows isn't set up yet.
 ruby = { version = "4.1.0-preview1", os = ["linux", "macos"] }
 python = "3.14"
 pre-commit = "latest"
