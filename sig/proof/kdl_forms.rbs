@@ -1,0 +1,74 @@
+module Proof
+  # The forms of every node of one kind of KDL file, and which nodes the file
+  # has at its top.
+  #
+  # A reference page lists the nodes of its file, and the children and
+  # properties of each. Each kind of file that Proof reads is that list as data,
+  # so the check of a node's form is the same code for every file, and a node
+  # a page gains is a line of data.
+  #
+  # This class holds the forms, finds the form of a node by its name, and says
+  # whether a node may be at the top of the file and whether it may be given
+  # only once. It refuses nothing itself.
+  #
+  # Use it as `Proof::PoolFileForms`, and to give `Proof::KdlFormCheck` and a
+  # `Proof::KdlRefusal` the forms of a file.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # forms = Proof::KdlForms.new(top: [:server], forms: [Proof::KdlForm.new(name: :server, usage: "server port=7443", properties: [:port])])
+  # forms[:server].properties # => [:port]
+  # forms[:cluster] # => nil
+  # ```
+  class KdlForms < Data
+    # The names of the nodes the file may have at its top, outside any block.
+    attr_reader top: Array[Symbol]
+
+    # The form of every node the file may have, at the top or in a block.
+    attr_reader forms: Array[KdlForm]
+
+    # Builds the forms of a file.
+    #
+    # - `top`: Array of Symbol, the names of the nodes at the top.
+    # - `forms`: Array of `Proof::KdlForm`, one for each name the file has.
+    def self.new: (top: Array[Symbol], forms: Array[KdlForm]) -> instance
+                | (Array[Symbol] top, Array[KdlForm] forms) -> instance
+
+    # The form of the node `name`, or `nil` for a name the file doesn't have.
+    #
+    # - `name`: Symbol, such as `:host`.
+    #
+    # ```ruby
+    # Proof::PoolFileForms[:host].arguments # => 1..1
+    # ```
+    def []: (Symbol name) -> KdlForm?
+
+    # The form of `node`, by its name.
+    #
+    # - `node`: `Proof::KdlNode`, a node the file has.
+    #
+    # ```ruby
+    # Proof::PoolFileForms.of(Proof::KdlParser.parse("limits\n", path: "pool.kdl").first).name # => :limits
+    # ```
+    def of: (KdlNode node) -> KdlForm
+
+    # Whether `node` may be at the top of the file.
+    #
+    # - `node`: `Proof::KdlNode`.
+    #
+    # ```ruby
+    # Proof::PoolFileForms.top?(Proof::KdlParser.parse("budget \"1GB\"\n", path: "pool.kdl").first) # => false
+    # ```
+    def top?: (KdlNode node) -> bool
+
+    # Whether `node` may be given only once beside others of its name.
+    #
+    # - `node`: `Proof::KdlNode`, a node the file has.
+    #
+    # ```ruby
+    # Proof::PoolFileForms.once?(Proof::KdlParser.parse("runner nuc-linux\n", path: "pool.kdl").first) # => false
+    # ```
+    def once?: (KdlNode node) -> bool
+  end
+end

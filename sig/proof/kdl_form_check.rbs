@@ -1,0 +1,69 @@
+module Proof
+  # Checks every node of a KDL file against the form its name gives it.
+  #
+  # KDL accepts any node with any arguments, properties, and children. A
+  # misspelled property would be dropped, a second `server` would override the
+  # first, and a bare `withhold` would withhold nothing, so the person would
+  # believe the file says what they wrote.
+  #
+  # This class checks the file's nodes in the order the file has them, so the
+  # first mistake in the file is the one refused. It refuses a node that may
+  # not be at the top, and a second one of a name the file may have only once.
+  # It checks each node against its `Proof::KdlForm`, and each of its children
+  # against theirs: a child the form doesn't list, a child given twice that may
+  # not be, a wrong number of arguments, a property the form doesn't list or
+  # needs, and a child the form needs. It checks no value, and it leaves the
+  # words of each refusal to the file's `Proof::KdlRefusal`.
+  #
+  # Use it from the reader of a kind of file, before it builds the file's
+  # values.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # path = "pool.kdl"
+  # check = Proof::KdlFormCheck.new(forms: Proof::PoolFileForms, refusal: Proof::PoolFileRefusal.new(path:))
+  # check.check(Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n}\n", path:)).size # => 1
+  # ```
+  #
+  # A node the file doesn't have is refused at its line:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::PoolFileError
+  # check.check(Proof::KdlParser.parse("cluster\n", path:))
+  # ```
+  class KdlFormCheck
+    # Prepares to check against `forms`, and to refuse with `refusal`.
+    #
+    # - `forms`: `Proof::KdlForms`, the forms of the file's nodes.
+    # - `refusal`: `Proof::KdlRefusal`, the file's refusal.
+    def initialize: (forms: KdlForms, refusal: KdlRefusal) -> void
+
+    # Checks every node of the file, in order, and raises the file's error at
+    # the line of the first thing wrong. Gives `nodes` when nothing is.
+    #
+    # - `nodes`: Array of `Proof::KdlNode`, the file's nodes.
+    #
+    # ```ruby
+    # Proof::KdlFormCheck.new(forms: Proof::PoolFileForms, refusal: Proof::PoolFileRefusal.new(path: "pool.kdl")).check([]) # => []
+    # ```
+    def check: (Array[KdlNode] nodes) -> Array[KdlNode]
+
+    private
+
+    def check_top: (KdlNode node, KdlNode? first) -> void
+
+    def check_child: (KdlNode parent, KdlNode child, KdlNode? first) -> void
+
+    def check_node: (KdlNode node) -> void
+
+    def check_properties: (KdlNode node, KdlForm form) -> void
+
+    def check_children: (KdlNode node, KdlForm form) -> void
+
+    def refuse_missing: (KdlNode node, String kind, String? missing) -> void
+
+    @forms: KdlForms
+    @refusal: KdlRefusal
+  end
+end

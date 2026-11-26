@@ -2,7 +2,7 @@
 
 module Proof
   # steep:ignore:start
-  class PoolFileForm < Data.define(:name, :usage, :arguments, :properties, :required, :children, :needs, :repeatable)
+  class KdlForm < Data.define(:name, :usage, :arguments, :properties, :required, :children, :needs, :repeatable)
     # steep:ignore:end
     NONE = Array.new(0).freeze
     DEFAULTS = {

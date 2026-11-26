@@ -2,9 +2,9 @@ module Proof
   # The form of each node of the pool file that the reader reads.
   #
   # The pool file page lists the nodes of the file, and the children and
-  # properties of each. This module is that list as data, one
-  # `Proof::PoolFileForm` for each node, so that the check of a node's shape is
-  # the same code for each, and a node the page gains is a line here.
+  # properties of each. This constant is that list as data, one
+  # `Proof::KdlForm` for each node, so that the check of a node's form is the
+  # same code for each, and a node the page gains is a line here.
   #
   # Use it to find the form of a node by its name.
   #
@@ -15,28 +15,5 @@ module Proof
   # Proof::PoolFileForms[:defaults].children # => [:budget, :"keep-free", :share, :"active-for", :withhold]
   # Proof::PoolFileForms[:cluster] # => nil
   # ```
-  module PoolFileForms
-    # The children that `defaults` and `host` share.
-    SETTINGS: Array[Symbol]
-
-    # Each form, in the order the page lists the nodes.
-    ALL: Array[PoolFileForm]
-
-    # Each form by its node's name.
-    BY_NAME: Hash[Symbol, PoolFileForm]
-
-    # The form of the node `name`, or `nil` for a name the page doesn't list.
-    #
-    # - `name`: Symbol, such as `:host`.
-    def self.[]: (Symbol name) -> PoolFileForm
-
-    # The form of `node`, by its name.
-    #
-    # - `node`: `Proof::KdlNode`, a node the page lists.
-    #
-    # ```ruby
-    # Proof::PoolFileForms.of(Proof::KdlParser.parse("limits\n", path: "pool.kdl").first).name # => :limits
-    # ```
-    def self.of: (KdlNode node) -> PoolFileForm
-  end
+  PoolFileForms: KdlForms
 end

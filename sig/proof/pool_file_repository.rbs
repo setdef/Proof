@@ -16,7 +16,7 @@ module Proof
   class PoolFileRepository
     # Prepares to build the entry of `node`.
     #
-    # - `node`: `Proof::KdlNode`, a `repository` node that `Proof::PoolFileShape`
+    # - `node`: `Proof::KdlNode`, a `repository` node that `Proof::KdlFormCheck`
     #   has checked.
     # - `refusal`: `Proof::PoolFileRefusal`.
     def initialize: (node: KdlNode, refusal: PoolFileRefusal) -> void

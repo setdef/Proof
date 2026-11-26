@@ -17,7 +17,7 @@ module Proof
 
     def read(text)
       nodes = KdlParser.parse(text, path: @path, error: PoolFileError)
-      PoolFileNodes.new(nodes:, refusal: @refusal).check
+      KdlFormCheck.new(forms: PoolFileForms, refusal: @refusal).check(nodes)
       PoolFile.new(**parts_of(nodes.group_by { |node| node.name.to_sym }))
     end
 

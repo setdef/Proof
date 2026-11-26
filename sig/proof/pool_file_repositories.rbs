@@ -23,7 +23,7 @@ module Proof
     # The entry of each `repository` node, in order.
     #
     # - `by_name`: Hash from a node's name as a symbol to the nodes of that name,
-    #   which `Proof::PoolFileShape` has checked.
+    #   which `Proof::KdlFormCheck` has checked.
     #
     # ```ruby
     # path = "pool.kdl"

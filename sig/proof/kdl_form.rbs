@@ -1,35 +1,35 @@
 module Proof
-  # What one node of the pool file takes: its arguments, its properties, and its
+  # What one node of a KDL file takes: its arguments, its properties, and its
   # children.
   #
   # KDL accepts any node with any arguments, properties, and children, and the
-  # pool file page lists what each node takes. Written as a check in each place
-  # that reads a node, that list would be in a dozen places and drift. A form
-  # holds it once, as data.
+  # reference page of each kind of file lists what each of its nodes takes.
+  # Written as a check in each place that reads a node, that list would be in a
+  # dozen places and drift. A form holds it once, as data.
   #
   # This class holds the node's name and an example of how to write it, how many
   # arguments it takes, the names of its properties and which it needs, the
   # names of its children and which it needs, and whether it may be given again
   # beside another of its name. It answers what a node lacks or has too much of,
-  # and refuses nothing itself. `Proof::PoolFileShape` checks a node against its
+  # and refuses nothing itself. `Proof::KdlFormCheck` checks a node against its
   # form and refuses.
   #
-  # Use it as the entries of `Proof::PoolFileForms`.
+  # Use it as the entries of `Proof::KdlForms`, such as `Proof::PoolFileForms`.
   #
   # ## Examples
   #
   # ```ruby
-  # form = Proof::PoolFileForm.new(name: :server, usage: "server port=7443", properties: [:port])
+  # form = Proof::KdlForm.new(name: :server, usage: "server port=7443", properties: [:port])
   # [form.name, form.arguments, form.properties] # => [:server, 0..0, [:port]]
   # ```
   #
   # A host takes one argument, its name, and needs a runner:
   #
   # ```ruby
-  # host = Proof::PoolFileForm.new(name: :host, usage: "host nuc { runner nuc-linux }", arguments: 1..1, needs: [:runner])
+  # host = Proof::KdlForm.new(name: :host, usage: "host nuc { runner nuc-linux }", arguments: 1..1, needs: [:runner])
   # host.needs # => [:runner]
   # ```
-  class PoolFileForm < Data
+  class KdlForm < Data
     # The list that a member leaves out has, which is empty.
     NONE: Array[Symbol]
 
@@ -79,7 +79,7 @@ module Proof
     # - `repeatable`: bool. Defaults to `false`.
     #
     # ```ruby
-    # Proof::PoolFileForm.new(name: :budget, usage: "budget \"100GB\"", arguments: 1..1).repeatable # => false
+    # Proof::KdlForm.new(name: :budget, usage: "budget \"100GB\"", arguments: 1..1).repeatable # => false
     # ```
     def initialize: (name: Symbol, usage: String, **Object given) -> void
 

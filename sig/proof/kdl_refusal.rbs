@@ -1,0 +1,94 @@
+module Proof
+  # Raises a KDL file's error for each way a node can break its form, in the
+  # words of the file's messages.
+  #
+  # Every kind of file Proof reads checks its nodes against their forms, and
+  # each says its mistakes in its own words, since each page writes its nodes
+  # its own way. The check is the same for each, so the facts each message
+  # needs, such as what a form takes and how to write it, are the same too.
+  #
+  # This class has one method for each mistake that `Proof::KdlFormCheck`
+  # finds. Each gathers what the message says, such as the node's name, the
+  # properties or children its form lists, and the form's usage, and raises the
+  # file's error with the file's message of that name. Each raises and never
+  # returns. A message names what it says as `%<name>p`, so a message uses what
+  # it needs and leaves out the rest.
+  #
+  # Use it as the base of the refusal of a kind of KDL file, which gives its
+  # path, its error, its messages, and its forms, and adds the refusals of
+  # values that only it has.
+  class KdlRefusal < FileRefusal
+    # Words what a node has, for a message: none, one with "only", two with
+    # "and", or three or more with a serial comma. `kind` is the singular and
+    # the plural of what they are, such as `["property", "properties"]`.
+    KNOWN: ^(Array[Symbol] names, Array[String] kind) -> String
+
+    # The singular and the plural of a node's properties, for `KNOWN`.
+    PROPERTIES: Array[String]
+
+    # The singular and the plural of a node's children, for `KNOWN`.
+    CHILDREN: Array[String]
+
+    # Prepares to refuse as the file at `path`.
+    #
+    # - `path`: String, the file's path.
+    # - `error`: the `Proof::FileError` subclass to raise.
+    # - `messages`: Hash from a message's name to its text, for `format` to
+    #   fill in by name.
+    # - `forms`: `Proof::KdlForms`, the forms of the file's nodes.
+    def initialize: (path: String, error: singleton(FileError), messages: Hash[Symbol, String], forms: KdlForms) -> void
+
+    # Refuses a node that may not be at the top of the file. The message is
+    # `unknown_node`, with the node's `name`.
+    #
+    # ```ruby
+    # # Wrong: raises Proof::PoolFileError
+    # Proof::PoolFileRefusal.new(path: "pool.kdl").unknown_node(Proof::KdlParser.parse("cluster\n", path: "pool.kdl").first)
+    # ```
+    def unknown_node: (KdlNode node) -> bot
+
+    # Refuses a second node that the file may have only once. `first` is the
+    # node before it. The message is `repeated_node`, with the node's `name` and
+    # the `line` of the first.
+    def repeated_node: (KdlNode node, KdlNode first) -> bot
+
+    # Refuses a node with a number of arguments its form doesn't take. `count`
+    # is how many it has. The message is `node_arguments`, with the node's
+    # `name`, what its form `takes`, the form's `usage`, and the `count`.
+    def node_arguments: (KdlNode node, Integer count) -> bot
+
+    # Refuses a property that the node's form doesn't list. The message is
+    # `property_that_is_a_child`, with the `property`, when the form has a
+    # child of its name, and otherwise `unknown_property`, with the node's
+    # `name`, the `property`, and the properties the form is `known` to have.
+    def stray_property: (KdlNode node, String property) -> bot
+
+    # Refuses a child that the parent's form doesn't list. The message is
+    # `child_that_is_a_property`, with the `child`'s name and the form's
+    # `usage`, when the form has a property of its name, and otherwise
+    # `unknown_child`, with the parent's `name`, the `child`'s name, and the
+    # children the form is `known` to have.
+    def stray_child: (KdlNode parent, KdlNode child) -> bot
+
+    # Refuses a child given a second time. `first` is the one before it. The
+    # message is `repeated_child`, with the child's `name` and the `line` of the
+    # first.
+    def repeated_child: (KdlNode child, KdlNode first) -> bot
+
+    # Refuses a node that lacks a property or a child its form needs. The
+    # message is `missing`, with the node's `name`, the `kind`, the name of what
+    # is `missing`, and the form's `usage`.
+    #
+    # - `kind`: String, `"property"` or `"child"`.
+    # - `missing`: String, the name of what the node lacks.
+    def missing: (KdlNode node, String kind, String missing) -> bot
+
+    private
+
+    def unknown_child: (KdlNode parent, KdlNode child) -> bot
+
+    def say_of: (KdlNode node, Symbol key, **kdl_value values) -> bot
+
+    @forms: KdlForms
+  end
+end

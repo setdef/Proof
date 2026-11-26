@@ -66,6 +66,21 @@ module Proof
     # ```
     def arguments_only?: () -> bool
 
+    # Yields each of `nodes` in order, with the first node before it that has
+    # the same name, or `nil` when it is the first of its name. Gives `nodes`.
+    #
+    # - `nodes`: Array of `Proof::KdlNode`, such as the nodes of a file.
+    #
+    # ```ruby
+    # nodes = Proof::KdlParser.parse("host a\nhost b\nserver\n", path: "pool.kdl")
+    # pairs = []
+    # Proof::KdlNode.each_after_first(nodes) { |node, first| pairs << [node.line, first&.line] }
+    # pairs # => [[1, nil], [2, 1], [3, nil]]
+    # ```
+    def self.each_after_first: (Array[KdlNode] nodes) { (KdlNode node, KdlNode? first) -> void } -> Array[KdlNode]
+
+    def self.first_named: (String name, Array[KdlNode] nodes) -> KdlNode?
+
     # Yields each child in order, with the first child before it that has the
     # same name, or `nil` when it is the first of its name.
     #
@@ -115,9 +130,5 @@ module Proof
     # node.children_by_name.keys # => ["os", "label"]
     # ```
     def children_by_name: () -> Hash[String, KdlNode]
-
-    private
-
-    def first_before: (Integer index) -> KdlNode?
   end
 end
