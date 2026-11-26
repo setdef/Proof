@@ -72,7 +72,7 @@ Letting a **runner** that asked to join into the **pool**, with `proof runner ap
 
 ### one-time code
 
-A code of 8 characters that `proof server setup`, `proof runner setup`, and `proof login` use, valid once for 15 minutes.
+A code of 8 characters that `proof server setup` and `proof runner setup` print, and that `proof login` and `proof runner approve` ask for. It works once, for 15 minutes.
 
 - Don't say: code alone, which in Proof's docs also means a project's source (see "How your code reaches a runner"); PIN; OTP.
 
