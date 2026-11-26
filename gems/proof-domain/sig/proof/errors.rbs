@@ -45,6 +45,15 @@ module Proof
   class InvalidPathPatternError < Error
   end
 
+  # Raised when one source's settings hold something that isn't a setting:
+  # operating systems that are not a list of `Proof::OS` values with at least
+  # one, labels that are not a `Proof::LabelSet`, a time limit that is not a
+  # `Proof::TimeLimit`, or artifacts or caches that are not lists of
+  # `Proof::PathPattern` values. A number of CPUs or megabytes that breaks its
+  # rule raises `Proof::InvalidResourcesError`.
+  class InvalidTaskSettingsError < Error
+  end
+
   # Raised when a time limit isn't a duration: a whole number from 1 and one
   # unit, `s`, `m`, or `h` in lowercase, with no space, such as `"90s"`,
   # `"30m"`, or `"2h"`.

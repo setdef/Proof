@@ -1,0 +1,18 @@
+module Proof
+  # A list of values of one kind, held as a set.
+  #
+  # `Proof::TaskSettings` holds a task's operating systems, artifacts, and
+  # caches as sets, and refuses a list with anything else in it. It is a
+  # separate module so that the check is in one place. It is a private constant
+  # of `Proof`, so the domain has no public name for it.
+  module Listing
+    # A frozen set of the items of `values`, or `nil` when `values` isn't an
+    # `Array` or `Set`, when an item isn't an instance of `kind`, or when it has
+    # fewer than `minimum` items.
+    #
+    # - `values`: Object, such as an `Array` of `Proof::OS`.
+    # - `kind`: Class, what each item must be an instance of.
+    # - `minimum`: Integer, the fewest items.
+    def self.set: (Object values, Class kind, Integer minimum) -> Set[Object]?
+  end
+end

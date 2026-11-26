@@ -22,6 +22,9 @@ module Proof
   class InvalidRunIdError < Error
   end
 
+  class InvalidTaskSettingsError < Error
+  end
+
   class InvalidTimeLimitError < Error
   end
 
