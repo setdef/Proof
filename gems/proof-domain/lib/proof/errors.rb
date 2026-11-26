@@ -6,4 +6,10 @@ module Proof
 
   class InvalidOSError < Error
   end
+
+  class InvalidLabelError < Error
+  end
+
+  class InvalidLabelSetError < Error
+  end
 end

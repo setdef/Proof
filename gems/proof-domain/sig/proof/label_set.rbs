@@ -1,0 +1,60 @@
+module Proof
+  # The labels a runner offers, or the labels a task asks for.
+  #
+  # The server places a run only on a runner that has every label the task
+  # asks for. Compared as arrays, `["gpu", "kvm"]` and `["kvm", "gpu"]` differ,
+  # and a repeated label counts twice.
+  #
+  # A set holds each label once, in no order, so two sets with the same labels
+  # are equal. Ask a runner's set whether it offers every label of a task's set.
+  #
+  # Use it for a runner's labels, for a task's `label` entries, and for the
+  # labels of a run.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # runner = Proof::LabelSet.of("desktop", "gpu")
+  # runner.offers_every_label_of?(Proof::LabelSet.of("gpu")) # => true
+  # runner.offers_every_label_of?(Proof::LabelSet.of("gpu", "kvm")) # => false
+  # ```
+  #
+  # A repeated label and the order make no difference:
+  #
+  # ```ruby
+  # Proof::LabelSet.of("gpu", "kvm", "gpu") == Proof::LabelSet.of("kvm", "gpu") # => true
+  # ```
+  class LabelSet < Data
+    # The labels, in a frozen set.
+    attr_reader labels: Set[Label]
+
+    def self.new: (labels: Array[Label] | Set[Label]) -> instance
+                | (Array[Label] | Set[Label] labels) -> instance
+
+    # Builds a set of labels from `names`.
+    #
+    # - `names`: each a String, as `Proof::Label.new` takes it.
+    #
+    # ```ruby
+    # Proof::LabelSet.of("gpu", "kvm").labels.size # => 2
+    # Proof::LabelSet.of.labels.size # => 0
+    # ```
+    def self.of: (*String names) -> LabelSet
+
+    # Builds a set, and raises `Proof::InvalidLabelSetError` unless `labels`
+    # is an `Array` or `Set` of `Proof::Label` values. A set of strings raises.
+    #
+    # - `labels`: an `Array` or `Set` of `Proof::Label`.
+    def initialize: (labels: Array[Label] | Set[Label]) -> void
+
+    # Whether this set has every label in `required`. An empty `required` is
+    # always satisfied.
+    #
+    # - `required`: LabelSet, the labels a task asks for.
+    #
+    # ```ruby
+    # Proof::LabelSet.of("gpu").offers_every_label_of?(Proof::LabelSet.of) # => true
+    # ```
+    def offers_every_label_of?: (LabelSet required) -> bool
+  end
+end

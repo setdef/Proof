@@ -17,4 +17,12 @@ module Proof
   # and `windows`.
   class InvalidOSError < Error
   end
+
+  # Raised when a label isn't a String with something in it.
+  class InvalidLabelError < Error
+  end
+
+  # Raised when a set of labels is built from anything but labels.
+  class InvalidLabelSetError < Error
+  end
 end

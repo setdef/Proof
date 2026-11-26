@@ -1,0 +1,49 @@
+module Proof
+  # A name for something a runner offers beyond its operating system, such as
+  # `gpu`, `kvm`, or `desktop`.
+  #
+  # A task asks for labels and a runner has them, and the server places a run
+  # only where the two match. A label that is blank, or isn't text, can't name
+  # anything a runner offers.
+  #
+  # This class raises unless a label is a string with something in it. It
+  # keeps the name exactly as given, so `gpu` and `GPU` are two labels.
+  #
+  # Use it for each label in a project file, a pool file, and the `--label`
+  # flag.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::Label.new(name: "gpu").to_s # => "gpu"
+  # Proof::Label.new(name: "gpu") == Proof::Label.new(name: "gpu") # => true
+  # ```
+  #
+  # A blank name raises:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidLabelError
+  # Proof::Label.new(name: " ")
+  # ```
+  class Label < Data
+    # The label's name, frozen.
+    attr_reader name: String
+
+    def self.new: (name: String) -> instance
+                | (String name) -> instance
+
+    # Builds a label, and raises `Proof::InvalidLabelError` unless `name` is a
+    # string with a character other than whitespace in it. A symbol, `nil`,
+    # and the empty string raise.
+    #
+    # - `name`: String, such as `"gpu"`.
+    def initialize: (name: String) -> void
+
+    # The name.
+    #
+    # ```ruby
+    # Proof::Label.new(name: "kvm").to_s # => "kvm"
+    # ```
+    def to_s: () -> String
+  end
+end
