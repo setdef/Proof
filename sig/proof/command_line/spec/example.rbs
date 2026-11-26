@@ -1,0 +1,56 @@
+module Proof
+  module CommandLine
+    class Spec
+      # One example command line, with the heading and the explanation the spec gives it.
+      #
+      # Help that opens with examples teaches a command faster than a list of
+      # flags. The examples belong to the spec, so the help and the generated
+      # reference show the same ones.
+      #
+      # This class answers from the spec's JSON: one example's command line and its text.
+      #
+      # Use it to print a command's examples in its help.
+      #
+      # ## Examples
+      #
+      # ```ruby
+      # example = Proof::CommandLine::Spec.load.command(["watch"])&.examples&.first
+      # example&.code # => "proof watch m3d8q"
+      # example&.header # => nil
+      # ```
+      class Example < Data
+        # The JSON object of the example, one entry of an `examples` list.
+        attr_reader node: Node
+
+        def self.new: (node: Node) -> instance
+                    | (Node node) -> instance
+
+        # Reads an example from its JSON object.
+        #
+        # - `node`: Node, one entry of an `examples` list.
+        def initialize: (Node node) -> void
+
+        # The command line to show, such as `"proof run test"`.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["watch"])&.examples&.first&.code # => "proof watch m3d8q"
+        # ```
+        def code: () -> String
+
+        # The heading, or `nil` when the example has none.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["watch"])&.examples&.first&.header # => nil
+        # ```
+        def header: () -> String?
+
+        # The explanation, or `nil` when the example has none.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.examples.first&.help&.start_with?("Sends the working tree") # => true
+        # ```
+        def help: () -> String?
+      end
+    end
+  end
+end

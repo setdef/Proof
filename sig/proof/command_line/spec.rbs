@@ -1,0 +1,135 @@
+module Proof
+  module CommandLine
+    # The command-line interface of `proof`, as `proof.usage.kdl` describes it.
+    #
+    # The command reads its flags, prints its help, and suggests the flag a
+    # person meant from one description of the interface. Written as Ruby
+    # beside the spec, those facts would drift from it, and a flag added to
+    # the spec would reach no one.
+    #
+    # `usage generate json` writes the spec as JSON, and the repository keeps
+    # that file at `lib/proof/command_line/spec.json`. This class reads it into
+    # typed values: the program, its commands, and each command's flags and
+    # arguments. The file loads with Ruby's standard library alone, so the
+    # command starts without reading KDL.
+    #
+    # Use it to find a command by the words that name it, and to list the
+    # flags, arguments, and examples of each.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # spec = Proof::CommandLine::Spec.load
+    # spec.bin # => "proof"
+    # spec.command(["server", "setup"])&.help # => "Set up this computer as the pool's server"
+    # spec.command(["frobnicate"]) # => nil
+    # ```
+    #
+    # Each flag says which switches name it and whether it takes a value:
+    #
+    # ```ruby
+    # flag = Proof::CommandLine::Spec.load.command(["run"])&.own_flags&.find { |each| each.name == "os" }
+    # flag&.switches # => ["--os"]
+    # flag&.takes_value? # => true
+    # flag&.choices # => ["linux", "macos", "windows", "any", "all"]
+    # ```
+    class Spec < Data
+      # The path of the JSON file the spec is read from.
+      PATH: String
+
+      # The JSON object of the whole spec.
+      attr_reader node: Node
+
+      def self.new: (node: Node) -> instance
+                  | (Node node) -> instance
+
+      # Reads the whole spec from `node`, the JSON object `usage generate json` writes.
+      #
+      # - `node`: Node, the whole document.
+      def initialize: (Node node) -> void
+
+      # Reads the spec from the JSON file the repository keeps.
+      #
+      # ```ruby
+      # Proof::CommandLine::Spec.load.about.start_with?("Run your project's tests") # => true
+      # ```
+      def self.load: () -> Spec
+
+      # Reads the spec from the text of `usage generate json`. A key the text
+      # leaves out reads as `nil`, an empty list, or `false`, as
+      # `Proof::CommandLine::Spec::Node` answers.
+      #
+      # - `text`: String, the JSON document.
+      #
+      # ```ruby
+      # spec = Proof::CommandLine::Spec.parse('{"bin": "tool", "about": "Does a thing", "cmd": {"name": "tool"}}')
+      # spec.bin # => "tool"
+      # spec.root.subcommands # => []
+      # ```
+      def self.parse: (String text) -> Spec
+
+      # The program's name as typed, `"proof"`, or an empty String when the
+      # spec has none.
+      #
+      # ```ruby
+      # Proof::CommandLine::Spec.load.bin # => "proof"
+      # ```
+      def bin: () -> String
+
+      # The one-line description of the program.
+      #
+      # ```ruby
+      # Proof::CommandLine::Spec.load.about.end_with?("any commit") # => true
+      # ```
+      def about: () -> String
+
+      # The longer description, or `nil` when the spec has none.
+      #
+      # ```ruby
+      # Proof::CommandLine::Spec.load.about_long&.include?("each begins with") # => true
+      # ```
+      def about_long: () -> String?
+
+      # The text for the end of the help, or `nil` when the spec has none.
+      #
+      # ```ruby
+      # Proof::CommandLine::Spec.load.after_help&.start_with?("Documentation:") # => true
+      # ```
+      def after_help: () -> String?
+
+      # The examples of the whole program.
+      #
+      # ```ruby
+      # Proof::CommandLine::Spec.load.examples.first&.code # => "proof run test"
+      # ```
+      def examples: () -> Array[Example]
+
+      # The statuses `proof` exits with, in the spec's order.
+      #
+      # ```ruby
+      # Proof::CommandLine::Spec.load.exit_codes.map(&:status).first(3) # => [0, 2, 75]
+      # ```
+      def exit_codes: () -> Array[ExitCode]
+
+      # The program as a command with no name: its subcommands are the
+      # commands, and its flags are the global flags.
+      #
+      # ```ruby
+      # Proof::CommandLine::Spec.load.root.subcommands.first&.name # => "run"
+      # ```
+      def root: () -> Command
+
+      # The command that the words in `path` name, or `nil` when no command
+      # has that path. An empty `path` names the program itself.
+      #
+      # - `path`: Array of String, such as `["runner", "setup"]`.
+      #
+      # ```ruby
+      # spec = Proof::CommandLine::Spec.load
+      # spec.command(["runner", "setup"])&.path # => ["runner", "setup"]
+      # spec.command(["runner", "nope"]) # => nil
+      # ```
+      def command: (Array[String] path) -> Command?
+    end
+  end
+end

@@ -1,0 +1,71 @@
+module Proof
+  module CommandLine
+    class Spec
+      # One argument of a command: a word that isn't a flag.
+      #
+      # A command takes words in order, some it can't run without and some
+      # that repeat. The usage line, the help, and the parser all have to agree
+      # on which is which.
+      #
+      # This class answers from the spec's JSON: an argument's name, whether it is required, and whether it takes more than one word.
+      #
+      # Use it to write a command's usage line and to check how many words a command takes.
+      #
+      # ## Examples
+      #
+      # ```ruby
+      # arg = Proof::CommandLine::Spec.load.command(["cancel"])&.args&.first
+      # arg&.to_s # => "<run...>"
+      # arg&.required? # => true
+      # ```
+      class Arg < Data
+        # The JSON object of the argument, one entry of a command's `args`.
+        attr_reader node: Node
+
+        def self.new: (node: Node) -> instance
+                    | (Node node) -> instance
+
+        # Reads an argument from its JSON object.
+        #
+        # - `node`: Node, one entry of a command's `args`.
+        def initialize: (Node node) -> void
+
+        # The argument's name in the spec, such as `"run"`.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["watch"])&.args&.first&.name # => "run"
+        # ```
+        def name: () -> String
+
+        # Whether the command can't run without it.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["watch"])&.args&.first&.required? # => true
+        # ```
+        def required?: () -> bool
+
+        # Whether it takes more than one word.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["watch"])&.args&.first&.repeatable? # => false
+        # ```
+        def repeatable?: () -> bool
+
+        # The one-line description, or `nil` when the spec has none.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["watch"])&.args&.first&.help&.start_with?("The run") # => true
+        # ```
+        def help: () -> String?
+
+        # The argument as a usage line writes it: `<name>` when required,
+        # `[name]` when optional, and `...` after the name when it repeats.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["download"])&.args&.map(&:to_s) # => ["<run>", "[pattern...]"]
+        # ```
+        def to_s: () -> String
+      end
+    end
+  end
+end

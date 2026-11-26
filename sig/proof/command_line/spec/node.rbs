@@ -1,0 +1,147 @@
+module Proof
+  module CommandLine
+    class Spec
+      # The JSON type that `usage generate json` writes.
+      type json = String | Integer | Float | bool | nil | Array[json] | Hash[String, json]
+
+      # Anything that builds a value from one object of the spec's JSON, as
+      # each class under `Proof::CommandLine::Spec` does with `new`.
+      interface _Reader[T]
+        # Builds a value from `node`.
+        def new: (Node node) -> T
+      end
+
+      # One object of the spec's JSON, read with the type each key has.
+      #
+      # `usage generate json` writes the spec as JSON, and Ruby reads JSON
+      # into values of no known type. Left that way, every field a reader
+      # takes from it is a guess, and a field of the wrong type fails far from
+      # where it was read.
+      #
+      # This class wraps one JSON object and answers each question with a
+      # value of one type: a key that is absent, or holds another type, gives
+      # `nil`, an empty array, `0`, or `false`.
+      #
+      # Use it inside `Proof::CommandLine::Spec` to read the JSON into typed
+      # values.
+      #
+      # ## Examples
+      #
+      # ```ruby
+      # node = Proof::CommandLine::Spec::Node.new(JSON.parse('{"name": "run", "args": [{"name": "task"}]}'))
+      # node.text("name") # => "run"
+      # node.text("help") # => nil
+      # ```
+      class Node < Data
+        # The JSON object, as `JSON.parse` reads it.
+        attr_reader value: Hash[String, json]
+
+        def self.new: (value: Hash[String, json]) -> instance
+                    | (Hash[String, json] value) -> instance
+
+        # Wraps `value`, one JSON object.
+        #
+        # - `value`: Hash, the object as `JSON.parse` reads it.
+        def initialize: (Hash[String, json] value) -> void
+
+        # The String under `key`, or `nil` when `key` is absent or holds
+        # another type.
+        #
+        # - `key`: String, the key to read.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec::Node.new(JSON.parse('{"help": "Run a task"}')).text("help") # => "Run a task"
+        # ```
+        def text: (String key) -> String?
+
+        # The Strings in the Array under `key`, in order, or an empty Array
+        # when `key` is absent or holds another type. Items that aren't
+        # Strings are left out.
+        #
+        # - `key`: String, the key to read.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec::Node.new(JSON.parse('{"short": ["q"]}')).texts("short") # => ["q"]
+        # Proof::CommandLine::Spec::Node.new({}).texts("short") # => []
+        # ```
+        def texts: (String key) -> Array[String]
+
+        # The Integer under `key`, or `0` when `key` is absent or holds
+        # another type.
+        #
+        # - `key`: String, the key to read.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec::Node.new(JSON.parse('{"code": 75}')).whole_number("code") # => 75
+        # ```
+        def whole_number: (String key) -> Integer
+
+        # Whether `key` holds `true`. An absent key, `false`, and any other
+        # value answer `false`.
+        #
+        # - `key`: String, the key to read.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec::Node.new(JSON.parse('{"var": true}')).true?("var") # => true
+        # Proof::CommandLine::Spec::Node.new({}).true?("var") # => false
+        # ```
+        def true?: (String key) -> bool
+
+        # Whether `key` holds `false`. An absent key, `true`, and any other
+        # value answer `false`, so this tells a key set to `false` from one
+        # that is left out.
+        #
+        # - `key`: String, the key to read.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec::Node.new(JSON.parse('{"strict": false}')).false?("strict") # => true
+        # Proof::CommandLine::Spec::Node.new({}).false?("strict") # => false
+        # ```
+        def false?: (String key) -> bool
+
+        # The object under `key`, or `nil` when `key` is absent or doesn't
+        # hold an object.
+        #
+        # - `key`: String, the key to read.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec::Node.new(JSON.parse('{"arg": {"name": "os"}}')).node("arg")&.text("name") # => "os"
+        # ```
+        def node: (String key) -> Node?
+
+        # Builds a value with `reader` from each object in the Array under
+        # `key`, in order, and answers them, or an empty Array when `key` is
+        # absent or holds another type. Items that aren't objects are left out.
+        #
+        # - `key`: String, the key to read.
+        # - `reader`: a class that takes a Node, such as `Proof::CommandLine::Spec::Flag`.
+        #
+        # ```ruby
+        # node = Proof::CommandLine::Spec::Node.new(JSON.parse('{"flags": [{"name": "json"}, {"name": "quiet"}]}'))
+        # node.read_all("flags", Proof::CommandLine::Spec::Flag).map(&:name) # => ["json", "quiet"]
+        # ```
+        def read_all: [T] (String key, _Reader[T] reader) -> Array[T]
+
+        # Builds a value with `reader` from each object among the values of the
+        # object under `key`, in the order the JSON gives them, and answers
+        # them, or an empty Array when `key` is absent or doesn't hold an
+        # object. `usage` keys each subcommand by its name.
+        #
+        # - `key`: String, the key to read.
+        # - `reader`: a class that takes a Node, such as `Proof::CommandLine::Spec::Command`.
+        #
+        # ```ruby
+        # node = Proof::CommandLine::Spec::Node.new(JSON.parse('{"subcommands": {"setup": {"name": "setup"}}}'))
+        # node.read_members("subcommands", Proof::CommandLine::Spec::Command).map(&:name) # => ["setup"]
+        # ```
+        def read_members: [T] (String key, _Reader[T] reader) -> Array[T]
+
+        private
+
+        def list: (String key) -> Array[json]
+
+        def object: (String key) -> Hash[String, json]
+      end
+    end
+  end
+end

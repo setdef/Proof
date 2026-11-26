@@ -1,0 +1,15 @@
+module Proof
+  # Turns the words typed after `proof` into a value for each command.
+  #
+  # The command's interface is `proof.usage.kdl`, and the words a person or an
+  # agent types come in as a list of strings. Every use case would have to
+  # read flags, spell-check them, and refuse a mistake the same way, and one
+  # that read them differently would accept a command line the spec refuses.
+  #
+  # This module reads the words once. It reads each command's flags from the
+  # spec, hands back a typed value for the command, and raises a mistake that
+  # says what is wrong. It starts no run, reads no file, and makes no network
+  # call.
+  module CommandLine
+  end
+end

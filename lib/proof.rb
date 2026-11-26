@@ -2,6 +2,7 @@
 
 require "proof/domain"
 
+require_relative("proof/command_line")
 require_relative("proof/git")
 require_relative("proof/version")
 

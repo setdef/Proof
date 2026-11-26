@@ -1,0 +1,148 @@
+module Proof
+  module CommandLine
+    class Spec
+      # One command of `proof`, such as `run` or `runner setup`, as the spec describes it.
+      #
+      # Parsing a command line, spell-checking a flag, and printing help all
+      # start from the same questions: which flags does this command have,
+      # which arguments, and which subcommands. A copy kept for each of them
+      # would drift.
+      #
+      # This class answers from the spec's JSON: a command's path, its text, and everything it takes.
+      #
+      # Use it to find a command's subcommand by name and to list the flags that are its own and the ones every command has.
+      #
+      # ## Examples
+      #
+      # ```ruby
+      # server = Proof::CommandLine::Spec.load.command(["server"])
+      # server&.subcommands&.map(&:name) # => ["setup", "upgrade", "uninstall"]
+      # server&.subcommand_required? # => true
+      # ```
+      class Command < Data
+        # The JSON object of the command, as `usage generate json` writes it.
+        attr_reader node: Node
+
+        def self.new: (node: Node) -> instance
+                    | (Node node) -> instance
+
+        # Reads a command, and its subcommands as they are asked for, from its JSON object.
+        #
+        # - `node`: Node, a command's object.
+        def initialize: (Node node) -> void
+
+        # The command's name, the last word of its path.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["runner", "setup"])&.name # => "setup"
+        # ```
+        def name: () -> String
+
+        # The words that name the command, such as `["runner", "setup"]`.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["runner", "setup"])&.path # => ["runner", "setup"]
+        # ```
+        def path: () -> Array[String]
+
+        # The one-line description, or `nil` when the spec has none.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["logout"])&.help&.start_with?("Sign out") # => true
+        # ```
+        def help: () -> String?
+
+        # The longer description, or `nil` when the spec has none.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["logout"])&.help_long # => nil
+        # ```
+        def help_long: () -> String?
+
+        # The arguments, in the order the command takes them.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["run"])&.args&.map(&:name) # => ["task", "args"]
+        # ```
+        def args: () -> Array[Arg]
+
+        # The flags the spec lists under the command. On the program itself these
+        # are the global flags.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["status"])&.flags&.map(&:name) # => ["json"]
+        # ```
+        def flags: () -> Array[Flag]
+
+        # The subcommands, in the spec's order.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["hook"])&.subcommands&.map(&:name) # => ["install", "uninstall"]
+        # ```
+        def subcommands: () -> Array[Command]
+
+        # The sets of which the command takes exactly one.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["status"])&.groups # => []
+        # ```
+        def groups: () -> Array[Group]
+
+        # Whether the command can't run without one of its subcommands.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["hook"])&.subcommand_required? # => true
+        # ```
+        def subcommand_required?: () -> bool
+
+        # The command's examples.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["status"])&.examples&.map(&:code) # => ["proof status"]
+        # ```
+        def examples: () -> Array[Example]
+
+        # The subcommand named `word`, or `nil` when the command has none by
+        # that name.
+        #
+        # - `word`: String, as typed.
+        #
+        # ```ruby
+        # hook = Proof::CommandLine::Spec.load.command(["hook"])
+        # hook&.subcommand("install")&.path # => ["hook", "install"]
+        # hook&.subcommand("run") # => nil
+        # ```
+        def subcommand: (String word) -> Command?
+
+        # The command that the words in `words` name, starting from this
+        # command, or `nil` when no command has that path. No words name this
+        # command itself.
+        #
+        # - `words`: Array of String, such as `["setup"]`.
+        #
+        # ```ruby
+        # runner = Proof::CommandLine::Spec.load.command(["runner"])
+        # runner&.follow(["setup"])&.path # => ["runner", "setup"]
+        # runner&.follow(["setup", "nope"]) # => nil
+        # ```
+        def follow: (Array[String] words) -> Command?
+
+        # The flags only this command has, in the spec's order. The global flags,
+        # such as `--quiet`, are left out.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.command(["status"])&.own_flags&.map(&:name) # => ["json"]
+        # ```
+        def own_flags: () -> Array[Flag]
+
+        # The flags that work on every command, in the spec's order. Only the
+        # program itself, `Proof::CommandLine::Spec#root`, lists them.
+        #
+        # ```ruby
+        # Proof::CommandLine::Spec.load.root.global_flags.map(&:name) # => ["no-color", "no-input", "quiet", "debug"]
+        # ```
+        def global_flags: () -> Array[Flag]
+      end
+    end
+  end
+end
