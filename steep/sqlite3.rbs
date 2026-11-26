@@ -8,10 +8,9 @@ module SQLite3
   end
 
   class Database
-    # Calls the block each time SQLite finds the file locked, with the number
-    # of times it has been called for this lock. SQLite tries again while the
-    # block gives `true`, and gives up with a busy error when it gives `false`.
-    def busy_handler: () { (Integer attempts) -> boolish } -> void
+    # Makes SQLite wait up to `milliseconds` for a locked file, sleeping in
+    # Ruby between tries, and give up with a busy error after that.
+    def busy_handler_timeout=: (Integer milliseconds) -> Integer
 
     # The journal mode now, such as `"wal"`.
     def journal_mode: () -> String

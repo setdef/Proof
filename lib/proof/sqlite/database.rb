@@ -10,11 +10,8 @@ module Proof
       MIGRATIONS = File.join(__dir__.to_s, "migrations")
       ON_CONNECT = lambda do |connection|
         # A connection waits for the file's lock by sleeping in Ruby, so a thread or fiber that waits lets others run.
-        # SQLite's own wait sleeps inside C and holds every other thread and fiber.
-        connection.busy_handler do |attempts|
-          sleep(0.005)
-          attempts < 1000
-        end
+        # SQLite's own wait, `busy_timeout=`, sleeps inside C and holds every other thread and fiber.
+        connection.busy_handler_timeout = 5000
         write_ahead(connection)
       end
       WRITE_AHEAD_ATTEMPTS = 200

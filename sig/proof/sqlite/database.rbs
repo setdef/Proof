@@ -8,11 +8,11 @@ module Proof
     #
     # This module opens the file with Sequel's `fiber_concurrency` extension, so
     # each fiber has a connection of its own, and with a busy handler that
-    # sleeps in Ruby, so a thread or fiber that waits for the write lock lets
-    # the others run. It puts the file in write-ahead mode, so a read doesn't
-    # wait for a write. It runs the migrations under the file's write lock, so two
-    # processes that open a new file together migrate it once, and builds the ROM
-    # container.
+    # sleeps in Ruby for up to 5 seconds, so a thread or fiber that waits for
+    # the write lock lets the others run. It puts the file in write-ahead mode,
+    # so a read doesn't wait for a write. It runs the migrations under the
+    # file's write lock, so two processes that open a new file together migrate
+    # it once, and builds the ROM container.
     #
     # Use it through `Proof::Sqlite::Runs`.
     module Database
