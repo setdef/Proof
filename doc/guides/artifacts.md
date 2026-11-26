@@ -68,3 +68,5 @@ The run finds it at `$PROOF_INPUTS/files/large-sample.db`.
 ## How long artifacts last
 
 The server keeps artifacts for 7 days, and at most 16 GB from one run, unless the [pool file](../reference/pool-file.md) says otherwise. After that, `proof download` says when they were deleted. Download what you want to keep.
+
+The server checks that limit and its free space when a run starts, and reserves no space for the run. Two runs that each fit can together fill the server's disk, and the second then fails when its artifacts arrive.

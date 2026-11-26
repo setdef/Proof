@@ -45,7 +45,7 @@ What the server must guarantee, and the traps known so far. How to meet each req
 - **A run whose command exited 0 but whose artifacts couldn't be kept is `failed`, never `succeeded`.** A pass is reported only for work Proof finished.
 - Refuse file paths that are absolute or contain `..`, and check names that differ only in case, which collide on Windows and macOS.
 - Enforce `limits artifacts` per run, and keep free space on the server's disk: a run whose artifacts would fill it fails, rather than the server.
-- Before a run starts, it must already be known whether the server will accept its artifacts, so a run never does all its work to fail at the end.
+- When a run starts, check `limits artifacts` and the server's free space. Reserve no space: reserving it would make the server account for space across runs, for little gain. Two runs that each fit can together fill the disk, and the second then fails when its artifacts arrive, as the previous requirement allows.
 
 ## Tokens and codes
 
