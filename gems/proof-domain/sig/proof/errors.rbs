@@ -102,6 +102,11 @@ module Proof
   class InvalidSizeError < Error
   end
 
+  # Raised when a retention value isn't a `Proof::Duration` of a whole number
+  # of days.
+  class InvalidRetentionError < Error
+  end
+
   # Raised when a source of randomness answers with anything but a whole
   # number from 0 up to, and not including, the limit it was asked for.
   class InvalidRandomSourceError < Error

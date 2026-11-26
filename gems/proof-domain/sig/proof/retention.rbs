@@ -1,0 +1,69 @@
+module Proof
+  # How long the server keeps what each run leaves, as the pool file's
+  # `retention` node gives it.
+  #
+  # A run leaves a record, its output, and its artifacts, and each outgrows the
+  # last in cost. Kept forever, they fill the server's disk. Kept by one rule,
+  # the output that `proof logs` prints would go as soon as the record does.
+  #
+  # This class holds three durations, each a whole number of days: how long the
+  # server keeps a run's record, how long its whole output, and how long its
+  # artifacts. A value that isn't given keeps its default: `"90d"` for the
+  # record, `"14d"` for the output, and `"7d"` for the artifacts.
+  #
+  # Use it as what the reader of the pool file builds from `retention`.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # retention = Proof::Retention.new
+  # [retention.runs, retention.output, retention.artifacts].map { |keeps| keeps.seconds / 86_400 } # => [90, 14, 7]
+  # ```
+  #
+  # A value that is given replaces its default, and the others keep theirs:
+  #
+  # ```ruby
+  # month = Proof::Duration.read("30d", units: [:d], name: "retention output")
+  # Proof::Retention.new(output: month).output.seconds / 86_400 # => 30
+  # Proof::Retention.new(output: month).runs.seconds / 86_400 # => 90
+  # ```
+  #
+  # A duration that is not a whole number of days is refused:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidRetentionError
+  # Proof::Retention.new(runs: Proof::Duration.read("90m", units: [:m], name: "runs"))
+  # ```
+  class Retention < Data
+    # For each member, the message when its value breaks the rule, and the rule.
+    RULES: Hash[Symbol, [String, MemberCheck::_Rule]]
+
+    # How long the server keeps a run's record, a `Proof::Duration` of whole
+    # days.
+    attr_reader runs: Duration
+
+    # How long the server keeps a run's whole output, a `Proof::Duration` of
+    # whole days.
+    attr_reader output: Duration
+
+    # How long the server keeps a run's artifacts, a `Proof::Duration` of whole
+    # days.
+    attr_reader artifacts: Duration
+
+    def self.new: (?runs: Duration, ?output: Duration, ?artifacts: Duration) -> instance
+                | (?Duration runs, ?Duration output, ?Duration artifacts) -> instance
+
+    # Builds the retention, and raises `Proof::InvalidRetentionError` unless
+    # each value is a `Proof::Duration` of a whole number of days. A value left
+    # out keeps its default.
+    #
+    # - `runs`: Duration, defaults to 90 days.
+    # - `output`: Duration, defaults to 14 days.
+    # - `artifacts`: Duration, defaults to 7 days.
+    #
+    # ```ruby
+    # Proof::Retention.new == Proof::Retention.new(runs: Proof::Duration.new(seconds: 90 * 86_400)) # => true
+    # ```
+    def initialize: (?runs: Duration, ?output: Duration, ?artifacts: Duration) -> void
+  end
+end
