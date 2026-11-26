@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+# The gate before a push: every check CI runs, all at once, through mise so the
+# tools are the ones mise.toml pins. Run it as `bin/ci` with BUNDLE_PATH set to
+# a folder outside the repository. RuboCop and REUSE read every file under the
+# repository, so gems installed inside it would fail the gate.
+
+root = File.realpath(File.expand_path("..", __dir__))
+
+# The real path of +path+, which may not exist yet, so a link into the
+# repository can't hide a bundle inside it.
+resolve = lambda do |path|
+  File.realpath(path)
+rescue SystemCallError
+  File.join(resolve.call(File.dirname(path)), File.basename(path))
+end
+
+bundle_path = ENV.fetch("BUNDLE_PATH", "")
+abort(<<~MESSAGE) if bundle_path.empty?
+  bin/ci: BUNDLE_PATH is not set.
+  Set it to a folder outside the repository, for example BUNDLE_PATH=$HOME/.cache/proof-bundle, and run bin/ci again.
+MESSAGE
+
+bundle = resolve.call(File.expand_path(bundle_path, root))
+abort(<<~MESSAGE) if bundle == root || bundle.start_with?("#{root}#{File::SEPARATOR}")
+  bin/ci: BUNDLE_PATH is inside the repository, where RuboCop and REUSE would read the gems.
+  Set it to a folder outside the repository, for example BUNDLE_PATH=$HOME/.cache/proof-bundle, and run bin/ci again.
+MESSAGE
+
+begin
+  exec([["MISE_TRUSTED_CONFIG_PATHS", root]].to_h, "mise", "exec", "--", "bundle", "exec", "rake", chdir: root)
+rescue Errno::ENOENT
+  abort("bin/ci: mise is not installed. Install it from https://mise.jdx.dev, then run bin/ci again.")
+end
