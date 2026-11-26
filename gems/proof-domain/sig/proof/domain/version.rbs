@@ -1,0 +1,17 @@
+module Proof
+  # The domain gem: the values and rules that Proof's command, server, and
+  # runner share.
+  #
+  # Each of the three needs the same ideas, such as what a run's ID looks like
+  # and how one amount of resources fits within another. Written three times,
+  # they would drift apart. This gem holds them once, as values that check
+  # their own rules when you build them, so an invalid value can't exist.
+  #
+  # It loads nothing but Ruby's standard library, and nothing in it reaches
+  # outside the process: the time and the randomness come in as arguments.
+  # `require "proof/domain"` loads all of it.
+  module Domain
+    # The version of the domain gem.
+    VERSION: String
+  end
+end

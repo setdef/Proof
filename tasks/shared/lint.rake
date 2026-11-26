@@ -20,7 +20,7 @@ task :rubycritic do
   FileUtils.rm_f(report)
   score_ok = system(
     "bundle exec rubycritic --no-browser --format json --path #{RUBYCRITIC_REPORT_DIR} " \
-      "--minimum-score #{RUBYCRITIC_MINIMUM_SCORE} lib sig"
+      "--minimum-score #{RUBYCRITIC_MINIMUM_SCORE} lib sig gems/proof-domain/lib gems/proof-domain/sig"
   )
   abort("RubyCritic wrote no report.") unless File.exist?(report)
 
@@ -29,7 +29,7 @@ task :rubycritic do
   abort("RubyCritic's score is below #{RUBYCRITIC_MINIMUM_SCORE}.") unless score_ok
 end
 
-Inch::Rake::Suggest.new("doc:suggest", "lib/**/*.rb", "sig/**/*.rbs") do |suggest|
+Inch::Rake::Suggest.new("doc:suggest", "{lib,gems/*/lib}/**/*.rb", "{sig,gems/*/sig}/**/*.rbs") do |suggest|
   suggest.args << ""
 end
 

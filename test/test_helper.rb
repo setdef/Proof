@@ -7,6 +7,7 @@ SimpleCov.start do
   # A deprecated SimpleCov setting raises instead of warning.
   deprecations(:raise)
   cover("lib/**/*.rb")
+  cover("gems/*/lib/**/*.rb")
   cover("tasks/critic_faults.rb")
   cover("tasks/ruby_doc_comments.rb")
   enable_coverage(:branch)

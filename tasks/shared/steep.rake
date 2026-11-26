@@ -13,7 +13,7 @@ namespace :steep do
     exceptions = File.expand_path("../rbs_exceptions.rb", __dir__)
     abort("tasks/rbs_exceptions.rb missing — re-scaffold to create it") unless File.exist?(exceptions)
     Lint.load(exceptions).enforce!(
-      glob: "sig/**/*.rbs",
+      glob: "{sig,gems/*/sig}/**/*.rbs",
       pattern: /\buntyped\b/,
       reject_pattern: /^\s*#/,
       violation_name: "'untyped' in RBS files"

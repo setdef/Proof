@@ -3,6 +3,11 @@ PATH
   specs:
     proof (0.1.0)
 
+PATH
+  remote: gems/proof-domain
+  specs:
+    proof-domain (0.1.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -262,6 +267,7 @@ DEPENDENCIES
   minitest-mock (~> 5.27)
   ostruct (~> 0.6.3)
   proof!
+  proof-domain (~> 0.1)!
   rake (~> 13.0)
   rdoc (~> 8.0)
   rubocop (~> 1.21)
@@ -326,6 +332,7 @@ CHECKSUMS
   prettyprint (0.2.1) sha256=d555d57ea6d7cf001d4774b693546a6bd88bec1e778ddffb5c60b68ceec4b7d4
   prism (2.1.0) sha256=1c0a7c6dea0e93183390fb123f007564dbe663198e2f86ad87204151147601f3
   proof (0.1.0)
+  proof-domain (0.1.0)
   pry (0.16.1) sha256=d92d82c86e7f2dc34beec6d2892d5cf5ea517eea22eed3ceabb38ee62a98accc
   public_suffix (7.0.5) sha256=1a8bb08f1bbea19228d3bed6e5ed908d1cb4f7c2726d18bd9cadf60bc676f623
   racc (1.8.1) sha256=4a7f6929691dbec8b5209a0b373bc2614882b55fc5d2e447a21aaa691303d62f

@@ -11,7 +11,7 @@ task test: "test:ruby"
 namespace :test do
   # Create a specific Minitest task for Ruby core tests
   Minitest::TestTask.create(:core) do |t|
-    t.test_globs = ["test/**/*.rb"]
+    t.test_globs = ["test/**/*.rb", "gems/*/test/**/*_test.rb"]
   end
 
   desc "Run all Ruby tests"

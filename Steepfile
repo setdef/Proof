@@ -18,6 +18,15 @@ target :lib do
   library "erb"
 end
 
+# The domain gem is checked alone, with only its own signatures, so a type
+# that names anything outside it is an error.
+target :domain do
+  signature "gems/proof-domain/sig"
+  check "gems/proof-domain/lib"
+
+  configure_code_diagnostics(Steep::Diagnostic::Ruby.all_error)
+end
+
 target :tasks do
   signature "tasks/sig"
   check "tasks/ruby_doc_comments.rb"

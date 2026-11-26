@@ -5,7 +5,7 @@ require "rdoc/task"
 RDoc::Task.new do |rdoc|
   rdoc.rdoc_dir = ENV.fetch("RDOC_OUTPUT", "tmp/rdoc")
   # The documentation lives in sig/**/*.rbs, which RDoc reads only as input.
-  rdoc.rdoc_files.include("lib/**/*.rb", "sig/**/*.rbs")
+  rdoc.rdoc_files.include("lib/**/*.rb", "sig/**/*.rbs", "gems/*/lib/**/*.rb", "gems/*/sig/**/*.rbs")
 end
 
 # Import shared quality tasks (owned by ruby_quality) plus per-repo tasks.
