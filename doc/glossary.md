@@ -213,13 +213,13 @@ The line `proof` writes to standard error when a run ends, with the run's exit s
 
 What the **server** keeps of a run apart from its **output** and **artifacts**.
 
-- Elsewhere: Slurm calls the same thing an accounting record, and HTCondor a job's entry in its history. In Kubernetes, an object is a "record of intent", a desired state, where Proof's record is what the server kept after the run.
+- Elsewhere: Slurm calls the same thing an accounting record, and HTCondor a job's entry in its history. In Kubernetes, an object is a "record of intent", a desired state, where Proof's record is what the server keeps of a run while it goes on and after it ends.
 
 ### invocation
 
 What a **runner** needs to start a run's command that the **record** never keeps: the task's arguments, a script's text, the run's **inputs**.
 
-- Elsewhere: Bazel's remote execution API calls what a worker needs an action, with a command's arguments and its input files. In Bazel, an invocation is one run of the `bazel` command, which is a **run** in Proof.
+- Elsewhere: Bazel's remote execution API calls what a worker needs an action, with a command's arguments and its input files. In Bazel, an invocation is one use of the `bazel` command, which Proof has no word for.
 
 ### follow
 
