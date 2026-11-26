@@ -184,7 +184,9 @@ A run ID's last five characters, which work wherever Proof asks for a run's ID.
 
 ### result line
 
-The last line of a run's output from `proof`, with `key=value` fields that are only ever added to.
+The line `proof` writes to standard error when a run ends, with the run's exit status, its full ID, and other `key=value` fields. Fields are only ever added to it, never renamed or removed.
+
+- Don't say: output, which means what the run's command prints.
 
 ### record
 
