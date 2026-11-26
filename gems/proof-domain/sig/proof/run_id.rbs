@@ -103,7 +103,14 @@ module Proof
     # ```
     def identified_by?: (String text) -> bool
 
-    # The full ID, such as `"20261125-0336-m3d8q"`.
+    # The full ID, such as `"20261125-0336-m3d8q"`. The year always has four
+    # digits, so the year 999 writes as `0999`.
+    #
+    # ```ruby
+    # id = Proof::RunId.new(minute: Time.utc(2026, 11, 25, 3, 36), characters: "m3d8q")
+    # id.to_s # => "20261125-0336-m3d8q"
+    # Proof::RunId.new(minute: Time.utc(999, 1, 1), characters: "m3d8q").to_s # => "09990101-0000-m3d8q"
+    # ```
     def to_s: () -> String
 
     private
