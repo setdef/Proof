@@ -8,6 +8,13 @@ module Proof
       # Writes several one-letter flags together as separate flags.
       def self.expand: (String token) -> Array[String]
 
+      # The name of the flag that OptionParser refused, as the person typed it.
+      #
+      # `flag` is what OptionParser gives for the refused flag. A long flag with a value is named without the value:
+      # `--os=linux` is `--os`. `-q=1` expands to `-q`, `-=`, and `-1`, so OptionParser refuses `-=`, and the name is
+      # the word among `tokens` that expanded to it, `-q=1`.
+      def self.named: (String flag, Array[String] tokens) -> String
+
       # Whether `token` is several one-letter flags written together, such as `-qd`, each among `switches`.
       def self.cluster?: (String token, Array[String] switches) -> bool
     end

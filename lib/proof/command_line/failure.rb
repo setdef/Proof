@@ -10,8 +10,8 @@ module Proof
         @switches = flags.flat_map(&:switches)
       end
 
-      def message(error)
-        switch = error.args.first.to_s.split("=").first.to_s
+      def message(error, tokens)
+        switch = Tokens.named(error.args.first.to_s, tokens)
         case error
         when OptionParser::MissingArgument then @messages.missing_value(switch)
         when OptionParser::NeedlessArgument then @messages.needless_value(switch)

@@ -20,7 +20,7 @@ module Proof
         words = parser.permute(tokens.flat_map { |token| Tokens.expand(token) })
         [@values, words]
       rescue OptionParser::ParseError => e
-        raise(Mistake, Failure.new(@messages, @flags).message(e))
+        raise(Mistake, Failure.new(@messages, @flags).message(e, tokens))
       end
 
       private def parser

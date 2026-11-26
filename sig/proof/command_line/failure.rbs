@@ -9,7 +9,10 @@ module Proof
       def initialize: (Messages messages, Array[Spec::Flag] flags) -> void
 
       # The line for the flag that OptionParser refused.
-      def message: (OptionParser::ParseError error) -> String
+      #
+      # - `error`: OptionParser::ParseError, what OptionParser raised.
+      # - `tokens`: Array of String, the words OptionParser read, as the person typed them.
+      def message: (OptionParser::ParseError error, Array[String] tokens) -> String
     end
   end
 end

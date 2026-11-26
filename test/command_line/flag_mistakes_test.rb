@@ -44,6 +44,14 @@ class CommandLineFlagMistakesTest < Minitest::Test
     assert_equal("proof: -qx isn't a flag of proof. To list the flags, run: proof --help", mistake("-qx", "status"))
   end
 
+  # OptionParser reads -q=1 as -q, -=, and -1, and the word that was typed is what the person needs to see.
+  def test_a_cluster_of_short_flags_with_an_equals_sign_is_named_as_typed
+    assert_equal(
+      "proof: -q=1 isn't a flag of proof status. To list the flags, run: proof status --help",
+      mistake("status", "-q=1")
+    )
+  end
+
   # An abbreviation is a mistake, as OptionParser's require_exact refuses it.
   def test_an_abbreviation_of_a_flag_is_refused_with_the_flag
     assert_equal(
