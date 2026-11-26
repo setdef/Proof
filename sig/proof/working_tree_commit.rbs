@@ -7,7 +7,8 @@ module Proof
   # would leave behind what the person never asked for.
   #
   # This class builds the commit in a temporary index file, so the clone's
-  # index, branch, and `HEAD` stay exactly as they were. The temporary index
+  # index, branch, and `HEAD` stay exactly as they were, and so does every other
+  # file in its `.git`, apart from the new objects. The temporary index
   # starts as a copy of the clone's index, never empty: `git add --all` leaves
   # out a file that `.gitignore` matches, and an empty index doesn't know that
   # such a file is tracked, so it would drop it. The copy also keeps a file that

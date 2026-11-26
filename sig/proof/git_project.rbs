@@ -63,8 +63,9 @@ module Proof
     # commit it marks. Raises `Proof::PartialCloneError` when the project is a
     # partial clone, and `Proof::UnknownRevisionError` when `revision` isn't a
     # commit the project has, which includes every revision of a project with no
-    # commit yet. Text that starts with `-` is a revision to look up, never an
-    # option.
+    # commit yet. Raises `Proof::GitFailedError` when Git fails in some other way,
+    # such as when it can't read the project's configuration. Text that starts
+    # with `-` is a revision to look up, never an option.
     #
     # - `revision`: String, as a person typed it.
     #
@@ -85,10 +86,11 @@ module Proof
     # `.gitignore` matches. Its one parent is `HEAD`, and it has no parent when
     # the project has no commit yet. Making it leaves the clone's index,
     # `HEAD`, and branches exactly as they were: Git builds the tree in a
-    # temporary index file that starts from `HEAD`'s tree, or empty when there
-    # is no `HEAD`.
+    # temporary index file that starts as a copy of the clone's index file, or
+    # empty when the clone has none.
     #
-    # Raises `Proof::PartialCloneError` when the project is a partial clone.
+    # Raises `Proof::PartialCloneError` when the project is a partial clone, and
+    # `Proof::GitFailedError` when Git fails.
     #
     # ```ruby
     # require "tmpdir"
