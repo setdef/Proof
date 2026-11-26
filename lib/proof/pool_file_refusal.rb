@@ -14,26 +14,29 @@ module Proof
       property_that_is_a_child: "%<property>p is a child node, not a property. " \
         "Put it in the node's block, with every value as an argument",
       unknown_child: "a %<name>p node has no child %<child>p. %<known>s",
+      child_that_is_a_property: "%<child>p is a property, not a child node. " \
+        "Write it on the line of the node, as in %<usage>s",
       repeated_child: "%<name>p is given twice, and the first is on line %<line>d. " \
         "Give every value as arguments to one %<name>p node",
       repeated_entry: "a second %<name>s is named %<entry>p, and the first is on line %<line>d. " \
         "Each %<name>s has one entry, so merge them into one",
       shared_runner: "the runner %<runner>p is also on the host %<entry>p, whose entry starts on line %<line>d. " \
         "A runner is one operating system on one host, so list it on one",
-      missing_property: "a %<name>p node needs the property %<property>p",
-      missing_child: "a %<name>p node needs a %<child>p child",
+      missing: "a %<name>p node needs the %<kind>s %<missing>p, as in %<usage>s",
       blank_name: "%<what>s is not empty and not only spaces, not %<value>p",
     }.freeze
-    KNOWN = lambda do |names, what|
-      # Two names take "and" with no comma, and three or more take a serial comma.
-      case names.size
-      when 0 then "It has no #{what}"
-      when 1, 2 then "Its #{what} are #{names.join(' and ')}"
-      else "Its #{what} are #{names.first(names.size - 1).join(', ')}, and #{names.last}"
-      end
+    KNOWN = lambda do |names, kind|
+      # One name takes "only" and the singular, two take "and" with no comma, and three or more take a serial comma.
+      singular, plural = kind
+      return "It has no #{plural}" if names.empty?
+      return "Its only #{singular} is #{names.first}" if names.one?
+
+      "Its #{plural} are #{names.first(names.size - 1).join(', ')}#{',' if names.size > 2} and #{names.last}"
     end
+    PROPERTIES = %w[property properties].freeze
+    CHILDREN = %w[child children].freeze
     EARLIER = -> (node) { { entry: node.arguments.first, line: node.line } }
-    private_constant(:MESSAGES, :KNOWN, :EARLIER)
+    private_constant(:MESSAGES, :KNOWN, :PROPERTIES, :CHILDREN, :EARLIER)
 
     def initialize(path:)
       super(path:, error: PoolFileError, messages: MESSAGES)
@@ -47,18 +50,25 @@ module Proof
       say_of(node, :repeated_node, line: first.line)
     end
 
-    def node_arguments(node, form, count)
-      say_of(node, :node_arguments, **form.facts(count))
+    def node_arguments(node, count)
+      say_of(node, :node_arguments, **PoolFileForms.of(node).facts(count))
     end
 
-    def unknown_property(node, property, form)
-      return say(node, :property_that_is_a_child, property:) if form.children.include?(property.to_sym)
-
-      say_of(node, :unknown_property, property:, known: KNOWN.call(form.properties, "properties"))
+    def unknown_property(node, property)
+      say_of(node, :unknown_property, property:, known: KNOWN.call(PoolFileForms.of(node).properties, PROPERTIES))
     end
 
-    def unknown_child(parent, child, form)
-      say(child, :unknown_child, name: parent.name, child: child.name, known: KNOWN.call(form.children, "children"))
+    def property_that_is_a_child(node, property)
+      say(node, :property_that_is_a_child, property:)
+    end
+
+    def unknown_child(parent, child)
+      known = KNOWN.call(PoolFileForms.of(parent).children, CHILDREN)
+      say(child, :unknown_child, name: parent.name, child: child.name, known:)
+    end
+
+    def child_that_is_a_property(parent, child)
+      say(child, :child_that_is_a_property, child: child.name, usage: PoolFileForms.of(parent).usage)
     end
 
     def repeated_child(child, first)
@@ -73,12 +83,8 @@ module Proof
       say(child, :shared_runner, runner:, **EARLIER.call(host))
     end
 
-    def missing_property(node, property)
-      say_of(node, :missing_property, property:)
-    end
-
-    def missing_child(node, child)
-      say_of(node, :missing_child, child:)
+    def missing(node, kind, missing)
+      say_of(node, :missing, kind:, missing:, usage: PoolFileForms.of(node).usage)
     end
 
     def blank_name(node, what, value)

@@ -9,8 +9,8 @@ class PoolFileReaderShareTest < Minitest::Test
   USAGE = "share cpus=2 memory=\"4GB\""
   MISTAKES = [
     ["defaults {\n  share \"4GB\"\n}\n", 2, "a \"share\" node takes no arguments, as in #{USAGE}, and this one has 1"],
-    ["defaults {\n  share cpus=2\n}\n", 2, "a \"share\" node needs the property \"memory\""],
-    ["defaults {\n  share memory=\"4GB\"\n}\n", 2, "a \"share\" node needs the property \"cpus\""],
+    ["defaults {\n  share cpus=2\n}\n", 2, "a \"share\" node needs the property \"memory\", as in #{USAGE}"],
+    ["defaults {\n  share memory=\"4GB\"\n}\n", 2, "a \"share\" node needs the property \"cpus\", as in #{USAGE}"],
     [
       "defaults {\n  share cpus=2 memory=\"4GB\" gpus=1\n}\n",
       2,

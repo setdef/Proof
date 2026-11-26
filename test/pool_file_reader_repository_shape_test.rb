@@ -13,12 +13,17 @@ class PoolFileReaderRepositoryShapeTest < Minitest::Test
     [
       "repository a url=\"u\" {\n  branch trunk\n  task test\n  url \"v\"\n}\n",
       4,
-      "a \"repository\" node has no child \"url\". #{CHILDREN}",
+      "\"url\" is a property, not a child node. Write it on the line of the node, as in #{USAGE}",
+    ],
+    [
+      "repository a url=\"u\" {\n  branch trunk\n  task test\n  tag \"v\"\n}\n",
+      4,
+      "a \"repository\" node has no child \"tag\". #{CHILDREN}",
     ],
     [
       "repository a url=\"u\" tag=\"v\" #{BODY}}\n",
       1,
-      "a \"repository\" node has no property \"tag\". Its properties are url",
+      "a \"repository\" node has no property \"tag\". Its only property is url",
     ],
     [
       "repository a url=\"u\" branch=\"trunk\" #{BODY}}\n",
@@ -32,9 +37,17 @@ class PoolFileReaderRepositoryShapeTest < Minitest::Test
     ["repository a b url=\"u\" #{BODY}}\n", 1, "#{TAKES} 2"],
   ].freeze
   MISSING = [
-    ["repository a #{BODY}}\n", 1, "a \"repository\" node needs the property \"url\""],
-    ["repository a url=\"u\" {\n  task test\n}\n", 1, "a \"repository\" node needs a \"branch\" child"],
-    ["repository a url=\"u\" {\n  branch trunk\n}\n", 1, "a \"repository\" node needs a \"task\" child"],
+    ["repository a #{BODY}}\n", 1, "a \"repository\" node needs the property \"url\", as in #{USAGE}"],
+    [
+      "repository a url=\"u\" {\n  task test\n}\n",
+      1,
+      "a \"repository\" node needs the child \"branch\", as in #{USAGE}",
+    ],
+    [
+      "repository a url=\"u\" {\n  branch trunk\n}\n",
+      1,
+      "a \"repository\" node needs the child \"task\", as in #{USAGE}",
+    ],
   ].freeze
   private_constant(:USAGE, :CHILDREN, :BODY, :UNKNOWN, :TAKES, :NAMES, :MISSING)
 

@@ -41,6 +41,10 @@ module Proof
 
     def refuse_child: (KdlNode parent, KdlNode child, KdlNode? first) -> void
 
+    def refuse_stray: (KdlNode node, String property) -> void
+
+    def refuse_unknown: (KdlNode parent, KdlNode child) -> void
+
     @refusal: PoolFileRefusal
   end
 end

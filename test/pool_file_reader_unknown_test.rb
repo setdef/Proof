@@ -8,7 +8,7 @@ class PoolFileReaderUnknownTest < Minitest::Test
   include PoolFileReaderHelper
 
   UNKNOWN_PROPERTIES = [
-    ["server host=\"nuc\"\n", 1, "a \"server\" node has no property \"host\". Its properties are port"],
+    ["server host=\"nuc\"\n", 1, "a \"server\" node has no property \"host\". Its only property is port"],
     [
       "\nretention days=\"90d\"\n",
       2,
