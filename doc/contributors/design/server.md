@@ -15,6 +15,10 @@ What the server must guarantee, and the traps known so far. How to meet each req
 - Refuse a run no host could ever take before anything is sent, and name the closest host. Keep a run queued when its operating system has no runner at the moment, since hosts come back.
 - `proof status` must say what each queued run waits behind: which runs hold the host it needs, or that a person is active there, or that no runner of its operating system is connected. A run that waits a long time without saying why looks hung.
 
+## The pool file
+
+- **The pool file is KDL 2, and a file that isn't valid KDL 2 is refused.** The `kdl` gem (2.2.0) silently falls back to KDL 1 unless it is called with `version: 2`, and a reader that falls back accepts, and misreads, files Proof must refuse.
+
 ## Runs and their records
 
 - Proof never runs a run again by itself: not after its command fails or times out, and not after it is `lost`. A lost run's `proof` exits 75, and a lost build of a pushed commit shows as `lost` in `proof status`.
