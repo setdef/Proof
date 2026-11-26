@@ -50,6 +50,12 @@ module Proof
   class InvalidRandomSourceError < Error
   end
 
+  class InvalidFactError < Error
+  end
+
+  class InvalidRunError < Error
+  end
+
   class GitNotFoundError < Error
   end
 

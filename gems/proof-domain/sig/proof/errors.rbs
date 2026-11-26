@@ -95,6 +95,18 @@ module Proof
   class InvalidRandomSourceError < Error
   end
 
+  # Raised when one of a run's facts is built from a value that breaks its
+  # rule: a time that isn't a `Time`, a count that isn't a whole number in its
+  # range, a name that is empty, or a reason that isn't in its list.
+  class InvalidFactError < Error
+  end
+
+  # Raised when a run's list of facts breaks a rule about runs, such as a pass
+  # without the whole output, a second placement, or a fact after a final
+  # state. The message names the rule.
+  class InvalidRunError < Error
+  end
+
   # Raised when the computer has no `git` program Proof can run. Install Git,
   # or fix `PATH`, and run again.
   class GitNotFoundError < Error

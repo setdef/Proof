@@ -1,0 +1,35 @@
+module Proof
+  class Run
+    # The fact that the server kept a run's artifacts and sealed their
+    # manifest.
+    #
+    # A run succeeds only when Proof kept its artifacts, so a run whose command
+    # exited with 0 still waits for them. A run with no artifact patterns has
+    # an empty manifest, which is kept like any other. The manifest itself,
+    # with each file, is kept apart from the run's record.
+    #
+    # This fact records that the manifest was sealed. It comes once, after the
+    # command ended, and never with `Proof::Run::ArtifactsNotKept`.
+    #
+    # Use it to record a sealed manifest.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # Proof::Run::ArtifactsKept.new(at: Time.utc(2026, 11, 25, 3, 42)).at # => Time.utc(2026, 11, 25, 3, 42)
+    # ```
+    class ArtifactsKept < Data
+      include Fact
+
+      # The moment the server sealed the manifest.
+      attr_reader at: Time
+
+      # Builds the fact, and raises `Proof::InvalidFactError` unless `at` is a
+      # `Time`.
+      #
+      # - `at`: Time, from the server's clock.
+      def self.new: (at: Time) -> instance
+                  | (Time at) -> instance
+    end
+  end
+end

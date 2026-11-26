@@ -1,0 +1,38 @@
+module Proof
+  class Run
+    # The fact that a run succeeded: its command exited with 0, its whole output
+    # arrived, and Proof kept its artifacts.
+    #
+    # A pass is reported only for work Proof finished. A command that exited
+    # with 0 isn't enough: the server needs the whole output, and the artifacts'
+    # sealed manifest.
+    #
+    # This fact is the run's final state, `succeeded`. `Proof::Run` refuses it
+    # unless the command exited with 0, the whole output arrived, and the
+    # artifacts were kept.
+    #
+    # Use it to record a pass.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # fact = Proof::Run::Succeeded.new(at: Time.utc(2026, 11, 25, 3, 42))
+    # fact.at # => Time.utc(2026, 11, 25, 3, 42)
+    # Proof::Run::FINAL_STATES[fact.class] # => :succeeded
+    # ```
+    class Succeeded < Data
+      include Fact
+      include Final
+
+      # The moment the run reached its final state.
+      attr_reader at: Time
+
+      # Builds the fact, and raises `Proof::InvalidFactError` unless `at` is a
+      # `Time`.
+      #
+      # - `at`: Time, from the server's clock.
+      def self.new: (at: Time) -> instance
+                  | (Time at) -> instance
+    end
+  end
+end

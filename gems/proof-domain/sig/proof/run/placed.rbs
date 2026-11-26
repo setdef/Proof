@@ -1,0 +1,55 @@
+module Proof
+  class Run
+    # The fact that the server placed a run: the runner it goes to, and that
+    # runner's host.
+    #
+    # Placing a run holds the CPUs and memory it requests on a host, until the
+    # run ends. The server computes what a host has in use from its runs, so
+    # each placed run has to say which host it holds. A host found later from
+    # the runner's name alone would move with the pool file, and the run
+    # would stop holding the host it runs on.
+    #
+    # This fact names the host and the runner as the pool file names them.
+    # Each run has it once at most: the store of runs refuses a second.
+    #
+    # Use it to record a placement.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # placed = Proof::Run::Placed.new(at: Time.utc(2026, 11, 25, 3, 36), host: "pc", runner: "pc-wsl")
+    # placed.host # => "pc"
+    # placed.runner # => "pc-wsl"
+    # ```
+    #
+    # A name has at least one character:
+    #
+    # ```ruby
+    # # Wrong: raises Proof::InvalidFactError
+    # Proof::Run::Placed.new(at: Time.utc(2026, 11, 25, 3, 36), host: "", runner: "pc-wsl")
+    # ```
+    class Placed < Data
+      include Fact
+
+      # The moment the server placed the run.
+      attr_reader at: Time
+
+      # The name of the host whose CPUs and memory the run holds, frozen.
+      attr_reader host: String
+
+      # The name of the runner the run goes to, frozen.
+      attr_reader runner: String
+
+      def self.new: (at: Time, host: String, runner: String) -> instance
+                  | (Time at, String host, String runner) -> instance
+
+      # Builds the fact. Raises `Proof::InvalidFactError` unless `host` and
+      # `runner` are each a String of at least one character.
+      #
+      # - `at`: Time, from the server's clock.
+      # - `host`: String, such as `"pc"`.
+      # - `runner`: String, such as `"pc-wsl"`.
+      def initialize: (at: Time, host: String, runner: String) -> void
+    end
+  end
+end

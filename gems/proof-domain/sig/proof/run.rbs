@@ -1,0 +1,261 @@
+module Proof
+  # One run, as the server records it: its ID and its list of facts.
+  #
+  # Several actors change a run at once. The runner reports its command's end,
+  # its `proof` asks to cancel it, its time limit passes, and the server's
+  # deadline for a runner that went away passes. A record of plain fields
+  # would let a report that came late overwrite a final state, and it couldn't
+  # show afterward how a run reached `succeeded`.
+  #
+  # A run here is its list of facts, which the server only ever adds to. Its
+  # state follows from them. Building a run checks every rule about a run,
+  # including a run rebuilt from storage: a run can't succeed without its whole
+  # output and its kept artifacts, can't be placed twice, and takes no fact
+  # after a final state but one, the end of a `lost` run's processes. A list
+  # that breaks a rule raises `Proof::InvalidRunError`, so a record changed by
+  # hand fails to load instead of reporting a pass. Two runs are the same run
+  # when their IDs are equal.
+  #
+  # Use it to start a run's record, to add a fact to it, and to ask a run its
+  # state, its placement, and whether it holds its host's CPUs and memory.
+  #
+  # ## Examples
+  #
+  # Queue a run, place it, and read its state:
+  #
+  # ```ruby
+  # id = Proof::RunId.parse("20261125-0336-m3d8q")
+  # queued = Proof::Run::Queued.new(
+  #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+  #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+  # )
+  # run = Proof::Run.new(id:, facts: [queued])
+  # run.state # => :queued
+  # run = run.with_fact(Proof::Run::Placed.new(at: Time.utc(2026, 11, 25, 3, 36), host: "nuc", runner: "nuc-linux"))
+  # run.state # => :running
+  # run.holds_resources? # => true
+  # ```
+  #
+  # Run the command to a pass:
+  #
+  # ```ruby
+  # at = Time.utc(2026, 11, 25, 3, 41)
+  # run = run.with_fact(Proof::Run::CommandStarted.new(at:))
+  #   .with_fact(Proof::Run::CommandEnded.new(at:, exit_status: 0))
+  #   .with_fact(Proof::Run::OutputCompleted.new(at:, bytes: 48_213))
+  #   .with_fact(Proof::Run::ArtifactsKept.new(at:))
+  #   .with_fact(Proof::Run::Succeeded.new(at:))
+  # run.state # => :succeeded
+  # run.holds_resources? # => false
+  # run.version # => 7
+  # ```
+  #
+  # A pass without the whole output raises:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidRunError
+  # Proof::Run.new(id:, facts: [
+  #   queued, Proof::Run::Placed.new(at:, host: "nuc", runner: "nuc-linux"), Proof::Run::CommandStarted.new(at:),
+  #   Proof::Run::CommandEnded.new(at:, exit_status: 0), Proof::Run::Succeeded.new(at:),
+  # ])
+  # ```
+  class Run
+    # Each final state's fact class, with its state as a Symbol.
+    FINAL_STATES: Hash[Class, Symbol]
+
+    # The run's ID.
+    attr_reader id: RunId
+
+    # The run's facts, in the order the server recorded them, in a frozen
+    # `Array`.
+    attr_reader facts: Array[Run::Fact]
+
+    # Builds a run from its facts, and checks every rule. Raises
+    # `Proof::InvalidRunError` unless `id` is a `Proof::RunId`, `facts` is an
+    # `Array` of one or more facts, and the facts keep every rule. The
+    # message names the rule the facts break first:
+    #
+    # - The first fact is `Proof::Run::Queued`, and no other is.
+    # - The run is placed once at most.
+    # - The command starts once at most, after the run is placed, and ends
+    #   once at most, after it starts.
+    # - The whole output arrives once at most, after the command ends.
+    # - The artifacts are kept, or not kept, once at most. They are kept, or
+    #   not kept for a reason other than space, only after the command ends.
+    #   They are not kept for space only after the run is placed and before
+    #   its command starts.
+    # - A cancel is asked for once at most.
+    # - `succeeded` needs the command to have exited with 0, the whole output,
+    #   and kept artifacts.
+    # - `failed` needs the whole output and either a status other than 0 or
+    #   artifacts not kept, unless the artifacts weren't kept for space before
+    #   the command started.
+    # - `timed_out` and `out_of_memory` need the command to have started.
+    # - `canceled` needs a cancel asked for and the run placed.
+    # - `lost` needs the run placed.
+    # - Nothing follows a final state, except one `Proof::Run::ProcessesEnded`
+    #   after `Proof::Run::Lost`.
+    #
+    # - `id`: RunId, the run's ID.
+    # - `facts`: an `Array` of facts, oldest first.
+    def initialize: (id: RunId, facts: Array[Run::Fact]) -> void
+
+    # Whether `other` is a run with the same ID. A run with more facts is
+    # still the same run.
+    #
+    # - `other`: Object, anything.
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # run = Proof::Run.new(id:, facts: [queued])
+    # run == run.with_fact(Proof::Run::CancelAsked.new(at: Time.utc(2026, 11, 25, 3, 37))) # => true
+    # ```
+    def ==: (Object other) -> bool
+
+    # The same as `==`, so a run works as a `Hash` key.
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # Proof::Run.new(id:, facts: [queued]).eql?(Proof::Run.new(id:, facts: [queued])) # => true
+    # ```
+    def eql?: (Object other) -> bool
+
+    # A hash of the run's ID, equal for two runs with the same ID.
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # Proof::Run.new(id:, facts: [queued]).hash == Proof::Run.new(id:, facts: [queued]).hash # => true
+    # ```
+    def hash: () -> Integer
+
+    # The run with `fact` added after its facts. Leaves this run as it is,
+    # and raises `Proof::InvalidRunError` when the new list breaks a rule.
+    #
+    # - `fact`: one of the run's facts, such as `Proof::Run::Placed`.
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # run = Proof::Run.new(id:, facts: [queued])
+    # run.with_fact(Proof::Run::CancelAsked.new(at: Time.utc(2026, 11, 25, 3, 37))).cancel_asked? # => true
+    # run.cancel_asked? # => false
+    # ```
+    def with_fact: (Run::Fact fact) -> Run
+
+    # The number of facts, which a store compares to refuse a fact added to
+    # a run that changed since it was read.
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # Proof::Run.new(id:, facts: [queued]).version # => 1
+    # ```
+    def version: () -> Integer
+
+    # The fact that the run was queued: its queue position, its operating
+    # systems, its labels, and its resources.
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 4, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # Proof::Run.new(id:, facts: [queued]).queued.position # => 4
+    # ```
+    attr_reader queued: Run::Queued
+
+    # The fact that the run was placed, or `nil` while it is queued.
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # run = Proof::Run.new(id:, facts: [queued])
+    # run.placement # => nil
+    # run.with_fact(Proof::Run::Placed.new(at: Time.utc(2026, 11, 25, 3, 36), host: "nuc", runner: "nuc-linux")).placement.runner # => "nuc-linux"
+    # ```
+    def placement: () -> Run::Placed?
+
+    # The fact of the run's final state, such as `Proof::Run::Lost`, or `nil`
+    # before then.
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # Proof::Run.new(id:, facts: [queued]).ending # => nil
+    # ```
+    def ending: () -> Run::Final?
+
+    # The run's state: `:queued` until it is placed, `:running` from then
+    # until it ends, and then its final state.
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # at = Time.utc(2026, 11, 25, 3, 36)
+    # queued = Proof::Run::Queued.new(
+    #   at:, position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # run = Proof::Run.new(id:, facts: [queued, Proof::Run::Placed.new(at:, host: "nuc", runner: "nuc-linux")])
+    # run.with_fact(Proof::Run::Lost.new(at:)).state # => :lost
+    # ```
+    def state: () -> Symbol
+
+    # Whether someone asked for the run to be canceled. The ask changes no
+    # state: the run is `canceled` only once its runner ends it.
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # Proof::Run.new(id:, facts: [queued]).cancel_asked? # => false
+    # ```
+    def cancel_asked?: () -> bool
+
+    # Whether the run holds the CPUs and memory it requests on the host it was
+    # placed on. A `running` run holds them. A `lost` run holds them until its
+    # processes end, because it may still be going on a host the server can't
+    # reach. A queued run and a run in any other final state hold none.
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # at = Time.utc(2026, 11, 25, 3, 36)
+    # queued = Proof::Run::Queued.new(
+    #   at:, position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # lost = Proof::Run.new(id:, facts: [
+    #   queued, Proof::Run::Placed.new(at:, host: "nuc", runner: "nuc-linux"), Proof::Run::Lost.new(at:),
+    # ])
+    # lost.holds_resources? # => true
+    # lost.with_fact(Proof::Run::ProcessesEnded.new(at:)).holds_resources? # => false
+    # ```
+    def holds_resources?: () -> bool
+  end
+end

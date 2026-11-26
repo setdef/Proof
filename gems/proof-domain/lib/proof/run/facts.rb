@@ -1,0 +1,20 @@
+# frozen_string_literal: true
+
+# Every fact of a run, so a file that names the facts while it loads can load them all at once.
+require_relative("artifacts_kept")
+require_relative("artifacts_not_kept")
+require_relative("cancel_asked")
+require_relative("canceled")
+require_relative("command_ended")
+require_relative("command_started")
+require_relative("fact")
+require_relative("failed")
+require_relative("final")
+require_relative("lost")
+require_relative("out_of_memory")
+require_relative("output_completed")
+require_relative("placed")
+require_relative("processes_ended")
+require_relative("queued")
+require_relative("succeeded")
+require_relative("timed_out")

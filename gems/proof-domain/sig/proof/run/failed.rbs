@@ -1,0 +1,40 @@
+module Proof
+  class Run
+    # The fact that a run failed: its command ended with another status than 0,
+    # Proof couldn't keep its artifacts, or the server was short of space for
+    # them when the run started.
+    #
+    # A run can fail three ways: its command ends with another status, Proof
+    # can't keep its artifacts, or the server is short of space before the
+    # command starts. Output that is cut off makes a run `lost`, not `failed`.
+    #
+    # This fact is the run's final state, `failed`. `Proof::Run` refuses it
+    # unless the whole output arrived and the status wasn't 0 or the artifacts
+    # weren't kept, or the artifacts weren't kept for space before the command
+    # started.
+    #
+    # Use it to record a failure.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # fact = Proof::Run::Failed.new(at: Time.utc(2026, 11, 25, 3, 42))
+    # fact.at # => Time.utc(2026, 11, 25, 3, 42)
+    # Proof::Run::FINAL_STATES[fact.class] # => :failed
+    # ```
+    class Failed < Data
+      include Fact
+      include Final
+
+      # The moment the run reached its final state.
+      attr_reader at: Time
+
+      # Builds the fact, and raises `Proof::InvalidFactError` unless `at` is a
+      # `Time`.
+      #
+      # - `at`: Time, from the server's clock.
+      def self.new: (at: Time) -> instance
+                  | (Time at) -> instance
+    end
+  end
+end

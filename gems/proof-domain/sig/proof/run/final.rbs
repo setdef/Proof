@@ -1,0 +1,23 @@
+module Proof
+  class Run
+    # What the facts of a run's final states have in common.
+    #
+    # A final state is final: no fact follows it, but one after `lost`. Each
+    # final state is a fact class of its own, so the facts that come before
+    # it can be checked for that state.
+    #
+    # Every final state's class includes this module, and nothing else does.
+    # `Proof::Run::FINAL_STATES` gives each one's state as a Symbol.
+    #
+    # Use it to ask whether a fact ends a run.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # Proof::Run::Lost.new(at: Time.utc(2026, 11, 25, 3, 50)).is_a?(Proof::Run::Final) # => true
+    # Proof::Run::CommandStarted.new(at: Time.utc(2026, 11, 25, 3, 37)).is_a?(Proof::Run::Final) # => false
+    # ```
+    module Final : Fact
+    end
+  end
+end

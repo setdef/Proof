@@ -1,0 +1,34 @@
+module Proof
+  class Run
+    # The fact that someone asked for a run to be canceled.
+    #
+    # A run is `canceled` only once its runner has ended it, which can take
+    # the grace period after `TERM`, and the command may exit by itself first.
+    # The ask has to be durable before `proof` exits, so the runner learns of
+    # it even if `proof` is gone.
+    #
+    # This fact records the ask, once. It changes no state: the run ends
+    # `canceled` only with a later `Proof::Run::Canceled`.
+    #
+    # Use it to record a cancel the run's `proof` asked for.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # Proof::Run::CancelAsked.new(at: Time.utc(2026, 11, 25, 3, 39)).at # => Time.utc(2026, 11, 25, 3, 39)
+    # ```
+    class CancelAsked < Data
+      include Fact
+
+      # The moment the server recorded the ask.
+      attr_reader at: Time
+
+      # Builds the fact, and raises `Proof::InvalidFactError` unless `at` is a
+      # `Time`.
+      #
+      # - `at`: Time, from the server's clock.
+      def self.new: (at: Time) -> instance
+                  | (Time at) -> instance
+    end
+  end
+end

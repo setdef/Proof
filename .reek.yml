@@ -12,3 +12,9 @@ detectors:
     accept:
       - e
       - _
+  ModuleInitialize:
+    # Each fact of a run is a Data.define class, and two Data.define classes
+    # can't share a superclass. The check every fact makes of its time sits in
+    # the module they all include, which calls Data's initialize.
+    exclude:
+      - Proof::Run::Fact

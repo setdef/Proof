@@ -1,0 +1,61 @@
+module Proof
+  class Run
+    # What each final state needs before it, in one place.
+    #
+    # `Proof::Run::Rules` asks this module about a final state, so a run can't
+    # succeed without its whole output and kept artifacts, and can't be lost
+    # before it was placed. It is a private constant of `Proof::Run`.
+    module Endings
+      # For each final state's class, the name of the method that says whether
+      # the facts before it allow it, and the message when they don't.
+      NEEDS: Hash[Class, [Symbol, String]]
+
+      # The message for a fact after a final state, other than the one that
+      # may follow `lost`.
+      AFTER_FINAL: String
+
+      # The message for `fact` after a final state, or `nil` when it is the one
+      # fact that may follow one: `Proof::Run::ProcessesEnded`, once, after
+      # `Proof::Run::Lost`.
+      #
+      # - `fact`: the fact after the final state.
+      # - `earlier`: an `Array` of the facts before it, with the final state.
+      def self.after_final: (Fact fact, Array[Fact] earlier) -> String?
+
+      # The message for the final state `fact` when the facts in `earlier`
+      # don't allow it, or `nil`.
+      #
+      # - `fact`: a final state, such as `Proof::Run::Succeeded`.
+      # - `earlier`: an `Array` of the facts before it.
+      def self.broken: (Final fact, Array[Fact] earlier) -> String?
+
+      # Whether `earlier` allows `succeeded`: the command exited with 0, the
+      # whole output arrived, and the artifacts were kept.
+      def self.passed?: (Array[Fact] earlier) -> bool
+
+      # Whether `earlier` allows `failed`: the artifacts weren't kept for space
+      # before the command, or the whole output arrived and the command ended
+      # with another status than 0 or the artifacts weren't kept.
+      def self.failed?: (Array[Fact] earlier) -> bool
+
+      # Whether the artifacts weren't kept for space before the command
+      # started.
+      def self.short_of_space?: (Array[Fact] earlier) -> bool
+
+      # Whether `fact` is a command end with another status than 0, or
+      # artifacts not kept.
+      def self.short_of_a_pass?: (Fact fact) -> bool
+
+      # Whether the command started, which `timed_out` and `out_of_memory`
+      # need.
+      def self.started?: (Array[Fact] earlier) -> bool
+
+      # Whether a cancel was asked for and the run was placed, which
+      # `canceled` needs.
+      def self.canceled?: (Array[Fact] earlier) -> bool
+
+      # Whether the run was placed, which `lost` needs.
+      def self.placed?: (Array[Fact] earlier) -> bool
+    end
+  end
+end

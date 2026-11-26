@@ -1,0 +1,39 @@
+module Proof
+  class Run
+    # The fact that a run's whole output reached the server.
+    #
+    # Output that is cut off makes a run `lost`, whatever its command's status,
+    # so the server has to know it has every byte before it reports a pass.
+    # The runner sends an end marker with the number of bytes it sent.
+    #
+    # This fact records that the server's count matched the end marker, with
+    # the number of bytes. It comes once, after the command ended.
+    #
+    # Use it to record that the output is complete.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # Proof::Run::OutputCompleted.new(at: Time.utc(2026, 11, 25, 3, 41), bytes: 48_213).bytes # => 48213
+    # ```
+    class OutputCompleted < Data
+      include Fact
+
+      # The moment the server matched the end marker.
+      attr_reader at: Time
+
+      # The number of bytes of output, a whole number from 0.
+      attr_reader bytes: Integer
+
+      def self.new: (at: Time, bytes: Integer) -> instance
+                  | (Time at, Integer bytes) -> instance
+
+      # Builds the fact. Raises `Proof::InvalidFactError` unless `bytes` is an
+      # Integer from 0.
+      #
+      # - `at`: Time, from the server's clock.
+      # - `bytes`: Integer, the length of the output.
+      def initialize: (at: Time, bytes: Integer) -> void
+    end
+  end
+end

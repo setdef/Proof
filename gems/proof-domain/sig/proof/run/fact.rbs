@@ -1,0 +1,86 @@
+module Proof
+  class Run
+    # What every fact of a run has: the moment the server recorded it.
+    #
+    # A run's record is a list of facts that the server only ever adds to.
+    # Each fact needs the time it was recorded, so the record can show when
+    # the run was queued, when its command started, and when it ended. A
+    # `Time` can change its zone in place, so a fact that kept the `Time` it
+    # was given could show another hour later.
+    #
+    # Every fact class includes this module, which checks the time when you
+    # build the fact and keeps a frozen copy in UTC. Give it the time from the
+    # server's clock, never a runner's or the command's, because their clocks
+    # can differ.
+    #
+    # Use it to ask whether an object is one of a run's facts, and to read when
+    # any fact was recorded.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # started = Proof::Run::CommandStarted.new(at: Time.new(2026, 11, 25, 4, 36, 0, "+01:00"))
+    # started.at # => Time.utc(2026, 11, 25, 3, 36)
+    # started.at.frozen? # => true
+    # started.is_a?(Proof::Run::Fact) # => true
+    # ```
+    #
+    # A time that isn't a `Time` raises:
+    #
+    # ```ruby
+    # # Wrong: raises Proof::InvalidFactError
+    # Proof::Run::CommandStarted.new(at: "2026-11-25 03:36")
+    # ```
+    module Fact : Data
+      # A whole number from `minimum`, or the error. Raises
+      # `Proof::InvalidFactError` with `message`, filled in by `format` with
+      # `value`, when `value` isn't an Integer from `minimum`.
+      #
+      # - `value`: Object, what a fact was given.
+      # - `minimum`: Integer, the smallest whole number allowed.
+      # - `message`: String, with one `%p` for the value.
+      #
+      # ```ruby
+      # Proof::Run::Fact.count(3, 1, "a count from 1, not %p") # => 3
+      # ```
+      def self.count: (Object value, Integer minimum, String message) -> Integer
+
+      # A name, frozen, or the error. Raises `Proof::InvalidFactError` with
+      # `message`, filled in by `format` with `value`, when `value` isn't a
+      # String with at least one character.
+      #
+      # - `value`: Object, what a fact was given.
+      # - `message`: String, with one `%p` for the value.
+      #
+      # ```ruby
+      # Proof::Run::Fact.name_of("nuc", "a host is a name, not %p") # => "nuc"
+      # ```
+      def self.name_of: (Object value, String message) -> String
+
+      # `facts`, or the error. Raises `Proof::InvalidRunError` unless `facts`
+      # is an `Array` of one or more facts, which is what `Proof::Run` is built
+      # from.
+      #
+      # - `facts`: Object, what a run was given.
+      #
+      # ```ruby
+      # Proof::Run::Fact.listed([Proof::Run::CommandStarted.new(at: Time.utc(2026, 11, 25, 3, 37))]).size # => 1
+      # ```
+      def self.listed: (Object facts) -> Array[Fact]
+
+      # The moment the server recorded the fact, a frozen `Time` in UTC.
+      #
+      # ```ruby
+      # Proof::Run::CancelAsked.new(at: Time.utc(2026, 11, 25, 3, 40)).at # => Time.utc(2026, 11, 25, 3, 40)
+      # ```
+      def at: () -> Time
+
+      # Checks the time, and raises `Proof::InvalidFactError` unless `at` is a
+      # `Time`. Passes the fact's other members on unchanged.
+      #
+      # - `at`: Time, from the server's clock, in any zone.
+      # - `members`: the fact's other members, by keyword.
+      def initialize: (at: Time, **top members) -> void
+    end
+  end
+end

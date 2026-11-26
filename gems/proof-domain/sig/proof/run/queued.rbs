@@ -1,0 +1,79 @@
+module Proof
+  class Run
+    # The fact that a run joined the queue: where it may go, what it requests,
+    # and its place in arrival order.
+    #
+    # Placement places the earliest run among those that fit, so it needs each
+    # queued run's order, and it needs to know where each run may go. A time
+    # can't give the order, because the server's clock can step back, and two
+    # runs can arrive in one moment.
+    #
+    # This fact holds the run's queue position, a whole number from 1 that the
+    # server gives, with the operating systems the run may go to, the labels it
+    # needs a runner to have, and the CPUs and memory it requests. Every run's
+    # record starts with this fact, and only with it.
+    #
+    # Use it to start a run's record.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 7, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of("kvm"), resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # queued.position # => 7
+    # queued.os.map(&:to_s) # => ["linux"]
+    # ```
+    #
+    # A run may go to any of several operating systems, and needs at least one:
+    #
+    # ```ruby
+    # # Wrong: raises Proof::InvalidFactError
+    # Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 7, os: [],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # ```
+    class Queued < Data
+      include Fact
+
+      # The moment the server queued the run.
+      attr_reader at: Time
+
+      # The run's queue position, a whole number from 1.
+      attr_reader position: Integer
+
+      # The operating systems the run may go to, a frozen set of at least one.
+      attr_reader os: Set[OS]
+
+      # The labels a runner needs to have for the run.
+      attr_reader labels: LabelSet
+
+      # The CPUs and memory the run requests, with at least 1 CPU.
+      attr_reader resources: Resources
+
+      def self.new: (at: Time, position: Integer, os: Array[OS] | Set[OS], labels: LabelSet, resources: Resources) -> instance
+                  | (Time at, Integer position, Array[OS] | Set[OS] os, LabelSet labels, Resources resources) -> instance
+
+      # Builds the fact. Raises `Proof::InvalidFactError` unless `position` is
+      # an Integer from 1, `os` is an `Array` or `Set` of one or more
+      # `Proof::OS`, `labels` is a `Proof::LabelSet`, and `resources` is
+      # `Proof::Resources` with at least 1 CPU. An empty set of labels needs no
+      # label, and a request of 0 megabytes is allowed.
+      #
+      # - `at`: Time, from the server's clock.
+      # - `position`: Integer, the queue position.
+      # - `os`: an `Array` or `Set` of `Proof::OS`.
+      # - `labels`: LabelSet, the labels a runner needs.
+      # - `resources`: Resources, the CPUs and memory requested.
+      def initialize: (at: Time, position: Integer, os: Array[OS] | Set[OS], labels: LabelSet, resources: Resources) -> void
+
+      private
+
+      def operating_systems: (Object given) -> Set[Object]
+
+      def requested: (Object given) -> Resources
+    end
+  end
+end

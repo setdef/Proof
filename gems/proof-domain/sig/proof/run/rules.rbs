@@ -1,0 +1,40 @@
+module Proof
+  class Run
+    # The rules a run's list of facts keeps, in one place.
+    #
+    # `Proof::Run` checks these when you build a run, including a run rebuilt
+    # from storage, so a record changed behind Proof's back fails to load
+    # instead of reporting a pass. It is a private constant of `Proof::Run`.
+    module Rules
+      # The message for each rule that isn't about one fact's order, by name.
+      MESSAGES: Hash[Symbol, String]
+
+      # For each fact that comes once after another, the class that has to
+      # come before it, and the message when it doesn't.
+      ORDER: Hash[Class, [Class, String]]
+
+      # The message of the first rule `facts` breaks, or `nil` when they break
+      # none.
+      #
+      # - `facts`: an `Array` of facts, in the order they were recorded.
+      def self.broken: (Array[Fact] facts) -> String?
+
+      # The message of the rule `fact` breaks after `earlier`, or `nil`.
+      private def self.broken_by: (Fact fact, Array[Fact] earlier) -> String?
+
+      # The message of the rule `fact` breaks before any final state, or `nil`.
+      private def self.following: (Fact fact, Array[Fact] earlier) -> String?
+
+      # The message for a fact that comes once, after the fact `ORDER` names,
+      # or `nil`.
+      private def self.ordered: (Fact fact, Array[Fact] earlier) -> String?
+
+      # The message for a fact about the run's artifacts, or `nil`.
+      private def self.artifacts: (Fact fact, Array[Fact] earlier) -> String?
+
+      # The message for artifacts left unkept for space at the wrong time, or
+      # `nil`.
+      private def self.short_of_space: (Array[Fact] earlier) -> String?
+    end
+  end
+end

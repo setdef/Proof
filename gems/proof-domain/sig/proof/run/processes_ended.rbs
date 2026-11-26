@@ -1,0 +1,34 @@
+module Proof
+  class Run
+    # The fact that a `lost` run's processes ended.
+    #
+    # A run is `lost` when the server loses contact with its runner, but the
+    # run may still be going on its host. Its host's CPUs and memory stay held
+    # until the runner reports that the run's processes ended, so a host is
+    # never offered more than it has.
+    #
+    # This fact records that report. It is the one fact that may follow a
+    # final state, and only `lost`, once. It changes no state.
+    #
+    # Use it to release a lost run's hold on its host.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # Proof::Run::ProcessesEnded.new(at: Time.utc(2026, 11, 25, 3, 58)).at # => Time.utc(2026, 11, 25, 3, 58)
+    # ```
+    class ProcessesEnded < Data
+      include Fact
+
+      # The moment the server received the runner's report.
+      attr_reader at: Time
+
+      # Builds the fact, and raises `Proof::InvalidFactError` unless `at` is a
+      # `Time`.
+      #
+      # - `at`: Time, from the server's clock.
+      def self.new: (at: Time) -> instance
+                  | (Time at) -> instance
+    end
+  end
+end

@@ -1,0 +1,33 @@
+module Proof
+  class Run
+    # The fact that a run's command started.
+    #
+    # A run is `running` from its placement, but its command can start much
+    # later: after the runner fetches the code, or after a person leaves. A
+    # run's time limit starts only when its command starts, and Proof never
+    # starts a command twice.
+    #
+    # This fact marks the moment, once, after the run is placed.
+    #
+    # Use it to record that a runner started the command.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # Proof::Run::CommandStarted.new(at: Time.utc(2026, 11, 25, 3, 37)).at # => Time.utc(2026, 11, 25, 3, 37)
+    # ```
+    class CommandStarted < Data
+      include Fact
+
+      # The moment the server learned the command started.
+      attr_reader at: Time
+
+      # Builds the fact, and raises `Proof::InvalidFactError` unless `at` is a
+      # `Time`.
+      #
+      # - `at`: Time, from the server's clock.
+      def self.new: (at: Time) -> instance
+                  | (Time at) -> instance
+    end
+  end
+end

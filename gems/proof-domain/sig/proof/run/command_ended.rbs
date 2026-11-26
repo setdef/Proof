@@ -1,0 +1,82 @@
+module Proof
+  class Run
+    # The fact that a run's command ended, with the status it ended with.
+    #
+    # A pass is a command that exited with 0, so the status has to come from
+    # the command itself. A command can also end by a signal, with no exit
+    # status, and recording a signal as an exit status of 1 would hide why it
+    # ended.
+    #
+    # This fact holds either the exit status or the signal, never both. An exit
+    # status runs from 0 to 4,294,967,295, because Windows gives a process an
+    # exit code of 32 bits.
+    #
+    # Use it to record how a command ended.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # ended = Proof::Run::CommandEnded.new(at: Time.utc(2026, 11, 25, 3, 41), exit_status: 0)
+    # ended.exited_zero? # => true
+    # ended.signal # => nil
+    # ```
+    #
+    # A command ended by a signal has no exit status:
+    #
+    # ```ruby
+    # killed = Proof::Run::CommandEnded.new(at: Time.utc(2026, 11, 25, 3, 41), signal: 9)
+    # killed.exit_status # => nil
+    # killed.exited_zero? # => false
+    # ```
+    #
+    # Both at once raise:
+    #
+    # ```ruby
+    # # Wrong: raises Proof::InvalidFactError
+    # Proof::Run::CommandEnded.new(at: Time.utc(2026, 11, 25, 3, 41), exit_status: 137, signal: 9)
+    # ```
+    class CommandEnded < Data
+      include Fact
+
+      # The message for a command end with both an exit status and a signal,
+      # or neither, which `format` fills in with both.
+      ONE_WAY: String
+
+      # The largest exit status, the largest exit code Windows gives.
+      LARGEST_EXIT_STATUS: Integer
+
+      # The moment the server learned the command ended.
+      attr_reader at: Time
+
+      # The command's exit status, or `nil` when a signal ended it.
+      attr_reader exit_status: Integer?
+
+      # The signal that ended the command, or `nil` when it exited.
+      attr_reader signal: Integer?
+
+      def self.new: (at: Time, ?exit_status: Integer?, ?signal: Integer?) -> instance
+                  | (Time at, Integer? exit_status, Integer? signal) -> instance
+
+      # Builds the fact. Raises `Proof::InvalidFactError` unless exactly one of
+      # `exit_status` and `signal` is given, `exit_status` is an Integer from 0
+      # to 4,294,967,295, and `signal` is an Integer from 1.
+      #
+      # - `at`: Time, from the server's clock.
+      # - `exit_status`: Integer, or `nil` for a command a signal ended.
+      # - `signal`: Integer, or `nil` for a command that exited.
+      def initialize: (at: Time, ?exit_status: Integer?, ?signal: Integer?) -> void
+
+      # Whether the command exited with 0, which is the only status a run
+      # succeeds with.
+      #
+      # ```ruby
+      # Proof::Run::CommandEnded.new(at: Time.utc(2026, 11, 25, 3, 41), exit_status: 1).exited_zero? # => false
+      # ```
+      def exited_zero?: () -> bool
+
+      private
+
+      def status: (Object given) -> Integer
+    end
+  end
+end

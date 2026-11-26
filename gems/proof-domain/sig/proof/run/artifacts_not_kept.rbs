@@ -1,0 +1,64 @@
+module Proof
+  class Run
+    # The fact that the server couldn't keep a run's artifacts, and why.
+    #
+    # A run whose command exited with 0 but whose artifacts couldn't be kept is
+    # `failed`, never `succeeded`. One reason comes before the command starts:
+    # when the server is short of space for a run's artifacts, the run fails
+    # before its command runs.
+    #
+    # This fact holds the reason, one of `REASONS`:
+    #
+    # - `:no_match`: a pattern matched no file.
+    # - `:over_limit`: the artifacts exceeded the pool's `limits artifacts`.
+    # - `:refused_path`: a path was absolute, held `..`, or differed from
+    #   another only in case.
+    # - `:short_of_space`: the server had less free space than `limits
+    #   artifacts` when the run started.
+    #
+    # Use it to record why a run's artifacts weren't kept.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # fact = Proof::Run::ArtifactsNotKept.new(at: Time.utc(2026, 11, 25, 3, 42), reason: :no_match)
+    # fact.reason # => :no_match
+    # fact.before_command? # => false
+    # ```
+    #
+    # ```ruby
+    # # Wrong: raises Proof::InvalidFactError
+    # Proof::Run::ArtifactsNotKept.new(at: Time.utc(2026, 11, 25, 3, 42), reason: :disk_full)
+    # ```
+    class ArtifactsNotKept < Data
+      include Fact
+
+      # The reasons artifacts go unkept, as Symbols.
+      REASONS: Array[Symbol]
+
+      # The moment the server gave up on the artifacts.
+      attr_reader at: Time
+
+      # Why the artifacts weren't kept, one of `REASONS`.
+      attr_reader reason: Symbol
+
+      def self.new: (at: Time, reason: Symbol) -> instance
+                  | (Time at, Symbol reason) -> instance
+
+      # Builds the fact. Raises `Proof::InvalidFactError` unless `reason` is
+      # one of `REASONS`.
+      #
+      # - `at`: Time, from the server's clock.
+      # - `reason`: Symbol, such as `:over_limit`.
+      def initialize: (at: Time, reason: Symbol) -> void
+
+      # Whether the server found this before the run's command started, which
+      # is true only for `:short_of_space`.
+      #
+      # ```ruby
+      # Proof::Run::ArtifactsNotKept.new(at: Time.utc(2026, 11, 25, 3, 36), reason: :short_of_space).before_command? # => true
+      # ```
+      def before_command?: () -> bool
+    end
+  end
+end
