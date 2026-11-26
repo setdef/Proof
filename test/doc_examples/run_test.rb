@@ -105,4 +105,13 @@ class DocExamplesRunTest < Minitest::Test
       assert_match(%r{\Adoc/a\.md: Ruby exited with status 3 before it finished the examples:\noutput}, failures.first)
     end
   end
+
+  def test_the_failures_come_in_the_order_of_the_files
+    in_project do |root|
+      %w[c b a d].each { |name| write(root, "doc/#{name}.md", page("1 + 1 # => 3")) }
+      files = DocExamples.check(root).failures.map { |failure| failure[%r{\Adoc/(\w)\.md}, 1] }
+
+      assert_equal(%w[a b c d], files)
+    end
+  end
 end

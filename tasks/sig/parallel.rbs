@@ -1,0 +1,6 @@
+# The part of the parallel gem that the tasks use.
+module Parallel
+  def self.processor_count: () -> Integer
+
+  def self.map: [T, U] (Array[T] items, in_threads: Integer) { (T) -> U } -> Array[U]
+end

@@ -1,12 +1,14 @@
 # frozen_string_literal: true
 
+require "parallel"
 require_relative("extractor")
 require_relative("instrumenter")
 require_relative("report")
 require_relative("subprocess")
 
 module DocExamples
-  # Runs the examples of each file, one fresh Ruby process for each.
+  # Runs the examples of each file, one fresh Ruby process for each, and as many
+  # at a time as the computer has processors.
   class Runner
     # The entry that runs a block, or nil after adding the fault that keeps the
     # block from running to +faults+.
@@ -24,9 +26,12 @@ module DocExamples
       @requires = requires
     end
 
-    # The report for the files at +paths+, relative to the root.
+    # The report for the files at +paths+, relative to the root. The failures
+    # come in the order of the paths, whichever process finishes first.
     def check(paths)
-      Report.combine(paths.map { |path| check_file(path) })
+      # A thread only waits for its process, so threads cost no more than a
+      # pool of processes would.
+      Report.combine(Parallel.map(paths, in_threads: Parallel.processor_count) { |path| check_file(path) })
     end
 
     # Extracts, instruments, and runs the examples of one file.
