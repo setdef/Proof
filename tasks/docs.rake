@@ -3,6 +3,9 @@
 require_relative("doc_examples")
 require_relative("ruby_doc_comments")
 
+Rake::Task["rdoc:coverage"].clear_comments
+Rake::Task["rdoc:coverage"].comment = "Fail when a public class, module, constant, or method has no RDoc"
+
 namespace :docs do
   desc "Fail when a comment in lib sits above a definition, where RDoc would take it as documentation"
   task :placement do

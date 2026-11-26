@@ -3,7 +3,7 @@
 require_relative("lint")
 
 namespace :steep do
-  desc "Run Steep type checker"
+  desc "Type-check lib, the gems, and the tasks with Steep"
   task :check do
     sh("bundle exec steep check")
   end
@@ -21,7 +21,7 @@ namespace :steep do
   end
 end
 
-desc "Run Steep type checker (with no_untyped check)"
+desc "Type-check the code with Steep, then fail on any untyped in an .rbs file"
 task steep: %w[steep:check steep:no_untyped]
 
 namespace :lint do

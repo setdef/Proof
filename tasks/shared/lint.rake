@@ -5,6 +5,7 @@ require "rubocop/rake_task"
 require "rubycritic/rake_task"
 require_relative("../critic_faults")
 
+desc "Run RuboCop, every cop on, over the Ruby, the RBS, and the Ruby in the Markdown"
 RuboCop::RakeTask.new
 
 # The floor for RubyCritic's overall score. It may rise, never fall.
@@ -35,13 +36,13 @@ Inch::Rake::Suggest.new("doc:suggest", "{lib,gems/*/lib}/**/*.rb", "{sig,gems/*/
 end
 
 namespace :reuse do
-  desc "Run the REUSE Tool to confirm REUSE compliance"
+  desc "Fail when a file has no copyright and license that REUSE can read, in the file or in REUSE.toml"
   task :lint do
     sh("reuse lint")
   end
 end
 
-desc "Run the REUSE Tool to confirm REUSE compliance"
+desc "Run reuse:lint"
 task reuse: "reuse:lint"
 
 namespace :lint do
