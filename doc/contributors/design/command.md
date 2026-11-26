@@ -28,7 +28,7 @@ Most invocations come from coding agents, inside agent harnesses. That shapes se
 
 ## The interface and the project file
 
-- **`proof.usage.kdl` is the interface,** and no Ruby library reads a usage spec: usage 7.4.1 generates parsers only for Go and Rust, and its TypeScript and Python SDKs are wrappers that call the `usage` program. The command's own parsing can therefore drift from the spec. A test must fail when the command accepts or refuses anything the spec doesn't say.
+- **`proof.usage.kdl` is the interface,** and no Ruby library reads a usage spec: usage 7.4.1 generates parsers only for Go and Rust, and its TypeScript and Python SDKs are wrappers that call the `usage` program. The command's parsing can therefore drift from the spec. A test must fail when the command accepts or refuses anything the spec doesn't say.
 - **The project file is KDL 2, and a file that isn't valid KDL 2 is refused.** The `kdl` gem (2.2.0) silently falls back to KDL 1 unless it is called with `version: 2`, and a reader that falls back accepts, and misreads, files Proof must refuse.
 
 ## The pre-push hook
