@@ -28,8 +28,10 @@ module Proof
     # `--commit`, or the working-tree commit. The text is what the commit
     # holds, byte for byte, and never what is on disk, so a change on disk that
     # the commit lacks isn't in it. It is `nil` when the commit has no file at
-    # `path`, and also when `path` is a folder or a submodule. A file that is
-    # empty gives `""`. A symbolic link gives the text of its target's path.
+    # `path`, and also when `path` is a folder or a submodule. `path` is
+    # written as Git writes it, from the project's root, with no `./` before it
+    # and no slash after it: `".config/"`, `"."`, and `"./.config/proof.kdl"`
+    # give `nil`. A file that is empty gives `""`. A symbolic link gives the text of its target's path.
     # Raises `Proof::UnknownRevisionError` when `id` isn't a commit the project
     # has, `Proof::PartialCloneError` when the project is a partial clone, and
     # `Proof::GitFailedError` when Git fails in some other way. A `path` that

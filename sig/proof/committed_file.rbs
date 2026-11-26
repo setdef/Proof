@@ -10,9 +10,9 @@ module Proof
   # the text is what Git stores, byte for byte. A folder and a submodule at the
   # path are no file, and so is a path the commit lacks.
   #
-  # `Proof::GitProject#file_at` uses it, through `Proof::FileReading`. Make one
-  # of this class only through that method, which checks that the clone is
-  # whole and that the commit exists.
+  # `Proof::GitProject#file_at` uses it. Make one of this class only through
+  # that method, which checks that the clone is whole and that the commit
+  # exists.
   #
   # ## Examples
   #
@@ -39,12 +39,15 @@ module Proof
     def initialize: (git: Git, commit: String, path: String) -> void
 
     # The file's text, or `nil` when the commit has no file at the path, or
-    # when the path is a folder or a submodule. An empty file gives `""`. A
-    # symbolic link gives the text of its target's path. Raises
-    # `Proof::GitFailedError` when Git fails.
+    # when the path is a folder or a submodule. The path is written as Git
+    # writes it, so one with a slash after it, `"."`, or a `./` before it gives
+    # `nil`. An empty file gives `""`. A symbolic link gives the text of its
+    # target's path. Raises `Proof::GitFailedError` when Git fails.
     def text: () -> String?
 
     private
+
+    def entry: () -> Array[String]
 
     @git: Git
     @commit: String

@@ -93,6 +93,28 @@ class GitProjectFileTest < Minitest::Test
     assert_nil(Proof::GitProject.find(folder).file_at(commit, CONFIG))
   end
 
+  # A folder named with a slash after it, or as ".", is a folder that Git lists the files of, and none of those
+  # files is the one asked for, so the answer is `nil`, not the text of the first file Git lists.
+  def test_a_path_to_a_folder_gives_nil_and_not_a_file_in_it
+    folder = make_repository
+    commit = commit_file(folder, ".config/proof.kdl", "task test\n")
+
+    [".config/", ".", ".config/."].each do |path|
+      assert_nil(Proof::GitProject.find(folder).file_at(commit, path), path)
+    end
+  end
+
+  # A path is the one the commit holds, as Git writes it, so a spelling of it that Git would resolve to the file,
+  # and the project file's real path would not be, is not a file.
+  def test_a_path_that_is_not_written_as_git_writes_it_gives_nil
+    folder = make_repository
+    commit = commit_file(folder, CONFIG, "task test\n")
+
+    ["./.config/proof.kdl", ".config//proof.kdl", "sub/../.config/proof.kdl"].each do |path|
+      assert_nil(Proof::GitProject.find(folder).file_at(commit, path), path)
+    end
+  end
+
   # The text is what the commit holds, byte for byte, so a reader sees an invalid byte as it is.
   def test_the_bytes_are_returned_as_they_are
     folder = make_repository
