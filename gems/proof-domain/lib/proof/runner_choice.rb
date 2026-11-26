@@ -24,7 +24,7 @@ module Proof
     def self.emptiest_first(pair, holding)
       host, runner = pair
       free = host.free_on(runner, holding)
-      [-free.megabytes, -free.cpus, runner.name]
+      [-free.megabytes, -free.cpus, runner.name, host.name]
     end
   end
   private_constant(:RunnerChoice)

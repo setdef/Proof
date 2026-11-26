@@ -10,12 +10,13 @@ module Proof
     # `nil` when one of them could take it some time, or when none takes its
     # operating system and labels. Each pair is judged by what its host could
     # ever have free within its runner's capacity. The pair whose worst
-    # shortfall is the smallest fits the most, then the first runner by name.
+    # shortfall is the smallest fits the most, then the first runner by name,
+    # then the first host by name.
     def self.of: (Run::Queued queued, Array[Host] hosts) -> [Host, Runner]?
 
     # Of `pairs`, which can't take a run of `resources`, the one whose worst
-    # shortfall is the smallest, then the first runner by name, or `nil` when
-    # `pairs` is empty.
+    # shortfall is the smallest, then the first runner by name, then the first
+    # host by name, or `nil` when `pairs` is empty.
     def self.closest: (Array[[Host, Runner]] pairs, Resources resources) -> [Host, Runner]?
 
     # The error that refuses a run of `resources`, naming the host of `pair`

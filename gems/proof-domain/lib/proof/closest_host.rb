@@ -10,7 +10,7 @@ module Proof
 
     def self.closest(pairs, resources)
       # The pair whose worst shortfall is the smallest, so a surplus of one resource can't hide the lack of another.
-      pairs.min_by { |pair| [-worst(pair, resources), pair.last.name] }
+      pairs.min_by { |pair| [-worst(pair, resources), pair.last.name, pair.first.name] }
     end
 
     def self.refusal(pair, resources)

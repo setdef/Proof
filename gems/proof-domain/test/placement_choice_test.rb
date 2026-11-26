@@ -63,6 +63,15 @@ class PlacementChoiceTest < Minitest::Test
     assert_equal("nuc-linux", placed_on(*hosts))
   end
 
+  # Two hosts can have runners of one name, so with as much of both free the
+  # first host by name goes first, whatever order the pool lists them in.
+  def test_with_runners_of_one_name_the_first_host_by_name_goes_first
+    enqueue("aaaaa")
+    hosts = [host("pc", runner("linux", has: [8, "16GB"])), host("nuc", runner("linux", has: [8, "16GB"]))]
+
+    assert_equal("nuc", placement(*hosts).place_next&.placement&.host)
+  end
+
   # Glossary, "place": placing a run holds its CPUs and memory, so the next
   # decision sees them in use.
   def test_a_placed_run_holds_its_host_for_the_next_decision

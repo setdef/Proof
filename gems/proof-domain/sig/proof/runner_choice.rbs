@@ -18,7 +18,8 @@ module Proof
     # `nil` when it fits nowhere. Of the connected runners that take the run
     # and have its CPUs and memory free, after `holding` and the share, it is
     # the one with the most memory free, then the most CPUs, then the first
-    # runner by name, since no two runners of a pool share a name.
+    # runner by name, then the first host by name, so the choice is the same
+    # whatever order the hosts come in.
     def self.best: (Run::Queued queued, Array[Host] hosts, Array[Run] holding) -> [Host, Runner]?
 
     # Whether the run `queued` describes fits the runner of `pair` now: the
@@ -27,7 +28,7 @@ module Proof
     def self.fits?: (Run::Queued queued, [Host, Runner] pair, Array[Run] holding) -> bool
 
     # The order placement weighs `pair` in, emptiest first: most memory free,
-    # then most CPUs free, then the runner's name.
-    def self.emptiest_first: ([Host, Runner] pair, Array[Run] holding) -> [Integer, Integer, String]
+    # then most CPUs free, then the runner's name, then the host's.
+    def self.emptiest_first: ([Host, Runner] pair, Array[Run] holding) -> [Integer, Integer, String, String]
   end
 end

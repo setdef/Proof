@@ -139,6 +139,13 @@ class RefusalTest < Minitest::Test
     assert_nil(refusal_over(host("nuc", runner("nuc-linux", has: [2, "4GB"])), labels: %w[gpu]))
   end
 
+  # Two hosts can have runners of one name, and the first host by name is named.
+  def test_a_tie_between_runners_of_one_name_names_the_first_host_by_name
+    hosts = [host("pc", runner("linux", has: [4, "8GB"])), host("nuc", runner("linux", has: [4, "8GB"]))]
+
+    assert_equal("nuc", refusal_over(*hosts)&.host)
+  end
+
   # Of two hosts that fit as much, the first runner by name is named, so the
   # message is the same every time.
   def test_a_tie_names_the_first_runner_by_name
