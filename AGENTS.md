@@ -17,6 +17,8 @@ For working on Proof itself. To use Proof on another project, read `skills/proof
 
 What to build next, what 1.0 leaves out, and what is undecided: `doc/contributors/plan.md`.
 
+How Proof is built, with the libraries and layout and the options each beat: `doc/contributors/architecture.md`.
+
 ## Commands
 
 - The gate, before every commit: `MISE_TRUSTED_CONFIG_PATHS=$PWD mise exec -- bundle exec rake`, with `BUNDLE_PATH` pointing outside the repository, where RuboCop and REUSE won't read the gems. It runs the tests with 100% line and branch coverage, RuboCop with every cop on, Steep, RubyCritic, REUSE, RDoc coverage, the comment-placement check, the CLI spec's lint, and the check that both generated references match it. It must pass with zero errors and zero warnings.
