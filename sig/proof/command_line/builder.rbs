@@ -12,7 +12,7 @@ module Proof
       def initialize: (Spec spec, Spec::Command command, Values values) -> void
 
       # The command's value with the global flags.
-      def invocation: () -> Invocation
+      def parsed: () -> Parsed
 
       private
 

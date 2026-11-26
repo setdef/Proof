@@ -22,10 +22,10 @@ module Proof
     # - `argv`: Array of String, the words as the shell gave them.
     #
     # ```ruby
-    # invocation = Proof::CommandLine.parse(["-q", "run", "lint", "--", "--fix", ":::", "test"])
-    # invocation.global.quiet # => true
-    # invocation.command.tasks.map(&:name) # => ["lint", "test"]
-    # invocation.command.tasks.first&.words # => ["--fix"]
+    # parsed = Proof::CommandLine.parse(["-q", "run", "lint", "--", "--fix", ":::", "test"])
+    # parsed.global.quiet # => true
+    # parsed.command.tasks.map(&:name) # => ["lint", "test"]
+    # parsed.command.tasks.first&.words # => ["--fix"]
     # ```
     #
     # A flag after the subcommand, a flag that takes a value, and a command with
@@ -35,7 +35,7 @@ module Proof
     # Proof::CommandLine.parse(["cancel", "m3d8q"]).command.runs # => ["m3d8q"]
     # Proof::CommandLine.parse(["run", "-h"]).path # => ["run"]
     # ```
-    def self.parse: (Array[String] argv) -> (Invocation | HelpRequest)
+    def self.parse: (Array[String] argv) -> (Parsed | HelpRequest)
 
     # The help for the command at `path`, as `proof` prints it to standard
     # output when asked: what the command does, how to use it, its examples,

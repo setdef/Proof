@@ -35,8 +35,8 @@ module Proof
         @values = values
       end
 
-      def invocation
-        Invocation.new(global:, command:)
+      def parsed
+        Parsed.new(global:, command:)
       end
 
       private def global

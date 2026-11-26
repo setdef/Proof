@@ -1,6 +1,6 @@
 module Proof
   module CommandLine
-    # A command line that asks `proof` to do something: the command, and the global flags.
+    # A command line that asks `proof` to do something, parsed: the command, and the global flags.
     #
     # The use cases run a command, and the composition root decides how much to
     # print from the global flags. Passed as two loose values, a use case could
@@ -14,10 +14,10 @@ module Proof
     #
     # ```ruby
     # flags = Proof::CommandLine::GlobalFlags.new(quiet: false, debug: false, no_color: false, no_input: false)
-    # invocation = Proof::CommandLine::Invocation.new(global: flags, command: Proof::CommandLine::LogoutCommand.new)
-    # invocation.command # => Proof::CommandLine::LogoutCommand.new
+    # parsed = Proof::CommandLine::Parsed.new(global: flags, command: Proof::CommandLine::LogoutCommand.new)
+    # parsed.command # => Proof::CommandLine::LogoutCommand.new
     # ```
-    class Invocation < Data
+    class Parsed < Data
       # The global flags.
       attr_reader global: GlobalFlags
 
@@ -27,7 +27,7 @@ module Proof
       def self.new: (global: GlobalFlags, command: command) -> instance
                   | (GlobalFlags global, command command) -> instance
 
-      # Builds an invocation.
+      # Builds a parsed command line.
       #
       # - `global`: GlobalFlags, the flags that work on every command.
       # - `command`: the command's value, such as `RunCommand`.

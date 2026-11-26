@@ -14,7 +14,7 @@ module Proof
         return HelpRequest.new(path: @path) if values.help?
 
         verify(values, words, tail)
-        Builder.new(@spec, @command, values).invocation
+        Builder.new(@spec, @command, values).parsed
       end
 
       private def verify(values, words, tail)

@@ -10,7 +10,7 @@ module Proof
       def initialize: (Spec spec, Spec::Command command) -> void
 
       # Reads the command's flags and words, and answers its value or a request for help.
-      def parse: (Array[String] tokens, Array[String] tail) -> (Invocation | HelpRequest)
+      def parse: (Array[String] tokens, Array[String] tail) -> (Parsed | HelpRequest)
 
       private def verify: (Values values, Array[String] words, Array[String] tail) -> void
     end

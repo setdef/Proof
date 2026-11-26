@@ -25,7 +25,7 @@ module CommandLineHelper
   }.freeze
   public_constant(:CL, :NO_FLAGS)
 
-  # The invocation or help request that the words parse to.
+  # The parsed command line or help request that the words parse to.
   def parse(*argv)
     CL.parse(argv)
   end

@@ -3,7 +3,7 @@
 module Proof
   module CommandLine
     # steep:ignore:start
-    class Invocation < Data.define(:global, :command)
+    class Parsed < Data.define(:global, :command)
       # steep:ignore:end
       # Steep reports as missing the members that Data.define makes, and the signature declares each one.
     end
