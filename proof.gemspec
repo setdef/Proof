@@ -20,6 +20,6 @@ Gem::Specification.new do |spec|
   spec.metadata["bug_tracker_uri"] = "#{spec.homepage}/issues"
   spec.metadata["changelog_uri"] = "#{spec.homepage}/blob/trunk/CHANGELOG.md"
 
-  spec.files = Dir["lib/**/*.rb", "sig/**/*.rbs", "README.md", "CHANGELOG.md", "LICENSE"]
+  spec.files = Dir["lib/**/*.rb", "lib/**/*.json", "sig/**/*.rbs", "README.md", "CHANGELOG.md", "LICENSE"]
   spec.require_paths = ["lib"]
 end

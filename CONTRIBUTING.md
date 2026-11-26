@@ -38,22 +38,23 @@ The command exits 0 when every check passes, with no errors and no warnings. It 
 | RDoc coverage | A public class, module, constant, or method with no documentation, counting the comments in `sig/**/*.rbs` |
 | Comment placement | A comment in `lib/` directly above a `def`, `class`, or `module`, where RDoc would take it as documentation |
 | Documentation examples | A Ruby example in a Markdown page or an `.rbs` comment that raises, or shows a wrong `# =>` value. The failure shows the file and line |
-| CLI spec | `usage lint` finding a fault, or a generated reference that differs from the spec |
+| CLI spec | `usage lint` finding a fault, or a file generated from the spec that differs from it |
 
 Run one check while you work: `bundle exec rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `docs:placement`, `docs:examples`, `usage:lint`, or `usage:references`. `bundle exec rake lint:fix` corrects the RuboCop offenses it can.
 
 Tests never reach the internet. Use local fakes.
 
-## Regenerate the CLI reference
+## Regenerate the files made from the CLI spec
 
-The CLI reference is generated from [`proof.usage.kdl`](proof.usage.kdl), and two pages hold it: `doc/reference/cli.md` and `skills/proof/references/cli.md`. After you change the spec, regenerate both:
+Three files are generated from [`proof.usage.kdl`](proof.usage.kdl): the CLI reference in two pages, `doc/reference/cli.md` and `skills/proof/references/cli.md`, and `lib/proof/command_line/spec.json`, which the command line reads to print help. After you change the spec, regenerate all three:
 
 ```console
 $ usage generate markdown --file proof.usage.kdl --out-file doc/reference/cli.md
 $ usage generate markdown --file proof.usage.kdl --out-file skills/proof/references/cli.md
+$ usage generate json --file proof.usage.kdl > lib/proof/command_line/spec.json
 ```
 
-Never edit either page by hand. If one differs from what the spec generates, `bundle exec rake usage:references` fails and prints these two commands.
+Never edit these files by hand. If one differs from what the spec generates, `bundle exec rake usage:references` fails and prints these three commands.
 
 ## Write the change
 
