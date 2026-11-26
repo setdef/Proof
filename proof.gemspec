@@ -19,6 +19,12 @@ Gem::Specification.new do |spec|
   # the parser's private methods, so it takes patch releases of 2.2 only. kdl's own
   # constraints on bigdecimal, base64, and simpleidn come with it.
   spec.add_dependency("kdl", "~> 2.2.0")
+  # The durable store of runs: ROM's relations over Sequel and SQLite. They load when the store is built, never
+  # with `require "proof"`.
+  spec.add_dependency("rom", "~> 5.4")
+  spec.add_dependency("rom-sql", "~> 3.7")
+  spec.add_dependency("sequel", "~> 5.110")
+  spec.add_dependency("sqlite3", "~> 2.10")
 
   spec.metadata["rubygems_mfa_required"] = "true"
   spec.metadata["source_code_uri"] = spec.homepage
