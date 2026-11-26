@@ -13,7 +13,7 @@ What the server must guarantee, and the traps known so far. How to meet each req
 - A run is placed only where its operating system, every label it needs, and its requested resources fit, in the order runs arrived. There are no priorities and no preemption.
 - A host with a person active keeps its share free: no new run is placed into it.
 - Refuse a run no host could ever take before anything is sent, and name the closest host. Keep a run queued when its operating system has no runner at the moment, since hosts come back.
-- `proof status` must say what each queued run waits behind: which runs hold the host it needs, or that a person is active there, or that no runner of its operating system is connected. A run that waits a long time without saying why looks hung.
+- `proof status` must say what each queued run waits behind: which runs hold the host it needs, or that a person is active there, or that the host needs someone to sign in, or that no runner of its operating system is connected. A run that waits a long time without saying why looks hung.
 
 ## The pool file
 
@@ -31,7 +31,7 @@ What the server must guarantee, and the traps known so far. How to meet each req
 
 - Keep each run's whole output as the runner sent it, up to the pool file's `limits output`. Past that, keep the first and last halves, with a line between them saying how much was left out.
 - Stream it to every follower without letting a slow follower hold up the run or other followers. Send output in bounded pieces, so a burst of hundreds of megabytes can't break a deadline.
-- **Following a run holds a connection open for as long as the run lasts.** A server that gives each open connection a separate thread stops answering new requests once followers hold every thread: with a cap of 4 threads, a thread-per-connection server (Puma 8.1.3) timed out its 5th request after 60 seconds, while a fiber-based server (Falcon 0.57.0) still answered with 40 follows open (measured once). [ADR 0004](../decisions/0004-every-connection-goes-out-to-the-server-over-https.md) expects dozens of followers at once, so the server must keep answering with that many follows open.
+- **Following a run holds a connection open for as long as the run lasts.** A server that gives each open connection a separate thread stops answering new requests once followers hold every thread: with a cap of 4 threads, a thread-per-connection server (Puma 8.1.3) timed out its 5th request after 60 seconds (measured once). [ADR 0004](../decisions/0004-every-connection-goes-out-to-the-server-over-https.md) expects dozens of runs followed at once, so the server must keep answering with that many follows open.
 - A follow must never silently drop or repeat output. Following picks up from a byte offset, so reattaching continues where it left off.
 
 ## Code

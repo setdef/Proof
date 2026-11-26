@@ -13,7 +13,7 @@ Some tasks need more than an operating system: a GPU, KVM for an Android emulato
 | --- | --- | --- |
 | `gpu` | Linux: the account can open a GPU's render node, through the `render` group. Windows: the runner's session has the PC's discrete GPU. macOS: always. | Hardware graphics and compute through the system's drivers |
 | `kvm` | Linux: the account can open `/dev/kvm`, through the `kvm` group | Hardware virtualization, for Android emulators and virtual machines |
-| `desktop` | Linux: Xvfb and a window manager are installed. Windows: always. macOS: the runner runs in a signed-in session ([Add a Mac](add-a-mac.md#let-runs-open-windows)). | A place to open windows: a virtual display on Linux, a private desktop on Windows, the runner's session on macOS |
+| `desktop` | Linux: Xvfb and a window manager are installed. Windows: always. macOS: work that opens windows runs in a signed-in session of the runner's account, and waits while there is none ([Add a Mac](add-a-mac.md#let-runs-open-windows)). | A place to open windows: a virtual display on Linux, a private desktop on Windows, the runner's session on macOS |
 | `sound` | Linux: PipeWire or PulseAudio is installed. Windows and macOS: always. | Somewhere to play sound: a separate virtual audio device on Linux, which the run can also record from; the host's speakers on Windows and macOS, only while no person is active there |
 | `podman` | Linux: rootless Podman works for the account | Containers, as [Run containers in a run](containers.md) describes |
 | `xcode` | macOS: Xcode is installed | Xcode's tools and the iOS Simulator |
