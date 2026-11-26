@@ -86,6 +86,7 @@
             "name": "label",
             "usage": "--label <label>",
             "help": "Run only on a runner that has this label, in addition to the task's labels",
+            "help_long": "Runs only on a runner that has this label, in addition to the task's labels. A label is 1 to 63 characters: ASCII letters, digits, `-`, `_`, and `.`, beginning and ending with a letter or a digit, with no space. Proof compares labels without regard to case, so GPU and gpu are one label. Proof refuses a label that breaks the rule.",
             "help_first_line": "Run only on a runner that has this label, in addition to the task's labels",
             "short": [],
             "long": [
@@ -176,6 +177,7 @@
             "name": "memory",
             "usage": "--memory <size>",
             "help": "Request this much memory, such as 8GB, in place of the task's request",
+            "help_long": "Requests this much memory, in place of the task's request. A size is a number, an optional space, and a unit: MB, GB, or TB, or MiB, GiB, or TiB, in any case. The number is whole, such as 8, or decimal with digits on both sides of the point, such as 1.5, with no sign, exponent, or thousands separator. Every unit counts in 1,024s, so 1GB is 1,024 MB. A size that isn't a whole number of megabytes rounds up to the next whole megabyte. Proof refuses a size that breaks the rule, with the forms that work.",
             "help_first_line": "Request this much memory, such as 8GB, in place of the task's request",
             "short": [],
             "long": [
@@ -359,7 +361,7 @@
         "hide": false,
         "args_override_self": true,
         "help": "Run a task or a script on one or more runners",
-        "help_long": "Sends your working tree as it is, with uncommitted changes and untracked files that Git doesn't\nignore, or the commit you name with --commit, and runs a task or a script there. Streams the\noutput while it runs and exits with the run's status. With several --os flags, runs one run per\noperating system in parallel and exits with the first of these that applies:\n\n1. 130, 141, or 143, when Proof canceled the runs: you pressed Ctrl-C, standard output was closed,\n   or Proof received TERM.\n2. The status of the first failing run, in the order of the --os flags, not the order the runs\n   finish. With --os all, the order is linux, macos, windows.\n3. 78, when a run succeeded but Proof couldn't keep its artifacts.\n4. 75, when the pool failed after Proof sent the runs, as when a runner's host went away.\n5. 0.\n\nA refusal, 2, comes before anything is sent, so it never mixes with these.\n\nProof's flags work anywhere before `--`. The words for the task follow `--`, as they do for\n`cargo run` and `npm run`, and go to the task as they are, so they mean what they mean to mise. A\nflag Proof doesn't have, before `--`, is a mistake: Proof names it, suggests the nearest flag it\nhas, and exits 2 without sending anything.\n\n`:::` starts the next task, before or after `--`, as it does for `mise run`. The word after `:::`\nis that task's name, and its words again follow `--`.\n\nPress Ctrl-C to cancel the run. To start a run without waiting for it, use --detach.",
+        "help_long": "Sends your working tree as it is, with uncommitted changes and untracked files that Git doesn't\nignore, or the commit you name with --commit, and runs a task or a script there. Streams the\noutput while it runs and exits with the run's status. With several --os flags, runs one run per\noperating system in parallel and exits with the first of these that applies:\n\n1. 130, 141, or 143, when Proof canceled the runs: you pressed Ctrl-C, standard output was closed,\n   or Proof received TERM.\n2. The status of the first failing run, in the order of the --os flags, not the order the runs\n   finish. With --os all, the order is linux, macos, windows.\n3. 78, when a run succeeded but Proof couldn't keep its artifacts.\n4. 75, when the pool failed, as when a runner's host went away.\n5. 0.\n\nA refusal, 2, comes before anything is sent, so it never mixes with these.\n\nProof's flags work anywhere before `--`. The words for the task follow `--`, as they do for\n`cargo run` and `npm run`, and go to the task as they are, so they mean what they mean to mise. A\nflag Proof doesn't have, before `--`, is a mistake: Proof names it, suggests the nearest flag it\nhas, and exits 2 without sending anything.\n\n`:::` starts the next task, before or after `--`, as it does for `mise run`. The word after `:::`\nis that task's name, and its words again follow `--`.\n\nPress Ctrl-C to cancel the run. To start a run without waiting for it, use --detach.",
         "name": "run",
         "aliases": [],
         "hidden_aliases": [],

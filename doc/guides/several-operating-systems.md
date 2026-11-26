@@ -68,7 +68,7 @@ With several runs, from several `--os` flags or from `--os all`, `proof` exits w
 | 1 | 130, 141, or 143 | Proof canceled the runs: you pressed Ctrl-C, standard output was closed, or Proof received `TERM`. | The whole command was stopped, so no status says how the tasks fared. |
 | 2 | The status of the first failing run | A task failed. | A task's failure is a definite answer that running again won't change. |
 | 3 | 78 | A run succeeded, but Proof couldn't keep its artifacts. | A mistake in configuration, which a person has to fix. |
-| 4 | 75 | The pool failed after Proof sent the runs. | Running again may fix it. |
+| 4 | 75 | The pool failed, as when a runner's host went away. | Running again may fix it. |
 | 5 | 0 | Every run succeeded. | |
 
 "First" follows the order of the `--os` flags, not the order the runs finish. With `--os all`, the order is `linux`, `macos`, `windows`. A refusal, status 2, comes before anything is sent, so it never mixes with these.
@@ -84,7 +84,7 @@ $ echo $?
 124
 ```
 
-A status of 75 means no run failed but the pool lost at least one, so run the same command again.
+A status of 75 means no run failed but the pool did, so run the same command again.
 
 ## Try a task somewhere new
 

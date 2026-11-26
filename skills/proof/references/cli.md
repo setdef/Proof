@@ -82,7 +82,7 @@ operating system in parallel and exits with the first of these that applies:
 2. The status of the first failing run, in the order of the --os flags, not the order the runs
    finish. With --os all, the order is linux, macos, windows.
 3. 78, when a run succeeded but Proof couldn't keep its artifacts.
-4. 75, when the pool failed after Proof sent the runs, as when a runner's host went away.
+4. 75, when the pool failed, as when a runner's host went away.
 5. 0.
 
 A refusal, 2, comes before anything is sent, so it never mixes with these.
@@ -106,13 +106,13 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
 - **`--os <os>`** — Runs on this operating system; repeat the flag to run on several in parallel. Without --os, Proof places the run on any operating system with a runner free, or only on those the project file lists for the task. "any" means the same, and "all" runs once on every one of them.
 
   **Choices:** `linux`, `macos`, `windows`, `any`, `all`
-- **`--label <label>`** — Run only on a runner that has this label, in addition to the task's labels
+- **`--label <label>`** — Runs only on a runner that has this label, in addition to the task's labels. A label is 1 to 63 characters: ASCII letters, digits, `-`, `_`, and `.`, beginning and ending with a letter or a digit, with no space. Proof compares labels without regard to case, so GPU and gpu are one label. Proof refuses a label that breaks the rule.
 
   **Choices:** `gpu`, `kvm`, `desktop`, `sound`, `podman`, `xcode`
 - **`--commit <rev>`** — Send this commit, with its history, instead of the working tree
 - **`-C --project <dir>`** — Use the project whose Git repository contains this folder
 - **`--cpus <count>`** — Request this many CPUs, in place of the task's request
-- **`--memory <size>`** — Request this much memory, such as 8GB, in place of the task's request
+- **`--memory <size>`** — Requests this much memory, in place of the task's request. A size is a number, an optional space, and a unit: MB, GB, or TB, or MiB, GiB, or TiB, in any case. The number is whole, such as 8, or decimal with digits on both sides of the point, such as 1.5, with no sign, exponent, or thousands separator. Every unit counts in 1,024s, so 1GB is 1,024 MB. A size that isn't a whole number of megabytes rounds up to the next whole megabyte. Proof refuses a size that breaks the rule, with the forms that work.
 - **`--timeout <duration>`** — End the run after this long, such as 30m, in place of the task's time limit
 - **`--empty`** — Start in an empty workspace, with nothing reused from earlier runs
 - **`--keep <pattern>`** — Keep the files matching this pattern as artifacts, in addition to the task's
