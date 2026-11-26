@@ -8,7 +8,7 @@ module Proof
   class Host < Data.define(:name, :share, :person_active, :runners)
     RULES = {
       name: ["a host's name is a name, not %p", MemberCheck.method(:named?)],
-      share: ["a host's share is resources, not %p", -> (value) { value.is_a?(Resources) }],
+      share: ["a host's share is resources, not %p", Resources.method(:===)],
       person_active: ["whether a person is active is true or false, not %p", MemberCheck.method(:flag?)],
       runners: ["a host's runners are a list of runners with different names, not %p", Runner.method(:listed?)],
     }.freeze
@@ -22,7 +22,11 @@ module Proof
     end
 
     def capacity
-      Capacity.most(runners.map(&:capacity))
+      Capacity.most(runners)
+    end
+
+    def spots
+      runners.map { |runner| [self, runner] }
     end
 
     def holding(runs, names = runners.map(&:name))
@@ -30,8 +34,10 @@ module Proof
     end
 
     def free_on(runner, runs)
-      on_host = Capacity.free(capacity, holding(runs), kept)
-      Capacity.least(on_host, Capacity.free(runner.capacity, holding(runs, [runner.name])))
+      Capacity.least(
+        Capacity.free(capacity, holding(runs), kept),
+        Capacity.free(runner.capacity, holding(runs, [runner.name]))
+      )
     end
 
     def ever_on(runner)
@@ -43,7 +49,7 @@ module Proof
     end
 
     private def memory_share
-      Resources.new(cpus: 0, megabytes: share.megabytes)
+      share.with(cpus: 0)
     end
   end
 end

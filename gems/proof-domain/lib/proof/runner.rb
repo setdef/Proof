@@ -6,9 +6,9 @@ module Proof
   class Runner < Data.define(:name, :os, :labels, :capacity, :connected)
     RULES = {
       name: ["a runner's name is a name, not %p", MemberCheck.method(:named?)],
-      os: ["a runner's OS is a Proof::OS, not %p", -> (value) { value.is_a?(OS) }],
-      labels: ["a runner's labels are a set of labels, not %p", -> (value) { value.is_a?(LabelSet) }],
-      capacity: ["a runner's capacity is resources, not %p", -> (value) { value.is_a?(Resources) }],
+      os: ["a runner's OS is a Proof::OS, not %p", OS.method(:===)],
+      labels: ["a runner's labels are a set of labels, not %p", LabelSet.method(:===)],
+      capacity: ["a runner's capacity is resources, not %p", Resources.method(:===)],
       connected: ["whether a runner is connected is true or false, not %p", MemberCheck.method(:flag?)],
     }.freeze
     private_constant(:RULES)

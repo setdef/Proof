@@ -14,19 +14,27 @@ module Proof
 
     def self.sum(runs)
       requests = runs.map { |run| run.queued.resources }
-      Resources.new(cpus: requests.sum(&:cpus), megabytes: requests.sum(&:megabytes))
+      requests.reduce(NONE) { |acc, elem| combine(acc, elem, &:+) }
     end
 
     def self.less(from, taken)
-      Resources.new(cpus: [from.cpus - taken.cpus, 0].max, megabytes: [from.megabytes - taken.megabytes, 0].max)
+      combine(from, taken) { |have, take| [have - take, 0].max }
     end
 
     def self.least(first, second)
-      Resources.new(cpus: [first.cpus, second.cpus].min, megabytes: [first.megabytes, second.megabytes].min)
+      combine(first, second) { |one, other| [one, other].min }
     end
 
-    def self.most(all)
-      Resources.new(cpus: all.map(&:cpus).max || 0, megabytes: all.map(&:megabytes).max || 0)
+    def self.most(runners)
+      runners.map(&:capacity).reduce(NONE) { |acc, elem| more(acc, elem) }
+    end
+
+    def self.more(first, second)
+      combine(first, second) { |one, other| [one, other].max }
+    end
+
+    def self.combine(first, second)
+      Resources.new(cpus: yield(first.cpus, second.cpus), megabytes: yield(first.megabytes, second.megabytes))
     end
   end
   private_constant(:Capacity)

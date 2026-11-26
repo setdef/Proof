@@ -5,12 +5,18 @@ module Proof
   # line of code for each would make their constructors hard to read. It is a
   # private constant of `Proof`.
   module MemberCheck
+    # A rule for one member: whether its value keeps the rule.
+    interface _Rule
+      # Whether `value` keeps the rule.
+      def call: (Object value) -> bool
+    end
+
     # The message for the first member in `members` that breaks its rule in
     # `rules`, filled in by `format` with its value, or `nil`.
     #
     # - `rules`: a `Hash` from member to its message and its rule.
     # - `members`: a `Hash` from member to its value.
-    def self.problem: (Hash[Symbol, [String, ^(Object) -> bool]] rules, Hash[Symbol, Object] members) -> String?
+    def self.problem: (Hash[Symbol, [String, _Rule]] rules, Hash[Symbol, Object] members) -> String?
 
     # Whether `value` is a String of at least one character.
     def self.named?: (Object value) -> bool

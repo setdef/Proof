@@ -23,7 +23,16 @@ module Proof
     # own.
     def self.least: (Resources first, Resources second) -> Resources
 
-    # The most CPUs and the most memory in `all`, each on its own, or none.
-    def self.most: (Array[Resources] all) -> Resources
+    # The most CPUs and the most memory any of `runners` can use, each on its
+    # own, or none.
+    def self.most: (Array[Runner] runners) -> Resources
+
+    # The more CPUs and the more memory of `first` and `second`, each on its
+    # own.
+    def self.more: (Resources first, Resources second) -> Resources
+
+    # Resources whose CPUs are the block's answer for the CPUs of `first` and
+    # `second`, and whose memory is its answer for their memory.
+    def self.combine: (Resources first, Resources second) { (Integer one, Integer other) -> Integer } -> Resources
   end
 end

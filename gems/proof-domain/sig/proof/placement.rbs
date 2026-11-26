@@ -1,0 +1,143 @@
+module Proof
+  # Chooses the runner for each queued run, and holds its CPUs and memory on
+  # that runner's host.
+  #
+  # Placing a run follows rules that span runs and hosts: a host's resources
+  # count once across its runners, a run has to fit its runner's capacity
+  # too, its OS and labels have to match, the earliest run that fits goes
+  # first, and a host keeps its share for a person. No single run or host
+  # holds all of those, and a host that kept what it has in use would be a
+  # second copy of the runs.
+  #
+  # This class reads the queued runs, the runs that hold resources, and the
+  # hosts, through the ports you give it, checks the rules, and writes one
+  # fact to one run. Each call to `place_next` is one decision. The store
+  # refuses a second placement of a run, and the server's unit of work runs
+  # one decision at a time, so two decisions never offer a host's resources
+  # twice.
+  #
+  # Use it to place the next run, each time a run joins the queue, a run
+  # ends, or a host changes.
+  #
+  # ## Examples
+  #
+  # A Linux run goes to the Linux runner:
+  #
+  # ```ruby
+  # nuc_linux = Proof::Runner.new(
+  #   name: "nuc-linux", os: Proof::OS.new(name: :linux), labels: Proof::LabelSet.of,
+  #   capacity: Proof::Resources.request(cpus: 8, memory: "32GB"), connected: true
+  # )
+  # nuc = Proof::Host.new(name: "nuc", share: Proof::Resources.request(cpus: 2, memory: "4GB"), person_active: false, runners: [nuc_linux])
+  # hosts = Data.define(:hosts).new(hosts: [nuc])
+  # clock = Data.define(:now).new(now: Time.utc(2026, 11, 25, 3, 37))
+  # runs = Proof::InMemory::Runs.new
+  # queued = Proof::Run::Queued.new(
+  #   at: Time.utc(2026, 11, 25, 3, 36), position: runs.next_position, os: [Proof::OS.new(name: :linux)],
+  #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 4, memory: "8GB")
+  # )
+  # runs.add(Proof::Run.new(id: Proof::RunId.parse("20261125-0336-m3d8q"), facts: [queued]))
+  # placement = Proof::Placement.new(runs:, hosts:, clock:)
+  # placement.place_next.placement.runner # => "nuc-linux"
+  # placement.place_next # => nil
+  # ```
+  class Placement
+    # The earliest run in `queued` that fits now, with the host and runner it
+    # would go to, or `nil` when none fits. A run that fits nowhere doesn't
+    # hold up the runs behind it.
+    #
+    # - `queued`: an `Array` of queued runs, earliest queue position first.
+    # - `hosts`: an `Array` of `Proof::Host`.
+    # - `holding`: an `Array` of the runs that hold resources.
+    #
+    # ```ruby
+    # Proof::Placement.first([], [], []) # => nil
+    # ```
+    def self.first: (Array[Run] queued, Array[Host] hosts, Array[Run] holding) -> [Run, Host, Runner]?
+
+    # The host and runner that the run `queued` describes would go to now, or
+    # `nil` when it fits nowhere. Of the connected runners that take the run
+    # and have its CPUs and memory free, after `holding` and the share, it is
+    # the one with the most memory free, then the most CPUs, then the first
+    # runner by name, since no two runners of a pool share a name.
+    #
+    # - `queued`: Run::Queued, the fact that the run was queued.
+    # - `hosts`: an `Array` of `Proof::Host`.
+    # - `holding`: an `Array` of the runs that hold resources.
+    #
+    # ```ruby
+    # Proof::Placement.spot(
+    #   Proof::Run::Queued.new(
+    #     at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+    #     labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 4, memory: "8GB")
+    #   ),
+    #   [], []
+    # ) # => nil
+    # ```
+    def self.spot: (Run::Queued queued, Array[Host] hosts, Array[Run] holding) -> [Host, Runner]?
+
+    # Whether the run `queued` describes fits the runner of `spot` now: the
+    # runner is connected and takes the run, and the run's CPUs and memory are
+    # free on the runner and its host, after `holding` and the share.
+    #
+    # - `queued`: Run::Queued, the fact that the run was queued.
+    # - `spot`: a host and one of its runners.
+    # - `holding`: an `Array` of the runs that hold resources.
+    #
+    # ```ruby
+    # nuc_linux = Proof::Runner.new(
+    #   name: "nuc-linux", os: Proof::OS.new(name: :linux), labels: Proof::LabelSet.of,
+    #   capacity: Proof::Resources.request(cpus: 8, memory: "32GB"), connected: false
+    # )
+    # nuc = Proof::Host.new(name: "nuc", share: Proof::Resources.request(cpus: 2, memory: "4GB"), person_active: false, runners: [nuc_linux])
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 4, memory: "8GB")
+    # )
+    # Proof::Placement.fits?(queued, [nuc, nuc_linux], []) # => false
+    # ```
+    def self.fits?: (Run::Queued queued, [Host, Runner] spot, Array[Run] holding) -> bool
+
+    # The order placement weighs `spot` in, emptiest first: most memory free,
+    # then most CPUs free, then the runner's name.
+    #
+    # - `spot`: a host and one of its runners.
+    # - `holding`: an `Array` of the runs that hold resources.
+    #
+    # ```ruby
+    # nuc_linux = Proof::Runner.new(
+    #   name: "nuc-linux", os: Proof::OS.new(name: :linux), labels: Proof::LabelSet.of,
+    #   capacity: Proof::Resources.request(cpus: 8, memory: "32GB"), connected: true
+    # )
+    # nuc = Proof::Host.new(name: "nuc", share: Proof::Resources.request(cpus: 2, memory: "4GB"), person_active: false, runners: [nuc_linux])
+    # Proof::Placement.emptiest_first([nuc, nuc_linux], []) # => [-28672, -8, "nuc-linux"]
+    # ```
+    def self.emptiest_first: ([Host, Runner] spot, Array[Run] holding) -> [Integer, Integer, String]
+
+    # Builds the service from its ports.
+    #
+    # - `runs`: `_Runs`, the store of runs.
+    # - `hosts`: `_Hosts`, the pool's hosts now.
+    # - `clock`: `_Clock`, the server's clock, for the time of each fact.
+    def initialize: (runs: _Runs, hosts: _Hosts, clock: _Clock) -> void
+
+    # Places the earliest queued run that fits now, and gives it with its
+    # placement, or `nil` when no queued run fits. A run that fits nowhere
+    # doesn't hold up the runs behind it. Raises `Proof::RunAlreadyPlacedError`
+    # or `Proof::RunChangedError` when another decision changed the run since
+    # it was read, as `Proof::_Runs#append` says.
+    #
+    # ```ruby
+    # placement = Proof::Placement.new(
+    #   runs: Proof::InMemory::Runs.new, hosts: Data.define(:hosts).new(hosts: []),
+    #   clock: Data.define(:now).new(now: Time.utc(2026, 11, 25, 3, 37))
+    # )
+    # placement.place_next # => nil
+    # ```
+    def place_next: () -> Run?
+
+    private
+
+    def place: (Run run, Host host, Runner runner) -> Run
+  end
+end
