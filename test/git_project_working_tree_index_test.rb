@@ -47,6 +47,36 @@ class GitProjectWorkingTreeIndexTest < Minitest::Test
     refute_path_exists(marker)
   end
 
+  # A linked worktree has its own index. The commit starts from that one, so a file staged there that
+  # `.gitignore` matches is in it, and neither the worktree's folder under `.git` nor the rest changes.
+  def test_a_linked_worktree_starts_from_its_own_index_and_changes_no_file_in_the_clone
+    main = make_repository
+    commit_file(main, ".gitignore", "*.log\n")
+    linked = File.join(temporary_folder, "linked")
+    git(main, "worktree", "add", "--quiet", "--detach", linked)
+    write_file(linked, "forced.log", "staged")
+    git(linked, "add", "-f", "forced.log")
+    before = digests(File.join(main, ".git"))
+    commit = working_tree_commit(linked)
+
+    assert_equal(before, digests(File.join(main, ".git")))
+    assert_equal([".gitignore", "forced.log"], tree(linked, commit).map(&:first))
+  end
+
+  # A clone whose index another Git process is writing, which shows as `index.lock`, still gets its
+  # commit, and the lock, which is that process's, stays exactly as it was.
+  def test_a_clone_whose_index_is_locked_by_another_git_process_gets_its_commit_and_keeps_the_lock
+    folder = make_repository
+    commit_file(folder)
+    write_file(folder, "new.txt", "new")
+    File.write(File.join(folder, ".git", "index.lock"), "held by another process")
+    before = digests(File.join(folder, ".git"))
+    commit = working_tree_commit(folder)
+
+    assert_equal(before, digests(File.join(folder, ".git")))
+    assert_equal(["a.txt", "new.txt"], tree(folder, commit).map(&:first))
+  end
+
   # A repository with a split index and an untracked cache, and a changed and a new file.
   private def make_clone_with_split_index
     folder = make_repository
