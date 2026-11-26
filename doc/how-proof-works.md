@@ -109,6 +109,8 @@ On Windows and Linux, input from runs never counts as a person: runs draw on sep
 
 Each person, agent, or runner that talks to the server holds a **token**. `proof login` gets one for you, and `proof runner approve` gives one to a runner. Proof keeps tokens in files that only their owner can read, never in an environment variable or on a command line.
 
+There are three kinds of token, and Proof records the kind when it issues one. A person's token can approve and revoke runners and cancel any run. An agent's can run, watch, download, and cancel its own runs. A runner's can do only a runner's work, because a runner never needs a person's powers.
+
 A token for running work lets its holder run any command, as the runner account, on every runner in the pool: that is what running a task is. Give one only to people and agents you'd give an account on those hosts.
 
 The server's address and certificate fingerprint travel inside the codes `proof server setup` and `proof runner setup` print. So the command and the runners know they're talking to your server from their first connection, with no certificate authority involved.

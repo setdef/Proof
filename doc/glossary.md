@@ -55,7 +55,7 @@ A runner's operating system: `linux`, `macos`, or `windows`. In flags and files,
 
 ### token
 
-A secret that a person, an agent, or a runner gives the server to act in the pool. Each token is issued to one person, agent, or runner, and Proof records which. Whoever holds a token issued for running work can run code as the runner account on every runner in the pool, so keep tokens as you would an SSH key.
+A secret that a person, an agent, or a runner gives the server to act in the pool. Each token is issued to one person, agent, or runner, and Proof records which: that is the token's kind, and what a token may do depends on it. A person's token may approve and revoke runners and cancel any run. An agent's may run, watch, download, and cancel its own runs. A runner's may do only a runner's work. Whoever holds a token issued for running work can run code as the runner account on every runner in the pool, so keep tokens as you would an SSH key.
 
 - Elsewhere: called a token in every tool, with a word for its kind: registration token, personal access token, API token.
 - Don't say: API token or access token as the name of one kind, because both are categories that cover every kind; secret; key; credential.
