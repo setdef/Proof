@@ -119,6 +119,8 @@ module Proof
 
     private
 
+    def resolve: (String revision) -> String
+
     def head_id: () -> String?
 
     def git: () -> Git

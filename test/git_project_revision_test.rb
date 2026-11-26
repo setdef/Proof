@@ -119,6 +119,20 @@ class GitProjectRevisionTest < Minitest::Test
     assert_equal(commit, Proof::GitProject.find(folder).commit_id("HEAD"))
   end
 
+  # A git that fails to list the settings, here with status 128 as a damaged configuration does, can't say
+  # whether the clone is partial. That is a Git failure, not a revision that is no commit.
+  def test_a_failing_partial_clone_check_is_a_git_failure_not_an_unknown_revision
+    program = File.join(temporary_folder, "git-that-fails-on-config")
+    script = "#!/bin/sh\ncase \"$1\" in config) echo 'fatal: bad config' >&2; exit 128 ;; esac\nexec git \"$@\"\n"
+    File.write(program, script)
+    File.chmod(0o755, program)
+    folder = make_repository
+    commit_file(folder)
+    error = assert_raises(Proof::GitFailedError) { Proof::GitProject.new(root: folder, program:).commit_id("HEAD") }
+
+    assert_equal([128, "fatal: bad config\n"], [error.status.exitstatus, error.error_output])
+  end
+
   # The same requirement from the other side: a full clone, even of a local repository, is sent.
   def test_a_full_clone_is_not_refused
     source = make_repository("source")

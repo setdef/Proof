@@ -17,15 +17,19 @@ module Proof
 
     def commit_id(revision)
       refuse_a_partial_clone
-      # The ^{commit} after the revision means no revision can read as an option, whatever it starts with.
-      git.run("rev-parse", "--verify", "#{revision}^{commit}").chomp
-    rescue GitFailedError
-      raise(UnknownRevisionError.new(revision:, root:))
+      resolve(revision)
     end
 
     def working_tree_commit_id
       refuse_a_partial_clone
       WorkingTreeCommit.new(git:, head: head_id).id
+    end
+
+    private def resolve(revision)
+      # The ^{commit} after the revision means no revision can read as an option, whatever it starts with.
+      git.run("rev-parse", "--verify", "#{revision}^{commit}").chomp
+    rescue GitFailedError
+      raise(UnknownRevisionError.new(revision:, root:))
     end
 
     private def head_id
