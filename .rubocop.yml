@@ -84,10 +84,3 @@ Style/InlineComment:
   # comment that the docs:examples task checks.
   Exclude:
     - "**/*.md"
-
-Naming/VariableNumber:
-  # Git names the environment variables that set a configuration value for one command GIT_CONFIG_KEY_0 and
-  # GIT_CONFIG_VALUE_0, and Proof's Hash keys must spell them as Git does.
-  AllowedIdentifiers:
-    - GIT_CONFIG_KEY_0
-    - GIT_CONFIG_VALUE_0

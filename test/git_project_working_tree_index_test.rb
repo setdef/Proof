@@ -19,14 +19,32 @@ class GitProjectWorkingTreeIndexTest < Minitest::Test
   end
 
   # Command design, "Which project and which code": "The clone's index, `HEAD`, and branches stay exactly
-  # as they were." With a split index and an untracked cache set, Git still adds no shared index file.
+  # as they were." With a split index and an untracked cache set, Git still adds no shared index file, and
+  # no file under `.git` changes, apart from the objects.
   def test_making_the_commit_changes_no_file_in_the_clone_whatever_its_index_settings
     folder = make_clone_with_split_index
     before = digests(File.join(folder, ".git"))
     working_tree_commit(folder)
-    after = digests(File.join(folder, ".git"))
 
-    assert_equal([before, []], [after.slice(*before.keys), after.keys.grep(/sharedindex/) - before.keys])
+    assert_equal(before, digests(File.join(folder, ".git")))
+    assert_equal(1, before.keys.grep(/sharedindex/).size)
+  end
+
+  # The same requirement when the clone sets a file-system monitor: starting one adds a socket to `.git`
+  # and leaves a process running, so Proof must not start it. The monitor here is a program that records
+  # that Git ran it.
+  def test_a_file_system_monitor_set_in_the_clone_is_not_started
+    folder = make_repository
+    commit_file(folder)
+    marker = File.join(temporary_folder, "monitor-ran")
+    monitor = File.join(temporary_folder, "monitor")
+    File.write(monitor, "#!/bin/sh\ntouch #{marker}\n")
+    File.chmod(0o755, monitor)
+    git(folder, "config", "core.fsmonitor", monitor)
+    write_file(folder, "a.txt", "2")
+    working_tree_commit(folder)
+
+    refute_path_exists(marker)
   end
 
   # A repository with a split index and an untracked cache, and a changed and a new file.

@@ -13,8 +13,9 @@ module Proof
   # such a file is tracked, so it would drop it. The copy also keeps a file that
   # you staged with `git add -f`, as `git commit` would, and lets `git add
   # --all` skip the files that haven't changed. Every command that writes the
-  # temporary index runs with `core.splitIndex=false`, so it never refers to a
-  # shared index file in the clone's `.git`, and never adds one. A submodule
+  # temporary index runs with `core.splitIndex=false` and `core.fsmonitor=false`,
+  # so it never refers to a shared index file in the clone's `.git`, never adds
+  # one, and never starts a file-system monitor there. A submodule
   # goes in at the commit its checkout is at, as `git add --all` records it,
   # including a commit that the project hasn't recorded yet. Changes to files
   # inside the submodule are not sent. The commit's one parent is `HEAD`, and a
@@ -44,6 +45,10 @@ module Proof
   class WorkingTreeCommit
     # The name and address of the commit's author and committer.
     IDENTITY: Hash[Symbol, String]
+
+    # The environment variables that give Git the settings that every command
+    # writing the temporary index runs with.
+    CONFIG: Hash[Symbol, String]
 
     # Prepares to make a commit on top of `head`.
     #
