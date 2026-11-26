@@ -57,6 +57,22 @@ module Proof
     #   `Proof::ProjectFileReader::PATH`.
     def self.read: (String text, ?path: String) -> ProjectFile
 
+    # Reads the project file of the commit that `id` identifies in `project`.
+    # It is `nil` when the commit has no file at `path`, and also when `path`
+    # is a folder or a submodule, as `Proof::GitProject#file_at` gives `nil`.
+    # Otherwise it reads the text as `Proof::ProjectFileReader.read` does.
+    # Raises `Proof::ProjectFileError`, with the path and no line, when the
+    # file is a symbolic link, because Proof reads only a regular file there.
+    # Raises what `Proof::GitProject#file_at` raises for a commit the project
+    # lacks, a partial clone, and a Git failure.
+    #
+    # - `project`: Proof::GitProject, the project to read from.
+    # - `id`: String, a full commit ID, such as `commit_id` or
+    #   `working_tree_commit_id` gives.
+    # - `path`: String, the file's path, for the read and for the errors.
+    #   Defaults to `Proof::ProjectFileReader::PATH`.
+    def self.read_from: (GitProject project, String id, ?path: String) -> ProjectFile?
+
     # Prepares to read texts as the file at `path`.
     #
     # - `path`: String, the file's path, for the errors.
@@ -68,6 +84,26 @@ module Proof
     # Proof::ProjectFileReader.new(path: ".config/proof.kdl").read("task test\n").entries.size # => 1
     # ```
     def read: (String text) -> ProjectFile
+
+    # Reads the project file of a commit, as `Proof::ProjectFileReader.read_from`
+    # does.
+    #
+    # ```ruby
+    # require "tmpdir"
+    # Dir.mktmpdir do |folder|
+    #   git = ["git", "-C", folder, "-c", "user.name=Ann", "-c", "user.email=ann@example.com"]
+    #   system(*git, "init", "--quiet")
+    #   Dir.mkdir(File.join(folder, ".config"))
+    #   File.write(File.join(folder, ".config", "proof.kdl"), "task test\n")
+    #   system(*git, "add", ".config/proof.kdl")
+    #   system(*git, "commit", "--quiet", "-m", "First")
+    #   project = Proof::GitProject.find(folder)
+    #   reader = Proof::ProjectFileReader.new(path: ".config/proof.kdl")
+    #   reader.read_from(project, project.commit_id("HEAD")).entries.size
+    # end
+    # # => 1
+    # ```
+    def read_from: (GitProject project, String id) -> ProjectFile?
 
     private
 
@@ -81,5 +117,7 @@ module Proof
     @tasks: TaskReader
 
     NODES: Array[String]
+
+    LINK_REASON: String
   end
 end

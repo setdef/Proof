@@ -240,6 +240,22 @@ module Proof
     def initialize: (root: String) -> void
   end
 
+  # Raised when a path in a commit is a symbolic link where Proof needs a
+  # regular file. A link could lead out of the commit, to a file Proof never
+  # sent, so Proof never reads through one.
+  #
+  # ```ruby
+  # Proof::SymbolicLinkError.new(path: ".config/proof.kdl", commit: "0a1b2c").message
+  # # => ".config/proof.kdl at 0a1b2c is a symbolic link, not a regular file"
+  # ```
+  class SymbolicLinkError < Error
+    # Builds the error, with a message that names the path and the commit.
+    #
+    # - `path`: String, the path from the project's root.
+    # - `commit`: String, the ID of the commit that holds the link.
+    def initialize: (path: String, commit: String) -> void
+  end
+
   # Raised when the `git` program ends with a status other than 0 and the
   # caller has no better word for why. A refusal Proof can explain, such as a
   # folder outside any repository, has an error class for that refusal.

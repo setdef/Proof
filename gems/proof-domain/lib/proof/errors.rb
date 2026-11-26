@@ -146,6 +146,12 @@ module Proof
     end
   end
 
+  class SymbolicLinkError < Error
+    def initialize(path:, commit:)
+      super("#{path} at #{commit} is a symbolic link, not a regular file")
+    end
+  end
+
   # steep:ignore:start
   class GitFailedError < Error
     # steep:ignore:end
