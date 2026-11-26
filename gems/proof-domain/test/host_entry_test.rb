@@ -28,8 +28,8 @@ class HostEntryTest < Minitest::Test
     assert_equal(Proof::HostSettings.new, Proof::HostEntry.new(name: "nuc", runners: %w[nuc-linux]).settings)
   end
 
-  # Pool file reference, "`host`": the table's `runner` default is "Written by `proof runner approve`", so a host lists
-  # one or more runners, and a host with none is refused.
+  # Pool file reference, "`host`": the table's `runner` default is "Required", so a host lists one or more runners, and
+  # a host with none is refused.
   def test_a_host_with_no_runner_is_refused
     assert_raises(Proof::InvalidHostEntryError) { Proof::HostEntry.new(name: "nuc", runners: []) }
   end

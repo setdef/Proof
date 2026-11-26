@@ -49,6 +49,18 @@ The server checks the whole file before it uses any of it. When the file has a m
 
 The pool file is [KDL](https://kdl.dev/) 2.0, so a repeated property keeps only its last value, and a size such as `4GB` needs quotes. The [project file reference](project-file.md#mistakes-proof-catches-and-one-it-cant) shows both mistakes with their fixes.
 
+Proof refuses a pool file, with the line and the reason, when:
+
+- a node, property, or child isn't one this page lists, or a property is written as a child, as in `server { port 7443 }`, or a child as a property, as in `host nuc budget="400GB"`: the message says how to write it;
+- a node has a different number of arguments than the page shows, such as a `budget` with two sizes;
+- a `host` has no `runner`, or has no `budget` in its entry or in `defaults`, or a `repository` has no `url`, no `branch`, or no `task`;
+- `server`, `retention`, `limits`, or `defaults` is given twice, or a child is given twice in one entry, except `runner` and `task`, which can be written in several nodes: give every other child's values as arguments to one node, as in `branch trunk release`;
+- two hosts have one name, two repositories have one name, a runner is on two hosts or twice on one, or a repository lists a branch or a task twice;
+- the name of a host, a runner, a repository, a branch, or a task, a repository's `url`, or a `credentials-file`'s path is empty or only spaces;
+- a `port` isn't a whole number from 1 to 65535, or `cpus` isn't a whole number from 0.
+
+Proof compares names as written, so `nuc` and `NUC` are two hosts. Labels are the exception, as [sizes and labels](#sizes-and-labels) says.
+
 ## Sizes and labels
 
 A size in the pool file, in `budget`, `keep-free`, `share`, or `limits`, is a number, an optional space, and a unit: `MB`, `GB`, `TB`, `MiB`, `GiB`, or `TiB`, in any case, all counted in 1,024s. The number is whole or decimal, and a size that isn't a whole number of megabytes rounds up to the next whole megabyte. A budget can run to terabytes. The [project file reference](project-file.md#sizes) gives the whole rule.
@@ -138,7 +150,7 @@ defaults {
 }
 ```
 
-The settings every `host` gets unless its entry has a different value. It takes the same children as a `host`, except `runner`.
+The settings every `host` gets unless its entry has a different value. It takes the same children as a `host`, except `runner`. A `withhold` in `defaults` and a `withhold` in a host add up, so the host withholds the labels of both.
 
 ## `host`
 
@@ -157,8 +169,8 @@ One entry for each physical computer. `proof status` shows the host under `NAME`
 
 | Child | Default | Meaning |
 | --- | --- | --- |
-| `runner` | Written by `proof runner approve` | The runners on this host. The server counts their CPUs and memory as one host's, so the server never gives a Windows PC and its WSL more runs together than the PC can run. A run must also fit the runner's capacity: WSL can have less memory than the PC, and the server doesn't place a run on the WSL runner that doesn't fit what WSL has. |
-| `budget` | Half the host's free disk space when `proof runner approve` adds the host, written into its entry | The disk space Proof may use on this host for workspaces and caches. When Proof's files exceed it, the host's runners delete the workspaces used least recently, never one in use. |
+| `runner` | Required. Written by `proof runner approve` | The runners on this host. The server counts their CPUs and memory as one host's, so the server never gives a Windows PC and its WSL more runs together than the PC can run. A run must also fit the runner's capacity: WSL can have less memory than the PC, and the server doesn't place a run on the WSL runner that doesn't fit what WSL has. |
+| `budget` | Required, in the entry or in `defaults`. `proof runner approve` writes half the host's free disk space into the entry when it adds the host | The disk space Proof may use on this host for workspaces and caches. When Proof's files exceed it, the host's runners delete the workspaces used least recently, never one in use. |
 | `keep-free` | `"25GB"` | The disk space the host's runners always leave free, whatever the budget, so a disk that fills for other reasons never fills completely because of Proof. |
 | `share` | `cpus=2 memory="4GB"` | The CPUs and memory Proof keeps free on this host for a person. The memory is free always, and the CPUs only while a person is active there. Runs go on with the rest, and runs that need the person's display, GPU, or speakers wait. |
 | `active-for` | `"5m"` | How long after the last use of the host's keyboard, mouse, or trackpad a person still counts as active. |

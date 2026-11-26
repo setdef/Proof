@@ -34,7 +34,7 @@ class PoolFileFormsTest < Minitest::Test
     )
   end
 
-  # Pool file reference, "`host`", table: `runner` is "Written by `proof runner approve`", so a host needs one, and
+  # Pool file reference, "`host`", table: `runner` is "Required", so a host needs one, and
   # the page's complete example gives two `runner` children, so a runner and a host may be given more than once.
   def test_a_host_needs_a_runner_and_a_host_and_a_runner_may_be_repeated
     assert_equal(

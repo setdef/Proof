@@ -18,8 +18,8 @@ class BuiltInHostDefaultsTest < Minitest::Test
     )
   end
 
-  # Pool file reference, "`host`", `budget`: "Half the host's free disk space when `proof runner approve` adds the
-  # host, written into its entry", so the built-in defaults give no budget.
+  # Pool file reference, "`host`", `budget`: "Required, in the entry or in `defaults`", so the built-in defaults give no
+  # budget.
   def test_the_built_in_defaults_give_no_budget
     assert_nil(Proof::BuiltInHostDefaults::SETTINGS.budget)
   end

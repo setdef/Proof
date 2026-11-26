@@ -80,9 +80,8 @@ class PoolFileReaderHostsTest < Minitest::Test
     )
   end
 
-  # Pool file reference, "`host`", `budget`: "Half the host's free disk space when `proof runner approve` adds the host,
-  # written into its entry", and the page gives no built-in budget, so a host with no budget in its entry or in
-  # `defaults` is refused at the host's line, with what the domain says.
+  # Pool file reference, "`host`", `budget`: "Required, in the entry or in `defaults`", so a host with no budget in its
+  # entry or in `defaults` is refused at the host's line, with what the domain says.
   def test_a_host_with_no_budget_in_its_entry_or_the_defaults_is_refused
     assert_refused(
       "server port=7443\n\nhost nuc {\n  runner nuc-linux\n}\n",

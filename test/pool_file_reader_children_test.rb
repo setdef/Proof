@@ -69,8 +69,8 @@ class PoolFileReaderChildrenTest < Minitest::Test
     assert_refused("host nuc os=\"linux\"\n", 1, "a \"host\" node has no property \"os\". It has no properties")
   end
 
-  # Pool file reference, "`host`": the `runner` child is "Written by `proof runner approve`", and a host with none has
-  # nothing to run, so a host with no `runner` is refused at the host's line.
+  # Pool file reference, "`host`": the `runner` child is "Required", and a host with none has nothing to run, so a host
+  # with no `runner` is refused at the host's line.
   def test_a_host_with_no_runner_is_refused
     assert_refused(
       "host a {\n  budget \"1GB\"\n}\n",

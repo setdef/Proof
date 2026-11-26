@@ -48,9 +48,8 @@ class HostEntryResolvedTest < Minitest::Test
     assert_equal(["pc", %w[pc-windows pc-wsl]], [host.name, host.runners])
   end
 
-  # Pool file reference, "`host`", `budget`: "Half the host's free disk space when `proof runner approve` adds the
-  # host, written into its entry", so the budget has no built-in default. A budget in `defaults` serves a host that
-  # has none.
+  # Pool file reference, "`host`", `budget`: "Required, in the entry or in `defaults`", so the budget has no built-in
+  # default. A budget in `defaults` serves a host that has none.
   def test_a_budget_in_the_defaults_serves_a_host_with_none
     host = host_entry("nuc", %w[nuc-linux]).resolved(example_defaults)
 
