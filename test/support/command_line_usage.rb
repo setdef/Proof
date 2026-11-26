@@ -48,8 +48,21 @@ module CommandLineContract
 
     private def args(roles)
       found = Hash.new { |hash, name| hash[name] = [] }
-      roles.each { |role| found[role["name"]].concat(role["values"]) if role["kind"] == "arg" }
-      found.transform_values { |words| words.reject { |word| word == "--" } }
+      separated = false
+      roles.each do |role|
+        separated = true if role["kind"] == "separator"
+        role["values"].each { |word| found[role["name"]] << [word, separated] } if role["kind"] == "arg"
+      end
+      found.transform_values { |entries| words(entries) }
+    end
+
+    # proof.usage.kdl: after `:::` comes the task's name, and its words follow a `--`. When `:::` follows the first
+    # `--`, usage binds the `--` after the name as a word, where the parser takes it as the separator, so it isn't
+    # one of the words to compare. Every other `--` is a word for both.
+    private def words(entries)
+      entries.each_with_index.filter_map do |(word, _), index|
+        word unless word == "--" && index >= 2 && entries[index - 2] == [":::", true]
+      end
     end
   end
 end

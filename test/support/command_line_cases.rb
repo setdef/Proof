@@ -29,6 +29,11 @@ module CommandLineContract
       %w[--script f -q],
       %w[test -q -- a -q],
       %w[a ::: b -- c -- d],
+      %w[lint -- a ::: -- b],
+      %w[lint -- a -- ::: test -- b -- c],
+      %w[lint ::: test -- -- x],
+      %w[-- lint ::: test -- x],
+      %w[lint ::: test --os linux],
     ].freeze
     private_constant(:RUN_WORDS)
 
@@ -48,9 +53,21 @@ module CommandLineContract
     end
 
     private def for_command(command)
-      return leaf_cases(command) if command.subcommands.empty?
+      return leaf_cases(command) + abbreviated_command(command) if command.subcommands.empty?
 
-      [command.path, [*command.path, "nope"], [*command.path, "-h"], [*command.path, "--help"]]
+      [command.path, [*command.path, "nope"], [*command.path, "-h"], [*command.path, "--help"]] +
+        abbreviated_command(command)
+    end
+
+    # proof.usage.kdl: a command is typed in full, so the front of its name names no command.
+    private def abbreviated_command(command)
+      *parents, name = command.path
+      [[*parents, front(name), *words(command)], [*parents, name[0, 1].to_s, *words(command)]]
+    end
+
+    # All of a word but its last character, which names nothing the spec defines.
+    private def front(word)
+      word[0...-1].to_s
     end
 
     private def leaf_cases(command)
@@ -69,22 +86,37 @@ module CommandLineContract
     private def flag_cases(command, base, flag)
       value = flag.choices.first || "v"
       cases = flag.switches.flat_map { |switch| switch_cases(command, base, flag, switch, value) }
-      cases + flag.requires.map { |required| [*base, flag.switches.last, *(value if flag.takes_value?), required] }
+      cases += flag.requires.map { |required| [*base, flag.switches.last, *(value if flag.takes_value?), required] }
+      cases + abbreviations(base, flag, value)
+    end
+
+    # proof.usage.kdl: a flag is typed in full, so the front of its name is no flag, and neither is the front of one
+    # of its choices a choice.
+    private def abbreviations(base, flag, value)
+      given = flag.takes_value? ? [value] : []
+      fronts = flag.long.flat_map { |word| ["--#{front(word)}", "--#{word[0, 1]}"] }
+      fronts.flat_map { |switch| [[*base, switch], [*base, switch, *given]] } + choices_cut(base, flag)
+    end
+
+    private def choices_cut(base, flag)
+      flag.choices.map { |choice| [*base, flag.switches.last, front(choice)] }
     end
 
     private def switch_cases(command, base, flag, switch, value)
-      before = [*command.path, switch, *(value if flag.takes_value?), *words(command)]
-      return [[*base, switch], before, [*base, switch, switch]] unless flag.takes_value?
+      given = [switch, *(value if flag.takes_value?)]
+      before = [*command.path, *given, *words(command)]
+      ahead = [*given, *base]
+      return [[*base, switch], before, ahead, [*base, switch, switch]] unless flag.takes_value?
 
       other = flag.choices[1] || "w"
-      [[*base, switch, value], before, [*base, switch, value, switch, other], [*base, "#{switch}=#{value}"]] +
+      [[*base, switch, value], before, ahead, [*base, switch, value, switch, other], [*base, "#{switch}=#{value}"]] +
         [[*base, switch], [*base, switch, "-x"], [*base, switch, "bogus"]]
     end
 
     private def globals(command, base)
       switches = @spec.root.global_flags.flat_map(&:switches)
       switches.flat_map { |switch| [[switch, *base], [*base, switch], [*command.path, switch, *words(command)]] } +
-        [[*base, "-qd"], [*base, "-q", "-d"], ["-qd", *base]]
+        [[*base, "-qd"], [*base, "-q", "-d"], ["-qd", *base], ["--nope", *base], ["-x", *base], ["--quie", *base]]
     end
 
     private def examples

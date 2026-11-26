@@ -6,7 +6,9 @@ require_relative("../support/command_line_usage")
 require_relative("../test_helper")
 
 # Checks that `proof`'s parser and `usage explain` agree on every command line the CLI spec defines: whether it is
-# accepted, which command it runs, and what each word binds to.
+# accepted, which command it runs, and what each word binds to, with each `--` that is a word kept and each one that
+# separates the task's words from the flags left out. The lines include the front of every flag, command, and choice,
+# which usage refuses, and each flag before its command, which usage refuses too.
 #
 # usage can't say four things the parser does, so the unit tests check them alone: the nearest flag in the line for an
 # unknown flag (flag_mistakes_test.rb), the words of every other line (word_mistakes_test.rb), `:::` with no task
@@ -31,10 +33,18 @@ class CommandLineContractTest < Minitest::Test
     )
   end
 
-  # The contract has enough command lines to mean something: at least one for each flag of each command.
-  def test_the_cases_cover_every_flag_of_every_command
-    flags = SPEC.root.subcommands.flat_map { |command| command.own_flags + command.subcommands.flat_map(&:own_flags) }
+  # The contract names every switch the spec gives a flag, in each of the spec's commands.
+  def test_the_cases_use_every_switch_of_every_command
+    commands = SPEC.root.subcommands.flat_map { |command| [command, *command.subcommands] }
+    switches = (commands.flat_map(&:own_flags) + SPEC.root.global_flags).flat_map(&:switches)
 
-    assert_operator(CASES.size, :>, flags.size * 10)
+    assert_empty(switches - CASES.flatten)
+  end
+
+  # The contract has a line for every command, in full.
+  def test_the_cases_use_every_command
+    paths = SPEC.root.subcommands.flat_map { |command| [command, *command.subcommands].map(&:path) }
+
+    assert_empty(paths.reject { |path| CASES.any? { |argv| argv.first(path.size) == path } })
   end
 end
