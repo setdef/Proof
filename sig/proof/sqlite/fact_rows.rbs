@@ -1,0 +1,101 @@
+module Proof
+  module Sqlite
+    # How a fact becomes a row of the `facts` table and back.
+    #
+    # A store of runs keeps each fact as one row, and has to read it back as an
+    # equal fact. A fact holds a `Time`, a set of operating systems, a set of
+    # labels, resources, and a reason, none of which a column holds as it is.
+    #
+    # This module writes a fact as the columns of its row and reads the row
+    # back. The time is whole seconds since 1970 and the nanoseconds past
+    # them, as two integers, so it comes back equal, in UTC, to the
+    # nanosecond. The operating systems and the labels are JSON text, a list of
+    # names in sorted order. The resources are a column each for the CPUs and
+    # the megabytes, and the reason is the text of its name. Every other member
+    # is a column of its own name.
+    #
+    # Use it to write and read the rows of the facts table.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # id = Proof::RunId.parse("20261125-0336-m3d8q")
+    # fact = Proof::Run::Placed.new(at: Time.utc(2026, 11, 25, 3, 36), host: "nuc", runner: "nuc-linux")
+    # row = Proof::Sqlite::FactRows.row(id, 2, fact)
+    # row.values_at(:run_id, :version, :kind, :host, :runner) # => ["20261125-0336-m3d8q", 2, "Placed", "nuc", "nuc-linux"]
+    # Proof::Sqlite::FactRows.fact(row) == fact # => true
+    # ```
+    #
+    # A row that isn't a fact raises:
+    #
+    # ```ruby
+    # # Wrong: raises Proof::InvalidFactError
+    # Proof::Sqlite::FactRows.fact(row.merge(kind: "Paused"))
+    # ```
+    module FactRows
+      # What `FactRows` needs of a class of fact.
+      interface _FactClass
+        # The names of the fact's members, `:at` first.
+        def members: () -> Array[Symbol]
+
+        # Builds the fact from its members, `at` among them, each a keyword.
+        def new: (**Object? members) -> Run::Fact
+
+        # Whether `other` is a fact of the class.
+        def ===: (Run::Fact other) -> bool
+      end
+
+      # Every class of fact the domain has, by the name its rows carry in the
+      # `kind` column. The domain gets a new fact without this module
+      # changing, and a test fails until the new fact has a sample.
+      KINDS: Hash[String, _FactClass]
+
+      # The columns that hold a member of some fact, which every row has,
+      # empty when its fact has no such member. A multi-row insert takes its
+      # columns from the first row and drops the rest, so a row that left out
+      # a column would lose it from every row after it.
+      MEMBER_COLUMNS: Array[Symbol]
+
+      # The row for `fact`, as the `version`th fact of the run `id`: a `Hash`
+      # from column name to value, with every column but `id`.
+      #
+      # - `id`: RunId, the run the fact belongs to.
+      # - `version`: Integer, the fact's place in the run's list, from 1.
+      # - `fact`: the fact.
+      #
+      # ```ruby
+      # Proof::Sqlite::FactRows.row(
+      #   Proof::RunId.parse("20261125-0336-m3d8q"), 1, Proof::Run::CancelAsked.new(at: Time.utc(2026, 11, 25, 3, 36))
+      # )[:at_seconds] # => 1795577760
+      # ```
+      def self.row: (RunId id, Integer version, Run::Fact fact) -> row
+
+      # The fact that `row` holds. Raises `Proof::InvalidFactError` when the
+      # row's kind isn't one of `KINDS`, when a column its fact needs is empty
+      # or isn't readable, or when the members break the fact's own rules.
+      #
+      # - `row`: a `Hash` from column name to value, as `row` gives and the
+      #   table holds.
+      #
+      # ```ruby
+      # row = Proof::Sqlite::FactRows.row(
+      #   Proof::RunId.parse("20261125-0336-m3d8q"), 1, Proof::Run::CancelAsked.new(at: Time.utc(2026, 11, 25, 3, 36))
+      # )
+      # Proof::Sqlite::FactRows.fact(row).at # => Time.utc(2026, 11, 25, 3, 36)
+      # ```
+      def self.fact: (row row) -> Run::Fact
+
+      # The name of `fact`'s class in `KINDS`, which its rows carry as `kind`.
+      private def self.kind_of: (Run::Fact fact) -> String
+
+      # The columns that hold `fact`'s members.
+      private def self.columns: (Run::Fact fact) -> row
+
+      # The columns that hold one member, `value`.
+      private def self.columns_of: (Symbol member, String | Integer | Symbol | Set[OS] | LabelSet | Resources | nil value) -> row
+
+      # The JSON text of the names, in sorted order.
+      private def self.json: (Array[String] names) -> String
+    end
+  end
+end

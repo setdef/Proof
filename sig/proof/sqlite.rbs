@@ -1,0 +1,18 @@
+module Proof
+  # The durable store of runs, in one SQLite file.
+  #
+  # The server has to keep every run's facts through a restart, and two
+  # writers can decide from one run at once. A `Hash` in memory does neither.
+  #
+  # This module holds the classes that keep runs in a file, over ROM, Sequel,
+  # and the `sqlite3` gem. `Proof::Sqlite::Runs` is the store, and the other
+  # classes are what it is made of. They load the three gems, so they load the
+  # first time something names `Proof::Sqlite::Runs`, and `require "proof"`
+  # loads none of them.
+  #
+  # Use it to keep runs where the server can find them after a restart.
+  module Sqlite
+    # A row of the `facts` table: its column names, each with its value.
+    type row = Hash[Symbol, String | Integer | nil]
+  end
+end

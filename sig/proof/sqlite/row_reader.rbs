@@ -1,0 +1,46 @@
+module Proof
+  module Sqlite
+    # Reads a fact from a row of the `facts` table.
+    #
+    # `Proof::Sqlite::FactRows` writes a fact as a row and reads it back, and
+    # the code that reads a row is as long as the code that writes one.
+    # Together they are more than one file can hold and keep every method of
+    # it simple.
+    #
+    # This module reads: it finds the class of fact the row's `kind` names,
+    # builds the time from its two integers, and reads each member from its
+    # column or columns.
+    #
+    # Use `Proof::Sqlite::FactRows.fact` to read a row, which calls it.
+    module RowReader
+      # The message for a row whose kind isn't one of
+      # `Proof::Sqlite::FactRows::KINDS`, with one `%p` for the kind.
+      UNKNOWN_KIND: String
+
+      # For each member that its column doesn't hold as it is, what reads the
+      # member from a row.
+      READERS: Hash[Symbol, ^(row) -> Object]
+
+      # The fact that `row` holds, as `Proof::Sqlite::FactRows.fact` says.
+      #
+      # - `row`: a `Hash` from column name to value.
+      #
+      # ```ruby
+      # row = Proof::Sqlite::FactRows.row(
+      #   Proof::RunId.parse("20261125-0336-m3d8q"), 1, Proof::Run::CancelAsked.new(at: Time.utc(2026, 11, 25, 3, 36))
+      # )
+      # Proof::Sqlite::RowReader.fact(row).class # => Proof::Run::CancelAsked
+      # ```
+      def self.fact: (row row) -> Run::Fact
+
+      # The time that `row` holds.
+      private def self.time_of: (row row) -> Time
+
+      # The members of `kind` that `row` holds, by name.
+      private def self.members_of: (FactRows::_FactClass kind, row row) -> Hash[Symbol, Object?]
+
+      # The value of `member` that `row` holds.
+      private def self.read: (Symbol member, row row) -> Object?
+    end
+  end
+end
