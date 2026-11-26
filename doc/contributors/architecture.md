@@ -115,6 +115,22 @@ Options weighed:
 - Rugged: builds libgit2 from source, its certificate check can't see the certificate, and it has no check that a commit is complete, which [the decision on code](decisions/0003-code-travels-as-git-commits-through-the-server.md) needs.
 - The `git` gem: wraps the same program, and pulls in ActiveSupport.
 
+#### A submodule in a working-tree commit
+
+A working-tree commit records each submodule at the commit its checkout is at, as `git add -A` records it. A submodule the developer has moved to another commit goes at that commit, even when the project hasn't committed the move. Changes to files inside a submodule are not sent, as [the command design](design/command.md#which-project-and-which-code) says. A run of `--commit REV` uses the tree of that commit, so it sends the submodule commits that tree records.
+
+Options weighed:
+
+- Pinning each submodule to the commit `HEAD` records: it drops a submodule bump the developer hasn't committed, and a working-tree run sends the working tree as it is.
+
+#### A project with no commit
+
+A project with no commit yet gets a working-tree commit made from an empty index, with no parent. `--commit` of any revision in such a project is refused as an unknown revision, because the project has no commit for a revision to point to.
+
+Options weighed:
+
+- Refusing a working-tree run: it stops a run in a new repository for no reason the run needs, because the run needs only the files.
+
 ### Requests to the server
 
 The command and the runners call the server with Ruby's Net::HTTP, pinned through its certificate-verification callback. It didn't block other fibers in a measurement: three one-second requests at once took 1.03 seconds.
