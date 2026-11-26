@@ -1,0 +1,121 @@
+{
+  "name": "todo",
+  "bin": "todo",
+  "cmd": {
+    "full_cmd": [],
+    "usage": "[-q --quiet] [SUBCOMMAND]",
+    "subcommands": {
+      "add": {
+        "full_cmd": [
+          "add"
+        ],
+        "usage": "add [--tag <tag>] <text>",
+        "subcommands": {},
+        "args": [
+          {
+            "name": "text",
+            "usage": "<text>",
+            "help": "What to do",
+            "help_first_line": "What to do",
+            "required": true,
+            "double_dash": "Optional",
+            "hide": false
+          }
+        ],
+        "flags": [
+          {
+            "name": "tag",
+            "usage": "--tag <tag>",
+            "help": "Tag it",
+            "help_first_line": "Tag it",
+            "short": [],
+            "long": [
+              "tag"
+            ],
+            "var": true,
+            "hide": false,
+            "global": false,
+            "arg": {
+              "name": "tag",
+              "usage": "<tag>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false,
+              "choices": {
+                "choices": [
+                  "home",
+                  "work"
+                ]
+              }
+            }
+          }
+        ],
+        "mounts": [],
+        "unknown_flags": null,
+        "hide": false,
+        "args_override_self": true,
+        "help": "Add an item",
+        "name": "add",
+        "aliases": [],
+        "hidden_aliases": [],
+        "examples": [],
+        "headings": []
+      }
+    },
+    "args": [],
+    "flags": [
+      {
+        "name": "quiet",
+        "usage": "-q --quiet",
+        "help": "Print less",
+        "help_first_line": "Print less",
+        "short": [
+          "q"
+        ],
+        "long": [
+          "quiet"
+        ],
+        "hide": false,
+        "global": true
+      }
+    ],
+    "mounts": [],
+    "unknown_flags": null,
+    "hide": false,
+    "args_override_self": true,
+    "name": "todo",
+    "aliases": [],
+    "hidden_aliases": [],
+    "examples": [],
+    "headings": []
+  },
+  "config": {
+    "props": {},
+    "sources": {},
+    "files": []
+  },
+  "usage": "",
+  "complete": {},
+  "about": "Keep a list",
+  "about_long": "Longer text",
+  "after_help_long": "Report a problem",
+  "examples": [
+    {
+      "code": "todo add milk",
+      "header": "Add",
+      "help": "Adds milk.",
+      "lang": ""
+    }
+  ],
+  "exit_codes": [
+    {
+      "code": 0,
+      "help": "It worked."
+    }
+  ],
+  "unknown_flags": "error",
+  "unknown_env": {
+    "prefix": "TODO_",
+    "allow": []
+  }
+}

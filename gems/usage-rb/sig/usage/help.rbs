@@ -7,7 +7,7 @@ module Usage
   # This class writes each command's help from the spec, in one layout: the name and what it does, the longer
   # description, the usage line, the examples, then a table each of subcommands, arguments, flags, and global flags.
   # The program's help also lists the exit statuses and ends with the spec's closing text. Each flag shows its
-  # one-line description and its choices. Lines that run past 100 characters, and table cells past the table's 78,
+  # one-line description and its choices. Lines that run past 100 characters, and table rows past 77,
   # wrap at spaces.
   #
   # Use it to print what `-h` and `--help` ask for.
