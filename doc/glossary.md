@@ -66,6 +66,20 @@ The one configuration file for the whole pool, kept on the server. It lists each
 
 - Don't say: config, which is ambiguous between the pool file and the **project file**.
 
+### repository
+
+The pool file's name for a **project** that the **server** also fetches from: its entry has the clone URL, the branches to watch, and the **tasks** to run on each new commit.
+
+- Elsewhere: called a repository in GitHub Actions and Woodpecker, where it is the unit of work, as a **project** is in Proof.
+- Don't say: project, which means the repository a **run**'s code comes from, whoever sends it; watch list.
+
+### retention
+
+How long the **server** keeps what each **run** leaves: its **record**, its **output**, and its **artifacts**. You set each in days in the **pool file**.
+
+- Elsewhere: GitHub Actions has `retention-days` for artifacts, and GitLab has `expire_in`.
+- Don't say: expiry; TTL; cleanup.
+
 ### place
 
 To choose the **runner** a queued **run** goes to, and hold the CPUs and memory it **requests** on that runner's **host**. A run leaves the **queue** when the **server** places it.
@@ -137,6 +151,8 @@ The values in a `defaults` node. In a project file, they apply to every task who
 
 One of the values a **run** gets: its **OS**es, **labels**, CPUs, memory, time limit, **artifacts**, and **caches**. A flag on `proof run`, the **task**'s entry in the **project file**, the **defaults**, and Proof's built-in defaults each give settings, in that order of precedence. CPUs, memory, and the time limit come from the first of them that has one, and so do the **OS**es. **Labels**, **artifacts**, and **caches** add up from all of them.
 
+A **host** has settings too: its **budget**, its `keep-free` disk space, its **share**, how long a **person** counts as **active**, and the **labels** it withholds. The host's entry in the **pool file**, the **defaults** node, and Proof's built-in defaults each give them, in that order. The budget, the `keep-free` space, the share, and the time a person counts as active come from the first of them that has one. The withheld labels add up from all of them.
+
 - Don't say: option, which most tools use for a flag; property, which in the project file means a `name=value` entry on a node, such as `cpus=4`, where `os` and `label` are children.
 
 ### resources
@@ -145,6 +161,20 @@ The CPUs and memory a task requests. The server places a run only where a host h
 
 - Elsewhere: called resources in Nomad, and CPUs and memory in Slurm and HTCondor, where asking for them is a request.
 - Don't say: reservation; slots; sizing; limits.
+
+### size
+
+An amount of memory or disk: a number, an optional space, and a unit, such as `512MB`, `8 GB`, or `1.5TiB`, counted in megabytes and rounded up to a whole megabyte. A **task**'s memory, a host's **budget**, and a pool file's `limits` are sizes.
+
+- Elsewhere: Kubernetes calls the same thing a quantity.
+- Don't say: capacity, which is what a **runner** reports; weight; volume.
+
+### duration
+
+A length of time written as a whole number from 1 and one unit, in lowercase, with no space: `90s`, `30m`, `2h`, or `7d`. A task's `timeout`, a host's `active-for`, and a repository's `poll` take seconds, minutes, or hours, and **retention** takes days. A form with two units, such as `1h30m`, or a fraction, such as `1.5h`, is refused.
+
+- Elsewhere: called a duration in Go, Nomad, and Kubernetes, whose parsers also read `1h30m` and `1.5h`.
+- Don't say: interval; period; time span.
 
 ### request
 
