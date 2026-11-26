@@ -8,23 +8,28 @@ class PoolFileReaderRepositoryValuesTest < Minitest::Test
   include PoolFileReaderHelper
 
   BODY = "{\n  branch trunk\n  task test\n"
+  WHAT_A_NAME_IS = "is text with at least one character that isn't white space, such as"
   BLANKS = [
-    ["repository \"\" url=\"u\" #{BODY}}\n", 1, "a repository's name is not empty and not only spaces, not \"\""],
-    ["repository a url=\" \" #{BODY}}\n", 1, "a repository's url is not empty and not only spaces, not \" \""],
+    ["repository \"\" url=\"u\" #{BODY}}\n", 1, "a repository's name #{WHAT_A_NAME_IS} lota, not \"\""],
+    [
+      "repository a url=\" \" #{BODY}}\n",
+      1,
+      "a repository's url #{WHAT_A_NAME_IS} https://github.com/setdef/Lota.git, not \" \"",
+    ],
     [
       "repository a url=\"u\" {\n  branch \" \"\n  task t\n}\n",
       2,
-      "a branch's name is not empty and not only spaces, not \" \"",
+      "a branch's name #{WHAT_A_NAME_IS} trunk, not \" \"",
     ],
     [
       "repository a url=\"u\" {\n  branch b\n  task \"\"\n}\n",
       3,
-      "a task's name is not empty and not only spaces, not \"\"",
+      "a task's name #{WHAT_A_NAME_IS} test, not \"\"",
     ],
     [
       "repository a url=\"u\" #{BODY}  credentials-file \"  \"\n}\n",
       4,
-      "a credentials file's path is not empty and not only spaces, not \"  \"",
+      "a credentials file's path #{WHAT_A_NAME_IS} ~/.config/proof/credentials/lota, not \"  \"",
     ],
   ].freeze
   LISTS = [
@@ -32,7 +37,7 @@ class PoolFileReaderRepositoryValuesTest < Minitest::Test
     ["  branch b b\n  task t\n", { branches: %w[b b], tasks: %w[t] }],
     ["  branch b\n  task t\n  task t\n", { branches: %w[b], tasks: %w[t t] }],
   ].freeze
-  private_constant(:BODY, :BLANKS, :LISTS)
+  private_constant(:WHAT_A_NAME_IS, :BODY, :BLANKS, :LISTS)
 
   # The domain's refusal of an entry built with this change from a good one.
   def domain_refused(**change)

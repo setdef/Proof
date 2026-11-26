@@ -56,7 +56,7 @@ Proof refuses a pool file, with the line and the reason, when:
 - a `host` has no `runner`, or has no `budget` in its entry or in `defaults`, or a `repository` has no `url`, no `branch`, or no `task`;
 - `server`, `retention`, `limits`, or `defaults` is given twice, or a child is given twice in one entry, except `runner` and `task`, which can be written in several nodes: give every other child's values as arguments to one node, as in `branch trunk release`;
 - two hosts have one name, two repositories have one name, a runner is on two hosts or twice on one, or a repository lists a branch or a task twice;
-- the name of a host, a runner, a repository, a branch, or a task, a repository's `url`, or a `credentials-file`'s path is empty or only spaces;
+- the name of a host, a runner, a repository, a branch, or a task, a repository's `url`, or a `credentials-file`'s path is empty or only white space;
 - a `port` isn't a whole number from 1 to 65535, or `cpus` isn't a whole number from 0.
 
 Proof compares the names of hosts, runners, and repositories without regard to case, as it does labels, so `nuc` and `NUC` are one host, and a second entry for it is refused. Each name is shown as its entry writes it. Branch and task names compare as written, as Git and mise compare them.

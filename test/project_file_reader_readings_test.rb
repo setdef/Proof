@@ -42,7 +42,9 @@ class ProjectFileReaderReadingsTest < Minitest::Test
   def test_a_blank_task_name_is_refused
     [["", "task \"\"\n"], ["  ", "task \"  \"\n"], ["\t", "task \"\\t\"\n"]].each do |name, text|
       assert_refused(
-        "task a\n#{text}", 2, "a task's name is not empty and not only spaces, such as test, not #{name.inspect}"
+        "task a\n#{text}",
+        2,
+        "a task's name is text with at least one character that isn't white space, such as test, not #{name.inspect}"
       )
     end
   end

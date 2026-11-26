@@ -11,9 +11,8 @@ module Proof
   #
   # Use it from `Proof::PoolFileReader`.
   class PoolFileRepositories
-    # For each child whose arguments may be blank, what its arguments are, for
-    # the message.
-    BLANKS: Hash[Symbol, String]
+    # The children whose arguments may be blank.
+    BLANKS: Array[Symbol]
 
     # Prepares to read with `refusal`.
     #

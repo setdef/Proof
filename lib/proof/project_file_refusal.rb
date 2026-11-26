@@ -13,7 +13,7 @@ module Proof
       defaults_arguments: "a \"defaults\" node takes properties and children and no arguments, as in defaults cpus=4",
       task_arguments: "a task entry is task NAME or task NAME COMMAND, such as task test or task docs \"make docs\", " \
         "and this one has %d arguments",
-      blank_name: "a task's name is not empty and not only spaces, such as test, not %p",
+      blank_name: "a task's name is text with at least one character that isn't white space, such as test, not %p",
       blank_command: "a task's command is not empty and not only spaces, such as \"make docs\", not %p. " \
         "Leave the command out to run the mise task of the same name",
     }.freeze

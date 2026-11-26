@@ -28,13 +28,16 @@ class PoolFileReaderChildrenTest < Minitest::Test
       "a \"defaults\" node takes no arguments, as in defaults { budget \"100GB\" }, and this one has 1",
     ],
   ].freeze
+  WHAT_A_NAME_IS = "is text with at least one character that isn't white space, such as"
   BLANKS = [
-    ["host \"\" {\n  runner a\n}\n", 1, "a host's name is not empty and not only spaces, not \"\""],
-    ["host \"  \" {\n  runner a\n}\n", 1, "a host's name is not empty and not only spaces, not \"  \""],
-    ["host a {\n  runner b \" \"\n}\n", 2, "a runner's name is not empty and not only spaces, not \" \""],
-    ["host \"\\t\" {\n  runner a\n}\n", 1, "a host's name is not empty and not only spaces, not \"\\t\""],
+    ["host \"\" {\n  runner a\n}\n", 1, "a host's name #{WHAT_A_NAME_IS} nuc, not \"\""],
+    ["host \"  \" {\n  runner a\n}\n", 1, "a host's name #{WHAT_A_NAME_IS} nuc, not \"  \""],
+    ["host a {\n  runner b \" \"\n}\n", 2, "a runner's name #{WHAT_A_NAME_IS} nuc-linux, not \" \""],
+    ["host \"\\t\" {\n  runner a\n}\n", 1, "a host's name #{WHAT_A_NAME_IS} nuc, not \"\\t\""],
   ].freeze
-  private_constant(:HOST_USAGE, :HOST, :HOST_CHILDREN, :DEFAULTS_CHILDREN, :UNKNOWN_CHILDREN, :NAMES, :BLANKS)
+  private_constant(
+    :WHAT_A_NAME_IS, :HOST_USAGE, :HOST, :HOST_CHILDREN, :DEFAULTS_CHILDREN, :UNKNOWN_CHILDREN, :NAMES, :BLANKS
+  )
 
   # Project file reference, "Mistakes Proof catches", which the pool file reference points to: "a node or property isn't
   # one this page lists", for a child of `host` and of `defaults`. `defaults` "takes the same children as a `host`,
