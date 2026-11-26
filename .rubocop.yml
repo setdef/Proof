@@ -58,3 +58,8 @@ Markdown/Syntax:
   # warnings, so it reports each "> [!warning]" line as an undefined link. No
   # Markdown satisfies both this cop and those alerts.
   Enabled: false
+
+Style/DataInheritance:
+  # AGENTS.md says to write value objects as class Foo < Data.define(...),
+  # which this cop forbids.
+  Enabled: false
