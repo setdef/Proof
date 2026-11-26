@@ -107,6 +107,19 @@ module Proof
   class InvalidRunError < Error
   end
 
+  # Raised when a runner, as placement reads it, has a name that isn't text,
+  # an OS that isn't a `Proof::OS`, labels that aren't a `Proof::LabelSet`, a
+  # capacity that isn't `Proof::Resources`, or a connection that isn't `true`
+  # or `false`.
+  class InvalidRunnerError < Error
+  end
+
+  # Raised when a host, as placement reads it, has a name that isn't text, a
+  # share that isn't `Proof::Resources`, a person's activity that isn't `true`
+  # or `false`, or runners that aren't a list of runners with different names.
+  class InvalidHostError < Error
+  end
+
   # Raised when a store of runs is given a new run whose ID a stored run
   # already has.
   class RunExistsError < Error

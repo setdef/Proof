@@ -1,0 +1,102 @@
+module Proof
+  # One runner, as placement reads it: its OS, the labels it offers, its
+  # capacity, and whether it is connected.
+  #
+  # Placement decides from what each runner last reported and from the pool
+  # file, and it checks a run against each runner many times in one decision.
+  # Read from several sources each time, two checks in one decision could
+  # disagree.
+  #
+  # This class holds one snapshot of a runner. Its labels are the ones it
+  # offers after the pool file withholds any, and its capacity can be less
+  # than its host's, as for WSL. Ask it whether it takes a queued run: the
+  # run's OS and every label it needs.
+  #
+  # Use it for each runner of a host that `Proof::_Hosts` gives placement.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # wsl = Proof::Runner.new(
+  #   name: "pc-wsl", os: Proof::OS.new(name: :linux), labels: Proof::LabelSet.of("kvm"),
+  #   capacity: Proof::Resources.request(cpus: 8, memory: "16GB"), connected: true
+  # )
+  # queued = Proof::Run::Queued.new(
+  #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+  #   labels: Proof::LabelSet.of("kvm"), resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+  # )
+  # wsl.takes?(queued) # => true
+  # ```
+  #
+  # A capacity is CPUs and memory:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidRunnerError
+  # Proof::Runner.new(name: "pc-wsl", os: Proof::OS.new(name: :linux), labels: Proof::LabelSet.of, capacity: "16GB", connected: true)
+  # ```
+  class Runner < Data
+    # For each member, the message when its value breaks the rule, and the
+    # rule.
+    RULES: Hash[Symbol, [String, ^(Object) -> bool]]
+
+    # The runner's name, as the pool file names it, frozen.
+    attr_reader name: String
+
+    # The runner's operating system.
+    attr_reader os: OS
+
+    # The labels the runner offers, after the pool file withholds any.
+    attr_reader labels: LabelSet
+
+    # The CPUs and memory the runner can use.
+    attr_reader capacity: Resources
+
+    # Whether the runner is connected to the server now.
+    attr_reader connected: bool
+
+    # Whether `given` is an `Array` of runners, each with a name the others
+    # don't have, as a host's runners are.
+    #
+    # - `given`: Object, such as an `Array` of `Proof::Runner`.
+    #
+    # ```ruby
+    # Proof::Runner.listed?([]) # => true
+    # Proof::Runner.listed?(["pc-wsl"]) # => false
+    # ```
+    def self.listed?: (Object given) -> bool
+
+    def self.new: (name: String, os: OS, labels: LabelSet, capacity: Resources, connected: bool) -> instance
+                | (String name, OS os, LabelSet labels, Resources capacity, bool connected) -> instance
+
+    # Builds a runner, and raises `Proof::InvalidRunnerError` unless `name` is
+    # a String of at least one character, `os` is a `Proof::OS`, `labels` is a
+    # `Proof::LabelSet`, `capacity` is `Proof::Resources`, and `connected` is
+    # `true` or `false`.
+    #
+    # - `name`: String, such as `"pc-wsl"`.
+    # - `os`: OS.
+    # - `labels`: LabelSet, the labels it offers.
+    # - `capacity`: Resources, what it can use.
+    # - `connected`: bool, whether it is connected now.
+    def initialize: (name: String, os: OS, labels: LabelSet, capacity: Resources, connected: bool) -> void
+
+    # Whether the run `queued` describes may go to this runner: its OS is one
+    # the run may go to, and it offers every label the run needs. Says nothing
+    # of resources or of the connection.
+    #
+    # - `queued`: Run::Queued, the fact that the run was queued.
+    #
+    # ```ruby
+    # mac = Proof::Runner.new(
+    #   name: "mac-macos", os: Proof::OS.new(name: :macos), labels: Proof::LabelSet.of,
+    #   capacity: Proof::Resources.request(cpus: 8, memory: "16GB"), connected: true
+    # )
+    # queued = Proof::Run::Queued.new(
+    #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [Proof::OS.new(name: :linux)],
+    #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 2, memory: "4GB")
+    # )
+    # mac.takes?(queued) # => false
+    # ```
+    def takes?: (Run::Queued queued) -> bool
+  end
+end

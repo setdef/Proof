@@ -19,6 +19,16 @@ class RunFactValuesTest < Minitest::Test
     assert_predicate(fact.runner, :frozen?)
   end
 
+  # Glossary, "place": a placement holds resources "on that runner's host", so
+  # a placement is on a host only by one of that host's runners.
+  def test_a_placement_is_on_its_host_by_one_of_its_runners
+    fact = placed(host: "pc", runner: "pc-wsl")
+
+    assert(fact.on?("pc", %w[pc-windows pc-wsl]))
+    refute(fact.on?("pc", %w[pc-windows]))
+    refute(fact.on?("nuc", %w[pc-wsl]))
+  end
+
   # A host and a runner each have a name.
   def test_a_placement_with_an_empty_host_is_refused
     error = assert_raises(Proof::InvalidFactError) { placed(host: "") }

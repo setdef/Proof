@@ -50,6 +50,19 @@ module Proof
       # - `host`: String, such as `"pc"`.
       # - `runner`: String, such as `"pc-wsl"`.
       def initialize: (at: Time, host: String, runner: String) -> void
+
+      # Whether the run was placed on the host named `host_name`, by one of the
+      # runners named in `runner_names`.
+      #
+      # - `host_name`: String, such as `"pc"`.
+      # - `runner_names`: an `Array` of String, such as the host's runners.
+      #
+      # ```ruby
+      # placed = Proof::Run::Placed.new(at: Time.utc(2026, 11, 25, 3, 36), host: "pc", runner: "pc-wsl")
+      # placed.on?("pc", ["pc-windows", "pc-wsl"]) # => true
+      # placed.on?("pc", ["pc-windows"]) # => false
+      # ```
+      def on?: (String host_name, Array[String] runner_names) -> bool
     end
   end
 end

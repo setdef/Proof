@@ -39,4 +39,22 @@ module Proof
     # or 1 when none is.
     def next_position: () -> Integer
   end
+
+  # The hosts of the pool, as placement reads them. A port: you pass an object
+  # that answers `hosts`, and the domain never reads the pool file or a
+  # runner's report itself.
+  #
+  # The server builds each `Proof::Host` from two sources: the pool file,
+  # which gives each host's runners and share and the labels it withholds, and
+  # each runner's latest report, which gives its OS, its labels, its capacity,
+  # whether it is connected, and whether a person is active at its host. When
+  # a runner can't tell whether a person is there, the host counts as one
+  # where a person is active.
+  #
+  # Any object with `hosts` fits, and so does a `Data` instance holding an
+  # `Array` of hosts in a test.
+  interface _Hosts
+    # Every host of the pool now, each with its runners.
+    def hosts: () -> Array[Host]
+  end
 end

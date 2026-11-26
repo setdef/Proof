@@ -1,0 +1,21 @@
+module Proof
+  # Checks of the members a value is built from, against a table of rules.
+  #
+  # `Proof::Host` and `Proof::Runner` each check four or five members, and a
+  # line of code for each would make their constructors hard to read. It is a
+  # private constant of `Proof`.
+  module MemberCheck
+    # The message for the first member in `members` that breaks its rule in
+    # `rules`, filled in by `format` with its value, or `nil`.
+    #
+    # - `rules`: a `Hash` from member to its message and its rule.
+    # - `members`: a `Hash` from member to its value.
+    def self.problem: (Hash[Symbol, [String, ^(Object) -> bool]] rules, Hash[Symbol, Object] members) -> String?
+
+    # Whether `value` is a String of at least one character.
+    def self.named?: (Object value) -> bool
+
+    # Whether `value` is `true` or `false`.
+    def self.flag?: (Object value) -> bool
+  end
+end

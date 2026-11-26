@@ -1,0 +1,154 @@
+module Proof
+  # One host, as placement reads it: its runners, its share, and whether a
+  # person is active there.
+  #
+  # Placement counts CPUs and memory per host, across all its runners, and a
+  # Windows PC with WSL has two. A host that kept what it has in use as a
+  # number of its own would be a second copy of the runs, which could drift
+  # from them.
+  #
+  # This class computes a host's free CPUs and memory from the runs you give
+  # it. Its capacity is the most any of its runners reports, of each. A new
+  # run on one of its runners gets what is free on the host, after every run
+  # it holds and after its share, and what is free on the runner, after the
+  # runs on that runner. The memory of the share is kept always, and its CPUs
+  # only while a person is active.
+  #
+  # Use it for each host that `Proof::_Hosts` gives placement.
+  #
+  # ## Examples
+  #
+  # A Windows PC with 16 CPUs and 64 GB, and WSL with 8 GB of it, keeps 4
+  # CPUs and 16 GB for a person:
+  #
+  # ```ruby
+  # linux = Proof::OS.new(name: :linux)
+  # windows = Proof::Runner.new(
+  #   name: "pc-windows", os: Proof::OS.new(name: :windows), labels: Proof::LabelSet.of,
+  #   capacity: Proof::Resources.request(cpus: 16, memory: "64GB"), connected: true
+  # )
+  # wsl = Proof::Runner.new(
+  #   name: "pc-wsl", os: linux, labels: Proof::LabelSet.of,
+  #   capacity: Proof::Resources.request(cpus: 16, memory: "8GB"), connected: true
+  # )
+  # pc = Proof::Host.new(
+  #   name: "pc", share: Proof::Resources.request(cpus: 4, memory: "16GB"), person_active: true, runners: [windows, wsl]
+  # )
+  # pc.capacity.megabytes # => 65536
+  # pc.free_on(windows, []).to_h # => {cpus: 12, megabytes: 49152}
+  # pc.free_on(wsl, []).to_h # => {cpus: 12, megabytes: 8192}
+  # ```
+  #
+  # A run on WSL takes from the host, so the Windows runner has less:
+  #
+  # ```ruby
+  # queued = Proof::Run::Queued.new(
+  #   at: Time.utc(2026, 11, 25, 3, 36), position: 1, os: [linux],
+  #   labels: Proof::LabelSet.of, resources: Proof::Resources.request(cpus: 4, memory: "6GB")
+  # )
+  # placed = Proof::Run::Placed.new(at: Time.utc(2026, 11, 25, 3, 36), host: "pc", runner: "pc-wsl")
+  # on_wsl = Proof::Run.new(id: Proof::RunId.parse("20261125-0336-m3d8q"), facts: [queued, placed])
+  # pc.free_on(windows, [on_wsl]).to_h # => {cpus: 8, megabytes: 43008}
+  # ```
+  class Host < Data
+    # For each member, the message when its value breaks the rule, and the
+    # rule.
+    RULES: Hash[Symbol, [String, ^(Object) -> bool]]
+
+    # The host's name, as the pool file names it, frozen.
+    attr_reader name: String
+
+    # The CPUs and memory the host keeps free for a person.
+    attr_reader share: Resources
+
+    # Whether a person is active at the host now.
+    attr_reader person_active: bool
+
+    # The host's runners, in a frozen `Array`.
+    attr_reader runners: Array[Runner]
+
+    def self.new: (name: String, share: Resources, person_active: bool, runners: Array[Runner]) -> instance
+                | (String name, Resources share, bool person_active, Array[Runner] runners) -> instance
+
+    # Builds a host, and raises `Proof::InvalidHostError` unless `name` is a
+    # String of at least one character, `share` is `Proof::Resources`,
+    # `person_active` is `true` or `false`, and `runners` is an `Array` of
+    # `Proof::Runner` with different names. A host may have no runners, and
+    # then it has nothing free.
+    #
+    # - `name`: String, such as `"pc"`.
+    # - `share`: Resources, kept for a person.
+    # - `person_active`: bool, whether a person is active now.
+    # - `runners`: an `Array` of `Proof::Runner`.
+    def initialize: (name: String, share: Resources, person_active: bool, runners: Array[Runner]) -> void
+
+    # The most CPUs and the most memory any of the host's runners reports,
+    # each on its own, or none when it has no runners.
+    #
+    # ```ruby
+    # Proof::Host.new(name: "nuc", share: Proof::Resources.new(cpus: 0, megabytes: 0), person_active: false, runners: []).capacity.to_h
+    # # => {cpus: 0, megabytes: 0}
+    # ```
+    def capacity: () -> Resources
+
+    # The runs in `runs` placed on this host by one of the runners named in
+    # `names`, which are all its runners unless you name fewer. A run placed by
+    # a runner that is no longer the host's, as after it was revoked, isn't
+    # among them.
+    #
+    # - `runs`: an `Array` of runs that hold resources.
+    # - `names`: an `Array` of runner names.
+    #
+    # ```ruby
+    # Proof::Host.new(name: "nuc", share: Proof::Resources.new(cpus: 0, megabytes: 0), person_active: false, runners: []).holding([]) # => []
+    # ```
+    def holding: (Array[Run] runs, ?Array[String] names) -> Array[Run]
+
+    # What a new run on `runner` could have now: what is free on the host,
+    # after the runs in `runs` it holds and after what it keeps for a person,
+    # and no more than what is free on `runner`, after the runs on it. Never
+    # below 0.
+    #
+    # - `runner`: Runner, one of the host's.
+    # - `runs`: an `Array` of runs that hold resources.
+    #
+    # ```ruby
+    # nuc_linux = Proof::Runner.new(
+    #   name: "nuc-linux", os: Proof::OS.new(name: :linux), labels: Proof::LabelSet.of,
+    #   capacity: Proof::Resources.request(cpus: 8, memory: "32GB"), connected: true
+    # )
+    # nuc = Proof::Host.new(name: "nuc", share: Proof::Resources.request(cpus: 2, memory: "4GB"), person_active: false, runners: [nuc_linux])
+    # nuc.free_on(nuc_linux, []).to_h # => {cpus: 8, megabytes: 28672}
+    # ```
+    def free_on: (Runner runner, Array[Run] runs) -> Resources
+
+    # What a run on `runner` could ever have, with no run on the host and no
+    # person active: the host's capacity less the memory of its share, and no
+    # more than the runner's capacity.
+    #
+    # - `runner`: Runner, one of the host's.
+    #
+    # ```ruby
+    # nuc_linux = Proof::Runner.new(
+    #   name: "nuc-linux", os: Proof::OS.new(name: :linux), labels: Proof::LabelSet.of,
+    #   capacity: Proof::Resources.request(cpus: 8, memory: "32GB"), connected: true
+    # )
+    # nuc = Proof::Host.new(name: "nuc", share: Proof::Resources.request(cpus: 2, memory: "4GB"), person_active: true, runners: [nuc_linux])
+    # nuc.ever_on(nuc_linux).to_h # => {cpus: 8, megabytes: 28672}
+    # ```
+    def ever_on: (Runner runner) -> Resources
+
+    # What the host keeps free for a person now: the memory of its share
+    # always, and its CPUs while a person is active.
+    #
+    # ```ruby
+    # Proof::Host.new(name: "nuc", share: Proof::Resources.request(cpus: 2, memory: "4GB"), person_active: false, runners: []).kept.to_h
+    # # => {cpus: 0, megabytes: 4096}
+    # ```
+    def kept: () -> Resources
+
+    private
+
+    def memory_share: () -> Resources
+  end
+end
