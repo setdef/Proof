@@ -27,6 +27,7 @@ What each operating system needs from a runner, and its traps. Where an item has
 - **Firewall:** a program that listens on any address other than `127.0.0.1` makes Windows prompt on the desktop, and when nobody answers, Windows adds a Block rule only an administrator can remove. Tests must bind `127.0.0.1`.
 - **Shared per-account state:** `APPDATA`, `LOCALAPPDATA`, and `USERPROFILE` stay the account's whatever `HOME` says. Environment variables are limited to 32,767 characters. Non-administrator symbolic links work in the console session but not over SSH.
 - **WSL:** the Linux runner in WSL and the Windows runner are one host. WSL has no GPU (OpenGL falls back to llvmpipe), and its processes run at normal priority whatever the Windows side's priority is. A Linux process outlives its `wsl.exe` until it next writes to it.
+- **Gems with C extensions need a compiler toolchain.** A project whose gems have C extensions and no precompiled Windows gem can't install them on a Windows host without MSYS2 at `C:\msys64`, with its `base-devel` group and the `mingw-w64-ucrt-x86_64-toolchain` package. Without them, `bundle install` fails (measured in three runs on an x64 Windows host, as an administrator).
 - **A GPU that drives a person's display:** work on it can disturb what the person sees, and from a disconnected session Windows may pick an integrated GPU the person's display depends on. A runner must never use a GPU that drives a person's display unless the pool file allows it.
 
 ## macOS
