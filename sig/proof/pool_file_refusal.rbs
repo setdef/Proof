@@ -1,0 +1,47 @@
+module Proof
+  # Raises `Proof::PoolFileError` for each way the shape of a pool file can be
+  # wrong, with the message for it.
+  #
+  # A refusal names a file and a line, and the reader would repeat both at every
+  # place it refuses something. The wording is the person's whole help in fixing
+  # the file, so it sits in one place, where it can be read as a list.
+  #
+  # This class holds the file's path, and has one method for each refusal: a
+  # node the page doesn't list, a node given twice, a node with arguments or
+  # children it doesn't take, and a property it doesn't have. Each method
+  # raises, and never returns. It also turns what the domain refuses into the
+  # same error, at the line of the node it was building.
+  #
+  # Use it from the classes that read a pool file's nodes.
+  class PoolFileRefusal < FileRefusal
+    # The messages, by name, for `format` to fill in.
+    MESSAGES: Hash[Symbol, String]
+
+    # Prepares to refuse as the file at `path`.
+    #
+    # - `path`: String, the file's path.
+    def initialize: (path: String) -> void
+
+    # Refuses a top-level node that the page doesn't list.
+    def unknown_node: (KdlNode node) -> bot
+
+    # Refuses a second node that the file may have only once. `first` is the node
+    # before it.
+    def repeated_node: (KdlNode node, KdlNode first) -> bot
+
+    # Refuses arguments on a node that takes none, with its usage and how many
+    # it has.
+    def node_arguments: (KdlNode node, String usage, Integer count) -> bot
+
+    # Refuses a property that the node doesn't have, and lists the ones it has,
+    # as `known` words them.
+    def unknown_property: (KdlNode node, String property, String known) -> bot
+
+    # Refuses a child of a node that has no children. `child` is the child.
+    def no_children: (KdlNode node, KdlNode child) -> bot
+
+    private
+
+    def say_of: (KdlNode node, Symbol key, **kdl_value values) -> bot
+  end
+end

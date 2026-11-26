@@ -1,0 +1,80 @@
+module Proof
+  # Reads a pool file's text into a `Proof::PoolFile`.
+  #
+  # `~/.config/proof/pool.kdl` is text that a person writes, in KDL 2, on the
+  # computer that runs the server. The server reads it from its own disk. A
+  # mistake in it must stop the server from using it, with the line and the
+  # reason, and never reach a run as a setting nobody meant. The domain refuses a
+  # bad size, duration, or label on its own, but it has no line to name, and it
+  # doesn't know which nodes and properties the file may have.
+  #
+  # This class reads the text with `Proof::KdlParser`, refuses a node or property
+  # the pool file page doesn't list, builds each value with the domain's own
+  # classes so that their rules are the file's rules, and raises
+  # `Proof::PoolFileError` for every mistake, with the path, the line of the node
+  # it is in, and what is wrong. It reads text and a path, and nothing else.
+  # Checking the whole file before any of it is used, and keeping the last good
+  # version, is the server's.
+  #
+  # Use it to turn the text of the pool file into the `Proof::PoolFile` the
+  # server reads.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # file = Proof::PoolFileReader.read("server port=8443\nretention output=\"30d\"\n")
+  # [file.port, file.retention.output.seconds / 86_400, file.retention.runs.seconds / 86_400] # => [8443, 30, 90]
+  # ```
+  #
+  # A mistake raises an error that names the line:
+  #
+  # ```ruby
+  # begin
+  #   Proof::PoolFileReader.read("server port=7443\nlimits output=\"400G\"\n")
+  # rescue Proof::PoolFileError => e
+  #   e.line # => 2
+  # end
+  # ```
+  class PoolFileReader
+    # The path of the pool file, as the page writes it.
+    PATH: String
+
+    # Reads `text` as a pool file. Raises `Proof::PoolFileError` for text that
+    # isn't KDL 2, for a node or property the page doesn't list, for a node
+    # given twice, for arguments or children a node doesn't take, and for a
+    # value the domain refuses. An empty text, or one with only comments, is a
+    # pool file with every default.
+    #
+    # - `text`: String, the file's text.
+    # - `path`: String, the file's path, for the errors. Defaults to
+    #   `Proof::PoolFileReader::PATH`.
+    def self.read: (String text, ?path: String) -> PoolFile
+
+    # Prepares to read texts as the file at `path`.
+    #
+    # - `path`: String, the file's path, for the errors.
+    def initialize: (path: String) -> void
+
+    # Reads `text` as `Proof::PoolFileReader.read` does.
+    #
+    # ```ruby
+    # Proof::PoolFileReader.new(path: "pool.kdl").read("server port=8443\n").port # => 8443
+    # ```
+    def read: (String text) -> PoolFile
+
+    private
+
+    def parts_of: (Array[Array[KdlNode]] groups) -> Hash[Symbol, Object]
+
+    def single: (Array[KdlNode] nodes) -> KdlNode?
+
+    def part_of: (KdlNode node) -> Hash[Symbol, Object]
+
+    NODES: Hash[Symbol, ^(Hash[Symbol, Object]) -> Hash[Symbol, Object]]
+
+    @path: String
+    @refusal: PoolFileRefusal
+    @shape: PoolFileShape
+    @properties: PoolFileProperties
+  end
+end

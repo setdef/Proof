@@ -39,7 +39,7 @@ module Proof
 
     private
 
-    def say: (KdlNode node, Symbol key, *kdl_value values) -> bot
+    def say: (KdlNode node, Symbol key, *kdl_value | Hash[Symbol, kdl_value] values) -> bot
 
     def refuse: (KdlNode node, String reason) -> bot
 

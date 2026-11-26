@@ -1,0 +1,43 @@
+module Proof
+  # Builds the values of the properties of a node of the pool file.
+  #
+  # `server port=7443`, `retention runs="90d"`, and `limits output="1GB"` give
+  # their settings as properties. The domain owns what makes each value valid:
+  # a port, a duration in days, and a size. Writing those rules a second time in
+  # the reader would let the two drift.
+  #
+  # This class builds each property's value with the domain's classes, so a
+  # port, a duration, and a size have one rule each, and a value the domain
+  # refuses is a refusal at the line of the node that gave it. It builds no
+  # property the node's form doesn't list, which `Proof::PoolFileShape`
+  # refuses first.
+  #
+  # Use it from `Proof::PoolFileReader`.
+  class PoolFileProperties
+    # The builder of each property, by the node's name and the property's name.
+    BUILDERS: Hash[Symbol, Hash[Symbol, ^(kdl_value) -> Object]]
+
+    # Prepares to build with `refusal`.
+    #
+    # - `refusal`: `Proof::PoolFileRefusal`.
+    def initialize: (refusal: PoolFileRefusal) -> void
+
+    # The values of the properties of `node`, by the property's name as a
+    # symbol. A property the node lacks is left out.
+    #
+    # - `node`: `Proof::KdlNode`, a `server`, `retention`, or `limits` node.
+    #
+    # ```ruby
+    # path = "pool.kdl"
+    # node = Proof::KdlParser.parse("server port=8443\n", path:, error: Proof::PoolFileError).first
+    # Proof::PoolFileProperties.new(refusal: Proof::PoolFileRefusal.new(path:)).read(node) # => {port: 8443}
+    # ```
+    def read: (KdlNode node) -> Hash[Symbol, Object]
+
+    private
+
+    def pair: (KdlNode node, Symbol key, kdl_value value) -> [Symbol, Object]
+
+    @refusal: PoolFileRefusal
+  end
+end

@@ -76,7 +76,7 @@ module Proof
     # ```ruby
     # Proof::Duration.read("7d", units: [:d], name: "retention artifacts").seconds # => 604_800
     # ```
-    def self.read: (Object text, units: Array[Symbol], name: String) -> Duration
+    def self.read: (Object? text, units: Array[Symbol], name: String) -> Duration
 
     # Builds a duration from a number of seconds, and raises
     # `Proof::InvalidDurationError` unless `seconds` is an Integer from 1.
@@ -88,7 +88,7 @@ module Proof
     # ```
     def initialize: (seconds: Integer) -> void
 
-    private def self.refusal: (Object text, Array[Symbol] units, String name) -> String
+    private def self.refusal: (Object? text, Array[Symbol] units, String name) -> String
 
     private def self.listed: (Array[String] items) -> String
   end

@@ -61,7 +61,7 @@ module Proof
     # ```ruby
     # Proof::Size.read("512mb", name: "limits output").megabytes # => 512
     # ```
-    def self.read: (Object text, name: String) -> Size
+    def self.read: (Object? text, name: String) -> Size
 
     # Builds a size from a number of megabytes, and raises
     # `Proof::InvalidSizeError` unless `megabytes` is an Integer from 0.

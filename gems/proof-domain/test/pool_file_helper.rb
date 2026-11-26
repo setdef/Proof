@@ -15,7 +15,12 @@ module PoolFileHelper
 
   # The duration that `retention` writes as this text, in days.
   def days(text)
-    Proof::Duration.read(text, units: %i[d], name: "retention")
+    days_named(text, "retention")
+  end
+
+  # The same duration, with the name of the setting that the message of a refusal gives.
+  def days_named(text, name)
+    Proof::Duration.read(text, units: %i[d], name:)
   end
 
   # The CPUs and memory that `share cpus=N memory="SIZE"` gives.

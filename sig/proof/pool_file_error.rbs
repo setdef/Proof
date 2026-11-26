@@ -1,0 +1,25 @@
+module Proof
+  # Raised when a pool file can't be read, with the file, the line, and what is
+  # wrong.
+  #
+  # The pool file is text that a person writes, and the server checks all of it
+  # before it uses any of it. A mistake in it that Proof ignored would place
+  # runs by settings the person didn't mean. A message that names no line
+  # leaves them searching the file.
+  #
+  # This error is the one every mistake in a pool file raises, whether KDL
+  # refuses the text or Proof refuses what it says. It is a
+  # `Proof::FileError`, so its message is the path, the line, and the reason.
+  #
+  # Use it to show a person where the pool file went wrong.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # error = Proof::PoolFileError.new(path: "pool.kdl", line: 12, reason: "a share has no space")
+  # error.message # => "pool.kdl:12: a share has no space"
+  # error.line # => 12
+  # ```
+  class PoolFileError < FileError
+  end
+end
