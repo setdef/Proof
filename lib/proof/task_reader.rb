@@ -19,7 +19,11 @@ module Proof
     def read(node)
       name, command = words_of(node)
       settings = @settings.read(node)
+      # The domain refuses a name or a command that isn't text, with its own message, so the entry is built from
+      # what the file holds, and Steep is told that this one call may pass what the domain's signature refuses.
+      # steep:ignore:start
       @refusal.checking(node) { TaskEntry.new(name:, command:, settings:) }
+      # steep:ignore:end
     end
 
     private def refuse_repeats_among(nodes)
