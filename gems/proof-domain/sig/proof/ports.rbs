@@ -33,5 +33,12 @@ module Proof
     # `Proof::UnknownRevisionError` when `revision` isn't a commit the project
     # has, and `Proof::PartialCloneError` when the project is a partial clone.
     def commit_id: (String revision) -> String
+
+    # The full ID of a new commit that holds the project's working tree as it
+    # is, with the changes not yet committed and the untracked files that Git
+    # doesn't ignore. Making it leaves the project's index, `HEAD`, and
+    # branches as they were. Raises `Proof::NoCommitsError` when the project
+    # has no commit, and `Proof::PartialCloneError` when it is a partial clone.
+    def working_tree_commit_id: () -> String
   end
 end

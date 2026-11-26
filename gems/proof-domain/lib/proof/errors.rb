@@ -26,12 +26,43 @@ module Proof
   end
 
   class NotInRepositoryError < Error
+    def initialize(folder:, git_said: nil)
+      super(
+        if git_said
+          "#{folder} is not inside a Git repository (#{git_said}). " \
+            "Run proof from a folder inside the project, or name the project with -C."
+        else
+          "#{folder} is not a folder, so no Git repository contains it. Check the folder you named with -C."
+        end
+      )
+    end
   end
 
   class UnknownRevisionError < Error
+    def initialize(revision:, root:)
+      super(
+        "#{revision} is not a commit in #{root}. " \
+          "Check the spelling, or run git fetch if it is a branch or tag that the project's remote has."
+      )
+    end
   end
 
   class PartialCloneError < Error
+    def initialize(root:)
+      super(
+        "#{root} is a partial clone, so it lacks objects of the commits that Proof sends. " \
+          "Clone the project again without --filter, and run proof from that clone."
+      )
+    end
+  end
+
+  class NoCommitsError < Error
+    def initialize(root:)
+      super(
+        "#{root} has no commits yet, so there is no HEAD to base the working tree on. " \
+          "Make a first commit with git commit, and run proof again."
+      )
+    end
   end
 
   class GitFailedError < Error

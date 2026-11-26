@@ -33,20 +33,8 @@ module Proof
   # Dir.mktmpdir { |folder| Proof::GitProject.find(folder) }
   # ```
   class GitProject < Data
-    # The message for a folder that doesn't exist, as a `format` string.
-    NOT_A_FOLDER: String
-
     # Matches the line of `git config --list` that marks a partial clone.
     PARTIAL_SETTING: Regexp
-
-    # The message for a revision that isn't a commit, as a `format` string.
-    UNKNOWN_REVISION: String
-
-    # The message for a partial clone, as a `format` string.
-    PARTIAL_CLONE: String
-
-    # The message for a folder outside any repository, as a `format` string.
-    NOT_IN_REPOSITORY: String
 
     # The project's root, as an absolute path with symbolic links resolved.
     attr_reader root: String
@@ -90,7 +78,33 @@ module Proof
     # ```
     def commit_id: (String revision) -> String
 
+    # The full ID of a new commit that holds the project's working tree as it
+    # is. It has the changes not yet committed, the untracked files that
+    # `.gitignore` doesn't match, and every tracked file, including one that
+    # `.gitignore` matches. Its one parent is `HEAD`. Making it leaves the
+    # clone's index, `HEAD`, and branches exactly as they were: Git builds the
+    # tree in a temporary index file that starts from `HEAD`'s tree.
+    #
+    # Raises `Proof::PartialCloneError` when the project is a partial clone,
+    # and `Proof::NoCommitsError` when it has no commit to be the parent.
+    #
+    # ```ruby
+    # require "tmpdir"
+    # Dir.mktmpdir do |folder|
+    #   git = ["git", "-C", folder, "-c", "user.name=Ann", "-c", "user.email=ann@example.com"]
+    #   system(*git, "init", "--quiet")
+    #   system(*git, "commit", "--quiet", "--allow-empty", "-m", "First")
+    #   File.write(File.join(folder, "new.txt"), "new")
+    #   id = Proof::GitProject.find(folder).working_tree_commit_id
+    #   IO.popen([*git, "ls-tree", "--name-only", id], &:read)
+    # end
+    # # => "new.txt\n"
+    # ```
+    def working_tree_commit_id: () -> String
+
     private
+
+    def head_id: () -> String
 
     def git: () -> Git
 

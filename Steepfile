@@ -17,6 +17,7 @@ target :lib do
   library "securerandom"
   library "erb"
   library "open3"
+  library "tmpdir"
 end
 
 # The domain gem is checked alone, with only its own signatures, so a type

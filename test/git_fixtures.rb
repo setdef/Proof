@@ -78,6 +78,13 @@ module GitFixtures
     git(folder, "rev-parse", "HEAD").chomp
   end
 
+  # Commits everything in +folder+, ignored files too, and returns the commit's ID.
+  def commit_all_with_ignored(folder)
+    git(folder, "add", "-A", "--force")
+    git(folder, "commit", "--quiet", "-m", "A change")
+    git(folder, "rev-parse", "HEAD").chomp
+  end
+
   # Writes +content+ to +path+ in +folder+, commits everything, and returns the commit's ID.
   def commit_file(folder, path = "a.txt", content = "1")
     write_file(folder, path, content)
@@ -93,5 +100,19 @@ module GitFixtures
     parent = temporary_folder
     git(parent, "clone", "--quiet", "--filter=blob:none", "file://#{source}", "partial")
     File.join(parent, "partial")
+  end
+
+  # The paths in the tree of +commit+ with the mode of each, as pairs sorted by path.
+  def tree(folder, commit)
+    entries = git(folder, "ls-tree", "-r", commit).lines.map do |line|
+      mode, _type, _id, path = line.split(/\s+/, 4)
+      [path.chomp, mode]
+    end
+    entries.sort
+  end
+
+  # The working-tree commit of the project in +folder+.
+  def working_tree_commit(folder)
+    Proof::GitProject.find(folder).working_tree_commit_id
   end
 end

@@ -1,0 +1,55 @@
+module Proof
+  # The commit of a project's working tree, made without touching the clone.
+  #
+  # A run can check the working tree as it is, with the changes not yet
+  # committed. Git has no command for that. Staging the changes with `git add`
+  # changes the clone's index, and a commit changes its branch, so Proof
+  # would leave behind what the person never asked for.
+  #
+  # This class builds the commit in a temporary index file, so the clone's
+  # index, branch, and `HEAD` stay exactly as they were. The index starts from
+  # `HEAD`'s tree, never empty: `git add --all` leaves out a file that
+  # `.gitignore` matches, and an empty index doesn't know that such a file is
+  # tracked, so it would drop it. The commit's one parent is `HEAD`. Its
+  # author and committer are `Proof <proof@proof.invalid>`, so a computer with
+  # no Git identity can make it, and its configuration can't sign it.
+  #
+  # `Proof::GitProject#working_tree_commit_id` uses it. Make one of this class
+  # only through that method, which checks that the clone is whole first.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "tmpdir"
+  # Dir.mktmpdir do |folder|
+  #   git = ["git", "-C", folder, "-c", "user.name=Ann", "-c", "user.email=ann@example.com"]
+  #   system(*git, "init", "--quiet")
+  #   system(*git, "commit", "--quiet", "--allow-empty", "-m", "First")
+  #   head = IO.popen([*git, "rev-parse", "HEAD"], &:read).chomp
+  #   File.write(File.join(folder, "new.txt"), "new")
+  #   id = Proof::WorkingTreeCommit.new(git: Proof::Git.new(folder:), head:).id
+  #   IO.popen([*git, "ls-tree", "--name-only", id], &:read)
+  # end
+  # # => "new.txt\n"
+  # ```
+  class WorkingTreeCommit
+    # The name and address of the commit's author and committer.
+    IDENTITY: Hash[Symbol, String]
+
+    # Prepares to make a commit on top of `head`.
+    #
+    # - `git`: Proof::Git, running in the project's root.
+    # - `head`: String, the full ID of the commit that is `HEAD`.
+    def initialize: (git: Git, head: String) -> void
+
+    # Makes the commit and returns its full ID.
+    def id: () -> String
+
+    private
+
+    @git: Git
+    @head: String
+
+    def commit_tree_of: (String index) -> String
+  end
+end

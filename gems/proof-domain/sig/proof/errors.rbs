@@ -52,18 +52,43 @@ module Proof
   # Raised when a folder isn't inside a Git repository, so there is no project
   # to find. Proof never guesses which project you meant.
   class NotInRepositoryError < Error
+    # Builds the error, with a message that says which folder isn't in a
+    # repository and what to do next.
+    #
+    # - `folder`: String, the folder that was searched.
+    # - `git_said`: String or `nil`, what git said when the folder exists.
+    #   `nil` means the folder doesn't exist.
+    def initialize: (folder: String, ?git_said: String?) -> void
   end
 
   # Raised when a revision, such as a branch, a tag, or a commit's first digits,
   # isn't a commit the project has. A tree or a file is a revision to Git, and
   # raises this error too.
   class UnknownRevisionError < Error
+    # Builds the error, with a message that gives the cause and what to try.
+    #
+    # - `revision`: String, what the person typed.
+    # - `root`: String, the project's root.
+    def initialize: (revision: String, root: String) -> void
   end
 
   # Raised when the project is a partial clone, made with a filter such as
   # `git clone --filter=blob:none`. A partial clone lacks objects that a commit
   # reaches, so Proof can't send the commit whole.
   class PartialCloneError < Error
+    # Builds the error, with a message that says why and what to do next.
+    #
+    # - `root`: String, the project's root.
+    def initialize: (root: String) -> void
+  end
+
+  # Raised when a project has no commits, so it has no `HEAD` to base a commit
+  # of its working tree on.
+  class NoCommitsError < Error
+    # Builds the error, with a message that says why and what to do next.
+    #
+    # - `root`: String, the project's root.
+    def initialize: (root: String) -> void
   end
 
   # Raised when the `git` program ends with a status other than 0 and the
