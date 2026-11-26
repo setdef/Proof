@@ -122,14 +122,29 @@ class HostTest < Minitest::Test
     assert_equal(Proof::Resources.new(cpus: 0, megabytes: 4096), host("nuc", share: size(2, "4GB")).kept)
   end
 
-  # Each value a host holds is checked, and two runners of one host have
-  # different names.
+  # Each value a host holds is checked.
   def test_a_host_with_a_value_of_the_wrong_kind_is_refused
-    good = { name: "nuc", share: size(2, "4GB"), person_active: false, runners: [] }
-    twice = [runner("nuc-linux"), runner("nuc-linux")]
-    bad = [{ name: nil }, { share: "4GB" }, { person_active: 1 }, { runners: [nil] }, { runners: twice }]
+    bad = [{ name: nil }, { name: "" }, { name: :nuc }, { share: "4GB" }, { person_active: 1 }]
 
-    bad.each { |values| assert_raises(Proof::InvalidHostError) { Proof::Host.new(**good, **values) } }
+    bad.each { |values| assert_raises(Proof::InvalidHostError) { Proof::Host.new(**good_values, **values) } }
+  end
+
+  # A host's runners are an Array of runners, and two runners of one host have
+  # different names.
+  def test_a_host_with_runners_of_the_wrong_kind_is_refused
+    twice = [runner("nuc-linux"), runner("nuc-linux")]
+    bad = [{ runners: [nil] }, { runners: twice }, { runners: Set[runner("nuc-linux")] }]
+
+    bad.each { |values| assert_raises(Proof::InvalidHostError) { Proof::Host.new(**good_values, **values) } }
+  end
+
+  # A host keeps a frozen copy of its name, so a change to the string it was
+  # given doesn't rename it.
+  def test_a_host_keeps_a_frozen_copy_of_its_name
+    given = +"nuc"
+
+    assert_predicate(host(given).name, :frozen?)
+    assert_predicate(host(given), :frozen?)
   end
 
   # A host keeps its own copy of its runners.
@@ -140,5 +155,9 @@ class HostTest < Minitest::Test
 
     assert_equal(1, nuc.runners.size)
     assert_predicate(nuc.runners, :frozen?)
+  end
+
+  private def good_values
+    { name: "nuc", share: size(2, "4GB"), person_active: false, runners: [] }
   end
 end
