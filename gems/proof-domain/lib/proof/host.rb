@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require_relative("capacity")
 require_relative("member_check")
+require_relative("resources")
+require_relative("room")
 require_relative("runner")
 
 module Proof
@@ -22,7 +23,7 @@ module Proof
     end
 
     def capacity
-      Capacity.most(runners)
+      Room.capacity(runners)
     end
 
     def spots
@@ -34,14 +35,11 @@ module Proof
     end
 
     def free_on(runner, runs)
-      Capacity.least(
-        Capacity.free(capacity, holding(runs), kept),
-        Capacity.free(runner.capacity, holding(runs, [runner.name]))
-      )
+      Room.free(capacity, holding(runs), kept).least(Room.free(runner.capacity, holding(runs, [runner.name])))
     end
 
     def ever_on(runner)
-      Capacity.least(runner.capacity, Capacity.free(capacity, [], memory_share))
+      runner.capacity.least(capacity.minus(memory_share))
     end
 
     def kept

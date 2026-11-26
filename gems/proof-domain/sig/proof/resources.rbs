@@ -18,6 +18,10 @@ module Proof
   # megabytes, so resources built from numbers accept a whole number of CPUs
   # from 0. Ask a request whether it fits within what a host has free.
   #
+  # A host's free amounts come from taking requests from what it has, and a
+  # difference below zero would read as room. `minus` never goes below 0, and
+  # `least` and `most` pick each resource on its own.
+  #
   # Use it for a task's request, a flag's request, and a host's free amounts.
   #
   # ## Examples
@@ -65,6 +69,16 @@ module Proof
   # busy = Proof::Resources.new(cpus: 0, megabytes: 4096)
   # Proof::Resources.request(cpus: 1, memory: "1GB").fits_within?(busy) # => false
   # ```
+  #
+  # A host with 8 CPUs and 16 GB, less a run that asks for 2 CPUs and 4 GB, has
+  # 6 CPUs and 12 GB. Taking more than there is leaves 0, never a negative
+  # number:
+  #
+  # ```ruby
+  # host = Proof::Resources.request(cpus: 8, memory: "16GB")
+  # host.minus(Proof::Resources.request(cpus: 2, memory: "4GB")).to_h # => {cpus: 6, megabytes: 12288}
+  # Proof::Resources.request(cpus: 1, memory: "1GB").minus(host).to_h # => {cpus: 0, megabytes: 0}
+  # ```
   class Resources < Data
     # The message for a memory that isn't a size, which `format` fills in with
     # what the memory was.
@@ -100,6 +114,14 @@ module Proof
     # ```
     def self.request: (cpus: Integer, memory: String) -> Resources
 
+    # Resources with no CPUs and no memory: what a host with nothing free has,
+    # and where the most of several resources starts.
+    #
+    # ```ruby
+    # Proof::Resources.none.to_h # => {cpus: 0, megabytes: 0}
+    # ```
+    def self.none: () -> Resources
+
     # Builds resources from CPUs and megabytes, and raises
     # `Proof::InvalidResourcesError` unless `cpus` and `megabytes` are each an
     # Integer from 0. Zero CPUs and zero megabytes are a host with nothing free,
@@ -124,5 +146,51 @@ module Proof
     # asked.fits_within?(Proof::Resources.request(cpus: 2, memory: "3GB")) # => false
     # ```
     def fits_within?: (Resources available) -> bool
+
+    # These resources less `taken`, each of the CPUs and the memory on its own
+    # and no lower than 0, so a host that has less than a run asks for has
+    # nothing free, never a negative amount.
+    #
+    # - `taken`: Resources, what is held, such as a run's request or a host's
+    #   share.
+    #
+    # ```ruby
+    # have = Proof::Resources.request(cpus: 8, memory: "16GB")
+    # have.minus(Proof::Resources.request(cpus: 2, memory: "4GB")).to_h # => {cpus: 6, megabytes: 12288}
+    # have.minus(Proof::Resources.request(cpus: 16, memory: "4GB")).to_h # => {cpus: 0, megabytes: 12288}
+    # ```
+    def minus: (Resources taken) -> Resources
+
+    # The fewer CPUs and the less memory of these resources and `other`, each
+    # on its own, so the result can have the CPUs of one and the memory of the
+    # other.
+    #
+    # - `other`: Resources, to compare with.
+    #
+    # ```ruby
+    # many_cpus = Proof::Resources.request(cpus: 16, memory: "8GB")
+    # much_memory = Proof::Resources.request(cpus: 4, memory: "32GB")
+    # many_cpus.least(much_memory).to_h # => {cpus: 4, megabytes: 8192}
+    # ```
+    def least: (Resources other) -> Resources
+
+    # The more CPUs and the more memory of these resources and `other`, each
+    # on its own, so the result can have the CPUs of one and the memory of the
+    # other. `Proof::Resources.none` is where a most of several resources
+    # starts.
+    #
+    # - `other`: Resources, to compare with.
+    #
+    # ```ruby
+    # many_cpus = Proof::Resources.request(cpus: 16, memory: "8GB")
+    # much_memory = Proof::Resources.request(cpus: 4, memory: "32GB")
+    # many_cpus.most(much_memory).to_h # => {cpus: 16, megabytes: 32768}
+    # [many_cpus, much_memory].reduce(Proof::Resources.none, :most).to_h # => {cpus: 16, megabytes: 32768}
+    # ```
+    def most: (Resources other) -> Resources
+
+    private
+
+    def combine: (Resources other) { (Integer one, Integer other) -> Integer } -> Resources
   end
 end

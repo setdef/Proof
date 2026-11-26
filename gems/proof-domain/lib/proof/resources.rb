@@ -20,6 +20,10 @@ module Proof
       new(cpus:, megabytes:)
     end
 
+    def self.none
+      new(cpus: 0, megabytes: 0)
+    end
+
     def initialize(cpus:, megabytes:)
       raise(InvalidResourcesError, format("cpus is a whole number from 0, not %p", cpus)) unless
         cpus.is_a?(Integer) && cpus >= 0
@@ -31,6 +35,22 @@ module Proof
 
     def fits_within?(available)
       cpus <= available.cpus && megabytes <= available.megabytes
+    end
+
+    def minus(taken)
+      combine(taken) { |have, take| [have - take, 0].max }
+    end
+
+    def least(other)
+      combine(other) { |one, two| [one, two].min }
+    end
+
+    def most(other)
+      combine(other) { |one, two| [one, two].max }
+    end
+
+    private def combine(other)
+      Resources.new(**to_h.merge(other.to_h) { |_member, one, two| yield(one, two) })
     end
   end
 end

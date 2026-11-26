@@ -1,0 +1,18 @@
+module Proof
+  # How much CPU and memory runners have, and what runs leave free of it.
+  #
+  # `Proof::Host` counts a host's capacity from its runners, and what is free
+  # from the runs that hold it. A difference below zero would read as room, so
+  # every subtraction here stops at 0. The arithmetic on one pair of
+  # resources is in `Proof::Resources`. This module is a private constant of
+  # `Proof`.
+  module Room
+    # The most CPUs and the most memory any of `runners` reports, each on its
+    # own, or none when there are no runners.
+    def self.capacity: (Array[Runner] runners) -> Resources
+
+    # What is left of `from` after the requests of the runs in `runs` and
+    # after `kept`, each resource no lower than 0.
+    def self.free: (Resources from, Array[Run] runs, ?Resources kept) -> Resources
+  end
+end

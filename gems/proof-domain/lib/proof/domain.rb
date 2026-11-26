@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require_relative("built_in_defaults")
-require_relative("capacity")
 require_relative("closest_host")
 require_relative("crockford")
 require_relative("domain/version")
@@ -19,6 +18,7 @@ require_relative("path_text")
 require_relative("placement")
 require_relative("project_file")
 require_relative("resources")
+require_relative("room")
 require_relative("run")
 require_relative("run_id")
 require_relative("run_id_text")
