@@ -11,7 +11,9 @@ module Proof
       # steep:ignore:end
       KEY = "key.pem"
       CERTIFICATE = "certificate.pem"
+      ATTEMPTS = 2
       public_constant(:KEY, :CERTIFICATE)
+      private_constant(:ATTEMPTS)
 
       attr_reader :key_path, :certificate_path
 
@@ -24,6 +26,20 @@ module Proof
       end
 
       def load_or_make
+        # A second server that starts at the same moment can write a file between this server's read and its write. The
+        # write then fails, and the file that won is the one to read: the key's, and then the certificate's.
+        attempts = 0
+        begin
+          read_or_make
+        rescue Errno::EEXIST
+          attempts += 1
+          retry if attempts <= ATTEMPTS
+
+          raise
+        end
+      end
+
+      private def read_or_make
         key_text = KeptFile.read(@key_path)
         key = key_text && @reader.key(key_text)
         certificate_text = KeptFile.read(@certificate_path) or return made_from(key || new_key)

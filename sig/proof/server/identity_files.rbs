@@ -53,6 +53,9 @@ module Proof
       # without its key, a key that isn't an EC P-256 private key in PEM, a
       # certificate that isn't PEM, and a certificate of another key.
       #
+      # When another server that starts at the same moment writes a file
+      # first, this reads that file, so both servers have one identity.
+      #
       # ```ruby
       # require "tmpdir"
       # files = Proof::Server::IdentityFiles.new(folder: Dir.mktmpdir)
@@ -61,6 +64,10 @@ module Proof
       def load_or_make: () -> Identity
 
       private
+
+      ATTEMPTS: Integer
+
+      def read_or_make: () -> Identity
 
       def new_key: () -> OpenSSL::PKey::EC
 
