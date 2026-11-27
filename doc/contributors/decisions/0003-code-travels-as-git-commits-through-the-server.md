@@ -28,7 +28,7 @@ A run checks either the working tree as it is, with uncommitted changes, or an e
 
 Chosen: option 1, because Git sends only the objects the other side lacks, keeps a commit's history, and can check that nothing a commit reaches is missing, and every runner has it. Option 2 lost because an archive has no history and sends the whole tree for every run. Option 3 lost because it puts forge credentials on every runner, and sends code to the forge that nobody decided to push.
 
-A working tree goes as a commit `proof` makes without touching the clone's index, branch, or `HEAD`. A runner counts a commit as fetched only once it has every object the commit reaches. How it works is in [How Proof works](../../how-proof-works.md#how-your-code-reaches-a-runner), and what it must guarantee is in the designs of [the command](../design/command.md#which-project-and-which-code) and [the server](../design/server.md#code).
+A working tree goes as a commit `proof` makes without touching the clone's index, branch, or `HEAD`. A runner counts a commit as fetched only once it has every object the commit reaches. How it works, and what it must guarantee, is in [How Proof works](../../how-proof-works.md#how-your-code-reaches-a-runner).
 
 Confidence: unbuilt. No recorded comparison measures option 1 against option 2.
 

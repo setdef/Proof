@@ -1,6 +1,6 @@
 # Architecture
 
-How Proof is built: the libraries, the layout of the code, and how the parts fit. This page is the place for mechanism, which [the design pages](design/README.md) never hold. They say what must hold, and [the decision records](decisions/README.md) hold the architectural decisions, such as Ruby, placement without an external scheduler, Git as the transport, connections out to the server, and no root. Choices of tool and library never reach the bar for a record, so they are here.
+How Proof is built: the libraries, the layout of the code, and how the parts fit. It is the design document of each part that is built: how the part works and why. What Proof must do is in the user documentation, such as [How Proof works](../how-proof-works.md), which is written ahead of the code, and [the decision records](decisions/README.md) hold the architectural decisions, such as Ruby, placement without an external scheduler, Git as the transport, connections out to the server, and no root. Choices of tool and library never reach the bar for a record, so they are here.
 
 Each section states how Proof is built, then lists the options weighed and why each lost. A measurement is stated with its numbers. The words are [the glossary's](../glossary.md).
 
@@ -8,7 +8,7 @@ Each section states how Proof is built, then lists the options weighed and why e
 
 ### One model for the command, the server, and the runner
 
-Proof has one bounded context. It has a shared kernel, which holds the ideas all three roles use (runs, tasks, resources, labels, the run states), and one module each for the command, the server, and the runner. The three always run one version and share one glossary, so the kernel's words mean the same in every module. The modules show which rule needs which guarantee. The server's modules need a store that can refuse a second decision. The runner's need a workspace lease that a prune can't race ([the runner design](design/runner.md#workspaces)) and one prune at a time across a host's runners ([the runner design](design/runner.md#disk)).
+Proof has one bounded context. It has a shared kernel, which holds the ideas all three roles use (runs, tasks, resources, labels, the run states), and one module each for the command, the server, and the runner. The three always run one version and share one glossary, so the kernel's words mean the same in every module. The modules show which rule needs which guarantee. The server's modules need a store that can refuse a second decision. The runner's need a workspace lease that a prune can't race ([How Proof works](../how-proof-works.md#what-a-runner-gives-each-run)) and one prune at a time across a host's runners ([#77](https://github.com/setdef/Proof/issues/77)).
 
 Options weighed:
 
@@ -54,11 +54,11 @@ Options weighed:
 
 ### A run as a consistency boundary
 
-A run is stored as an append-only list of facts, each with the server's time. The run's constructor checks every rule about a run, including when the run is rebuilt from storage. A record changed behind Proof's back therefore fails to load, instead of reporting a pass. The list also shows afterwards how a run reached `succeeded`. Which states a run can pass through, and what each ending needs, are in [the server design](design/server.md#runs-and-their-records) and [the runner design](design/runner.md#a-runs-end), and the facts record them.
+A run is stored as an append-only list of facts, each with the server's time. The run's constructor checks every rule about a run, including when the run is rebuilt from storage. A record changed behind Proof's back therefore fails to load, instead of reporting a pass. The list also shows afterwards how a run reached `succeeded`. Which states a run can pass through, and what each ending needs, are in [the glossary](../glossary.md#run-states) and [How Proof works](../how-proof-works.md#how-a-run-ends), and the facts record them.
 
 Options weighed:
 
-- A record of plain fields with a version number: it meets every requirement in [the server design](design/server.md#runs-and-their-records), but it can't show afterwards how a run reached `succeeded`, and nothing in it fails when a field is edited by hand.
+- A record of plain fields with a version number: it meets every requirement in [What the server keeps of a run](../how-proof-works.md#what-the-server-keeps-of-a-run), but it can't show afterwards how a run reached `succeeded`, and nothing in it fails when a field is edited by hand.
 
 #### The facts and the store of runs
 
@@ -77,7 +77,7 @@ Options weighed:
 | `Succeeded`, `Failed`, `TimedOut`, `OutOfMemory`, `Canceled`, `Lost` | Nothing more | Once, as the final state |
 | `ProcessesEnded` | Nothing more | Once, after `Lost`, the only fact a final state can be followed by |
 
-Each final state is allowed only after the facts it needs: `Succeeded` after a command that exited with 0, the whole output, and kept artifacts; `Failed` after the whole output and a status other than 0 or unkept artifacts, or after artifacts left unkept for space; `TimedOut` and `OutOfMemory` after the command started; `Canceled` after a cancel was asked for; `Lost` after the run was placed. A run holds its host's CPUs and memory while it is `running`, and while it is `lost` until its processes end. `Canceled` needs no placement, because the glossary's `canceled` covers a run that is still `queued` and ends with no runner. Such a run holds nothing, and placement never places it: `place_next` and `wait_reasons` skip a queued run whose cancel was asked for. A run that has a runner is `canceled` when its runner ends it. [The command design](design/command.md#output-and-exit-status) says what `proof` exits with for a run that someone else canceled.
+Each final state is allowed only after the facts it needs: `Succeeded` after a command that exited with 0, the whole output, and kept artifacts; `Failed` after the whole output and a status other than 0 or unkept artifacts, or after artifacts left unkept for space; `TimedOut` and `OutOfMemory` after the command started; `Canceled` after a cancel was asked for; `Lost` after the run was placed. A run holds its host's CPUs and memory while it is `running`, and while it is `lost` until its processes end. `Canceled` needs no placement, because the glossary's `canceled` covers a run that is still `queued` and ends with no runner. Such a run holds nothing, and placement never places it: `place_next` and `wait_reasons` skip a queued run whose cancel was asked for. A run that has a runner is `canceled` when its runner ends it. [How Proof works](../how-proof-works.md#how-a-run-ends) says what `proof` exits with for a run that someone else canceled.
 
 The store of runs is the port `Proof::_Runs`. It adds a fact only at the version the caller read, the run's number of facts, refuses a second placement whatever the version, refuses a second run at one queue position, and rebuilds each run from its facts on every read. `Proof::InMemory::Runs` keeps the facts in a `Hash` behind a mutex. `Proof::Testing::RunsContract` is the Minitest module every store passes, with two tests that run two threads at once and one that reopens the store over the same storage. One thread's call usually ends before the other's starts, so a store passes those two even with no lock. A store's test can define `build_runs_pausing_after_reads`, which the two tests call in place of `build_runs`: it builds a store that sleeps after each read, so the other thread's call comes between a call's read and its write, and a store with no lock fails them. `InMemoryRunsTest` defines it with a `Hash` that sleeps after each lookup.
 
@@ -97,7 +97,7 @@ Choosing a run's runner is a domain service. It checks the rules that span runs 
 - The server's unit of work serializes placement decisions.
 - A host's resources in use are computed from its runs, and never stored on the host, so there is no second copy to disagree with the runs.
 
-How placement orders and counts is in [the server design](design/server.md#placement), which says what must hold.
+What placement must do is in [How Proof works](../how-proof-works.md#how-the-server-places-a-run).
 
 Options weighed:
 
@@ -229,7 +229,7 @@ Options weighed:
 
 #### A submodule in a working-tree commit
 
-A working-tree commit records each submodule at the commit its checkout is at, as `git add -A` records it. A submodule the developer has moved to another commit goes at that commit, even when the project hasn't committed the move. Changes to files inside a submodule are not sent, as [the command design](design/command.md#which-project-and-which-code) says. A run of `--commit REV` uses the tree of that commit, so it sends the submodule commits that tree records.
+A working-tree commit records each submodule at the commit its checkout is at, as `git add -A` records it. A submodule the developer has moved to another commit goes at that commit, even when the project hasn't committed the move. Changes to files inside a submodule are not sent, as [How Proof works](../how-proof-works.md#how-your-code-reaches-a-runner) says. A run of `--commit REV` uses the tree of that commit, so it sends the submodule commits that tree records.
 
 Options weighed:
 
@@ -434,7 +434,7 @@ Options weighed:
 The Linux runner ends what a run started with a subreaper and a process group, and holds the run to its memory with a systemd scope:
 
 - The runner makes itself the child subreaper by calling `prctl(PR_SET_CHILD_SUBREAPER, 1)` through Fiddle, with a plain, non-variadic signature, as [Native calls](#native-calls) says native calls go. An orphaned descendant is then reparented to the runner and stays a zombie, which `kill -0` still answers, until the runner reaps it with `Process.wait`.
-- The runner starts the command with `Process.spawn(..., pgroup: true)` and ends the group with `Process.kill` on the negative group ID: `TERM`, then `CONT` for a stopped process, then `KILL`, as [the runner design](design/runner.md#a-runs-end) escalates.
+- The runner starts the command with `Process.spawn(..., pgroup: true)` and ends the group with `Process.kill` on the negative group ID: `TERM`, then `CONT` for a stopped process, then `KILL`, as [How Proof works](../how-proof-works.md#how-a-run-ends) says a run ends.
 - A process that leaves the group with `setsid` survives those signals. When its parent exits, it is an orphan and comes back to the runner, which holds it as a child to signal and reap.
 - The runner starts the command in `systemd-run --user --scope -p MemoryMax=… -p MemorySwapMax=0`, with `MemoryMax` set to the run's memory request and `MemorySwapMax` set to zero.
 - The runner reads a run's memory from `/proc/PID/smaps_rollup`, which has `Pss` and `SwapPss`, and which an account can read for its own processes, including those inside such a scope. The scope's `memory.current` and `memory.peak` are readable by the account too. Another account's processes aren't readable.

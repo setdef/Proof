@@ -45,7 +45,9 @@ The server listens on port 7443. It keeps each run's record for 90 days, its out
 
 ## What happens when the file has a mistake
 
-The server checks the whole file before it uses any of it. When the file has a mistake, the server keeps running with the last version that had none, and `proof status` shows the mistake, with its line, until you fix it. A server that starts with a mistake in the file runs no runs until you fix it.
+The server checks the whole file before it uses any of it. When the file has a mistake, the server keeps running with the last version that had none, and `proof status` shows the mistake, with its line, until you fix it. A file the server can't read, such as one that isn't there, is a mistake too.
+
+A server that starts with a mistake in the file runs no runs until you fix it. It still listens on the file's `server port` when the `server` node itself has no mistake, so every computer and runner set to that port can see the mistake, and on port 7443 only when it can't read the port.
 
 The pool file is [KDL](https://kdl.dev/) 2.0, so a repeated property keeps only its last value, and a size such as `4GB` needs quotes. The [project file reference](project-file.md#mistakes-proof-catches-and-one-it-cant) shows both mistakes with their fixes.
 

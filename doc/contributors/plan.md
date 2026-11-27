@@ -6,11 +6,11 @@ What 1.0 builds, in what order, and what it leaves out. Delete each item here on
 
 1. **Scaffold the repository** from `ruby_quality`, and merge its `AGENTS.md` into this repository's, so there is one ([#12](https://github.com/setdef/Proof/issues/12)).
 2. **One Linux runner, end to end,** in virtual machines: server setup, runner setup, a run of a commit and of a working tree, streamed output, the exit status, cancel, and artifacts.
-3. **Prove sensing a person** on each system, as [People at hosts](design/people-at-hosts.md#proven-before-its-built-on) lists, before anything depends on it ([#13](https://github.com/setdef/Proof/issues/13)).
+3. **Prove sensing a person** on each system, as [#13](https://github.com/setdef/Proof/issues/13) lists, before anything depends on it.
 4. **macOS,** then **Windows with WSL.**
 5. **Move one real project at a time** onto Proof once it can carry that project's checks.
 
-Each requirement in the design pages becomes an acceptance test as its part is built.
+Each requirement in the user documentation becomes an acceptance test as its part is built.
 
 ## Not in 1.0
 

@@ -26,7 +26,7 @@ Hosts are computers people use. Tasks need hardware such as KVM for Android emul
 
 Chosen: option 1, because a separate ordinary account keeps runs away from both the system and the person's files, while groups give it the hardware tasks need. Option 2 lost because a run's command could read and change the files of the person who uses the host. Option 3 lost because a run could then change the system it runs on, which is exactly what a host someone uses can't afford.
 
-Proof prints the commands that need an administrator, such as creating the account and adding it to a group, and checks them the next time setup runs. The docs name the account `proof`; any name works. How it works is in [How Proof works](../../how-proof-works.md#what-a-runner-gives-each-run), and what it must guarantee is in the designs of [the runner](../design/runner.md) and [each platform](../design/platforms.md).
+Proof prints the commands that need an administrator, such as creating the account and adding it to a group, and checks them the next time setup runs. The docs name the account `proof`; any name works. How it works, and what it must guarantee, is in [How Proof works](../../how-proof-works.md#what-a-runner-gives-each-run).
 
 Confidence: on Debian 13, an unprivileged account held a process tree to a memory limit through a systemd user scope, and ran a virtual display with a window manager, both tested in a virtual machine. Hardware access through groups is unproven on real hosts.
 
