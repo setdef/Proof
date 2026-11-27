@@ -4,3 +4,8 @@ module Parallel
 
   def self.map: [T, U] (Array[T] items, in_threads: Integer) { (T) -> U } -> Array[U]
 end
+
+# The part of the parallel_tests gem that the tasks use.
+module ParallelTests
+  def self.determine_number_of_processes: (Integer? count) -> Integer
+end

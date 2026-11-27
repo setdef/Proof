@@ -26,7 +26,7 @@ Run all of them before every push, with `BUNDLE_PATH` set to a folder outside th
 $ BUNDLE_PATH=$HOME/.cache/proof-bundle bin/ci
 ```
 
-`bin/ci` refuses a `BUNDLE_PATH` that is unset or inside the repository. It runs `mise exec -- bundle exec rake` at a low priority, with half as many test processes as the computer has processors (set `PARALLEL_TEST_PROCESSORS` to change that). Rake starts every check at once and exits 0 when every check passes, with no errors and no warnings. CI runs the same checks with `bundle exec rake` on Linux and macOS for every commit on the trunk. The checks are:
+`bin/ci` refuses a `BUNDLE_PATH` that is unset or inside the repository. It runs `mise exec -- bundle exec rake` at a low priority, with half as many processes as the computer has processors, for the tests and for the documentation examples alike (set `PARALLEL_TEST_PROCESSORS` to change that). Rake starts every check at once and exits 0 when every check passes, with no errors and no warnings. CI runs the same checks with `bundle exec rake` on Linux and macOS for every commit on the trunk. The checks are:
 
 | Check | What fails it |
 | --- | --- |

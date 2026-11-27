@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "parallel"
+require "parallel_tests"
 require_relative("extractor")
 require_relative("instrumenter")
 require_relative("report")
@@ -8,7 +9,8 @@ require_relative("subprocess")
 
 module DocExamples
   # Runs the examples of each file, one fresh Ruby process for each, and as many
-  # at a time as the computer has processors.
+  # at a time as the tests run in processes: PARALLEL_TEST_PROCESSORS when it is
+  # set, else one for each processor of the computer.
   class Runner
     # The entry that runs a block, or nil after adding the fault that keeps the
     # block from running to +faults+.
@@ -30,8 +32,13 @@ module DocExamples
     # come in the order of the paths, whichever process finishes first.
     def check(paths)
       # A thread only waits for its process, so threads cost no more than a
-      # pool of processes would.
-      Report.combine(Parallel.map(paths, in_threads: Parallel.processor_count) { |path| check_file(path) })
+      # pool of processes would. The parallel_tests gem reads the variable for
+      # the tests, so the examples read it the same way.
+      Report.combine(
+        Parallel.map(paths, in_threads: ParallelTests.determine_number_of_processes(nil)) do |path|
+          check_file(path)
+        end
+      )
     end
 
     # Extracts, instruments, and runs the examples of one file.
