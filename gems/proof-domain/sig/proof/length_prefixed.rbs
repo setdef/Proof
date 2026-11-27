@@ -1,0 +1,37 @@
+module Proof
+  # Joins fields into one string of bytes, each after its length.
+  #
+  # A slow tag is computed over a salt of several fields: a label, a nonce, a
+  # fingerprint, a runner's key. Joined end to end, two lists of fields can
+  # give one salt: `"ab"` and `"c"` join as `"a"` and `"bc"` do, so a tag over
+  # one list would match the other.
+  #
+  # This module writes each field's length in bytes, as 8 bytes with the most
+  # significant first, then the field's bytes. No two lists of fields join to
+  # the same bytes, so a tag computed over one list never matches another.
+  #
+  # Use it for every salt and every key-derivation input made of more than one
+  # field.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # Proof::LengthPrefixed.join("ab", "c") == Proof::LengthPrefixed.join("a", "bc") # => false
+  # Proof::LengthPrefixed.join("proof") # => "\x00\x00\x00\x00\x00\x00\x00\x05proof".b
+  # ```
+  module LengthPrefixed
+    # The fields, each after its length, as binary bytes. A length counts
+    # bytes, not characters, so `"é"` is 2 bytes long. An empty field is
+    # written as its length, 0, so it differs from no field. No fields give
+    # an empty string.
+    #
+    # - `fields`: Strings, in any encoding.
+    #
+    # ```ruby
+    # Proof::LengthPrefixed.join("é") # => "\x00\x00\x00\x00\x00\x00\x00\x02\xC3\xA9".b
+    # Proof::LengthPrefixed.join("a", "") == Proof::LengthPrefixed.join("a") # => false
+    # Proof::LengthPrefixed.join # => "".b
+    # ```
+    def self.join: (*String fields) -> String
+  end
+end

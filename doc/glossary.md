@@ -113,6 +113,20 @@ A code of 8 characters that `proof server setup` and `proof runner setup` print,
 - Elsewhere: called a user code in RFC 8628, which defines the device authorization grant, and in GitHub's and Microsoft's device sign-in.
 - Don't say: user code, because Proof's docs use user for the person who runs `proof`; code alone, which in Proof's docs also means a project's source (see "How your code reaches a runner"); PIN, which is a number someone keeps and reuses, where this code works once and expires; OTP, an abbreviation of "one-time password" that the docs would have to explain, where "one-time code" says it in plain words.
 
+### fingerprint
+
+The SHA-256 of the **server**'s public key. The command and every **runner** keep it after their first contact, and trust a server only while its key has that fingerprint.
+
+- Elsewhere: Git's `http.pinnedPubkey` takes the same hash, written after `sha256//` in Base64. SSH and GnuPG also call a hash of a key its fingerprint.
+- Don't say: thumbprint, which Windows uses for a hash of a whole certificate; pin, which is what the command and the runners do with a fingerprint.
+
+### slow tag
+
+A value Proof computes from a **one-time code** with scrypt, over the server's **fingerprint** and other fields, to show that whoever computed it knows the code. The server shows one before `proof login` sends a code, and the computer that approves a **runner** sends one to the runner, so the command and the runner keep a fingerprint only from someone who knows the code. Each tag takes about a third of a second and 128 MiB to compute, which makes trying every code against one take thousands of years on one processor.
+
+- Elsewhere: RFC 7914 calls what scrypt computes a derived key. In cryptography a tag is what a MAC computes, and a slow tag is one keyed by the code and slow on purpose.
+- Don't say: hash, because a hash has no key; MAC or HMAC, which are fast, where a slow tag is slow on purpose; tag alone, which can be read as a **label**.
+
 ## The project
 
 ### project
