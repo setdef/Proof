@@ -61,6 +61,17 @@ class RunnerKeyTest < Minitest::Test
     end
   end
 
+  # Architecture, "Certificates": one message for every cause. Ruby keeps the error a rescue raises over as the new
+  # error's cause and prints it after the message, so a refusal keeps no cause that would tell one failure from another.
+  def test_a_refusal_keeps_no_cause
+    %i[ciphertext ephemeral_key].each do |field|
+      runner, token = changed(field) { |bytes| flipped(bytes) }
+      error = assert_raises(Proof::TokenDecryptionError, field.to_s) { runner.decrypt(token) }
+
+      assert_equal(["the token doesn't decrypt with this runner's key", nil], [error.message, error.cause], field.to_s)
+    end
+  end
+
   # Ruby's openssl checks as few bytes of a tag as it is given, so a token whose tag is cut short is refused before
   # anything decrypts it.
   def test_a_token_with_a_short_tag_is_refused

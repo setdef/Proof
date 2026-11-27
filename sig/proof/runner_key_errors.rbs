@@ -26,7 +26,8 @@ module Proof
 
   # Raised when an encrypted token doesn't decrypt with a runner's key: it
   # was encrypted to another key, or something changed it on the way. The
-  # message is the same for every cause, so it tells an attacker nothing.
+  # message is the same for every cause, and the error has no `cause`, so it
+  # tells an attacker nothing.
   #
   # ## Examples
   #

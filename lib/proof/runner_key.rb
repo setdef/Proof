@@ -49,8 +49,9 @@ module Proof
     private def opened(encrypted)
       TokenCipher.decrypt(encrypted, key)
     rescue RunnerKeyError, OpenSSL::Cipher::CipherError
-      # One message for every cause, so a refusal tells whoever changed the token nothing.
-      raise(TokenDecryptionError, "the token doesn't decrypt with this runner's key")
+      # One message for every cause, so a refusal tells whoever changed the token nothing. Ruby would keep the error
+      # rescued here as the cause, and print its message after this one.
+      raise(TokenDecryptionError, "the token doesn't decrypt with this runner's key", cause: nil)
     end
   end
 end
