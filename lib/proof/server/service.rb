@@ -8,8 +8,9 @@ module Proof
 
       def self.reason(error)
         # Proof's own errors say what to do; an error from the system says only what failed.
-        message = error.message
-        error.is_a?(Error) ? message : "the server can't start: #{message}"
+        return error.message if error.is_a?(Error)
+
+        "the server can't start: #{system_reason(error)}"
       end
 
       def self.without_experimental_warnings
@@ -35,6 +36,14 @@ module Proof
         0
       rescue Error, SystemCallError => e
         failed(e)
+      end
+
+      private_class_method def self.system_reason(error)
+        # Ruby's message is "Reason @ function - path", or "Reason - path" for an error made with a path, and says the
+        # path last.
+        reason = SystemCallError.new(error.errno).message
+        path = error.message[/ (?:@ \w+ )?- (.+)\z/m, 1]
+        path ? "#{path}: #{reason}" : reason
       end
 
       private def as_the_process(&)

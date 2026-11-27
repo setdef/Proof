@@ -572,7 +572,7 @@ What the server writes to standard error, after `proof:`, beyond what it writes 
 | It has stopped | `proof: stopped.` |
 | Its key or certificate can't be used | `proof: PATH ...`, with what to do, as [The server's key and certificate](#the-servers-key-and-certificate) says |
 | Its port is taken | `proof: the server can't listen on port PORT: REASON`, with the system's text for the error, such as `Address already in use` |
-| A file it can't make | `proof: the server can't start: ` and Ruby's message |
+| A file it can't make or read | `proof: the server can't start: PATH: REASON`, with the system's text for the error, such as `Permission denied` |
 
 Options weighed:
 

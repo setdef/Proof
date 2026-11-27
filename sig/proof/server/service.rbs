@@ -32,15 +32,20 @@ module Proof
       SIGNALS: Array[String]
 
       # Why the server couldn't start, from `error`: a Proof error's own
-      # message, or a system error's after "the server can't start:".
+      # message, or a system error's after "the server can't start:", as
+      # the path it names, then the system's text for it.
       #
       # - `error`: Proof::Error or SystemCallError, what stopped the start.
       #
       # ```ruby
-      # Proof::Server::Service.reason(Errno::EACCES.new("key.pem")) # => "the server can't start: Permission denied - key.pem"
+      # Proof::Server::Service.reason(Errno::EACCES.new("key.pem")) # => "the server can't start: key.pem: Permission denied"
       # Proof::Server::Service.reason(Proof::Server::ListenError.new("port 7443 is taken")) # => "port 7443 is taken"
       # ```
       def self.reason: (Error | SystemCallError error) -> String
+
+      # The path in a system error's message and the system's text for it,
+      # as `path: text`, or the text alone when the error has no path.
+      private def self.system_reason: (SystemCallError error) -> String
 
       # Runs the block with Ruby's warnings of experimental features off, and
       # puts the switch back as it was.

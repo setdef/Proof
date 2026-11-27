@@ -66,7 +66,13 @@ class ServerServeTest < Minitest::Test
     write(File.join(@home, ".local", "share"), "a file where the folder goes\n")
 
     assert_equal(1, Proof::Server.serve(home: @home, err: @err, host: "127.0.0.1"))
-    assert_match(/\Aproof: the server can't start: /, @err.string.lines.last)
+    key = File.join(@home, ".local", "share", "proof", "server", "key.pem")
+
+    assert_equal("proof: the server can't start: #{key}: Not a directory\n", @err.string.lines.last)
+  end
+
+  def test_a_system_error_with_no_path_is_given_as_the_systems_text_alone
+    assert_equal("the server can't start: Permission denied", Proof::Server::Service.reason(Errno::EACCES.new))
   end
 
   def test_a_port_another_program_holds_stops_it_from_starting_with_status_one
