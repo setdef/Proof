@@ -12,14 +12,12 @@ module Usage
   #
   # ```ruby
   # require "usage"
-  # example = Usage::Example.read({ code: "todo add 'Buy milk'", header: "Add an item" }, "command add")
+  # spec = Usage::Spec.read(%q({"examples": [{"code": "todo add 'Buy milk'", "header": "Add an item"}]}))
+  # example = spec.examples.first || raise
   # example.code # => "todo add 'Buy milk'"
   # example.help # => nil
   # ```
   class Example < Data
-    # The keys of an example's object that the gem accepts. An example with a language isn't supported.
-    KEYS: keys
-
     # The command line to show.
     attr_reader code: String
 
@@ -38,15 +36,5 @@ module Usage
     # - `header`: String or `nil`, the heading.
     # - `help`: String or `nil`, the explanation.
     def initialize: (code: String, header: String?, help: String?) -> void
-
-    # Reads an example from its object in the spec's JSON.
-    #
-    # - `object`: Hash, one entry of an `examples` list.
-    # - `parent`: String, the place of its command or program, for the message of an error, such as `"command add"`.
-    #
-    # ```ruby
-    # Usage::Example.read({ code: "todo list" }, "the program").header # => nil
-    # ```
-    def self.read: (object object, String parent) -> Example
   end
 end

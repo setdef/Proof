@@ -1,0 +1,11 @@
+module Usage
+  # How the spec's JSON writes an exit status, read into a `Usage::ExitCode`.
+  module ExitCodeFormat
+    # The keys of an exit status's object that the gem reads.
+    KEYS: keys
+
+    # Reads an exit status from `object`, one entry of `exit_codes`, where `parent` is the place of the program, and
+    # raises `Usage::SpecError` when its code isn't a whole number.
+    def self.read: (object object, String parent) -> ExitCode
+  end
+end

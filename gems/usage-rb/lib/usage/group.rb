@@ -4,19 +4,6 @@ module Usage
   # steep:ignore:start
   class Group < Data.define(:name, :names, :required, :multiple)
     # steep:ignore:end
-    KEYS = %w[name members required multiple].freeze
-    private_constant(:KEYS)
-
-    def self.read(object, parent)
-      reader = Reader.new(object, "group #{object[:name]} of #{parent}", KEYS)
-      new(
-        name: reader.text(:name).to_s,
-        names: reader.texts(:members),
-        required: reader.boolean(:required),
-        multiple: reader.boolean(:multiple)
-      )
-    end
-
     def required?
       required
     end

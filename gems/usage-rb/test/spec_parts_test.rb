@@ -86,7 +86,8 @@ class UsageSpecPartsTest < Minitest::Test
 
   # A group is neither required nor multiple unless the spec says so.
   def test_a_group_takes_several_members_only_when_the_spec_says_multiple
-    several = Usage::Group.read({ name: "g", members: ["a"], multiple: true }, "here")
+    groups = read('{"cmd": {"groups": [{"name": "g", "members": ["a"], "multiple": true}]}}').commands.root.groups
+    several = groups.first || flunk
 
     assert_equal([false, true], [several.required?, several.multiple?])
   end

@@ -82,10 +82,10 @@ module Usage
     def self.parts(reader)
       {
         path: reader.texts(:full_cmd),
-        args: reader.parts(:args, Arg),
+        args: reader.parts(:args, ArgFormat),
         flags: reader.parts(:flags, Flag),
-        groups: reader.parts(:groups, Group),
-        examples: reader.parts(:examples, Example),
+        groups: reader.parts(:groups, GroupFormat),
+        examples: reader.parts(:examples, ExampleFormat),
         subcommands: reader.members(:subcommands).map { |child| read(child) },
         subcommand_required: reader.boolean(:subcommand_required),
       }

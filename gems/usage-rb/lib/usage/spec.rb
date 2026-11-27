@@ -76,8 +76,8 @@ module Usage
 
     def self.parts(reader)
       {
-        examples: reader.parts(:examples, Example),
-        exit_codes: reader.parts(:exit_codes, ExitCode),
+        examples: reader.parts(:examples, ExampleFormat),
+        exit_codes: reader.parts(:exit_codes, ExitCodeFormat),
         commands: CommandTree.new(root: Command.read(reader.object(:cmd))),
       }
     end

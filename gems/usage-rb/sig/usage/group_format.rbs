@@ -1,0 +1,11 @@
+module Usage
+  # How the spec's JSON writes a group, read into a `Usage::Group`.
+  module GroupFormat
+    # The keys of a group's object that the gem reads.
+    KEYS: keys
+
+    # Reads a group from `object`, one entry of a command's `groups`, where `parent` is the place of its command, such
+    # as `"command add"`, and raises `Usage::SpecError` for anything the gem doesn't act on.
+    def self.read: (object object, String parent) -> Group
+  end
+end
