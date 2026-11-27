@@ -58,25 +58,34 @@ class SqliteRunsRacesTest < Minitest::Test
   # Architecture, "Storage": "a busy handler that sleeps make a write waiting on a lock let other fibers run." A
   # thread that waits for the file's write lock sleeps in Ruby, so another thread keeps running. The lock is held until
   # the other thread has ticked three times, so the test doesn't depend on how fast the computer runs it: a write
-  # that blocks the other thread leaves it with no tick, and the holder gives up after five seconds.
+  # that blocks the other thread leaves it with no tick, and the holder gives up after five seconds. Such a write
+  # ends with a busy error when its own wait ends, so the test counts the ticks that the write let happen and fails on
+  # them, not on the error.
   def test_a_write_that_waits_for_the_lock_lets_other_threads_run
     runs = build_runs
     release = Thread::Queue.new
     held = holding_the_write_lock(runs.path, release)
 
-    assert_operator(ticks_while(release) { runs.add(FIXTURES.run) }, :>=, 3)
+    ticks, refusal = ticks_while(release) { runs.add(FIXTURES.run) }
+
+    assert_operator(ticks, :>=, 3, "The write blocked the other thread, and ended with #{refusal.inspect}")
     assert_equal(FIXTURES.run.facts, FIXTURES.facts(runs))
     held.join
   end
 
-  # How many times a thread that sleeps for 10 milliseconds between ticks ran while the block ran. The third tick
-  # pushes to +release+.
+  # How many times a thread that sleeps for 10 milliseconds between ticks ran while the block ran, and the database
+  # error that ended the block, if one did. The third tick pushes to +release+.
   private def ticks_while(release)
     ticks = Thread::Queue.new
     ticker = Thread.new { ticking(ticks, release) }
-    yield
+    refusal = begin
+      yield
+      nil
+    rescue ROM::SQL::DatabaseError => e
+      e
+    end
     ticker.kill
-    ticks.size
+    [ticks.size, refusal]
   end
 
   private def ticking(ticks, release)
