@@ -21,8 +21,8 @@ module Proof
     end
 
     def self.distinct_names?(value)
-      # Names compare as Proof::Label does, with String#casecmp?, so two that differ only in case are one name.
-      names?(value) && value.combination(2).none? { |one, other| one.casecmp?(other) }
+      # Two names that differ only in case are one name, as Name.same? finds.
+      names?(value) && value.combination(2).none? { |one, other| Name.same?(one, other) }
     end
 
     def self.whole?(value, minimum)

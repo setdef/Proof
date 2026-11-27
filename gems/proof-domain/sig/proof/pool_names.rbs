@@ -1,8 +1,8 @@
 module Proof
   # The rules about names that a pool file's entries may not share.
   #
-  # Names compare without regard to case, as `Proof::Label` compares labels,
-  # with `String#casecmp?`, so `nuc` and `NUC` are one name. A message names the
+  # Names compare without regard to case, with `Proof::Name.same?`, so `nuc` and
+  # `NUC` are one name. A message names the
   # entry that came first, as it wrote the name.
   #
   # Two hosts with one name would show their runs under one name in `proof

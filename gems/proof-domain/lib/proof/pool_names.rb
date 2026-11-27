@@ -22,15 +22,15 @@ module Proof
     private_class_method(:refuse_repeated)
 
     def self.earlier_repeated(names)
-      # Names compare as Proof::Label does, with String#casecmp?, which folds Unicode case. The pair is named by its
-      # earlier name, as that entry wrote it.
+      # Names compare with Name.same?, without regard to case. The pair is named by its earlier name, as that entry
+      # wrote it.
       names.each_with_index.filter_map { |name, index| same_name(name, names.take(index)) }
         .first
     end
     private_class_method(:earlier_repeated)
 
     def self.same_name(name, names)
-      names.find { |other| other.casecmp?(name) }
+      names.find { |other| Name.same?(other, name) }
     end
     private_class_method(:same_name)
 

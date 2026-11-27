@@ -26,8 +26,7 @@ module Proof
     def self.names?: (Object value) -> bool
 
     # Whether `value` is an `Array` of one or more names, as `Proof::Name`
-    # says, with no two that differ only in case. It compares as
-    # `Proof::Label` does, with `String#casecmp?`.
+    # says, with no two that `Proof::Name.same?` finds to be one name.
     def self.distinct_names?: (Object value) -> bool
 
     # Whether `value` is an Integer of at least `minimum`.
