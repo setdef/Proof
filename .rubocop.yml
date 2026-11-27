@@ -81,9 +81,13 @@ Style/DocumentationMethod:
 
 Style/InlineComment:
   # A Markdown page shows a result as `expression # => value`, a trailing
-  # comment that the docs:examples task checks.
+  # comment that the docs:examples task checks. Steep reads a type assertion
+  # from a trailing comment, `value #: String`, which is the only place it
+  # takes one.
   Exclude:
     - "**/*.md"
+    - "lib/**/*.rb"
+    - "gems/*/lib/**/*.rb"
 
 ThreadSafety/NewThread:
   inherit_mode:

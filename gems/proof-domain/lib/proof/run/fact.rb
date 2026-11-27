@@ -2,9 +2,7 @@
 
 module Proof
   class Run
-    # steep:ignore:start
     module Fact
-      # steep:ignore:end
       def self.count(value, minimum, message)
         return value if value.is_a?(Integer) && value >= minimum
 
@@ -13,9 +11,8 @@ module Proof
 
       def self.name_of(value, message)
         # named? has found a String, which Steep can't know.
-        # steep:ignore:start
-        frozen = -value if MemberCheck.named?(value)
-        # steep:ignore:end
+        text = value #: String
+        frozen = -text if MemberCheck.named?(value)
         return frozen if frozen
 
         raise(InvalidFactError, format(message, value))
@@ -33,6 +30,8 @@ module Proof
         # A Time can change its zone in place, so the fact keeps a frozen copy in UTC.
         super(at: at.getutc.freeze, **members)
       end
+
+      # @dynamic at
     end
   end
 end

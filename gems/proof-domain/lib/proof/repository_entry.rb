@@ -5,12 +5,11 @@ require_relative("member_check")
 require_relative("name")
 
 module Proof
-  # steep:ignore:start
   class RepositoryEntry < Data.define(:name, :url, :credentials_file, :branches, :tasks, :poll)
-    # steep:ignore:end
     PATH_OR_NOTHING = -> (value) { value.nil? || MemberCheck.named?(value) }
     NAMES = MemberCheck.method(:names?)
-    RULES = MemberCheck.rules(
+    # @type var rules: Hash[Symbol, [String, MemberCheck::rule]]
+    rules = {
       name: [Name.message("a repository's name", "lota"), MemberCheck.method(:named?)],
       url: [Name.message("a repository's url", "https://github.com/setdef/Lota.git"), MemberCheck.method(:named?)],
       credentials_file: [
@@ -28,8 +27,9 @@ module Proof
           "such as [\"test\"], not %p",
         NAMES,
       ],
-      poll: ["a repository's poll is a duration, not %p", Duration.method(:===)]
-    )
+      poll: ["a repository's poll is a duration, not %p", Duration.method(:===)],
+    }
+    RULES = rules.freeze
     private_constant(:PATH_OR_NOTHING, :NAMES, :RULES)
 
     def initialize(name:, url:, branches:, tasks:, **optional)
@@ -40,9 +40,10 @@ module Proof
       raise(InvalidRepositoryEntryError, problem) if problem
 
       # problem has found a name and lists of names, which Steep can't know.
-      # steep:ignore:start
-      super(name: -name, url:, branches: branches.dup.freeze, tasks: tasks.dup.freeze, **given)
-      # steep:ignore:end
+      text = name #: String
+      super(name: -text, url:, branches: branches.dup.freeze, tasks: tasks.dup.freeze, **given)
     end
+
+    # @dynamic name, url, credentials_file, branches, tasks, poll
   end
 end

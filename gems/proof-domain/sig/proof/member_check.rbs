@@ -15,20 +15,6 @@ module Proof
     # `Method`, or a lambda.
     type rule = _Rule | ^(Object? value) -> bool
 
-    # The table of rules a class checks its members against, frozen. A class
-    # builds its table through this so that each entry is typed as a message
-    # and a rule.
-    #
-    # - `table`: a `Hash` from member to its message and its rule.
-    def self.rules: (Hash[Symbol, [String, rule]] table) -> Hash[Symbol, [String, rule]]
-
-    # The table of defaults a class fills its members from, frozen. A class
-    # builds its table through this so that an empty list in it takes its type
-    # from the signature.
-    #
-    # - `table`: a `Hash` from member to its default.
-    def self.defaults: (Hash[Symbol, Object] table) -> Hash[Symbol, Object]
-
     # The message for the first member in `members` that breaks its rule in
     # `rules`, filled in by `format` with its value, or `nil`.
     #

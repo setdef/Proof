@@ -13,10 +13,6 @@ module Proof
       # come before it, and the message when it doesn't.
       ORDER: Hash[Class, [Class, String]]
 
-      # The table of `ORDER`, frozen, built so that each entry is read as a
-      # class and a message.
-      private def self.table: (Hash[Class, [Class, String]] entries) -> Hash[Class, [Class, String]]
-
       # The message of the first rule `facts` breaks, or `nil` when they break
       # none.
       #

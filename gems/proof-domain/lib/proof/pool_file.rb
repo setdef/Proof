@@ -10,10 +10,9 @@ require_relative("repository_entry")
 require_relative("retention")
 
 module Proof
-  # steep:ignore:start
   class PoolFile < Data.define(:port, :retention, :limits, :defaults, :hosts, :repositories)
-    # steep:ignore:end
-    RULES = MemberCheck.rules(
+    # @type var rules: Hash[Symbol, [String, MemberCheck::rule]]
+    rules = {
       port: ["a pool file's port is a Proof::Port, not %p", Port.method(:===)],
       retention: ["a pool file's retention is a Proof::Retention, not %p", Retention.method(:===)],
       limits: ["a pool file's limits are a Proof::Limits, not %p", Limits.method(:===)],
@@ -25,26 +24,28 @@ module Proof
       repositories: [
         "a pool file's repositories are a list of repository entries, not %p",
         -> (value) { value.is_a?(Array) && value.all?(RepositoryEntry) },
-      ]
-    )
-    DEFAULTS = MemberCheck.defaults(
+      ],
+    }
+    RULES = rules.freeze
+    # @type var defaults: Hash[Symbol, Object]
+    defaults = {
       port: Port.new(number: 7443),
       retention: Retention.new,
       limits: Limits.new,
       defaults: HostSettings.new,
       hosts: [],
-      repositories: []
-    )
+      repositories: [],
+    }
+    DEFAULTS = defaults.freeze
     private_constant(:RULES, :DEFAULTS)
 
     def initialize(**given)
       # The keywords arrive as one hash, since six keywords make a parameter list longer than RuboCop accepts.
       settings = checked(given)
       # checked has found a list of host entries and a list of repository entries, which Steep can't know.
-      hosts, repositories = settings.values_at(:hosts, :repositories)
-      # steep:ignore:start
+      hosts = settings.fetch(:hosts) #: Array[HostEntry]
+      repositories = settings.fetch(:repositories) #: Array[RepositoryEntry]
       PoolNames.refuse_repeats(hosts, repositories)
-      # steep:ignore:end
       super(**settings, hosts: hosts.dup.freeze, repositories: repositories.dup.freeze)
       # A host with no budget in its entry or in the defaults is refused when it is resolved.
       resolved_hosts
@@ -63,5 +64,7 @@ module Proof
         raise(InvalidPoolFileError, problem) if problem
       end
     end
+
+    # @dynamic port, retention, limits, defaults, hosts, repositories
   end
 end

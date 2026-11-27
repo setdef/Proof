@@ -3,9 +3,7 @@
 require_relative("host_settings")
 
 module Proof
-  # steep:ignore:start
   class ResolvedHost < Data.define(:name, :runners, :budget, :keep_free, :share, :active_for, :withheld)
-    # steep:ignore:end
     MISSING = "a resolved host has every setting, and %s is missing"
     private_constant(:MISSING)
 
@@ -20,13 +18,12 @@ module Proof
 
     private def entry_of(name, runners, settings)
       # The entry holds the rules for a name, runners, and settings of each kind, so a resolved host is checked by
-      # building the entry it came from, and Steep is told that this one call may pass what the entry's signature
-      # refuses.
-      # steep:ignore:start
+      # building the entry it came from.
       HostEntry.new(name:, runners:, settings: HostSettings.new(**settings))
-      # steep:ignore:end
     rescue Error => e
       raise(InvalidResolvedHostError, e.message)
     end
+
+    # @dynamic name, runners, budget, keep_free, share, active_for, withheld
   end
 end

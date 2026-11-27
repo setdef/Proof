@@ -21,11 +21,8 @@ module Proof
       @refusal.blank_command(node, command) if BLANK.call(command)
       settings = @settings.read(node)
       # The domain refuses a name that is blank or isn't text, and a command that isn't text, with its own message, so
-      # the entry is built from what the file holds, and Steep is told that this one call may pass what the domain's
-      # signature refuses.
-      # steep:ignore:start
+      # the entry is built from what the file holds.
       @refusal.checking(node) { TaskEntry.new(name:, command:, settings:) }
-      # steep:ignore:end
     end
 
     private def refuse_repeats_among(nodes)

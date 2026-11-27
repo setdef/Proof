@@ -9,10 +9,12 @@ module Proof
     # steep:ignore:end
     MEMORY_MESSAGE = "memory is a size: a number, whole or decimal, an optional space, and MB, GB, TB, " \
       "MiB, GiB, or TiB in any case, such as \"512MB\", \"8 GB\", \"1.5gib\", or \"0.5TB\", not %p"
-    RULES = MemberCheck.rules(
+    # @type var rules: Hash[Symbol, [String, MemberCheck::rule]]
+    rules = {
       cpus: ["cpus is a whole number from 0, not %p", -> (value) { MemberCheck.whole?(value, 0) }],
-      megabytes: ["megabytes is a whole number from 0, not %p", -> (value) { MemberCheck.whole?(value, 0) }]
-    )
+      megabytes: ["megabytes is a whole number from 0, not %p", -> (value) { MemberCheck.whole?(value, 0) }],
+    }
+    RULES = rules.freeze
     private_constant(:MEMORY_MESSAGE, :RULES)
 
     def self.request(cpus:, memory:)
@@ -61,10 +63,7 @@ module Proof
     end
 
     private def combine(other)
-      # The merged Hash has the two members, which Steep can't know.
-      # steep:ignore:start
-      Resources.new(**to_h.merge(other.to_h) { |_member, one, two| yield(one, two) })
-      # steep:ignore:end
+      Resources.new(cpus: yield(cpus, other.cpus), megabytes: yield(megabytes, other.megabytes))
     end
   end
 end

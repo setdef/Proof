@@ -4,16 +4,16 @@ require_relative("duration")
 require_relative("member_check")
 
 module Proof
-  # steep:ignore:start
   class Retention < Data.define(:runs, :output, :artifacts)
-    # steep:ignore:end
     DAY = 86_400
     WHOLE_DAYS = -> (value) { value.is_a?(Duration) && (value.seconds % DAY).zero? }
-    RULES = MemberCheck.rules(
+    # @type var rules: Hash[Symbol, [String, MemberCheck::rule]]
+    rules = {
       runs: ["retention runs is a duration in whole days, not %p", WHOLE_DAYS],
       output: ["retention output is a duration in whole days, not %p", WHOLE_DAYS],
-      artifacts: ["retention artifacts is a duration in whole days, not %p", WHOLE_DAYS]
-    )
+      artifacts: ["retention artifacts is a duration in whole days, not %p", WHOLE_DAYS],
+    }
+    RULES = rules.freeze
     private_constant(:DAY, :WHOLE_DAYS, :RULES)
 
     def initialize(
@@ -26,5 +26,7 @@ module Proof
 
       super
     end
+
+    # @dynamic runs, output, artifacts
   end
 end

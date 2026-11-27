@@ -4,13 +4,13 @@ require_relative("member_check")
 require_relative("size")
 
 module Proof
-  # steep:ignore:start
   class Limits < Data.define(:output, :artifacts)
-    # steep:ignore:end
-    RULES = MemberCheck.rules(
+    # @type var rules: Hash[Symbol, [String, MemberCheck::rule]]
+    rules = {
       output: ["limits output is a size, not %p", Size.method(:===)],
-      artifacts: ["limits artifacts is a size, not %p", Size.method(:===)]
-    )
+      artifacts: ["limits artifacts is a size, not %p", Size.method(:===)],
+    }
+    RULES = rules.freeze
     private_constant(:RULES)
 
     def initialize(output: Size.new(megabytes: 1024), artifacts: Size.new(megabytes: 16 * 1024))
@@ -19,5 +19,7 @@ module Proof
 
       super
     end
+
+    # @dynamic output, artifacts
   end
 end

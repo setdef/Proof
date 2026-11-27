@@ -9,20 +9,20 @@ module Proof
     end
 
     def entry
-      credentials_file, branches, tasks = %i[credentials-file branch task].map { |kind| @names.read(@node, kind) }
       # The domain refuses a name, a URL, a path, or a branch that isn't text, with its own message, so the entry is
-      # built from what the file holds, and Steep is told that this one call may pass what the domain's signature
-      # refuses.
-      # steep:ignore:start
+      # built from what the file holds.
       RepositoryEntry.new(
         name: @node.arguments.first,
         url: @node.properties["url"],
-        branches:,
-        tasks:,
-        credentials_file: credentials_file.first,
+        branches: names(:branch),
+        tasks: names(:task),
+        credentials_file: names(:"credentials-file").first,
         **poll
       )
-      # steep:ignore:end
+    end
+
+    private def names(kind)
+      @names.read(@node, kind)
     end
 
     private def poll

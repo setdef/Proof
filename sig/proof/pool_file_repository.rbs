@@ -40,6 +40,8 @@ module Proof
 
     private
 
+    def names: (Symbol kind) -> Array[kdl_value]
+
     def poll: () -> Hash[Symbol, Duration]
 
     @node: KdlNode

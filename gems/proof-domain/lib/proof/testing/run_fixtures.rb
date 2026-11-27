@@ -53,11 +53,8 @@ module Proof
       end
 
       def self.facts(runs, id = id())
-        # Array of nil is empty, so a missing run gives no facts, with no branch for coverage to miss.
-        # Steep reads the Array of a Run or nil as holding nil.
-        # steep:ignore:start
-        Array(runs.find(id)).flat_map(&:facts)
-        # steep:ignore:end
+        # Compacting a missing run leaves nothing, so a missing run gives no facts, with no branch for coverage to miss.
+        [runs.find(id)].compact.flat_map(&:facts)
       end
     end
   end

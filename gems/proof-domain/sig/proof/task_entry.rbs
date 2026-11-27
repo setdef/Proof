@@ -55,8 +55,8 @@ module Proof
     # The settings the entry gives.
     attr_reader settings: TaskSettings
 
-    def self.new: (name: String, ?command: String?, ?settings: TaskSettings) -> instance
-                | (String name, ?String? command, ?TaskSettings settings) -> instance
+    def self.new: (name: Object?, ?command: Object?, ?settings: Object?) -> instance
+                | (Object? name, ?Object? command, ?Object? settings) -> instance
 
     # Builds an entry, and raises `Proof::InvalidTaskEntryError` unless `name`
     # is a name, as `Proof::Name` says, `command` is a String or `nil`, and
@@ -71,6 +71,6 @@ module Proof
     # ```ruby
     # Proof::TaskEntry.new(name: "lint:ruby").name # => "lint:ruby"
     # ```
-    def initialize: (name: String, ?command: String?, ?settings: Object) -> void
+    def initialize: (name: Object?, ?command: Object?, ?settings: Object?) -> void
   end
 end

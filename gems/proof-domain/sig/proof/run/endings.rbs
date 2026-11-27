@@ -10,10 +10,6 @@ module Proof
       # the facts before it allow it, and the message when they don't.
       NEEDS: Hash[Class, [Symbol, String]]
 
-      # The table of `NEEDS`, frozen, built so that each entry is read as a
-      # method name and a message.
-      private def self.table: (Hash[Class, [Symbol, String]] entries) -> Hash[Class, [Symbol, String]]
-
       # The message for a fact after a final state, other than the one that
       # may follow `lost`.
       AFTER_FINAL: String

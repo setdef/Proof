@@ -27,10 +27,8 @@ module Proof
 
     def entry
       # The domain refuses a name or a runner that isn't text, with its own message, so the entry is built from what the
-      # file holds, and Steep is told that this one call may pass what the domain's signature refuses.
-      # steep:ignore:start
+      # file holds.
       HostEntry.new(name: @node.arguments.first, runners: @names.read(@node, :runner), settings:)
-      # steep:ignore:end
     end
 
     private def pair(child)

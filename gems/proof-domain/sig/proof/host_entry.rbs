@@ -55,8 +55,8 @@ module Proof
     # The settings the entry gives. A setting the entry leaves out is `nil`.
     attr_reader settings: HostSettings
 
-    def self.new: (name: String, runners: Array[String], ?settings: HostSettings) -> instance
-                | (String name, Array[String] runners, ?HostSettings settings) -> instance
+    def self.new: (name: Object?, runners: Object?, ?settings: Object?) -> instance
+                | (Object? name, Object? runners, ?Object? settings) -> instance
 
     # Builds an entry, and raises `Proof::InvalidHostEntryError` unless `name` is
     # a name, as `Proof::Name` says, `runners` is an `Array` of one or more
@@ -70,7 +70,7 @@ module Proof
     # ```ruby
     # Proof::HostEntry.new(name: "pc", runners: ["pc-windows", "pc-wsl"]).runners.size # => 2
     # ```
-    def initialize: (name: String, runners: Array[String], ?settings: HostSettings) -> void
+    def initialize: (name: Object?, runners: Object?, ?settings: Object?) -> void
 
     # The host with every setting it gets: from this entry, then `defaults`,
     # then Proof's built-in defaults. A single setting comes from the first of

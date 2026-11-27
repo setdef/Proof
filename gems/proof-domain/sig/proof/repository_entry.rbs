@@ -76,7 +76,7 @@ module Proof
     # How often the server fetches the branches.
     attr_reader poll: Duration
 
-    def self.new: (name: String, url: String, branches: Array[String], tasks: Array[String], ?credentials_file: String?, ?poll: Duration) -> instance
+    def self.new: (name: Object?, url: Object?, branches: Object?, tasks: Object?, ?credentials_file: Object?, ?poll: Object?) -> instance
                 | (String name, String url, String? credentials_file, Array[String] branches, Array[String] tasks, Duration poll) -> instance
 
     # Builds an entry, and raises `Proof::InvalidRepositoryEntryError` unless
@@ -94,6 +94,6 @@ module Proof
     # ```ruby
     # Proof::RepositoryEntry.new(name: "lota", url: "https://example.com/lota.git", branches: ["trunk"], tasks: ["test"]).name # => "lota"
     # ```
-    def initialize: (name: Object, url: Object, branches: Object, tasks: Object, **Object? optional) -> void
+    def initialize: (name: Object?, url: Object?, branches: Object?, tasks: Object?, **Object? optional) -> void
   end
 end

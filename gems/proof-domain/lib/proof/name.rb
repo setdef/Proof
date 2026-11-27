@@ -25,9 +25,8 @@ module Proof
       raise(InvalidNameError, format(message(what, example), value)) unless valid?(value)
 
       # valid? has found a String, which Steep can't know.
-      # steep:ignore:start
-      -value
-      # steep:ignore:end
+      text = value #: String
+      -text
     end
   end
 end

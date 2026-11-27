@@ -16,20 +16,16 @@ module Proof
         after_command: "a run's artifacts are kept, or not kept for a reason other than space, " \
           "only after its command ends",
       }.freeze
-      def self.table(entries)
-        # Steep reads each entry of a frozen literal as an Array, so the table is frozen here, where its type is known.
-        entries.freeze
-      end
-      private_class_method(:table)
-
-      ORDER = table(
+      # @type var order: Hash[Class, [Class, String]]
+      order = {
         Placed => [Queued, "a run is placed once"],
         CommandStarted => [Placed, "a run's command starts once, after the run is placed"],
         CommandEnded => [CommandStarted, "a run's command ends once, after it starts"],
         OutputCompleted => [CommandEnded, "a run's whole output arrives once, after its command ends"],
         CancelAsked => [Queued, "a cancel is asked for once"],
-        ProcessesEnded => [Lost, "a run's processes end as a fact only after the run is lost"]
-      )
+        ProcessesEnded => [Lost, "a run's processes end as a fact only after the run is lost"],
+      }
+      ORDER = order.freeze
       private_constant(:MESSAGES, :ORDER)
 
       def self.broken(facts)
@@ -47,10 +43,7 @@ module Proof
       def self.following(fact, earlier)
         case fact
         when Queued then nil
-        # Steep finds nothing in common between the modules Fact and Final, which the final facts include both of.
-        # steep:ignore:start
         when Final then Endings.broken(fact, earlier)
-        # steep:ignore:end
         when ArtifactsKept, ArtifactsNotKept then artifacts(fact, earlier)
         else ordered(fact, earlier)
         end
@@ -75,5 +68,8 @@ module Proof
       private_class_method(:broken_by, :following, :ordered, :artifacts, :short_of_space)
     end
     private_constant(:Rules)
+
+    # Steep wants every opening of a class to define all the methods that the signature declares for it, and this
+    # file opens Run only to hold a module.
   end
 end

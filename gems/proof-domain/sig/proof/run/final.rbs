@@ -17,7 +17,8 @@ module Proof
     # Proof::Run::Lost.new(at: Time.utc(2026, 11, 25, 3, 50)).is_a?(Proof::Run::Final) # => true
     # Proof::Run::CommandStarted.new(at: Time.utc(2026, 11, 25, 3, 37)).is_a?(Proof::Run::Final) # => false
     # ```
-    module Final : Fact
+    module Final : Data
+      include Fact
     end
   end
 end

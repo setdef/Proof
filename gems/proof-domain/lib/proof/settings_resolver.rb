@@ -6,9 +6,7 @@ require_relative("project_file")
 require_relative("run_settings")
 
 module Proof
-  # steep:ignore:start
   class SettingsResolver < Data.define(:project_file, :flags)
-    # steep:ignore:end
     MESSAGE = "a run reads a project file and flags, not %<file>p and %<flags>p"
     private_constant(:MESSAGE)
 
@@ -24,14 +22,12 @@ module Proof
       RunSettings.new(settings: together(names), commands: project_file.commands_of(names))
     end
 
-    # steep:ignore:start
     private def task_names_in(task_names)
-      # steep:ignore:end
       names = Listing.set(task_names, String, 1)
       raise(InvalidRunSettingsError, format("a run has one or more task names, not %p", task_names)) unless names
 
       # Listing.set has found each name to be a String, which Steep can't know.
-      names.to_a
+      names.to_a #: Array[String]
     end
 
     private def settings_for(name)
@@ -49,5 +45,7 @@ module Proof
     private def refuse_unshared(systems)
       raise(NoSharedOSError.new(operating_systems: systems)) if systems.values.reduce(:&).empty?
     end
+
+    # @dynamic project_file, flags
   end
 end
