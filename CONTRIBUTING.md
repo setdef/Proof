@@ -109,7 +109,7 @@ Proof runs other people's tests and builds on other people's computers, so treat
 
 ## Quality gates
 
-`bundle exec rake` runs the quality gates: the tests, RuboCop, Steep, RubyCritic, `reuse lint`, RDoc coverage, `docs:placement` (which fails on a doc comment in a `.rb` file), the Ruby examples in the documentation, and the CLI spec's checks. Every change has to pass all of them, with zero errors and zero warnings. Their thresholds only ever go up. When a change fails a gate, fix the change; never lower a threshold, turn off a check, or exclude code to get it through.
+`bundle exec rake` runs the quality gates: a frozen `bundle install` (`bundle:frozen`), the tests, RuboCop, Steep, the check that every Steep target loads (`steep:loads`), RubyCritic, `reuse lint`, RDoc coverage, `docs:placement` (which fails on a doc comment in a `.rb` file), the Ruby examples in the documentation, and the CLI spec's checks. Every change has to pass all of them, with zero errors and zero warnings. Their thresholds only ever go up. When a change fails a gate, fix the change; never lower a threshold, turn off a check, or exclude code to get it through.
 
 Coverage is 100% for each file, on every system CI tests. A test skipped on one system can drop that system's branch coverage below 100% and turn its job red, even though every test passes. Never skip a test on one system to make it pass. Pass the system-dependent value in, such as a path separator or a platform flag, so the test runs everywhere.
 
