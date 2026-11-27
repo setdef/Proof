@@ -4,6 +4,6 @@ module Usage
     # Raises `Usage::SpecError` for a key of `object` that `keys` doesn't list, or whose value isn't the one it lists.
     def self.check: (object object, String where, keys keys) -> void
 
-    private def self.refusal: (String setting, keys keys) -> String?
+    private def self.refusal: (String key, String value, keys keys) -> String?
   end
 end

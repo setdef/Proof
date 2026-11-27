@@ -8,14 +8,13 @@ module Usage
       # A key the reader doesn't know, or a value it can't act on, would change what the spec means if it were
       # skipped, so each is refused by name, and the gem can learn it later without changing what it accepts now.
       object.each do |key, value|
-        refusal = refusal("#{key}=#{JSON.generate(value)}", keys)
+        refusal = refusal(key.to_s, JSON.generate(value), keys)
         raise(SpecError, "#{where} #{refusal}, which usage-rb doesn't support") if refusal
       end
     end
 
-    def self.refusal(setting, keys)
-      key, value = setting.split("=", 2)
-      return if keys.include?(key) || keys.include?(setting)
+    def self.refusal(key, value, keys)
+      return if keys.include?(key) || keys.include?("#{key}=#{value}")
 
       (keys.any? { |each| each.start_with?("#{key}=") }) ? "sets #{key} to #{value}" : "has #{key}"
     end
