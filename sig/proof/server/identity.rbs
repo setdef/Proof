@@ -1,0 +1,117 @@
+module Proof
+  module Server
+    # The server's key and the certificate that carries it: its identity in
+    # TLS.
+    #
+    # The command and every runner trust the server by the SHA-256 of its
+    # public key, not by a certificate authority. TLS still sends a
+    # certificate, so the server needs one, and the one it sends has to hold
+    # that key.
+    #
+    # This class holds an EC P-256 private key and a self-signed certificate
+    # for it, refuses a key of any other kind and a certificate for another
+    # key, and gives the key's fingerprint in the form Git's
+    # `http.pinnedPubkey` takes. The certificate never expires, because
+    # nothing trusts its dates.
+    #
+    # Use it to make the server's certificate for a key, and to learn the
+    # fingerprint that pins it.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # identity = Proof::Server::Identity.make(Proof::Server::Identity.new_key)
+    # identity.fingerprint.start_with?("sha256//") # => true
+    # identity.certificate.subject.to_s # => "/CN=Proof server"
+    # ```
+    #
+    # A key of another kind is refused:
+    #
+    # ```ruby
+    # # Wrong: raises Proof::Server::IdentityError
+    # certificate = Proof::Server::Identity.make(Proof::Server::Identity.new_key).certificate
+    # Proof::Server::Identity.new(key: OpenSSL::PKey::RSA.generate(2048), certificate:)
+    # ```
+    class Identity < Data
+      # The curve of the server's key, as OpenSSL names P-256.
+      CURVE: String
+
+      # The common name of the certificate's subject and issuer.
+      NAME: String
+
+      # The end of the certificate's validity: 9999-12-31 23:59:59 UTC, which
+      # RFC 5280 gives a certificate with no well-defined expiration date.
+      NO_EXPIRY: Time
+
+      # Each extension of the certificate, in the form OpenSSL reads from text,
+      # such as `keyUsage=critical,digitalSignature`.
+      EXTENSIONS: Array[String]
+
+      # The EC P-256 private key.
+      attr_reader key: OpenSSL::PKey::EC
+
+      # The self-signed certificate that holds the key.
+      attr_reader certificate: OpenSSL::X509::Certificate
+
+      # A new EC P-256 private key, from OpenSSL's random source.
+      #
+      # ```ruby
+      # Proof::Server::Identity.new_key.group&.curve_name # => "prime256v1"
+      # ```
+      def self.new_key: () -> OpenSSL::PKey::EC
+
+      # Whether `key` is an EC P-256 private key, the only kind the server has.
+      #
+      # ```ruby
+      # Proof::Server::Identity.server_key?(Proof::Server::Identity.new_key) # => true
+      # Proof::Server::Identity.server_key?(OpenSSL::PKey::EC.generate("secp384r1")) # => false
+      # ```
+      def self.server_key?: (OpenSSL::PKey::PKey key) -> bool
+
+      # Makes a self-signed certificate for `key`, valid from `now` with no
+      # end, with a random serial number. It is a version 3 certificate for a
+      # TLS server, which is no certificate authority.
+      #
+      # - `key`: OpenSSL::PKey::EC, the server's key.
+      # - `now`: Time, the start of its validity. Defaults to the time now.
+      #
+      # ```ruby
+      # now = Time.utc(2026, 11, 26)
+      # Proof::Server::Identity.make(Proof::Server::Identity.new_key, now:).certificate.not_before # => now
+      # ```
+      def self.make: (OpenSSL::PKey::EC key, ?now: Time) -> Identity
+
+      # Pairs `key` with `certificate`. Raises `Proof::Server::IdentityError`
+      # for a key that isn't an EC P-256 private key, and for a certificate of
+      # another key.
+      #
+      # - `key`: OpenSSL::PKey::EC, the private key.
+      # - `certificate`: OpenSSL::X509::Certificate, a certificate for its
+      #   public key.
+      def initialize: (key: OpenSSL::PKey::EC, certificate: OpenSSL::X509::Certificate) -> void
+
+      def self.new: (key: OpenSSL::PKey::EC, certificate: OpenSSL::X509::Certificate) -> Identity
+                  | (OpenSSL::PKey::EC key, OpenSSL::X509::Certificate certificate) -> Identity
+
+      # The SHA-256 of the public key's DER, in Base64 after `sha256//`: the
+      # form of Git's `http.pinnedPubkey`, and the fingerprint the command and
+      # the runners pin.
+      #
+      # ```ruby
+      # Proof::Server::Identity.make(Proof::Server::Identity.new_key).fingerprint.size # => 52
+      # ```
+      def fingerprint: () -> String
+
+      # A certificate for `key` from `now` on, with its names, its dates, and
+      # its extensions, and no signature.
+      private def self.unsigned: (OpenSSL::PKey::EC key, Time now) -> OpenSSL::X509::Certificate
+
+      # `certificate` with its version, a random serial number, and the name
+      # of its subject and issuer.
+      private def self.named: (OpenSSL::X509::Certificate certificate) -> OpenSSL::X509::Certificate
+
+      # `certificate` with the extensions of a TLS server.
+      private def self.extended: (OpenSSL::X509::Certificate certificate) -> OpenSSL::X509::Certificate
+    end
+  end
+end

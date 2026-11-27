@@ -1,0 +1,16 @@
+module Proof
+  # The server: the one Proof program that keeps the queue and places each run
+  # on a runner.
+  #
+  # The command and every runner connect to one server over HTTPS, and trust
+  # it by its key. The server's code loads OpenSSL and Falcon, which the
+  # command never needs, and the command starts on Ruby's standard library
+  # alone.
+  #
+  # This module holds the server's classes. Each one loads the first time
+  # something names it, so `require "proof"` loads none of the gems they use.
+  #
+  # Use it to start the server, and to reach the parts it is made of.
+  module Server
+  end
+end

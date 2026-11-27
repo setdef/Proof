@@ -1,0 +1,52 @@
+module Proof
+  module Server
+    # The messages of the server's refusals of its key and certificate.
+    #
+    # A server that can't use its key can't start, and the person who reads
+    # why is at the server's computer with its files in front of them. Each
+    # message has to name the file, and say what to do, without making a key
+    # that every computer and runner would then refuse.
+    #
+    # This class holds each message, with the paths of both files, and builds
+    # the `Proof::Server::IdentityError` that carries it.
+    #
+    # Use it through `Proof::Server::IdentityFiles`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # refusal = Proof::Server::IdentityRefusal.new(key: "key.pem", certificate: "certificate.pem")
+    # refusal.error(:certificate_not_pem).message
+    # # => "certificate.pem isn't a certificate in PEM. Delete certificate.pem, and the server makes a new one for its key when it starts."
+    # ```
+    class IdentityRefusal
+      # What a refusal of the key says to do about it.
+      PUT_BACK: String
+
+      # What a refusal of the certificate says to do about it.
+      REMAKE: String
+
+      # Each message by its reason, with `%<key>s` and `%<certificate>s` for
+      # the paths of the files.
+      MESSAGES: Hash[Symbol, String]
+
+      # Holds the paths for the messages.
+      #
+      # - `key`: String, the path of the key's file.
+      # - `certificate`: String, the path of the certificate's file.
+      def initialize: (key: String, certificate: String) -> void
+
+      # The error for `reason`: `:key_not_pem`, `:key_of_another_kind`,
+      # `:lost_key`, `:certificate_not_pem`, or `:another_key`.
+      #
+      # ```ruby
+      # refusal = Proof::Server::IdentityRefusal.new(key: "key.pem", certificate: "certificate.pem")
+      # refusal.error(:another_key).message.start_with?("certificate.pem isn't the certificate of the key in key.pem.")
+      # # => true
+      # ```
+      def error: (Symbol reason) -> IdentityError
+
+      @paths: Hash[Symbol, String]
+    end
+  end
+end

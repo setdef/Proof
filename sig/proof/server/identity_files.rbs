@@ -1,0 +1,72 @@
+module Proof
+  module Server
+    # The server's key and certificate in their folder.
+    #
+    # Every computer and runner that trusts the server knows it by its key, so
+    # the server makes the key once, on its first start, and has to find the
+    # same key on every start after that. A key made again, or a file replaced
+    # by a second server starting at the same moment, would make every one of
+    # them refuse the server.
+    #
+    # This class reads `key.pem` and `certificate.pem` from the folder. It
+    # makes both when neither is there, and a certificate for the key when
+    # only the key is there. It never replaces a file that is there, and
+    # never makes a key while a certificate is there. It refuses a file it
+    # can't use with a `Proof::Server::IdentityError` that names the file
+    # and says what to do. The folder is made readable by the account alone,
+    # and so is the key.
+    #
+    # Use it to find the server's identity when the server starts.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # require "tmpdir"
+    # folder = File.join(Dir.mktmpdir, "server")
+    # first = Proof::Server::IdentityFiles.new(folder:).load_or_make
+    # again = Proof::Server::IdentityFiles.new(folder:).load_or_make
+    # again.fingerprint == first.fingerprint # => true
+    # Dir.children(folder).sort # => ["certificate.pem", "key.pem"]
+    # ```
+    class IdentityFiles
+      # The name of the key's file.
+      KEY: String
+
+      # The name of the certificate's file.
+      CERTIFICATE: String
+
+      # The path of the key's file.
+      attr_reader key_path: String
+
+      # The path of the certificate's file.
+      attr_reader certificate_path: String
+
+      # Finds the files in `folder`.
+      #
+      # - `folder`: String, the folder that holds them. It is made, with
+      #   every folder above it that isn't there, when the files are made.
+      def initialize: (folder: String) -> void
+
+      # The server's identity from the folder: made first if the folder has
+      # no key and no certificate, and its certificate made first if it has
+      # only the key. Raises `Proof::Server::IdentityError` for a certificate
+      # without its key, a key that isn't an EC P-256 private key in PEM, a
+      # certificate that isn't PEM, and a certificate of another key.
+      #
+      # ```ruby
+      # require "tmpdir"
+      # files = Proof::Server::IdentityFiles.new(folder: Dir.mktmpdir)
+      # files.load_or_make.key.private_to_pem == File.read(files.key_path) # => true
+      # ```
+      def load_or_make: () -> Identity
+
+      private
+
+      def new_key: () -> OpenSSL::PKey::EC
+
+      def made_from: (OpenSSL::PKey::EC key) -> Identity
+
+      @reader: IdentityReader
+    end
+  end
+end

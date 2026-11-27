@@ -1,0 +1,54 @@
+module Proof
+  module Server
+    # A file the server writes once and never replaces.
+    #
+    # The server's key is what every computer and runner knows the server by.
+    # A write that replaces the file, as a rename does, would let a second
+    # server that starts at the same moment put its own key in the first
+    # one's place, and a crash part way through a write could leave the name
+    # on an empty file.
+    #
+    # This module writes the text under a temporary name, syncs it to the
+    # disk, and links it to its name, which fails with `Errno::EEXIST` when the
+    # name is taken. It makes the file's folder, and every folder above it
+    # that isn't there, readable by the account alone, as the XDG Base
+    # Directory Specification asks.
+    #
+    # Use it for the server's key and certificate.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # require "tmpdir"
+    # path = File.join(Dir.mktmpdir, "server", "key.pem")
+    # Proof::Server::KeptFile.read(path) # => nil
+    # Proof::Server::KeptFile.write(path, "the key\n", mode: 0o600)
+    # Proof::Server::KeptFile.read(path) # => "the key\n"
+    # ```
+    #
+    # A second write to the same name is refused:
+    #
+    # ```ruby
+    # # Wrong: raises Errno::EEXIST
+    # Proof::Server::KeptFile.write(path, "another key\n", mode: 0o600)
+    # ```
+    module KeptFile
+      # The text of the file at `path`, or `nil` when there is no file there.
+      #
+      # - `path`: String, the file's path.
+      def self.read: (String path) -> String?
+
+      # Writes `text` to a new file at `path`, with `mode`. Raises
+      # `Errno::EEXIST` when a file is there, and leaves that file as it is.
+      #
+      # - `path`: String, the file's path.
+      # - `text`: String, what it holds.
+      # - `mode`: Integer, its permissions, such as `0o600`.
+      def self.write: (String path, String text, mode: Integer) -> void
+
+      # Writes `text` to a new file at `path` and syncs it to the disk, making
+      # its folder first.
+      private def self.write_new: (String path, String text, Integer mode) -> void
+    end
+  end
+end

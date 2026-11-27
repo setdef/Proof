@@ -312,6 +312,23 @@ Options weighed:
 - A fingerprint a person compares, or a longer code: people skip the comparison, agents can't make it, and a long code can't be typed from a text console.
 - The `localhost` gem: puts an IP address in a DNS-name field, adds a separate certificate authority, and writes under `~/.local/state`. Falcon's TLS setup loads only RSA keys.
 
+#### The server's key and certificate
+
+`Proof::Server::IdentityFiles` keeps the key as `key.pem`, which only the server's account can read, and a certificate for it as `certificate.pem`, in the server's folder. On the server's first start neither file is there, and it makes both. On every start after that it reads them. Every computer and runner that trusts the server knows it by its key, and nothing re-pins by itself, so the server never replaces a key:
+
+- It makes a key only when neither file is there. It refuses a certificate whose key is missing, and the message says to put the key back, or to delete both files and have every computer and runner trust the server again.
+- `Proof::Server::KeptFile` writes each file under a temporary name, syncs it to the disk, and then links it to its name. Making a link fails when the name is taken, where a rename replaces the file, so two servers that start at once can't each write a key, and a crash can't leave a key file with no key in it. It makes the folder, and every folder above it that isn't there, readable by the account alone, as the [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir/latest/) asks.
+- `Proof::Server::IdentityReader` reads the text of each file, and refuses a key that isn't an EC P-256 private key in PEM, a certificate that isn't PEM, and a certificate of another key, each with the file's path and what to do. `Proof::Server::IdentityRefusal` holds those messages, as `Proof::PoolFileRefusal` holds the pool file's. The certificate is the only file the server makes again: when only the key is there, it makes a certificate for the key, and the fingerprint stays the same.
+
+`Proof::Server::Identity` holds the key and a self-signed version 3 certificate for it: the server's identity, as Apple's Security framework calls a certificate with its private key. The certificate's subject is `CN=Proof server`, its serial number is 127 random bits with the top one set, and its extensions are those of a TLS server that is no certificate authority: `basicConstraints` `CA:FALSE`, `keyUsage` `digitalSignature`, and `extendedKeyUsage` `serverAuth`. Its validity has no end: its `notAfter` is 9999-12-31 23:59:59 UTC, which [RFC 5280, section 4.1.2.5](https://www.rfc-editor.org/rfc/rfc5280#section-4.1.2.5), gives a certificate with no well-defined expiration date. The command, the runners, and Git trust the pin, never the certificate's dates, so an end would only make OpenSSL refuse a key they trust. It holds no host name, because the server's address is whatever name the command and the runners reach it by. `fingerprint` gives the pin as `sha256//` and the Base64 of the SHA-256 of the public key's DER, the form `http.pinnedPubkey` takes, and a test compares it with the pin that the `openssl` command computes for the same key.
+
+Options weighed:
+
+- A new certificate for the key on every start: the pin would stay the same, but a client that keeps the certificate itself, as Git does with `http.sslCAInfo`, would refuse the next one.
+- A certificate that ends after a year, as a public certificate authority's does: nothing trusts the dates, and the server would have to renew it for no gain.
+- A key made again when its file is damaged or missing: every computer and runner would refuse the server, and nothing on the server would say why.
+- Writing each file with a rename: a second server that starts at the same moment would replace the first one's key.
+
 ### Native calls
 
 Native calls go through Fiddle on every system. Fledge's runtimes ship Fiddle as a bundled gem, and Fledge's tests call native code through it in built apps on macOS and Linux. No Proof code has yet called Win32 through it. `Kernel#syscall` can't do the job everywhere: it raises `NotImplementedError` on macOS (measured on Ruby 4.1.0-preview1), it doesn't exist on Windows, and its call numbers differ between x86-64 and ARM64 Linux.

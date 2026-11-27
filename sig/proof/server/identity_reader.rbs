@@ -1,0 +1,64 @@
+module Proof
+  module Server
+    # Reads the text of the server's key and certificate.
+    #
+    # A key file can hold a key of another kind, or text that isn't a key,
+    # and a certificate file can hold the certificate of another key. Each
+    # mistake needs its own message, with the file it is in, before the
+    # server starts with a key that every computer and runner would refuse.
+    #
+    # This class reads PEM text into the key and the certificate, refuses
+    # each mistake with a `Proof::Server::IdentityError` from
+    # `Proof::Server::IdentityRefusal`, and pairs the two into a
+    # `Proof::Server::Identity`. It reads text, and nothing else: finding,
+    # making, and writing the files is `Proof::Server::IdentityFiles`'s.
+    #
+    # Use it through `Proof::Server::IdentityFiles`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # reader = Proof::Server::IdentityReader.new(key_path: "key.pem", certificate_path: "certificate.pem")
+    # made = Proof::Server::Identity.make(Proof::Server::Identity.new_key)
+    # key = reader.key(made.key.private_to_pem)
+    # reader.identity(key, reader.certificate(made.certificate.to_pem)).fingerprint == made.fingerprint # => true
+    # ```
+    #
+    # Text that isn't a key is refused, with the file's path:
+    #
+    # ```ruby
+    # # Wrong: raises Proof::Server::IdentityError
+    # reader.key("not a key\n")
+    # ```
+    class IdentityReader
+      # Reads texts as the files at the paths, which the messages name.
+      #
+      # - `key_path`: String, the path of the key's file.
+      # - `certificate_path`: String, the path of the certificate's file.
+      def initialize: (key_path: String, certificate_path: String) -> void
+
+      # The EC P-256 private key in `text`. Raises
+      # `Proof::Server::IdentityError` for text that isn't a private key in
+      # PEM, and for a key of another kind.
+      #
+      # - `text`: String, the key file's text.
+      def key: (String text) -> OpenSSL::PKey::EC
+
+      # The certificate in `text`. Raises `Proof::Server::IdentityError` for
+      # text that isn't a certificate in PEM.
+      #
+      # - `text`: String, the certificate file's text.
+      def certificate: (String text) -> OpenSSL::X509::Certificate
+
+      # `key` and `certificate` as the server's identity. Raises
+      # `Proof::Server::IdentityError` when there is no key, and when the
+      # certificate is another key's.
+      #
+      # - `key`: OpenSSL::PKey::EC, or `nil` when the key's file isn't there.
+      # - `certificate`: OpenSSL::X509::Certificate, the certificate read.
+      def identity: (OpenSSL::PKey::EC? key, OpenSSL::X509::Certificate certificate) -> Identity
+
+      @refusal: IdentityRefusal
+    end
+  end
+end
