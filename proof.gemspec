@@ -25,6 +25,8 @@ Gem::Specification.new do |spec|
   spec.add_dependency("rom-sql", "~> 3.7")
   spec.add_dependency("sequel", "~> 5.110")
   spec.add_dependency("sqlite3", "~> 2.10")
+  # The server's HTTPS, with each connection on a fiber. It loads when the server starts, never with `require "proof"`.
+  spec.add_dependency("falcon", "~> 0.57.0")
 
   spec.metadata["rubygems_mfa_required"] = "true"
   spec.metadata["source_code_uri"] = spec.homepage

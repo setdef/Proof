@@ -96,3 +96,21 @@ ThreadSafety/NewThread:
     # The test of the busy handler holds the file's write lock in one thread, counts the ticks of a second while a
     # third waits for the lock, and needs the three at once.
     - "test/sqlite_runs_races_test.rb"
+    # The server's tests run the server in a thread with a fiber scheduler of its own, and call it from others, as the
+    # command and the runners call it from other processes.
+    - "test/server_https_client.rb"
+    - "test/server_https_test.rb"
+
+Style/IpAddresses:
+  # Tests never reach the internet, so a server a test starts listens on the loopback address alone.
+  AllowedAddresses:
+    - "::"
+    - "127.0.0.1"
+
+Style/StringHashKeys:
+  # A Rack application takes its request as a hash with string keys, and answers with headers in one, as the Rack
+  # specification says, and the server's requests and their tests are written to it.
+  Exclude:
+    - "lib/proof/server/requests.rb"
+    - "test/server_https_test.rb"
+    - "test/server_requests_test.rb"

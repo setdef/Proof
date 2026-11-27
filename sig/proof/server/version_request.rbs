@@ -1,0 +1,37 @@
+module Proof
+  module Server
+    # Answers `GET /version` with the server's version.
+    #
+    # The server, every runner, and the command run one version, and the
+    # command checks the server's on each call, before it sends anything, so
+    # it can say which one to upgrade.
+    #
+    # This class answers with `{"version":"0.1.0"}`, in JSON, whatever the
+    # request holds. It has no rule to check and no port to call, so it
+    # calls no use case. The request needs no token, because the command
+    # checks the version before it signs in.
+    #
+    # Use it as the answer to `GET /version` in `Proof::Server::Requests`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # Proof::Server::VersionRequest.new(version: "0.2.0").call({}).last # => ["{\"version\":\"0.2.0\"}"]
+    # Proof::Server::VersionRequest.new.call({}).first # => 200
+    # ```
+    class VersionRequest
+      # Answers with `version`.
+      #
+      # - `version`: String, the version to give. Defaults to
+      #   `Proof::VERSION`.
+      def initialize: (?version: String) -> void
+
+      # The answer: status 200 and the version in JSON.
+      #
+      # - `_env`: Hash, the request, which the answer doesn't read.
+      def call: (env _env) -> response
+
+      @version: String
+    end
+  end
+end

@@ -1,16 +1,13 @@
 # frozen_string_literal: true
 
+require_relative("loaded_gems")
 require_relative("test_helper")
-require "open3"
-require "rbconfig"
 
 # Checks what loading Proof brings in. The command starts on Ruby's standard library alone, so the `kdl` gem and the
 # gems it loads wait until a project file's KDL is read, and ROM, Sequel, and SQLite wait until a store of runs is built.
-#
-# Each check runs in a fresh Ruby process, which starts with the same files loaded as any other. A process that already
-# ran the tests has loaded `kdl` itself and would hide the difference.
 class ProofLoadTest < Minitest::Test
-  LIB = File.expand_path("../lib", __dir__)
+  include LoadedGems
+
   KDL_GEMS = %w[kdl bigdecimal simpleidn base64 racc].freeze
   # ROM, rom-sql, Sequel, the `sqlite3` gem, and the gems they load.
   STORE_GEMS = %w[
@@ -51,10 +48,7 @@ class ProofLoadTest < Minitest::Test
     Dir.mktmpdir { |folder| Proof::Sqlite::Runs.new(path: File.join(folder, "runs.db")).close }
     puts($LOADED_FEATURES - before)
   RUBY
-  # A gem's folder in a path, such as `rom-sql` in `.../gems/rom-sql-3.7.0/lib/rom/sql.rb`. The name stops at the first
-  # slash, because a system's gem folder holds a `gems` folder of its own: `.../gems/4.1.0/gems/rom-sql-3.7.0/`.
-  GEM_FOLDER = %r{/gems/([^/]+)-\d[^/]*/}
-  private_constant(:LIB, :KDL_GEMS, :STORE_GEMS, :REQUIRE_PROOF, :PARSE, :OPEN_STORE, :GEM_FOLDER)
+  private_constant(:KDL_GEMS, :STORE_GEMS, :REQUIRE_PROOF, :PARSE, :OPEN_STORE)
 
   # Architecture, "Command line": "no KDL read at run time and no `kdl` gem, so the command starts on Ruby's standard
   # library alone." Requiring Proof loads none of the gems that `kdl` brings.
@@ -95,15 +89,6 @@ class ProofLoadTest < Minitest::Test
     assert_equal(%w[dry-core rom-sql sqlite3], storage_gems_in(paths))
   end
 
-  # The files that +code+ added to a fresh Ruby process, with Proof's lib folder on the load path.
-  def loaded_by(code)
-    out, err, status = Open3.capture3(RbConfig.ruby, "-I", LIB, "-e", code)
-
-    assert_predicate(status, :success?, err)
-    assert_empty(err)
-    out.lines.map(&:chomp)
-  end
-
   # The names among +paths+ that are the `kdl` gem or a gem it loads.
   def kdl_gems_in(paths)
     names = paths.to_set { |path| File.basename(path, ".*") }
@@ -113,7 +98,6 @@ class ProofLoadTest < Minitest::Test
   # The names among +paths+ that are a gem the store loads, found by the gem's folder, because `sequel` and `sqlite3`
   # name files in other gems too.
   def storage_gems_in(paths)
-    folders = paths.filter_map { |path| path[GEM_FOLDER, 1] }
-    folders & STORE_GEMS
+    gems_in(paths, STORE_GEMS)
   end
 end

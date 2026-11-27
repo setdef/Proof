@@ -17,7 +17,7 @@ Options weighed:
 
 ### The domain gem and the code around it
 
-The domain lives in a gem in this repository, `gems/proof-domain`. It has no runtime dependencies, only Ruby's standard library, and a test fails if the gem loads anything outside itself.
+The domain lives in a gem in this repository, `gems/proof-domain`. It has no runtime dependencies, only Ruby's standard library, and a test fails if the gem loads anything outside itself. Ruby's default gems are part of its standard library, so the test counts one at the version Ruby ships as standard wherever a bundle installed it: Falcon requires the `openssl` gem, and `Gemfile.lock` locks 4.0.2, the version Ruby 4.1.0-preview1 ships, which Bundler installs in the bundle.
 
 - Value objects are `class Foo < Data.define(...)`, each with an RBS signature. Each boundary's rules are checked in its constructor, so an invalid value can't exist.
 - Domain services receive their ports by keyword.
@@ -286,6 +286,41 @@ Options weighed:
 
 - Puma 8.1.3 with 4 threads, Iodine, and Agoo: each answered nothing with 4 streams open.
 - WEBrick: passed the same measurement, but gives each connection a thread with no limit, and has a history of request-smuggling fixes.
+
+#### Falcon in the server
+
+`proof.gemspec` lists `falcon` at `~> 0.57.0`, and `Gemfile.lock` locks 0.57.0. Falcon is below 1.0, and its API changes between minor releases: 0.57.0 marks `Falcon::Server.middleware` deprecated in favor of `rack_middleware`. The pin takes patch releases of 0.57 only, and a new minor release is checked before Proof takes it.
+
+`Proof::Server::Https` serves a Rack application with `Falcon::Server`, over sockets that are already listening, wrapped in io-endpoint's `BoundEndpoint` and `SSLEndpoint`. Falcon's TLS setup isn't used: it loads only RSA keys, and the server's key is EC P-256. `Https.context` makes the `OpenSSL::SSL::SSLContext`, with TLS 1.3 as both its least and its most version, and the server's identity as its certificate and key, so a client that offers only TLS 1.2 is refused in the handshake, before any request. Each connection speaks HTTP/1.1, with no ALPN: Net::HTTP, which the command and the runners use, speaks nothing else, and `git` falls back to it. Falcon's HTTP cache is off, because no answer of the server's may come from a cache.
+
+Async, Falcon, and protocol-rack log through the `console` gem, which writes JSON to standard error. A refused handshake is logged as a warning with its backtrace, so a client of an older TLS, or a scanner of ports, would fill the server's log. `Https#run` sets the logger of the fiber it runs in, which every fiber it starts inherits, to one that writes only errors to the server's standard error, so an exception in a request's handler still reaches the log, and nothing outside the server's fibers changes.
+
+Requiring `proof` loads none of this. `Proof::Server` loads each of its classes the first time something names it, and naming `Https` loads Falcon, Async, async-http, async-http-cache, async-utilization, console, the fiber-annotation, fiber-local, and fiber-storage gems, io-endpoint, io-event, io-stream, protocol-hpack, protocol-http, protocol-http1, protocol-http2, protocol-rack, and rack. That took 133 to 256 ms on an M1 Max, after 81 to 136 ms for `require "proof"`, once per start of the server. `test/server_load_test.rb` runs both in a new Ruby process, and fails when requiring Proof loads any of them, or when naming `Https` loads none. protocol-http 0.72.1 assigns a rescued error to a variable it never reads, and Ruby's `-w`, which the tests run under, warns of it, so `test/test_helper.rb` drops that one warning by its file and its text.
+
+Falcon's gemspec also brings async-container, async-service, bake, localhost, samovar, and string-format, which the server doesn't load, and Fledge ships them all the same. Every gem it brings is Ruby, except two with C extensions, which Fledge compiles from source, as it does `sqlite3`:
+
+- `io-event` 1.22.3, the fiber scheduler's event loop, ships only as source. On Linux its `extconf.rb` links liburing when liburing's headers are on the computer that builds it, and Fledge's documentation says it refuses a gem that links a library not every distribution has. So a Linux release is built where liburing's headers aren't installed, and io-event uses epoll, or with liburing listed in `fledge.yml` as a library of the distribution. On macOS it uses kqueue.
+- `openssl` 4.0.2 is the version Ruby 4.1.0-preview1 bundles, and Falcon requires the gem. Fledge compiles a gem that links OpenSSL against the OpenSSL its runtime carries, the copy Ruby's `openssl` was built with.
+
+`Gemfile.lock` keeps `aarch64-linux`, `arm64-darwin`, and `x86_64-linux` in its `PLATFORMS`. `bundle install` dropped all three when it added Falcon, and `bundle lock --add-platform` put them back.
+
+Options weighed:
+
+- Falcon's TLS setup, from an `https://` URL: it loads only RSA keys.
+- HTTP/2 by ALPN, as Falcon offers by default: nothing that calls the server speaks it, and each follow is its own connection either way.
+- The `localhost` gem's certificates, which Falcon offers for development: [Certificates](#certificates) says why the server makes its own.
+- Async's `Async::HTTP::Server` with protocol-rack, without Falcon: the measurements in [The HTTP server](#the-http-server) were of Falcon, and Falcon adds only the middleware around the Rack application.
+
+#### Requests
+
+`Proof::Server::Requests` is the Rack application the server serves. It holds a table of paths, each with the answer to each method it takes, and the composition root builds it. A path the table doesn't have gets 404, and a method its path doesn't take gets 405 with the `allow` header, each with an `error` in JSON, so the command can tell a request the server lacks, as on a server of another version, from one that failed. Each answer in the table is an object with `call(env)`: it takes the request apart, calls its use case with the parts, and turns the result into JSON, so a use case sees no HTTP and a test calls it with no server. The composition root hands each use case its ports when it builds the answer.
+
+`GET /version` is answered by `Proof::Server::VersionRequest` with `{"version":"0.1.0"}`, the server's `Proof::VERSION`. It needs no token, because the command checks the version before it signs in, and it calls no use case, because it has no rule to check and no port to call.
+
+Options weighed:
+
+- Roda, Sinatra, or Hanami's router: each runs its routes in blocks that change `self`, which Steep can't check without hand-written types for the whole DSL, for a table that is a `Hash` lookup. When a path takes a parameter, such as a run's ID, the first of them to weigh is Roda, which has no dependency but Rack and comes from Sequel's maintainer.
+- Protocol::HTTP's own middleware in place of Rack: `git http-backend`, which the server will serve, is a CGI program, and a Rack environment is the CGI environment it reads.
 
 ### Certificates
 

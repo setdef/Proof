@@ -1,0 +1,86 @@
+module Proof
+  module Server
+    # What a request brings, as Rack gives it: `REQUEST_METHOD`, `PATH_INFO`,
+    # and the rest, each by its name.
+    type env = Hash[String, Object]
+
+    # An answer, as Rack takes it: the status, the headers, and the body's
+    # parts.
+    type response = [Integer, Hash[String, String], Array[String]]
+
+    # What answers one request: the version request, and each request that
+    # the server gains.
+    interface _Request
+      # The answer to the request in `env`.
+      def call: (env env) -> response
+    end
+
+    # The server's requests, each by its path and method.
+    #
+    # The command and the runners call the server by a method and a path,
+    # such as `GET /version`. A request the server doesn't have, by its path
+    # or by its method, has to say so, in the same form as every answer, so
+    # the command can tell a server of another version from one that failed.
+    #
+    # This class is the Rack application the server serves. It finds each
+    # request's answer in a table of paths, each with its methods, and
+    # answers a path it doesn't have with 404 and a method its path doesn't
+    # take with 405 and the `allow` header, each with an `error` in JSON.
+    # Each answer in the table takes the request apart, calls the use case it
+    # was built with, and turns the result into JSON, so that the use case
+    # sees no HTTP.
+    #
+    # Use it to answer every request that reaches the server.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # requests = Proof::Server::Requests.new({ "/version" => { "GET" => Proof::Server::VersionRequest.new(version: "0.2.0") } })
+    # requests.call({ "REQUEST_METHOD" => "GET", "PATH_INFO" => "/version" })
+    # # => [200, { "content-type" => "application/json" }, ["{\"version\":\"0.2.0\"}"]]
+    # requests.call({ "REQUEST_METHOD" => "GET", "PATH_INFO" => "/runs" }).first # => 404
+    # ```
+    class Requests
+      # An answer with `status`, the JSON of `value` as its body, and
+      # `headers` beside its `content-type`.
+      #
+      # - `status`: Integer, the HTTP status.
+      # - `value`: Hash, what the body holds, by name.
+      # - `headers`: Hash, any headers beyond `content-type`. Defaults to none.
+      #
+      # ```ruby
+      # Proof::Server::Requests.json(200, { version: "0.2.0" }).last # => ["{\"version\":\"0.2.0\"}"]
+      # ```
+      def self.json: (Integer status, Hash[Symbol, String] value, ?Hash[String, String] headers) -> response
+
+      # Answers requests from `routes`.
+      #
+      # - `routes`: Hash, each path with the answer to each method it takes,
+      #   such as `{ "/version" => { "GET" => request } }`.
+      def initialize: (Hash[String, Hash[String, _Request]] routes) -> void
+
+      # The answer to the request in `env`.
+      #
+      # - `env`: Hash, the request, as Rack gives it.
+      def call: (env env) -> response
+
+      # The answer to a request the table has no answer for: 404 for a path
+      # it doesn't have, and 405 for a method the path doesn't take.
+      private def refusal: (String path, String method) -> response
+
+      # The answer to `method` at `path`, which takes only the methods in
+      # `allowed`: status 405, with them in the `allow` header.
+      #
+      # - `path`: String, the request's path.
+      # - `method`: String, the method it came with.
+      # - `allowed`: String, the methods the path takes, such as `"GET"`.
+      #
+      # ```ruby
+      # Proof::Server::Requests.refused("/version", "POST", "GET")[0..1] # => [405, { "content-type" => "application/json", "allow" => "GET" }]
+      # ```
+      def self.refused: (String path, String method, String allowed) -> response
+
+      @routes: Hash[String, Hash[String, _Request]]
+    end
+  end
+end

@@ -1,0 +1,63 @@
+module Proof
+  module Server
+    # Serves the server's requests over HTTPS, with Falcon.
+    #
+    # The command and every runner connect to the server over HTTPS and trust
+    # it by its key. Dozens of runs may be followed at once, each holding a
+    # connection open, and a server that gives each connection a thread stops
+    # answering once the followers hold every thread.
+    #
+    # This class serves a Rack application with Falcon, which serves each
+    # connection on a fiber, over sockets that are already listening. It
+    # speaks HTTP/1.1 over TLS 1.3 only, with the server's identity, and
+    # refuses a client that offers an older TLS before any request. Falcon's
+    # own log, which would report every refused handshake, writes only
+    # errors, to `err`.
+    #
+    # Use it inside the server's fiber scheduler, to serve its requests.
+    #
+    # ## Examples
+    #
+    # <!-- skip-example: serves until a fiber scheduler stops it, and a test runs it -->
+    # ```ruby
+    # require "socket"
+    # identity = Proof::Server::Identity.make(Proof::Server::Identity.new_key)
+    # sockets = Socket.tcp_server_sockets(nil, 7443)
+    # https = Proof::Server::Https.new(app: Proof::Server::Requests.new({}), identity:, sockets:, err: $stderr)
+    # Sync { https.run.wait }
+    # ```
+    class Https
+      # A TLS context that speaks TLS 1.3 only, with `identity`'s key and
+      # certificate.
+      #
+      # - `identity`: Proof::Server::Identity, the server's key and
+      #   certificate.
+      #
+      # <!-- skip-example: a context shows the versions it takes only in a handshake, which the tests make -->
+      # ```ruby
+      # identity = Proof::Server::Identity.make(Proof::Server::Identity.new_key)
+      # OpenSSL::SSL::SSLServer.new(TCPServer.new("127.0.0.1", 0), Proof::Server::Https.context(identity))
+      # ```
+      def self.context: (Identity identity) -> OpenSSL::SSL::SSLContext
+
+      # Prepares to serve `app` on `sockets`.
+      #
+      # - `app`: the Rack application, such as `Proof::Server::Requests`.
+      # - `identity`: Proof::Server::Identity, the server's key and
+      #   certificate.
+      # - `sockets`: Array of Socket, listening on the server's port.
+      # - `err`: IO, where Falcon writes its errors: the server's standard
+      #   error.
+      def initialize: (app: _Request app, identity: Identity, sockets: Array[Socket], err: IO | StringIO) -> void
+
+      # Serves in a new task of the current fiber scheduler's task, and
+      # returns the task, which serves until it is stopped. Sets the logger of
+      # the current fiber, and the fibers it starts, to write only errors.
+      def run: () -> Async::Task
+
+      @endpoint: IO::Endpoint::SSLEndpoint
+      @middleware: Protocol::HTTP::Middleware
+      @err: IO | StringIO
+    end
+  end
+end

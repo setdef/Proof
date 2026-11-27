@@ -1,0 +1,75 @@
+# The parts of Falcon, Async, io-endpoint, and Console that Proof calls,
+# which ship no signatures. Steep checks Proof's calls against these, so a
+# call they don't answer is an error here and not in the server.
+module Falcon
+  # An HTTP server over an endpoint, on fibers.
+  class Server
+    # The middleware that serves the Rack application `app`, with Falcon's
+    # HTTP cache when `cache` is true.
+    def self.rack_middleware: (Proof::Server::_Request app, cache: bool) -> Protocol::HTTP::Middleware
+
+    def initialize: (Protocol::HTTP::Middleware middleware, IO::Endpoint::SSLEndpoint endpoint, protocol: singleton(Async::HTTP::Protocol::HTTP11), scheme: String) -> void
+
+    # Accepts connections in a new task of the current one, and returns the
+    # task.
+    def run: () -> Async::Task
+  end
+end
+
+module Protocol
+  module HTTP
+    # A step of the server's handling of a request.
+    class Middleware
+    end
+  end
+end
+
+module Async
+  # A fiber that the scheduler runs.
+  class Task
+    # Stops the task and every task it started.
+    def stop: () -> void
+  end
+
+  module HTTP
+    module Protocol
+      # HTTP/1.1, the protocol of each connection.
+      module HTTP11
+      end
+    end
+  end
+end
+
+class IO
+  module Endpoint
+    # An endpoint over sockets that are already bound and listening.
+    class BoundEndpoint
+      def initialize: (nil endpoint, Array[Socket] sockets) -> void
+    end
+
+    # An endpoint that speaks TLS over another one.
+    class SSLEndpoint
+      def initialize: (BoundEndpoint endpoint, ssl_context: OpenSSL::SSL::SSLContext) -> void
+    end
+  end
+end
+
+module Console
+  # Sets the logger of the current fiber, which the fibers it starts inherit.
+  def self.logger=: (Logger logger) -> Logger
+
+  # How Console makes its loggers.
+  class Config
+    # The configuration Console uses when none is loaded.
+    DEFAULT: Config
+
+    # A logger that writes to `io`.
+    def make_logger: (IO | StringIO io) -> Logger
+  end
+
+  # What Async and Falcon log through.
+  class Logger
+    # Sets the least severe level it writes, such as `:error`.
+    def level=: (Symbol level) -> Symbol
+  end
+end

@@ -21,6 +21,7 @@ target :lib do
   library "open3"
   library "tmpdir"
   library "openssl"
+  library "socket"
 end
 
 # The domain gem is checked alone, with only its own signatures, so a type

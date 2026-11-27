@@ -27,5 +27,18 @@ end
 
 require "minitest/autorun"
 
+# protocol-http 0.72.1, which Falcon loads, assigns a rescued error to a variable it never reads, and Ruby's -w warns of
+# it when the server's HTTPS loads. This drops that one warning, by its file and its text, so every other warning still
+# shows.
+module IgnoredWarnings
+  STREAMABLE = %r{/protocol-http-[^/]+/lib/protocol/http/body/streamable\.rb:\d+: warning: assigned but unused variable}
+  private_constant(:STREAMABLE)
+
+  def warn(message, ...)
+    super unless STREAMABLE.match?(message)
+  end
+end
+Warning.singleton_class.prepend(IgnoredWarnings)
+
 $LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
 require "proof"

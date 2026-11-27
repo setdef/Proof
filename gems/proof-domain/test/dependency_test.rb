@@ -33,8 +33,15 @@ class DomainDependencyTest < Minitest::Test
 
   # Whether +path+ is in +lib+ or in Ruby's standard library.
   def own_or_standard?(path, lib)
-    roots = [lib, RbConfig::CONFIG["rubylibdir"], RbConfig::CONFIG["rubyarchdir"]]
+    roots = [lib, RbConfig::CONFIG["rubylibdir"], RbConfig::CONFIG["rubyarchdir"], *default_gem_folders]
     roots.any? { |root| path.start_with?("#{File.realpath(root)}/") }
+  end
+
+  # The folders of the installed gems that are Ruby's default gems, at the version Ruby ships. A default gem is part of
+  # the standard library, and a bundle that locks one, such as `openssl` for Falcon, installs it in a folder of its own.
+  def default_gem_folders
+    shipped = Gem::Specification.default_stubs.to_h { |stub| [stub.name, stub.version] }
+    Gem::Specification.filter_map { |spec| spec.full_gem_path if shipped[spec.name] == spec.version }
   end
 
   # The gem's lib folder, copied with one line added to the file that loads
@@ -67,5 +74,10 @@ class DomainDependencyTest < Minitest::Test
   # The same check, run on a copy that requires the standard library, reports nothing.
   def test_a_require_of_the_standard_library_is_allowed
     assert_empty(loaded_outside_after_adding('require("set")'))
+  end
+
+  # A default gem is part of the standard library, wherever the bundle installed it.
+  def test_a_require_of_a_default_gem_is_allowed
+    assert_empty(loaded_outside_after_adding('require("openssl")'))
   end
 end
