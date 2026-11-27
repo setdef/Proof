@@ -24,11 +24,10 @@ module Proof
     KINDS: Hash[Symbol, Array[String]]
 
     # Whether two names a pool file gives, of hosts, runners, or repositories,
-    # are one name. Two texts are one when they differ only in case, as
-    # `Proof::Label` compares labels, with `String#casecmp?`, which folds
-    # Unicode case, so `"nuc"` and `"NUC"` are one name. A value that isn't
-    # text, which the domain refuses later, is one name only with an equal
-    # value, so `5` and `"5"` are two.
+    # are one name. Two texts are one when `Proof::Name.same?` finds them
+    # so, which is when they differ only in case, so `"nuc"` and `"NUC"` are
+    # one name. A value that isn't text, which the domain refuses later, is one
+    # name only with an equal value, so `5` and `"5"` are two.
     #
     # - `one`, `other`: each a value as KDL read it.
     #
