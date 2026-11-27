@@ -10,6 +10,7 @@ SimpleCov.start do
   cover("gems/*/lib/**/*.rb")
   cover("tasks/critic_faults.rb")
   cover("tasks/doc_examples.rb")
+  cover("tasks/steep_loads.rb")
   cover("tasks/doc_examples/**/*.rb")
   cover("tasks/ruby_doc_comments.rb")
   enable_coverage(:branch)

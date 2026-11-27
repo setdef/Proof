@@ -573,3 +573,14 @@ Options weighed:
 - A tool that already runs examples from `.rbs` comments: no maintained tool reads `.rbs` files.
 - minitest-markdown: silently passes a wrong `# =>` on the same line.
 - The YARD tools: read only YARD's `@example` tags.
+
+### Type checking
+
+Steep checks four targets: `lib`, the domain gem, the usage gem, and the Rake tasks. Steep loads each target's signatures into every other target, so a signature that names a type from a library, such as `OptionParser` from `optparse`, needs that library in every target. A target that lacks it fails to build its types. Steep then checks none of that target's files, reports no error, and ends with "No type error detected". `steep check --validate=project` and `--validate=library` don't find it, because Steep validates a signature only in the target it belongs to.
+
+The Steepfile therefore holds one list of libraries and loads it in every target, and `rake steep:loads` fails the gate when any target doesn't load. It loads each target's signatures as Steep does, and names each target that fails with its first diagnostic, so the fix is one line in the list.
+
+Options weighed:
+
+- `unreferenced!` on each target, so none loads another's signatures: the domain gem's and usage gem's signatures are also in `lib`'s list, and Steep gives a signature file to the first target that lists it, so `lib` would stop seeing them.
+- A check of Steep's output for a target that reports nothing: Steep prints nothing for a target that fails to load and for one with no errors alike.

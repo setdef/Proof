@@ -32,7 +32,7 @@ $ BUNDLE_PATH=$HOME/.cache/proof-bundle bin/ci
 | --- | --- |
 | Tests | A failing test, or a line or branch no test runs (SimpleCov's minimum is 100% for each file) |
 | RuboCop | Any offense, with every cop on |
-| Steep | A type error, or `untyped` in a `.rbs` file |
+| Steep | A type error, `untyped` in a `.rbs` file, or a Steep target that fails to load, which leaves its files unchecked |
 | RubyCritic | A file rated below A, a smell (from reek), duplication (from flay), or an overall score below 95. The failure names each file, its rating, and each smell |
 | REUSE | A file that `REUSE.toml` gives no copyright or license |
 | RDoc coverage | A public class, module, constant, or method with no documentation, counting the comments in `sig/**/*.rbs` |
