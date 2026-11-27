@@ -44,5 +44,10 @@ module Proof
     def inspect
       "#<#{self.class}>"
     end
+
+    def pretty_print(printer)
+      # pp defines Data#pretty_print to print every member, and IRB and the debugger print with it, not with inspect.
+      printer.text(inspect)
+    end
   end
 end

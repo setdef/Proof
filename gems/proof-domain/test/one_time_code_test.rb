@@ -2,6 +2,7 @@
 
 require_relative("test_helper")
 require "minitest/mock"
+require "pp"
 require "securerandom"
 
 # Checks the one-time code that a person types to sign in or to approve a runner: how it is made, read, written, and
@@ -131,5 +132,11 @@ class OneTimeCodeTest < Minitest::Test
   # the characters out.
   def test_inspect_leaves_the_characters_out
     assert_equal("#<Proof::OneTimeCode>", Proof::OneTimeCode.parse("Q8MR-2T4W").inspect)
+  end
+
+  # IRB, the debugger, and `pp` print a value with `pretty_print`, which `Data` defines to show every member, so a code
+  # pretty-prints as it inspects.
+  def test_pretty_print_leaves_the_characters_out
+    assert_equal("#<Proof::OneTimeCode>\n", PP.pp(Proof::OneTimeCode.parse("Q8MR-2T4W"), +""))
   end
 end

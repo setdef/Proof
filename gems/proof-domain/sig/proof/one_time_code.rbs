@@ -138,5 +138,25 @@ module Proof
     # Proof::OneTimeCode.parse("Q8MR-2T4W").inspect # => "#<Proof::OneTimeCode>"
     # ```
     def inspect: () -> String
+
+    # What `pp` takes text from: a `PP` or a `PrettyPrint`.
+    interface _Printer
+      # Adds `text` to what the printer writes.
+      #
+      # - `text`: String.
+      def text: (String text) -> void
+    end
+
+    # Writes the same text as `inspect` to `printer`, so `pp`, IRB, and the
+    # debugger, which print with `pretty_print`, show no characters either.
+    #
+    # - `printer`: `_Printer`, the printer `pp` passes.
+    #
+    # ```ruby
+    # require "pp"
+    #
+    # PP.pp(Proof::OneTimeCode.parse("Q8MR-2T4W"), +"") # => "#<Proof::OneTimeCode>\n"
+    # ```
+    def pretty_print: (_Printer printer) -> void
   end
 end
