@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
 
   spec.metadata["rubygems_mfa_required"] = "true"
   spec.metadata["source_code_uri"] = spec.homepage
-  spec.metadata["bug_tracker_uri"] = "#{spec.homepage}/issues"
+  spec.metadata["bug_tracker_uri"] = "https://forum.setdef.com/c/proof"
 
   spec.files = Dir["lib/**/*.rb", "sig/**/*.rbs"]
   spec.require_paths = ["lib"]
