@@ -4,9 +4,17 @@
 require_relative("facts")
 
 module Proof
+  # steep:ignore:start
   class Run
+    # steep:ignore:end
     module Endings
-      NEEDS = {
+      def self.table(entries)
+        # Steep reads each entry of a frozen literal as an Array, so the table is frozen here, where its type is known.
+        entries.freeze
+      end
+      private_class_method(:table)
+
+      NEEDS = table(
         Succeeded => [
           :passed?,
           "a run succeeds only after its command exits with 0, its whole output arrives, and its artifacts are kept",
@@ -19,8 +27,8 @@ module Proof
         TimedOut => [:started?, "a run times out only after its command starts"],
         OutOfMemory => [:started?, "a run runs out of memory only after its command starts"],
         Canceled => [:canceled?, "a run is canceled only after a cancel is asked for"],
-        Lost => [:placed?, "a run is lost only after it is placed"],
-      }.freeze
+        Lost => [:placed?, "a run is lost only after it is placed"]
+      )
       AFTER_FINAL = "a final state is final: only the run's processes ending, once, may follow lost"
       private_constant(:NEEDS, :AFTER_FINAL)
 

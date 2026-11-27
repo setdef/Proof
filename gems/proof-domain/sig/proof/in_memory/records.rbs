@@ -26,6 +26,8 @@ module Proof
     # table.keys # => [id]
     # ```
     class Records
+      @table: Hash[RunId, Array[Run::Fact]]
+
       # Builds the checks over `table`.
       #
       # - `table`: a `Hash` from run ID to facts, which the checks change.

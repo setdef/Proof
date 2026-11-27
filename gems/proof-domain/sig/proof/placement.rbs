@@ -42,6 +42,10 @@ module Proof
   # placement.place_next # => nil
   # ```
   class Placement
+    @runs: _Runs
+    @hosts: _Hosts
+    @clock: _Clock
+
     # Builds the service from its ports.
     #
     # - `runs`: `_Runs`, the store of runs.
@@ -132,6 +136,6 @@ module Proof
     # every queued run but those whose cancel was asked for.
     def queue: () -> Array[Run]
 
-    def place: (Run run, Host host, Runner runner) -> Run
+    def place: ([Run, Host, Runner] chosen) -> Run
   end
 end

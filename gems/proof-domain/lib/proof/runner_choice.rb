@@ -5,9 +5,15 @@ module Proof
     def self.first(queued, hosts, holding)
       queued.each do |run|
         found = best(run.queued, hosts, holding)
-        return [run, *found] if found
+        return chosen(run, found) if found
       end
       nil
+    end
+
+    def self.chosen(run, pair)
+      # Steep reads a splat in an Array literal as a list, so the three are named here, where it can see the tuple.
+      host, runner = pair
+      [run, host, runner]
     end
 
     def self.best(queued, hosts, holding)

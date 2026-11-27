@@ -32,10 +32,7 @@ module Proof
       end
 
       def self.kind(fact)
-        # Steep gives a value of the module Run::Fact none of Object's methods, so it can't see the class.
-        # steep:ignore:start
         fact.class.name.to_s.split("::").last.to_s
-        # steep:ignore:end
       end
 
       def self.columns(fact)

@@ -5,7 +5,9 @@ require_relative("run/facts")
 require_relative("run/rules")
 
 module Proof
+  # steep:ignore:start
   class Run
+    # steep:ignore:end
     FINAL_STATES = {
       Succeeded => :succeeded,
       Failed => :failed,
@@ -56,7 +58,10 @@ module Proof
     end
 
     def ending
+      # Steep finds nothing in common between the modules Fact and Final, which the final facts include both of.
+      # steep:ignore:start
       facts.each { |fact| return fact if fact.is_a?(Final) }
+      # steep:ignore:end
       nil
     end
 

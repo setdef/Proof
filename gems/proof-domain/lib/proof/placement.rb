@@ -15,7 +15,7 @@ module Proof
 
     def place_next
       found = RunnerChoice.first(queue, @hosts.hosts, @runs.holding_resources)
-      place(*found) if found
+      place(found) if found
     end
 
     def check(queued)
@@ -32,7 +32,8 @@ module Proof
       @runs.queued.reject(&:cancel_asked?)
     end
 
-    private def place(run, host, runner)
+    private def place(chosen)
+      run, host, runner = chosen
       placed = Run::Placed.new(at: @clock.now, host: host.name, runner: runner.name)
       @runs.append(run.id, placed, version: run.version)
     end

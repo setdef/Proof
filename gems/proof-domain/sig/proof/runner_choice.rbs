@@ -30,5 +30,8 @@ module Proof
     # The order placement weighs `pair` in, emptiest first: most memory free,
     # then most CPUs free, then the runner's name, then the host's.
     def self.emptiest_first: ([Host, Runner] pair, Array[Run] holding) -> [Integer, Integer, String, String]
+
+    # The run, and the host and runner chosen for it, as one list.
+    private def self.chosen: (Run run, [Host, Runner] pair) -> [Run, Host, Runner]
   end
 end

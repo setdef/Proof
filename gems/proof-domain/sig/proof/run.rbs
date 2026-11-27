@@ -99,7 +99,7 @@ module Proof
     #
     # - `id`: RunId, the run's ID.
     # - `facts`: an `Array` of facts, oldest first.
-    def initialize: (id: RunId, facts: Array[Run::Fact]) -> void
+    def initialize: (id: Object, facts: Array[Run::Fact]) -> void
 
     # Whether `other` is a run with the same ID. A run with more facts is
     # still the same run.

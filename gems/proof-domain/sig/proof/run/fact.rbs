@@ -32,6 +32,8 @@ module Proof
     # Proof::Run::CommandStarted.new(at: "2026-11-25 03:36")
     # ```
     module Fact : Data
+      include Kernel
+
       # A whole number from `minimum`, or the error. Raises
       # `Proof::InvalidFactError` with `message`, filled in by `format` with
       # `value`, when `value` isn't an Integer from `minimum`.
