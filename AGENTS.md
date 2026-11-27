@@ -57,6 +57,28 @@ How Proof is built, with the libraries and layout and the options each beat: `do
 - Releases: bump the version in `lib/proof/version.rb`, tag it, and publish a GitHub release regularly, always as `0.X.Y`, never with a prerelease suffix such as `-rc.1` or `.pre.1`.
 - `CHANGELOG.md` follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and lists only what people who use Proof see: new commands and flags, changed behavior, deprecations, removals. Its Unreleased section covers the time since the last tag, so a commit that undoes an earlier unreleased one removes that entry. Past versions stay as they are.
 
+## Writing things down
+
+Record these where the next contributor will find it. (What lives only in a chat, or on one machine, gets lost.) Write each thing in its axis's home, and nowhere else:
+
+| Axis | As it is | As it will be |
+| - | - | - |
+| Requirements: what the software does for its users | User documentation† | Issues |
+| Contract: what a caller can rely on | Doc comments; the changelog, for changes over time | Issues |
+| Architecture: the few decisions the structure rests on | Accepted ADRs | Proposed ADRs |
+| Design: how each part works, and why | Design documents | Nowhere |
+| Behavior: what the code does | Tests | Nowhere |
+| Facts that constrain the design | The design document or ADR they constrain; until that exists, the issue whose work they constrain | Nowhere |
+
+- **Decide a design at the last responsible moment,** while building it, with the facts in hand, then record it as it is. Never write a design, or a behavior, ahead of the code, in an issue or anywhere else.
+- **A design document explains a part to the people who change it:** its concepts, how its pieces fit, why it is shaped this way, its traps, and what it deliberately doesn't do. It doesn't restate the code: no fields, option types, step-by-step restatements of the code, or private call graphs.
+- **Change a design document when a design decision changes,** never because behavior did. The two vary independently.
+- **A doc comment describes the contract from the caller's side,** never how the code does the work inside.
+- **Check a fact at its source before anything rests on it,** on the platform it's about. A decision that rests on an unchecked fact waits.
+- **Record a fact found before its design exists as a fact, not a decision:** what was spiked or checked, how, on which platform and version, and the result. It waits in the issue whose work it constrains. When the design or architecture is decided, the relevant facts go in that design document or ADR.
+- **Issues may represent proposed or accepted** requirements or contracts, and an issue that doesn't specify which can't be assumed to have already been accepted or denied.
+- † **In a project being built under README-Driven Development,** the user documentation is written ahead of the code, as its requirements. Everywhere else, it describes only what the software does today.
+
 ## Landmines
 
 - `doc/reference/cli.md`, `skills/proof/references/cli.md`, and `lib/proof/command_line/spec.json` are generated. Never edit them by hand.
