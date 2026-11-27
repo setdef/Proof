@@ -387,7 +387,7 @@ Options weighed:
 
 #### The runner's token, encrypted to its key
 
-`Proof::RunnerKey`, in `lib/proof`, is a runner's EC P-256 key, on the curve of the server's key. `generate` makes it on the runner, and `read` reads the public key, as DER, from a join request on the server. `public_der` gives the bytes that the join request carries and that `J` and `S` are over. `encrypt` and `decrypt` call `Proof::TokenCipher`, a private constant of `Proof`, which composes Ruby's `openssl`:
+`Proof::RunnerKey`, in `lib/proof`, is a runner's EC P-256 key, on the curve of the server's key. `generate` makes it on the runner, and `read` reads the public key, as DER, from a join request on the server. It refuses any bytes but those `public_der` gives back for the key: OpenSSL also reads PEM, a private key, a compressed point, and a curve's parameters spelled out, and the tags are over the bytes the request carried. `public_der` gives the bytes that the join request carries and that `J` and `S` are over. `encrypt` and `decrypt` call `Proof::TokenCipher`, a private constant of `Proof`, which composes Ruby's `openssl`:
 
 1. `encrypt` makes an ephemeral P-256 key for the token alone, and ECDH gives the secret it shares with the runner's key.
 2. HKDF-SHA256, with an empty salt, makes a 32-byte key from that secret over `Proof::LengthPrefixed` fields: the label `proof runner token`, the ephemeral key's DER, and the runner key's DER. A token encrypted to one key never decrypts with another's.
