@@ -100,7 +100,7 @@ module Proof
     # alphabet. A hyphen isn't one: use `parse` for a code as typed.
     #
     # - `characters`: String, 8 symbols in either case.
-    def initialize: (characters: String) -> void
+    def initialize: (characters: Object) -> void
 
     # Whether `other` is a code with the same characters. OpenSSL's
     # `fixed_length_secure_compare` compares them, so the time it takes is
