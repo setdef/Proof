@@ -1,0 +1,8 @@
+# Ruby's `SystemCallError.new` also takes an errno alone, and the error's
+# message is then the system's text for it, such as "No such file or
+# directory", with no call or path after it. The core signature lists only
+# the form with a message.
+class SystemCallError
+  def initialize: (Integer errno) -> void
+                | ...
+end

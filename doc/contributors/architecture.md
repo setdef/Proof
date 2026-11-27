@@ -193,6 +193,28 @@ Options weighed:
 - A reader written for Proof: the reasons to write it can be fixed in `kdl` for everyone ([issue #54](https://github.com/setdef/Proof/issues/54)).
 - `vexyl`'s reader: it reads every number as a float, and it failed 5 of the 338 cases of the official KDL test suite.
 
+### The pool file on the server
+
+`Proof::Server::CurrentPoolFile` holds the pool file the server uses and the mistake that `proof status` shows. It reads each text whole with `Proof::PoolFileReader`, which builds every value before it returns any, so a text with a mistake on any line leaves the last version that had none in use, and becomes the mistake, with its path and line. A text with no mistake becomes the pool file and clears the mistake. Before the first text with no mistake there is no pool file, so a server that starts with a mistake runs no runs. A file the server can't read, such as one that isn't there, is a mistake with no line, and the last good version stays in use. `port` is the pool file's port, or 7443, the page's default, when there is none.
+
+`Proof::Server::PoolFileWatch` reads the file on each `check` and gives the text to `CurrentPoolFile` when it differs from the last text it read, so an edit takes effect for the next run without a restart. It compares the text, not the file's time or size, so an edit within one tick of the file system's clock, a copy that keeps the old time, and an edit that keeps the size are all read. For each text it reads, it writes lines to standard error, after `proof:`, where the service manager records them:
+
+| What it read | Lines |
+| --- | --- |
+| A text with no mistake | `proof: read PATH, and the next run uses it.` |
+| A mistake, with a good version from before | `proof: PATH:LINE: REASON`, then `proof: the server keeps the last version of PATH that had no mistake until you fix it.` |
+| A mistake, with no good version | `proof: PATH:LINE: REASON`, then `proof: the server runs no runs until you fix PATH.` |
+| A file it can't read | `proof: PATH: the server can't read it: REASON`, then one of the two lines that follow a mistake |
+
+The reason for a file it can't read is the system's text for the error, such as `No such file or directory`, without the call and the path that Ruby's message adds.
+
+Options weighed:
+
+- Notices of a change from the operating system, through the `listen` gem: it loads `rb-inotify` on Linux or `rb-fsevent` on macOS, with `ffi`, a gem with a native extension, and runs threads of its own, for one file of a few kilobytes.
+- Comparing the file's modification time: two saves within one tick of the clock, or a copy that keeps the old time, would go unread.
+- Reading the file again on `SIGHUP`, as nginx and sshd do: the pool file page says the server reads the file whenever it changes, with nothing for a person to send.
+- Reading the file only before each placement: a mistake would show only when a run arrives, and a lower share would place nothing until something else asked for a placement.
+
 ### Git
 
 Proof runs the `git` program as a subprocess, with every inherited `GIT_*` variable removed so that a hook or a parent Git process can't redirect it.

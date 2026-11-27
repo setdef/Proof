@@ -1,0 +1,68 @@
+module Proof
+  module Server
+    # Reads the pool file again when it changes.
+    #
+    # A change to the pool file takes effect for the next run, without a
+    # restart. The person who made it can't see what the server made of it
+    # unless the server says so, and a mistake that only `proof status`
+    # shows goes unseen until someone asks.
+    #
+    # This class reads the file at the path of the current pool file on each
+    # `check`, and gives its text to
+    # `Proof::Server::CurrentPoolFile` when the text differs from the last
+    # one it read. It writes to standard error, after `proof:`, what it read,
+    # or the mistake with its line and whether the server keeps an older
+    # version or runs no runs. A file it can't read, such as one that isn't
+    # there, is a mistake too. A text it has seen is neither read nor
+    # reported again.
+    #
+    # Use it to check the file when the server starts and every second after.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # require "stringio"
+    # require "tmpdir"
+    # path = File.join(Dir.mktmpdir, "pool.kdl")
+    # File.write(path, "server port=8443\n")
+    # current = Proof::Server::CurrentPoolFile.new(path:)
+    # err = StringIO.new
+    # Proof::Server::PoolFileWatch.new(current:, err:).check
+    # current.port # => 8443
+    # err.string.start_with?("proof: read ") # => true
+    # ```
+    class PoolFileWatch
+      # Watches the file at the path of `current`.
+      #
+      # - `current`: Proof::Server::CurrentPoolFile, what each text goes to.
+      # - `err`: IO, where the messages go: the server's standard error.
+      def initialize: (current: CurrentPoolFile, err: IO | StringIO) -> void
+
+      # Reads the file, and gives its text to the current pool file and says
+      # what came of it, unless the text is the one read last.
+      #
+      # ```ruby
+      # require "stringio"
+      # require "tmpdir"
+      # path = File.join(Dir.mktmpdir, "pool.kdl")
+      # current = Proof::Server::CurrentPoolFile.new(path:)
+      # Proof::Server::PoolFileWatch.new(current:, err: StringIO.new).check
+      # current.mistake&.reason # => "the server can't read it: No such file or directory"
+      # ```
+      def check: () -> void
+
+      private
+
+      def seen: (String? text) { () -> void } -> void
+
+      def report: () -> void
+
+      def say: (String line) -> void
+
+      @current: CurrentPoolFile
+      @err: IO | StringIO
+      @checked: bool
+      @seen: String?
+    end
+  end
+end

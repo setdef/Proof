@@ -1,0 +1,81 @@
+module Proof
+  module Server
+    # The pool file the server uses, and the mistake it shows.
+    #
+    # A person edits the pool file while the server runs. An edit can have a
+    # mistake on any line, and a server that used the lines before it would
+    # place runs by a pool nobody wrote. A server that stopped would stop
+    # every run in the pool for one typo.
+    #
+    # This class keeps the last version of the file that had no mistake, and
+    # the mistake of the newest version, if it has one. It reads each text
+    # whole with `Proof::PoolFileReader`, so a text with a mistake leaves the
+    # last good version in use. Before any text without a mistake, it has no
+    # pool file, and the server runs no runs.
+    #
+    # Use it to find the pool file a run is placed by, and the mistake that
+    # `proof status` shows.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # current = Proof::Server::CurrentPoolFile.new(path: "pool.kdl")
+    # current.read("server port=8443\n")
+    # current.read("server port=9443\nlimits output=\"400G\"\n")
+    # current.port # => 8443
+    # current.mistake&.line # => 2
+    # ```
+    class CurrentPoolFile
+      # The file's path, which each mistake names.
+      attr_reader path: String
+
+      # The last version read that had no mistake, or `nil` before there is
+      # one.
+      attr_reader pool_file: PoolFile?
+
+      # The mistake of the newest version, with its path and line, or `nil`
+      # when it has none.
+      attr_reader mistake: PoolFileError?
+
+      # Starts with no pool file and no mistake.
+      #
+      # - `path`: String, the file's path, which each mistake names.
+      def initialize: (path: String) -> void
+
+      # Reads `text` as the newest version of the file. A text with no
+      # mistake becomes the pool file and clears the mistake. A text with a
+      # mistake becomes the mistake, and the pool file stays as it was.
+      #
+      # - `text`: String, the file's text.
+      #
+      # ```ruby
+      # current = Proof::Server::CurrentPoolFile.new(path: "pool.kdl")
+      # current.read("server port=8443\n")
+      # current.pool_file&.port&.number # => 8443
+      # ```
+      def read: (String text) -> void
+
+      # Holds as the mistake that the file can't be read, with no line, and
+      # keeps the pool file as it was.
+      #
+      # - `reason`: String, why, such as `"No such file or directory"`.
+      #
+      # ```ruby
+      # current = Proof::Server::CurrentPoolFile.new(path: "pool.kdl")
+      # current.unreadable("No such file or directory")
+      # current.mistake&.message # => "pool.kdl: the server can't read it: No such file or directory"
+      # ```
+      def unreadable: (String reason) -> void
+
+      # The port of the pool file, or 7443, the page's default, when there is
+      # none. The server listens on it when it starts.
+      #
+      # ```ruby
+      # Proof::Server::CurrentPoolFile.new(path: "pool.kdl").port # => 7443
+      # ```
+      def port: () -> Integer
+
+      @reader: PoolFileReader
+    end
+  end
+end
