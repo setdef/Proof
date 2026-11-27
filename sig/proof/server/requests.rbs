@@ -80,6 +80,16 @@ module Proof
       # ```
       def self.refused: (String path, String method, String allowed) -> response
 
+      # The text of `value`, a method or a path from a request, with each
+      # byte that isn't UTF-8 replaced by U+FFFD, so JSON can hold it.
+      #
+      # - `value`: the method or the path, or `nil`.
+      #
+      # ```ruby
+      # Proof::Server::Requests.text("/a\xFF".b) # => "/a\uFFFD"
+      # ```
+      def self.text: (Object? value) -> String
+
       @routes: Hash[String, Hash[String, _Request]]
     end
   end

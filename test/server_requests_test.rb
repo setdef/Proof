@@ -38,6 +38,22 @@ class ServerRequestsTest < Minitest::Test
     assert_equal({ "error" => "/version takes GET, not POST" }, JSON.parse(body.join))
   end
 
+  # A client can send any bytes in a path, and JSON holds only text, so the answer shows a byte that isn't UTF-8 as the
+  # replacement character, where an exception would answer with a server error.
+  def test_a_path_that_isnt_utf_8_is_not_found
+    status, _, body = @requests.call(env("GET", "/\xFF".b))
+
+    assert_equal(404, status)
+    assert_equal({ "error" => "the server has no request at /\uFFFD" }, JSON.parse(body.join))
+  end
+
+  def test_a_method_that_isnt_utf_8_is_refused
+    status, _, body = @requests.call(env("G\xFFT".b, "/version"))
+
+    assert_equal(405, status)
+    assert_equal({ "error" => "/version takes GET, not G\uFFFDT" }, JSON.parse(body.join))
+  end
+
   private def env(method, path)
     { "REQUEST_METHOD" => method, "PATH_INFO" => path }
   end

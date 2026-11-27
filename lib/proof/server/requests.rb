@@ -13,13 +13,18 @@ module Proof
         json(405, { error: "#{path} takes #{allowed}, not #{method}" }, { "allow" => allowed })
       end
 
+      def self.text(value)
+        # A client can send any bytes, and JSON holds only text, so a byte that isn't UTF-8 becomes U+FFFD.
+        value.to_s.dup.force_encoding(Encoding::UTF_8).scrub
+      end
+
       def initialize(routes)
         @routes = routes
       end
 
       def call(env)
-        method = env["REQUEST_METHOD"].to_s
-        path = env["PATH_INFO"].to_s
+        method = Requests.text(env["REQUEST_METHOD"])
+        path = Requests.text(env["PATH_INFO"])
         request = @routes.dig(path, method) or return refusal(path, method)
         request.call(env)
       end
