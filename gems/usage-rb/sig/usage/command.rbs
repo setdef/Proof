@@ -4,9 +4,8 @@ module Usage
   # Parsing a command line and writing help start from the same questions: which flags a command has, which
   # arguments, and which subcommands. Each answering from its own reading of the spec would drift.
   #
-  # This class reads one command, and every command under it, from the spec's JSON, the way each part of the spec
-  # reads itself. It holds what the spec says of the command and finds a subcommand by name. Finding a command by its
-  # path, and the flags it takes from the commands above it, are `Usage::CommandTree`'s.
+  # This class holds what the spec says of one command and the commands under it, and finds a subcommand by name.
+  # Finding a command by its path, and the flags it takes from the commands above it, are `Usage::CommandTree`'s.
   #
   # Use it to list a command's subcommands, and the flags that are its own and the ones it passes on to every command
   # under it.
@@ -33,11 +32,6 @@ module Usage
   # Usage::Spec.read('{"cmd": {"args": [{"name": "file"}], "subcommands": {"add": {"name": "add"}}}}')
   # ```
   class Command < Data
-    # The keys of a command's object that the gem accepts. It accepts `effect`, which says what the command does to
-    # the world for tools that act for a person, and reads nothing of it. Aliases, mounts, headings, and hidden
-    # commands aren't supported, nor is any `unknown_flags` but `"error"`.
-    KEYS: keys
-
     # The command's name, the last word of its path, or the program's name for the program itself.
     attr_reader name: String
 
@@ -84,21 +78,6 @@ module Usage
     # - `examples`: Array of `Usage::Example`.
     # - `subcommand_required`: bool, whether a subcommand must follow.
     def initialize: (name: String, path: Array[String], help: String?, help_long: String?, args: Array[Arg], flags: Array[Flag], subcommands: Array[Command], groups: Array[Group], examples: Array[Example], subcommand_required: bool) -> void
-
-    # Reads a command, and every command under it, from its object in the spec's JSON, and raises
-    # `Usage::SpecError` for anything the gem doesn't act on, and when a command has both arguments and subcommands.
-    #
-    # - `object`: Hash, the command's object.
-    #
-    # ```ruby
-    # list = Usage::Command.read({ name: "todo", subcommands: { list: { name: "list", full_cmd: ["list"] } } })
-    # list.subcommands.map(&:path) # => [["list"]]
-    # ```
-    def self.read: (object object) -> Command
-
-    private def self.place: (json words) -> String
-
-    private def self.parts: (Reader reader) -> { path: Array[String], args: Array[Arg], flags: Array[Flag], groups: Array[Group], examples: Array[Example], subcommands: Array[Command], subcommand_required: bool }
 
     # Whether the command is the program itself, the one command with no path.
     #

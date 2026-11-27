@@ -4,6 +4,7 @@ require_relative("usage/arg")
 require_relative("usage/arg_format")
 require_relative("usage/choices")
 require_relative("usage/command")
+require_relative("usage/command_format")
 require_relative("usage/command_page")
 require_relative("usage/command_tree")
 require_relative("usage/example")
@@ -23,12 +24,14 @@ require_relative("usage/program_page")
 require_relative("usage/reader")
 require_relative("usage/spec")
 require_relative("usage/spec_error")
+require_relative("usage/spec_format")
 require_relative("usage/usage_line")
 require_relative("usage/version")
 
 module Usage
   private_constant(
     :ArgFormat,
+    :CommandFormat,
     :CommandPage,
     :ExampleFormat,
     :ExitCodeFormat,
@@ -40,6 +43,7 @@ module Usage
     :Page,
     :ProgramPage,
     :Reader,
+    :SpecFormat,
     :UsageLine
   )
 end

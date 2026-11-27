@@ -1,0 +1,27 @@
+module Usage
+  # How `usage generate json` writes a whole spec, read into a `Usage::Spec`.
+  module SpecFormat
+    # The keys of the program's object that the gem accepts. It accepts `name`, `version`, `author`, `license`, and
+    # `repository`, which are for the documents usage writes, and reads none of them. It refuses a `min_usage_version`
+    # newer than `Usage::USAGE_VERSION`. It supports no completions, no configuration files, no usage line of the
+    # spec's own, and no `unknown_flags` but `"error"`.
+    KEYS: keys
+
+    # The keys of `unknown_env`.
+    ENV_KEYS: keys
+
+    # Reads a spec from `text`, and raises `Usage::SpecError` for a text that isn't such JSON or that uses anything the
+    # gem doesn't act on.
+    def self.read: (String text) -> Spec
+
+    private def self.json: (String text) -> object
+
+    private def self.check_usage_version: (String? wanted) -> void
+
+    private def self.described: (Reader reader) -> { bin: String, about: String, about_long: String?, after_help: String? }
+
+    private def self.parts: (Reader reader) -> { examples: Array[Example], exit_codes: Array[ExitCode], commands: CommandTree }
+
+    private def self.environment: (Reader reader) -> { env_prefix: String?, env_allowed: Array[String] }
+  end
+end

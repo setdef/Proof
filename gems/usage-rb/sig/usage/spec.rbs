@@ -5,10 +5,10 @@ module Usage
   # that JSON as hashes of no known shape, so every reader of it would check each key's type again, and a key it
   # missed would change nothing it does.
   #
-  # This class reads the JSON once, into typed values: the program, its commands, and each command's flags and
-  # arguments. It raises `Usage::SpecError` for a text that isn't such JSON, for a key of the wrong type, and for
-  # anything the gem doesn't act on, so a spec it reads means what it says. A key the JSON leaves out takes usage's
-  # default.
+  # This class holds the program's interface as typed values: the program, its commands, and each command's flags
+  # and arguments. It reads the JSON once, and raises `Usage::SpecError` for a text that isn't such JSON, for a key of
+  # the wrong type, and for anything the gem doesn't act on, so a spec it reads means what it says. A key the JSON
+  # leaves out takes usage's default.
   #
   # Use it to reach a program's commands, its examples, and its exit statuses.
   #
@@ -33,16 +33,6 @@ module Usage
   # Usage::Spec.read('{"cmd": {"subcommands": {"list": {"name": "list", "aliases": ["ls"]}}}}')
   # ```
   class Spec < Data
-    # The keys of the program's object that the gem accepts. It accepts `name`, `version`, `author`, `license`, and
-    # `repository`, which are for the documents usage writes, and reads none of them. It refuses a `min_usage_version`
-    # newer than `Usage::USAGE_VERSION`. It
-    # supports no completions, no configuration files, no usage line of the spec's own, and no `unknown_flags` but
-    # `"error"`.
-    KEYS: keys
-
-    # The keys of `unknown_env`.
-    ENV_KEYS: keys
-
     # The program's name as typed, such as `"todo"`, or an empty String when the spec has none.
     attr_reader bin: String
 
@@ -96,15 +86,5 @@ module Usage
     # Usage::Spec.read('{"bin": "todo"}').about # => ""
     # ```
     def self.read: (String text) -> Spec
-
-    private def self.json: (String text) -> object
-
-    private def self.check_usage_version: (String? wanted) -> void
-
-    private def self.described: (Reader reader) -> { bin: String, about: String, about_long: String?, after_help: String? }
-
-    private def self.parts: (Reader reader) -> { examples: Array[Example], exit_codes: Array[ExitCode], commands: CommandTree }
-
-    private def self.environment: (Reader reader) -> { env_prefix: String?, env_allowed: Array[String] }
   end
 end

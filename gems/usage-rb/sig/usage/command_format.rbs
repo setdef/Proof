@@ -1,0 +1,17 @@
+module Usage
+  # How the spec's JSON writes a command and every command under it, read into a `Usage::Command`.
+  module CommandFormat
+    # The keys of a command's object that the gem accepts. It accepts `effect`, which says what the command does to
+    # the world for tools that act for a person, and reads nothing of it. Aliases, mounts, headings, and hidden
+    # commands aren't supported, nor is any `unknown_flags` but `"error"`.
+    KEYS: keys
+
+    # Reads a command, and every command under it, from `object`, and raises `Usage::SpecError` for anything the gem
+    # doesn't act on, and when a command has both arguments and subcommands.
+    def self.read: (object object) -> Command
+
+    private def self.place: (json words) -> String
+
+    private def self.parts: (Reader reader) -> { path: Array[String], args: Array[Arg], flags: Array[Flag], groups: Array[Group], examples: Array[Example], subcommands: Array[Command], subcommand_required: bool }
+  end
+end
