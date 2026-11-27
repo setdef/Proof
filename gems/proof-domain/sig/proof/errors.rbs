@@ -157,6 +157,12 @@ module Proof
   class InvalidRandomSourceError < Error
   end
 
+  # Raised when a one-time code isn't 8 characters of Crockford's Base32,
+  # with one hyphen or none between the two groups of four. The message never
+  # repeats what was typed, which may be the code with one character wrong.
+  class InvalidOneTimeCodeError < Error
+  end
+
   # Raised when one of a run's facts is built from a value that breaks its
   # rule: a time that isn't a `Time`, a count that isn't a whole number in its
   # range, a name that isn't a name, or a reason that isn't in its list.

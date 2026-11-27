@@ -30,6 +30,11 @@ target :domain do
   check "gems/proof-domain/lib"
 
   configure_code_diagnostics(Steep::Diagnostic::Ruby.all_error)
+
+  # The one-time code and the slow tag compare in constant time, and the slow
+  # tag computes scrypt, with Ruby's openssl, which is part of the standard
+  # library the domain may load.
+  library "openssl"
 end
 
 # The usage gem is checked alone too, with only its own signatures and the

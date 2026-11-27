@@ -1,0 +1,142 @@
+module Proof
+  # The 8 characters a person types to sign in, or to approve a runner,
+  # written `Q8MR-2T4W`.
+  #
+  # `proof server setup` and `proof runner setup` print a one-time code, and
+  # a person types it into `proof login` or `proof runner approve`. People
+  # type it in either case, with or without the hyphen, and mix up `O` and
+  # `0`, or `I`, `L`, and `1`. A slow tag computed over the code as typed
+  # would differ from one computed over the code as printed, and two strings
+  # compared with `==` take longer the more of a guess is right.
+  #
+  # This class reads a code as Crockford's Base32, in lowercase with no
+  # hyphen, before anything uses it, so every way of typing one code is one
+  # value. It compares two codes in constant time, and its `inspect` leaves
+  # the characters out, so a log or an error can't show a code. It draws the
+  # characters from a random source you pass, and never draws them itself.
+  #
+  # How long a code works, and how many wrong attempts void it, are rules of
+  # the server that issued it, not of the characters, so this class holds
+  # neither.
+  #
+  # Use it to make a code, to read one a person typed, to compare two, and to
+  # compute a slow tag over one.
+  #
+  # ## Examples
+  #
+  # Read a code, however it was typed, and write it back:
+  #
+  # ```ruby
+  # code = Proof::OneTimeCode.parse("q8mr2t4w")
+  # code.to_s # => "Q8MR-2T4W"
+  # code == Proof::OneTimeCode.parse("Q8MR-2T4W") # => true
+  # ```
+  #
+  # Make one from a random source:
+  #
+  # ```ruby
+  # require "securerandom"
+  #
+  # Proof::OneTimeCode.generate(random: SecureRandom).to_s.length # => 9
+  # ```
+  #
+  # Compare a code with the text a person typed by reading the text first.
+  # A code is never equal to a string:
+  #
+  # ```ruby
+  # code = Proof::OneTimeCode.parse("Q8MR-2T4W")
+  # code == "Q8MR-2T4W" # => false
+  # code == Proof::OneTimeCode.parse("Q8MR-2T4W") # => true
+  # ```
+  class OneTimeCode < Data
+    # The number of characters in a code, 8.
+    LENGTH: Integer
+
+    # The message of every refusal, which never repeats what was typed.
+    REFUSAL: String
+
+    # The 8 characters, in lowercase with no hyphen, as the alphabet writes
+    # them. These are what a slow tag is computed over.
+    attr_reader characters: String
+
+    def self.new: (characters: String) -> instance
+                | (String characters) -> instance
+
+    # Makes a new code, with 8 characters drawn from `random`.
+    #
+    # - `random`: `_RandomSource`, asked for 8 numbers below 32. Pass
+    #   `SecureRandom` for a code anyone will type: Ruby's `Random` is
+    #   predictable from what it has drawn.
+    #
+    # ```ruby
+    # Proof::OneTimeCode.generate(random: Random.new(1)).to_s # => "5BC8-Z9B5"
+    # ```
+    def self.generate: (random: _RandomSource) -> OneTimeCode
+
+    # Reads a code as a person typed it: in either case, with or without the
+    # hyphen between the two groups of four, with `o` read as `0` and `i` or
+    # `l` as `1`. Raises `Proof::InvalidOneTimeCodeError` for any other text:
+    # a hyphen anywhere else, a space, a `u`, or more or fewer than 8
+    # characters. Strip a line break from text read from a file before you
+    # pass it.
+    #
+    # - `text`: String, as typed.
+    #
+    # ```ruby
+    # Proof::OneTimeCode.parse("q8mr-2t4w").characters # => "q8mr2t4w"
+    # Proof::OneTimeCode.parse("IOL0-1111").to_s # => "1010-1111"
+    # ```
+    #
+    # A code with a space in it is refused, and so is one with a line break:
+    #
+    # ```ruby
+    # # Wrong: raises Proof::InvalidOneTimeCodeError
+    # Proof::OneTimeCode.parse("Q8MR 2T4W")
+    # ```
+    def self.parse: (String text) -> OneTimeCode
+
+    # Builds a code from its characters, read as Crockford's Base32. Raises
+    # `Proof::InvalidOneTimeCodeError` unless `characters` is 8 symbols of the
+    # alphabet. A hyphen isn't one: use `parse` for a code as typed.
+    #
+    # - `characters`: String, 8 symbols in either case.
+    def initialize: (characters: String) -> void
+
+    # Whether `other` is a code with the same characters. OpenSSL's
+    # `fixed_length_secure_compare` compares them, so the time it takes is
+    # the same wherever two codes differ. Anything but a code is not equal.
+    #
+    # - `other`: Object, usually another code.
+    #
+    # ```ruby
+    # code = Proof::OneTimeCode.parse("Q8MR-2T4W")
+    # code == Proof::OneTimeCode.parse("q8mr2t4w") # => true
+    # code == Proof::OneTimeCode.parse("Q8MR-2T4X") # => false
+    # ```
+    def ==: (Object other) -> bool
+
+    # The same as `==`, so equal codes are one key in a `Hash`.
+    #
+    # - `other`: Object, usually another code.
+    #
+    # ```ruby
+    # { Proof::OneTimeCode.parse("Q8MR-2T4W") => :sign_in }[Proof::OneTimeCode.parse("q8mr2t4w")] # => :sign_in
+    # ```
+    def eql?: (Object other) -> bool
+
+    # The code as Proof prints it: in capitals, grouped four and four.
+    #
+    # ```ruby
+    # Proof::OneTimeCode.parse("q8mr2t4w").to_s # => "Q8MR-2T4W"
+    # ```
+    def to_s: () -> String
+
+    # The class alone, with no characters, so a log or an error that shows
+    # the code shows nothing anyone could type.
+    #
+    # ```ruby
+    # Proof::OneTimeCode.parse("Q8MR-2T4W").inspect # => "#<Proof::OneTimeCode>"
+    # ```
+    def inspect: () -> String
+  end
+end

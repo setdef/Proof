@@ -83,6 +83,9 @@ module Proof
   class InvalidRandomSourceError < Error
   end
 
+  class InvalidOneTimeCodeError < Error
+  end
+
   class InvalidFactError < Error
   end
 
