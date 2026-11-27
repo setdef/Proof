@@ -67,13 +67,13 @@ module Usage
     attr_reader requires: Array[String]
 
     # Whether the flag may repeat, each time adding a value.
-    attr_reader var: bool
+    attr_reader repeatable: bool
 
     # Whether the flag works on every command under the one that has it.
     attr_reader global: bool
 
-    def self.new: (name: String, short: Array[String], long: Array[String], value: String?, help: String?, help_long: String?, choices: Choices, requires: Array[String], var: bool, global: bool) -> instance
-                | (String name, Array[String] short, Array[String] long, String? value, String? help, String? help_long, Choices choices, Array[String] requires, bool var, bool global) -> instance
+    def self.new: (name: String, short: Array[String], long: Array[String], value: String?, help: String?, help_long: String?, choices: Choices, requires: Array[String], repeatable: bool, global: bool) -> instance
+                | (String name, Array[String] short, Array[String] long, String? value, String? help, String? help_long, Choices choices, Array[String] requires, bool repeatable, bool global) -> instance
 
     # Builds a flag from its parts.
     #
@@ -85,9 +85,9 @@ module Usage
     # - `help_long`: String or `nil`, the longer description.
     # - `choices`: `Usage::Choices`, the values it offers.
     # - `requires`: Array of String, the switches that must come with it.
-    # - `var`: bool, whether it repeats.
+    # - `repeatable`: bool, whether it repeats.
     # - `global`: bool, whether it works on every command under its own.
-    def initialize: (name: String, short: Array[String], long: Array[String], value: String?, help: String?, help_long: String?, choices: Choices, requires: Array[String], var: bool, global: bool) -> void
+    def initialize: (name: String, short: Array[String], long: Array[String], value: String?, help: String?, help_long: String?, choices: Choices, requires: Array[String], repeatable: bool, global: bool) -> void
 
     # Reads a flag from its object in the spec's JSON, and raises `Usage::SpecError` when it uses anything the gem
     # doesn't act on, such as a count, a default, or a value that may be left out.
@@ -101,7 +101,7 @@ module Usage
     # ```
     def self.read: (object object, String parent) -> Flag
 
-    private def self.valued: (Reader reader, String where) -> { value: String?, choices: Choices, var: bool }
+    private def self.valued: (Reader reader, String where) -> { value: String?, choices: Choices, repeatable: bool }
 
     # Whether the flag may repeat, each time adding a value.
     #

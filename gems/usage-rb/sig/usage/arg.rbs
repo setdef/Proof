@@ -34,10 +34,10 @@ module Usage
     attr_reader required: bool
 
     # Whether it takes every word left, in place of one.
-    attr_reader var: bool
+    attr_reader repeatable: bool
 
-    def self.new: (name: String, help: String?, help_long: String?, required: bool, var: bool) -> instance
-                | (String name, String? help, String? help_long, bool required, bool var) -> instance
+    def self.new: (name: String, help: String?, help_long: String?, required: bool, repeatable: bool) -> instance
+                | (String name, String? help, String? help_long, bool required, bool repeatable) -> instance
 
     # Builds an argument from its parts.
     #
@@ -45,8 +45,8 @@ module Usage
     # - `help`: String or `nil`, the one-line description.
     # - `help_long`: String or `nil`, the longer description.
     # - `required`: bool, whether the command can't run without it.
-    # - `var`: bool, whether it takes every word left.
-    def initialize: (name: String, help: String?, help_long: String?, required: bool, var: bool) -> void
+    # - `repeatable`: bool, whether it takes every word left.
+    def initialize: (name: String, help: String?, help_long: String?, required: bool, repeatable: bool) -> void
 
     # Reads an argument from its object in the spec's JSON, and raises `Usage::SpecError` when it uses anything the
     # gem doesn't act on, such as a default or choices.

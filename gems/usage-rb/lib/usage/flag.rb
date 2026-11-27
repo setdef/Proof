@@ -2,7 +2,7 @@
 
 module Usage
   # steep:ignore:start
-  class Flag < Data.define(:name, :short, :long, :value, :help, :help_long, :choices, :requires, :var, :global)
+  class Flag < Data.define(:name, :short, :long, :value, :help, :help_long, :choices, :requires, :repeatable, :global)
     # steep:ignore:end
     KEYS = %w[name usage help help_long help_first_line short long var global arg requires hide=false].freeze
     VALUE_KEYS = %w[name usage choices required=true double_dash="Optional" hide=false].freeze
@@ -23,7 +23,7 @@ module Usage
     end
 
     def repeatable?
-      var
+      repeatable
     end
 
     def global?
@@ -52,7 +52,7 @@ module Usage
       {
         value: value&.text(:name),
         choices: Choices.new(values: choices&.texts(:choices) || [], strict: !choices&.false?(:strict)),
-        var:,
+        repeatable: var,
       }
     end
     private_class_method(:valued)
