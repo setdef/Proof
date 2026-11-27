@@ -1,0 +1,50 @@
+module Proof
+  # Encrypts a runner's token to its key, and decrypts it, with ECDH, HKDF,
+  # and AES-GCM from Ruby's `openssl`.
+  #
+  # `Proof::RunnerKey` holds the key, and `Proof::EncryptedToken` the fields
+  # that travel. The steps between them, in the order Ruby's `openssl` takes
+  # them, are easy to get wrong: a key derived over one public key and not
+  # the other, a tag set after the ciphertext, or a tag shorter than 16
+  # bytes, which Ruby's `openssl` accepts and checks only in part.
+  #
+  # This module holds those steps, and the check of each field's length. It
+  # is a private constant of `Proof`: encrypt and decrypt with
+  # `Proof::RunnerKey`.
+  module TokenCipher
+    # The cipher, AES-256 in GCM mode.
+    NAME: String
+
+    # The first field HKDF makes the key over, so the key is never the key
+    # of anything else derived from the same secret.
+    LABEL: String
+
+    # The bytes of `value`, frozen. Raises `Proof::InvalidEncryptedTokenError`
+    # unless it is a String whose length is in `lengths`, with a message that
+    # says the encrypted token's `refusal`, such as `"nonce is 12 bytes"`.
+    def self.field: (Object value, Range[Integer?] lengths, String refusal) -> String
+
+    # `token`, encrypted to `recipient` under a new ephemeral key and a
+    # random nonce.
+    def self.encrypt: (String token, OpenSSL::PKey::EC recipient) -> EncryptedToken
+
+    # The token `encrypted` holds, as bytes, decrypted with `recipient`'s
+    # private key. Raises `Proof::RunnerKeyError` when its ephemeral key
+    # isn't a P-256 public key, and `OpenSSL::Cipher::CipherError` when it
+    # was encrypted to another key or a field changed.
+    def self.decrypt: (EncryptedToken encrypted, OpenSSL::PKey::EC recipient) -> String
+
+    # The fields HKDF makes the key over: the label, `ephemeral_key`, and
+    # `recipient`'s public key, each length-prefixed.
+    def self.info: (String ephemeral_key, OpenSSL::PKey::EC recipient) -> String
+
+    # A cipher set to `direction`, `:encrypt` or `:decrypt`, with the key
+    # HKDF-SHA256 makes from `shared` over `info`.
+    def self.keyed: (Symbol direction, String shared, String info) -> OpenSSL::Cipher
+
+    # `bytes` through `cipher`, with no associated data. Decrypting, AES-GCM
+    # checks the tag at the end and raises `OpenSSL::Cipher::CipherError`
+    # when it doesn't match.
+    def self.ciphered: (OpenSSL::Cipher cipher, String bytes) -> String
+  end
+end

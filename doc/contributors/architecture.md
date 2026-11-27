@@ -385,6 +385,24 @@ Options weighed:
 - A cost passed to each method, with `COST` as its default: any caller could pass another, a value a server sent among them.
 - A test cost set in the process, by a variable or a method the tests call: the code that computes every tag would read it, in production too.
 
+#### The runner's token, encrypted to its key
+
+`Proof::RunnerKey`, in `lib/proof`, is a runner's EC P-256 key, on the curve of the server's key. `generate` makes it on the runner, and `read` reads the public key, as DER, from a join request on the server. `public_der` gives the bytes that the join request carries and that `J` and `S` are over. `encrypt` and `decrypt` call `Proof::TokenCipher`, a private constant of `Proof`, which composes Ruby's `openssl`:
+
+1. `encrypt` makes an ephemeral P-256 key for the token alone, and ECDH gives the secret it shares with the runner's key.
+2. HKDF-SHA256, with an empty salt, makes a 32-byte key from that secret over `Proof::LengthPrefixed` fields: the label `proof runner token`, the ephemeral key's DER, and the runner key's DER. A token encrypted to one key never decrypts with another's.
+3. AES-256-GCM encrypts the token with a random 12-byte nonce and no associated data. `Proof::EncryptedToken` holds the ephemeral key, the nonce, the ciphertext, and the 16-byte tag.
+
+`decrypt` raises `Proof::TokenDecryptionError` for a token encrypted to another key and for any field changed, with one message for every cause, and `Proof::RunnerKeyError` for a public key alone. `Proof::EncryptedToken` refuses a tag that isn't 16 bytes when it is built, because Ruby's `openssl` checks as few bytes of a tag as it is given: a tag cut to 4 bytes decrypted in a measurement. A test decrypts a token encrypted by hand with the shared secret of RFC 5903's P-256 exchange, so the format can't change unnoticed.
+
+They are in `lib/proof`, not the domain gem, because making a key and a nonce draws random numbers inside OpenSSL, and the domain never draws a random number itself. No port is needed, because the use cases that call them are in `lib/proof` too.
+
+Options weighed:
+
+- X25519 for the runner's key: Ruby's `openssl` has it, but the server's key is P-256, and with one curve Proof has one kind of key.
+- A nonce of zeros, since each token has a separate key: it is safe, and a random nonce costs nothing and leaves no reader wondering.
+- The two public keys as associated data instead of in the key derivation: either binds them, and HKDF's info is where RFC 5869 puts what a key is for.
+
 #### The server's key and certificate
 
 `Proof::Server::IdentityFiles` keeps the key as `key.pem`, which only the server's account can read, and a certificate for it as `certificate.pem`, in the server's folder. On the server's first start neither file is there, and it makes both. On every start after that it reads them. Every computer and runner that trusts the server knows it by its key, and nothing re-pins by itself, so the server never replaces a key:

@@ -120,12 +120,19 @@ The SHA-256 of the **server**'s public key. The command and every **runner** kee
 - Elsewhere: Git's `http.pinnedPubkey` takes the same hash, written after `sha256//` in Base64. SSH and GnuPG also call a hash of a key its fingerprint.
 - Don't say: thumbprint, which Windows uses for a hash of a whole certificate; pin, which is what the command and the runners do with a fingerprint.
 
+### runner key
+
+The EC P-256 key pair a **runner** makes when it asks to join. Its join request carries the public key, the server encrypts the runner's **token** to it, and only the runner, which keeps the private key, can decrypt the token.
+
+- Elsewhere: HPKE (RFC 9180) calls such a key the recipient's public key, and age calls it a recipient.
+- Don't say: runner token, which is the **token** the key decrypts; key alone, because the **server** has a key too.
+
 ### slow tag
 
 A value Proof computes from a **one-time code** with scrypt, over the server's **fingerprint** and other fields, to show that whoever computed it knows the code. The server shows one before `proof login` sends a code, and the computer that approves a **runner** sends one to the runner, so the command and the runner keep a fingerprint only from someone who knows the code. Each tag takes about a third of a second and 128 MiB to compute, which makes trying every code against one take thousands of years on one processor.
 
 - Elsewhere: RFC 7914 calls what scrypt computes a derived key. In cryptography a tag is what a MAC computes, and a slow tag is one keyed by the code and slow on purpose.
-- Don't say: hash, because a hash has no key; MAC or HMAC, which are fast, where a slow tag is slow on purpose; tag alone, which can be read as a **label**.
+- Don't say: hash, because a hash has no key; MAC or HMAC, which take microseconds, where a slow tag is slow on purpose; tag alone, which can be read as a **label**.
 
 ## The project
 

@@ -1,0 +1,40 @@
+module Proof
+  # Raised when a runner's key isn't an EC P-256 key, or when a key without
+  # its private half is asked to decrypt.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # # Wrong: raises Proof::RunnerKeyError
+  # Proof::RunnerKey.read("not a key")
+  # ```
+  class RunnerKeyError < Error
+  end
+
+  # Raised when an encrypted token's fields aren't bytes of the lengths
+  # AES-GCM takes: a nonce of 12 bytes, a tag of 16, and an ephemeral key
+  # that isn't empty.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidEncryptedTokenError
+  # Proof::EncryptedToken.new(ephemeral_key: "key", nonce: "n" * 12, ciphertext: "", auth_tag: "t" * 4)
+  # ```
+  class InvalidEncryptedTokenError < Error
+  end
+
+  # Raised when an encrypted token doesn't decrypt with a runner's key: it
+  # was encrypted to another key, or something changed it on the way. The
+  # message is the same for every cause, so it tells an attacker nothing.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # # Wrong: raises Proof::TokenDecryptionError
+  # token = Proof::RunnerKey.generate.encrypt("runner token")
+  # Proof::RunnerKey.generate.decrypt(token)
+  # ```
+  class TokenDecryptionError < Error
+  end
+end

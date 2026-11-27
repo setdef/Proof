@@ -1,0 +1,62 @@
+module Proof
+  # A runner's token, encrypted to the runner's key, as the server sends it.
+  #
+  # The server sends a runner its token over a network an attacker may sit
+  # in. The runner has checked nothing about the server yet when it arrives:
+  # it pins the server's key only after the server's slow tag matches.
+  #
+  # This class holds the four fields that `Proof::RunnerKey#encrypt` gives
+  # and `Proof::RunnerKey#decrypt` takes, and checks their lengths when you
+  # build one, so a tag cut short is refused before anything decrypts it:
+  # Ruby's openssl checks as few bytes of a tag as it is given.
+  #
+  # Use it to send a token and to read one that arrived.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # runner = Proof::RunnerKey.generate
+  # token = runner.encrypt("runner token")
+  # token.nonce.bytesize # => 12
+  # token.auth_tag.bytesize # => 16
+  # ```
+  #
+  # A token read from the network is built from its fields:
+  #
+  # ```ruby
+  # arrived = Proof::EncryptedToken.new(**token.to_h)
+  # runner.decrypt(arrived) # => "runner token"
+  # ```
+  class EncryptedToken < Data
+    # The length of a nonce, 12 bytes, as AES-GCM takes it.
+    NONCE_LENGTH: Integer
+
+    # The length of a tag, 16 bytes, as AES-GCM gives it.
+    TAG_LENGTH: Integer
+
+    # The DER of the public key the server made for this token alone.
+    attr_reader ephemeral_key: String
+
+    # The 12 bytes AES-GCM encrypted with.
+    attr_reader nonce: String
+
+    # The token, encrypted, as long as the token.
+    attr_reader ciphertext: String
+
+    # The 16 bytes AES-GCM checks the ciphertext with.
+    attr_reader auth_tag: String
+
+    def self.new: (ephemeral_key: String, nonce: String, ciphertext: String, auth_tag: String) -> instance
+                | (String ephemeral_key, String nonce, String ciphertext, String auth_tag) -> instance
+
+    # Holds the fields, each frozen in the binary encoding. Raises
+    # `Proof::InvalidEncryptedTokenError` when a field isn't a String, the
+    # ephemeral key is empty, the nonce isn't 12 bytes, or the tag isn't 16.
+    #
+    # - `ephemeral_key`: String, the DER of a public key.
+    # - `nonce`: String, 12 bytes.
+    # - `ciphertext`: String, any number of bytes.
+    # - `auth_tag`: String, 16 bytes.
+    def initialize: (ephemeral_key: Object, nonce: Object, ciphertext: Object, auth_tag: Object) -> void
+  end
+end

@@ -1,0 +1,125 @@
+module Proof
+  # A runner's EC P-256 key, which its token is encrypted to.
+  #
+  # A runner asks to join with its key and a join tag, and the server sends
+  # its token back after a person approves it. An attacker in between can
+  # pass the request on unchanged and read the answer. A token sent as it is
+  # would be the attacker's to use.
+  #
+  # This class encrypts a token to a runner's public key, and decrypts it
+  # with the private key, which never leaves the runner. Each token gets a
+  # key of its own: an ephemeral P-256 key and ECDH give a shared secret,
+  # HKDF-SHA256 makes an AES-256 key from it over both public keys, and
+  # AES-GCM encrypts the token and checks it on the way back. Each step is
+  # Ruby's `openssl`.
+  #
+  # Use it on the runner to make the key its join request carries and to
+  # decrypt its token, and on the server to encrypt the token to the key the
+  # request carried.
+  #
+  # ## Examples
+  #
+  # The runner makes a key and sends its public half. The server reads it,
+  # and encrypts the token to it:
+  #
+  # ```ruby
+  # runner = Proof::RunnerKey.generate
+  # sent = runner.public_der
+  #
+  # token = Proof::RunnerKey.read(sent).encrypt("runner token")
+  # runner.decrypt(token) # => "runner token"
+  # ```
+  #
+  # Any other key, the attacker's included, can't decrypt it:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::TokenDecryptionError
+  # Proof::RunnerKey.generate.decrypt(token)
+  # ```
+  class RunnerKey < Data
+    # The curve of every runner's key, `prime256v1`, the curve of the
+    # server's key.
+    CURVE: String
+
+    # The key: a private key on the runner, and a public key alone on the
+    # server.
+    attr_reader key: OpenSSL::PKey::EC
+
+    def self.new: (key: OpenSSL::PKey::PKey) -> instance
+                | (OpenSSL::PKey::PKey key) -> instance
+
+    # Makes a new key, with its private half, from OpenSSL's random numbers.
+    #
+    # ```ruby
+    # Proof::RunnerKey.generate.key.private? # => true
+    # ```
+    def self.generate: () -> RunnerKey
+
+    # Reads a public key from the DER a join request carried. Raises
+    # `Proof::RunnerKeyError` unless `der` is an EC P-256 key.
+    #
+    # - `der`: String, the bytes `public_der` gives.
+    #
+    # ```ruby
+    # runner = Proof::RunnerKey.generate
+    # Proof::RunnerKey.read(runner.public_der).key.private? # => false
+    # ```
+    def self.read: (String der) -> RunnerKey
+
+    # Whether `key` is an EC P-256 key, public or private.
+    #
+    # - `key`: Object, usually an `OpenSSL::PKey::PKey`.
+    #
+    # ```ruby
+    # Proof::RunnerKey.runner_key?(OpenSSL::PKey::EC.generate("prime256v1")) # => true
+    # Proof::RunnerKey.runner_key?(OpenSSL::PKey::EC.generate("secp384r1")) # => false
+    # ```
+    def self.runner_key?: (Object key) -> bool
+
+    # Holds `key`. Raises `Proof::RunnerKeyError` unless it is an EC P-256
+    # key, public or private.
+    #
+    # - `key`: `OpenSSL::PKey::EC`.
+    def initialize: (key: Object) -> void
+
+    # The DER of the public key: what a join request carries, and what the
+    # join tag and the server's tag are over.
+    #
+    # ```ruby
+    # Proof::RunnerKey.generate.public_der.bytesize # => 91
+    # ```
+    def public_der: () -> String
+
+    # The token, encrypted to this key. A public key alone encrypts. Each
+    # call makes a new ephemeral key and nonce, so two encryptions of one
+    # token share no field.
+    #
+    # - `token`: String, the runner's token.
+    #
+    # ```ruby
+    # runner = Proof::RunnerKey.generate
+    # runner.encrypt("runner token").ciphertext.bytesize # => 12
+    # ```
+    def encrypt: (String token) -> EncryptedToken
+
+    # The token, decrypted, as UTF-8 text. Raises `Proof::RunnerKeyError`
+    # when this key has no private half, and `Proof::TokenDecryptionError`
+    # when the token was encrypted to another key or any field changed.
+    #
+    # - `encrypted`: `Proof::EncryptedToken`, as `encrypt` gave it.
+    #
+    # ```ruby
+    # runner = Proof::RunnerKey.generate
+    # runner.decrypt(runner.encrypt("runner token")) # => "runner token"
+    # ```
+    def decrypt: (EncryptedToken encrypted) -> String
+
+    private
+
+    # The token `encrypted` holds, decrypted as bytes. Raises
+    # `Proof::TokenDecryptionError` when its ephemeral key isn't a P-256
+    # public key, or AES-GCM finds it was encrypted to another key or
+    # changed.
+    def opened: (EncryptedToken encrypted) -> String
+  end
+end

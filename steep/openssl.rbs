@@ -1,0 +1,9 @@
+# Steep's openssl signature lacks OpenSSL::PKey::PKey#derive, which computes
+# the shared secret of an ECDH exchange with the other side's public key.
+module OpenSSL
+  module PKey
+    class PKey
+      def derive: (PKey peer) -> String
+    end
+  end
+end
