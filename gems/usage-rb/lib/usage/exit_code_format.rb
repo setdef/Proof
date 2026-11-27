@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require_relative("keys")
 module Usage
   module ExitCodeFormat
-    KEYS = %w[code help].freeze
+    KEYS = Keys.new(read: %i[code help])
     private_constant(:KEYS)
 
     def self.read(object, parent)

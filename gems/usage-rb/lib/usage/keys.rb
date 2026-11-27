@@ -3,21 +3,27 @@
 require "json"
 
 module Usage
-  module Keys
-    def self.check(object, place, keys)
-      # A key the reader doesn't know, or a value it can't act on, would change what the spec means if it were
-      # skipped, so each is refused by name, and the gem can learn it later without changing what it accepts now.
+  # steep:ignore:start
+  class Keys < Data.define(:read, :defaults)
+    # steep:ignore:end
+    def initialize(read:, defaults: {})
+      super
+    end
+
+    def check(object, place)
+      # A key the gem doesn't know, or a value it can't act on, would change what the spec means if it were skipped,
+      # so each is refused by name, and the gem can learn it later without changing what it accepts now.
       object.each do |key, value|
-        refusal = refusal(key.to_s, JSON.generate(value), keys)
+        refusal = refusal(key, value)
         place.unsupported(refusal) if refusal
       end
     end
 
-    def self.refusal(key, value, keys)
-      return if keys.include?(key) || keys.include?("#{key}=#{value}")
+    private def refusal(key, value)
+      return if read.include?(key)
+      return "has #{key}" unless defaults.key?(key)
 
-      (keys.any? { |each| each.start_with?("#{key}=") }) ? "sets #{key} to #{value}" : "has #{key}"
+      "sets #{key} to #{JSON.generate(value)}" unless defaults[key] == value
     end
-    private_class_method(:refusal)
   end
 end

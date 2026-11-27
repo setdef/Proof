@@ -14,7 +14,7 @@ module Usage
 
     # Takes the object, where it is in the spec for the messages of errors, and the keys the gem accepts there, and
     # raises `Usage::SpecError` for any other key or value. A key whose value is `null` reads as left out.
-    def initialize: (object object, Place place, keys keys) -> void
+    def initialize: (object object, Place place, Keys keys) -> void
 
     # Raises `Usage::SpecError` saying the part this object holds does `what`, which the gem doesn't support.
     def unsupported: (String what) -> bot
@@ -28,8 +28,7 @@ module Usage
     # The `true` or `false` under `key`, or `false` when it is left out.
     def boolean: (Symbol key) -> bool
 
-    # Whether `key` holds `false`, which a key left out doesn't. The keys the gem accepts say which values the key
-    # may have.
+    # Whether `key` holds `false`, which a key left out doesn't, for a key whose default is `true`.
     def false?: (Symbol key) -> bool
 
     # The whole number under `key`.
@@ -39,7 +38,7 @@ module Usage
     def object: (Symbol key) -> object
 
     # A reader of the object under `key`, with the keys the gem accepts there, or `nil` when it is left out.
-    def nested: (Symbol key, keys keys) -> Reader?
+    def nested: (Symbol key, Keys keys) -> Reader?
 
     # Each object in the list under `key` read as a part of the spec by `kind`, its format, which is told where this
     # object is, or an empty list when the key is left out.

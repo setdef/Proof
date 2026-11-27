@@ -1,9 +1,25 @@
 module Usage
-  # Checks the keys of one object of the spec's JSON against those the gem accepts for its kind.
-  module Keys
-    # Raises `Usage::SpecError` for a key of `object` that `keys` doesn't list, or whose value isn't the one it lists.
-    def self.check: (object object, Place place, keys keys) -> void
+  # The keys that one kind of object in the spec's JSON may have: those the gem reads, and those it accepts only at
+  # usage's default, such as `hide` at `false`.
+  class Keys < Data
+    # The keys the gem reads, with any value.
+    attr_reader read: Array[Symbol]
 
-    private def self.refusal: (String key, String value, keys keys) -> String?
+    # The keys the gem accepts only with one value, usage's default, by key.
+    attr_reader defaults: Hash[Symbol, json]
+
+    def self.new: (read: Array[Symbol], ?defaults: Hash[Symbol, json]) -> instance
+                | (Array[Symbol] read, ?Hash[Symbol, json] defaults) -> instance
+
+    # Takes the keys read and the keys accepted only at their defaults, none unless given.
+    def initialize: (read: Array[Symbol], ?defaults: Hash[Symbol, json]) -> void
+
+    # Raises `Usage::SpecError` for a key of `object` that is neither read nor a default, or that is a default with
+    # another value, naming the key, its place, and the value.
+    def check: (object object, Place place) -> void
+
+    private
+
+    def refusal: (Symbol key, json value) -> String?
   end
 end

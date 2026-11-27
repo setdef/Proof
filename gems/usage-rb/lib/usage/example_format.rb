@@ -1,8 +1,9 @@
 # frozen_string_literal: true
 
+require_relative("keys")
 module Usage
   module ExampleFormat
-    KEYS = %w[code header help lang=""].freeze
+    KEYS = Keys.new(read: %i[code header help], defaults: { lang: "" })
     private_constant(:KEYS)
 
     def self.read(object, parent)

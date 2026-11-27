@@ -1,10 +1,14 @@
 # frozen_string_literal: true
 
+require_relative("keys")
 require_relative("named_format")
 
 module Usage
   module ArgFormat
-    KEYS = %w[name usage help help_long help_first_line required var double_dash="Optional" hide=false].freeze
+    KEYS = Keys.new(
+      read: %i[name usage help help_long help_first_line required var],
+      defaults: { double_dash: "Optional", hide: false }
+    )
     private_constant(:KEYS)
 
     def self.read(object, parent)

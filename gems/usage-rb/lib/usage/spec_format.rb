@@ -1,30 +1,30 @@
 # frozen_string_literal: true
 
+require_relative("keys")
 require "json"
 
 module Usage
   module SpecFormat
-    KEYS = %w[
-      name
-      bin
-      version
-      author
-      license
-      repository
-      min_usage_version
-      about
-      about_long
-      after_help_long
-      examples
-      exit_codes
-      cmd
-      unknown_env
-      unknown_flags="error"
-      usage=""
-      complete={}
-      config={"props":{},"sources":{},"files":[]}
-    ].freeze
-    ENV_KEYS = %w[prefix allow].freeze
+    KEYS = Keys.new(
+      read: %i[
+        name
+        bin
+        version
+        author
+        license
+        repository
+        min_usage_version
+        about
+        about_long
+        after_help_long
+        examples
+        exit_codes
+        cmd
+        unknown_env
+      ],
+      defaults: { unknown_flags: "error", usage: "", complete: {}, config: { props: {}, sources: {}, files: [] } }
+    )
+    ENV_KEYS = Keys.new(read: %i[prefix allow])
     private_constant(:KEYS, :ENV_KEYS)
 
     def self.read(text)

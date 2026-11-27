@@ -33,8 +33,4 @@ module Usage
 
   # One object of that JSON, such as a command or a flag, with its keys as Symbols.
   type object = Hash[Symbol, json]
-
-  # The keys of one kind of object that the gem accepts: a key it reads, such as `help`, or a key with the one value
-  # it accepts, written as the key, `=`, and the value as JSON, such as `hide=false`.
-  type keys = Array[String]
 end

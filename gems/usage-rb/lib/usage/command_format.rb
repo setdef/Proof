@@ -1,30 +1,22 @@
 # frozen_string_literal: true
 
+require_relative("keys")
 require_relative("named_format")
 
 module Usage
   module CommandFormat
-    KEYS = %w[
-      name
-      full_cmd
-      usage
-      help
-      help_long
-      args
-      flags
-      subcommands
-      groups
-      examples
-      subcommand_required
-      effect
-      unknown_flags="error"
-      args_override_self=true
-      hide=false
-      aliases=[]
-      hidden_aliases=[]
-      mounts=[]
-      headings=[]
-    ].freeze
+    KEYS = Keys.new(
+      read: %i[name full_cmd usage help help_long args flags subcommands groups examples subcommand_required effect],
+      defaults: {
+        unknown_flags: "error",
+        args_override_self: true,
+        hide: false,
+        aliases: [],
+        hidden_aliases: [],
+        mounts: [],
+        headings: [],
+      }
+    )
     private_constant(:KEYS)
 
     def self.read(object)

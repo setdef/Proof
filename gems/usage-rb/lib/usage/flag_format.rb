@@ -1,12 +1,19 @@
 # frozen_string_literal: true
 
+require_relative("keys")
 require_relative("named_format")
 
 module Usage
   module FlagFormat
-    KEYS = %w[name usage help help_long help_first_line short long var global arg requires hide=false].freeze
-    VALUE_KEYS = %w[name usage choices required=true double_dash="Optional" hide=false].freeze
-    CHOICE_KEYS = %w[choices strict=true strict=false].freeze
+    KEYS = Keys.new(
+      read: %i[name usage help help_long help_first_line short long var global arg requires],
+      defaults: { hide: false }
+    )
+    VALUE_KEYS = Keys.new(
+      read: %i[name usage choices],
+      defaults: { required: true, double_dash: "Optional", hide: false }
+    )
+    CHOICE_KEYS = Keys.new(read: %i[choices strict])
     private_constant(:KEYS, :VALUE_KEYS, :CHOICE_KEYS)
 
     def self.read(object, parent)

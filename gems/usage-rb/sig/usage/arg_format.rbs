@@ -3,7 +3,7 @@ module Usage
   module ArgFormat
     # The keys of an argument's object that the gem accepts. A hidden argument, or one with other rules for `--`,
     # isn't supported.
-    KEYS: keys
+    KEYS: Keys
 
     # Reads an argument from `object`, one entry of a command's `args`, where `parent` is the place of its command,
     # such as `"command add"`, and raises `Usage::SpecError` for anything the gem doesn't act on.

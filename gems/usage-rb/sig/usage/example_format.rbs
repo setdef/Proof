@@ -2,7 +2,7 @@ module Usage
   # How the spec's JSON writes an example, read into a `Usage::Example`.
   module ExampleFormat
     # The keys of an example's object that the gem accepts. An example with a language isn't supported.
-    KEYS: keys
+    KEYS: Keys
 
     # Reads an example from `object`, one entry of an `examples` list, where `parent` is the place of its command or
     # program, such as `"command add"`, and raises `Usage::SpecError` for anything the gem doesn't act on.

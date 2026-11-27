@@ -6,7 +6,7 @@ module Usage
       # usage writes `null` for a key it has no value for, so a null is read as a key left out.
       @object = object.compact
       @place = place
-      Keys.check(@object, place, keys)
+      keys.check(@object, place)
     end
 
     def unsupported(what)
@@ -30,7 +30,7 @@ module Usage
     end
 
     def false?(key)
-      @object[key] == false
+      @object.key?(key) && !boolean(key)
     end
 
     def number(key)

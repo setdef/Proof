@@ -43,7 +43,7 @@ class UsageSpecRefusalTest < Minitest::Test
 
     assert_predicate(read(with_flag(flag % "true")).commands.root.flags.first&.choices, :strict?)
     assert_equal(
-      "flag v of the program, in arg, in choices sets strict to \"no\", which usage-rb doesn't support",
+      "flag v of the program, in arg, in choices has strict that isn't true or false",
       refusal(with_flag(flag % '"no"'))
     )
   end
