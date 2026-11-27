@@ -11,7 +11,7 @@ module Proof
       # steep:ignore:end
     end
 
-    COST = Cost.new(n: 2 ** 17, r: 8, p: 1, length: 32)
+    COST = Cost.new(n: 1 << 17, r: 8, p: 1, length: 32)
     public_constant(:COST)
 
     NONCE_LENGTH = 16
