@@ -1,52 +1,57 @@
 # frozen_string_literal: true
 
+# Steep loads every target's signatures into every other target, so a library
+# that any signature names has to load in every target. A target that lacks one
+# fails to build its types, and Steep then checks none of its files and reports
+# no error. A library goes in this list, once, for all of them.
+libraries = %w[
+  date
+  did_you_mean
+  erb
+  fileutils
+  json
+  minitest
+  open3
+  openssl
+  optparse
+  pathname
+  securerandom
+  socket
+  stringio
+  timeout
+  tmpdir
+  uri
+].freeze
+
 target :lib do
   signature "sig", "steep", "gems/proof-domain/sig", "gems/proof-domain/steep", "gems/usage-rb/sig"
   check "lib"
 
   configure_code_diagnostics(Steep::Diagnostic::Ruby.all_error)
 
-  library "json"
-  library "pathname"
-  library "fileutils"
-  library "minitest"
-  library "date"
-  library "timeout"
-  library "uri"
-  library "stringio"
-  library "securerandom"
-  library "erb"
-  library "optparse"
-  library "did_you_mean"
-  library "open3"
-  library "tmpdir"
-  library "openssl"
-  library "socket"
+  library(*libraries)
 end
 
-# The domain gem is checked alone, with only its own signatures, so a type
-# that names anything outside it is an error.
+# The domain gem is checked with its own signatures, and Steep loads the
+# others beside them.
 target :domain do
   signature "gems/proof-domain/sig", "gems/proof-domain/steep"
   check "gems/proof-domain/lib"
 
   configure_code_diagnostics(Steep::Diagnostic::Ruby.all_error)
 
-  # The one-time code and the slow tag compare in constant time, and the slow
-  # tag computes scrypt, with Ruby's openssl, which is part of the standard
-  # library the domain may load.
-  library "openssl"
+  library(*libraries)
 end
 
-# The usage gem is checked alone too, with only its own signatures and the
-# standard library it loads, so it can name nothing of Proof's.
+# The usage gem is checked with its own signatures, and Steep loads the others
+# beside them.
 target :usage do
   signature "gems/usage-rb/sig"
   check "gems/usage-rb/lib"
 
   configure_code_diagnostics(Steep::Diagnostic::Ruby.all_error)
 
-  library "json"
+  library(*libraries)
 end
 
 target :tasks do
@@ -57,9 +62,7 @@ target :tasks do
 
   configure_code_diagnostics(Steep::Diagnostic::Ruby.all_error)
 
-  library "ripper"
-  library "json"
-  library "open3"
+  library(*libraries)
   library "prism"
-  library "tmpdir"
+  library "ripper"
 end
