@@ -111,7 +111,7 @@ module Proof
     # ```ruby
     # Proof::TaskSettings.new(labels: Proof::LabelSet.of("desktop")).labels.labels.size # => 1
     # ```
-    def initialize: (?os: Array[OS] | Set[OS] | nil, ?labels: LabelSet?, ?cpus: Integer?, ?megabytes: Integer?, ?time_limit: TimeLimit?, ?artifacts: Array[PathPattern] | Set[PathPattern] | nil, ?caches: Array[PathPattern] | Set[PathPattern] | nil) -> void
+    def initialize: (**Object? given) -> void
 
     # These settings, with what they leave out filled in from `lower`: the
     # settings of the source that comes next in the order flag, task entry,

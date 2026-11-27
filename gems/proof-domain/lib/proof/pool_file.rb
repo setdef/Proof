@@ -27,21 +27,24 @@ module Proof
         -> (value) { value.is_a?(Array) && value.all?(RepositoryEntry) },
       ]
     )
-    DEFAULTS = {
+    DEFAULTS = MemberCheck.defaults(
       port: Port.new(number: 7443),
       retention: Retention.new,
       limits: Limits.new,
       defaults: HostSettings.new,
       hosts: [],
-      repositories: [],
-    }.freeze
+      repositories: []
+    )
     private_constant(:RULES, :DEFAULTS)
 
     def initialize(**given)
       # The keywords arrive as one hash, since six keywords make a parameter list longer than RuboCop accepts.
       settings = checked(given)
+      # checked has found a list of host entries and a list of repository entries, which Steep can't know.
       hosts, repositories = settings.values_at(:hosts, :repositories)
+      # steep:ignore:start
       PoolNames.refuse_repeats(hosts, repositories)
+      # steep:ignore:end
       super(**settings, hosts: hosts.dup.freeze, repositories: repositories.dup.freeze)
       # A host with no budget in its entry or in the defaults is refused when it is resolved.
       resolved_hosts

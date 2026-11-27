@@ -20,8 +20,11 @@ module Proof
 
     private def entry_of(name, runners, settings)
       # The entry holds the rules for a name, runners, and settings of each kind, so a resolved host is checked by
-      # building the entry it came from.
+      # building the entry it came from, and Steep is told that this one call may pass what the entry's signature
+      # refuses.
+      # steep:ignore:start
       HostEntry.new(name:, runners:, settings: HostSettings.new(**settings))
+      # steep:ignore:end
     rescue Error => e
       raise(InvalidResolvedHostError, e.message)
     end

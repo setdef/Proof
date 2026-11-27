@@ -72,7 +72,7 @@ module Proof
     # Proof::Name.valid?("") # => false
     # Proof::Name.valid?(:nuc) # => false
     # ```
-    def self.valid?: (Object value) -> bool
+    def self.valid?: (Object? value) -> bool
 
     # The message for a value that isn't a name, with one `%p` for `format` to
     # fill in with the value.

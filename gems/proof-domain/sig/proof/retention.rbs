@@ -40,7 +40,7 @@ module Proof
     DAY: Integer
 
     # The rule for a retention's durations: a `Proof::Duration` of whole days.
-    WHOLE_DAYS: ^(Object value) -> bool
+    WHOLE_DAYS: MemberCheck::rule
 
     # For each member, the message when its value breaks the rule, and the rule.
     RULES: Hash[Symbol, [String, MemberCheck::rule]]

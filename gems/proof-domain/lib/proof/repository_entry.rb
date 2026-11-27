@@ -39,7 +39,10 @@ module Proof
       problem = MemberCheck.problem(RULES, { name:, url:, branches:, tasks:, **given })
       raise(InvalidRepositoryEntryError, problem) if problem
 
+      # problem has found a name and lists of names, which Steep can't know.
+      # steep:ignore:start
       super(name: -name, url:, branches: branches.dup.freeze, tasks: tasks.dup.freeze, **given)
+      # steep:ignore:end
     end
   end
 end

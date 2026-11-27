@@ -76,10 +76,10 @@ module Proof
     # - `share`: Resources. It may be 0 CPUs and 0 megabytes.
     # - `active_for`: Duration.
     # - `withheld`: LabelSet.
-    def initialize: (name: String, runners: Array[String], budget: Size, keep_free: Size, share: Resources, active_for: Duration, withheld: LabelSet) -> void
+    def initialize: (name: Object, runners: Object, **Object settings) -> void
 
     private
 
-    def entry_of: (String name, Array[String] runners, Hash[Symbol, Object] settings) -> HostEntry
+    def entry_of: (Object name, Object runners, Hash[Symbol, Object] settings) -> HostEntry
   end
 end

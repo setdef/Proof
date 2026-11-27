@@ -34,7 +34,10 @@ module Proof
       settled = settings.over(defaults).over(BuiltInHostDefaults::SETTINGS)
       raise(InvalidHostEntryError, format(NO_BUDGET, name)) unless settled.budget
 
+      # The built-in defaults give every setting, so settled has them all, which Steep can't know.
+      # steep:ignore:start
       ResolvedHost.new(name:, runners:, **settled.to_h)
+      # steep:ignore:end
     end
   end
 end

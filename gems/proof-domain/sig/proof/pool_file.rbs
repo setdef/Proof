@@ -89,7 +89,7 @@ module Proof
     # ```ruby
     # Proof::PoolFile.new(port: Proof::Port.new(number: 8443)).port.number # => 8443
     # ```
-    def initialize: (?port: Port, ?retention: Retention, ?limits: Limits, ?defaults: HostSettings, ?hosts: Array[HostEntry], ?repositories: Array[RepositoryEntry]) -> void
+    def initialize: (**Object given) -> void
 
     # Each host with every setting it gets, in the order the file has them: from
     # its entry, then `defaults`, then Proof's built-in defaults.

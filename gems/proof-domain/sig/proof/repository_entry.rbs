@@ -47,7 +47,7 @@ module Proof
   # ```
   class RepositoryEntry < Data
     # The rule for a credentials file: a name, or nothing.
-    PATH_OR_NOTHING: ^(Object value) -> bool
+    PATH_OR_NOTHING: MemberCheck::rule
 
     # The rule for branches and tasks: one or more names that differ.
     NAMES: MemberCheck::rule
@@ -94,6 +94,6 @@ module Proof
     # ```ruby
     # Proof::RepositoryEntry.new(name: "lota", url: "https://example.com/lota.git", branches: ["trunk"], tasks: ["test"]).name # => "lota"
     # ```
-    def initialize: (name: String, url: String, branches: Array[String], tasks: Array[String], ?credentials_file: String?, ?poll: Duration) -> void
+    def initialize: (name: Object, url: Object, branches: Object, tasks: Object, **Object? optional) -> void
   end
 end

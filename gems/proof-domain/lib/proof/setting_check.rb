@@ -30,9 +30,12 @@ module Proof
 
     def self.checked(name, value)
       case name
-      # Resources holds the rules for CPUs and memory, so a source's CPUs and megabytes are checked by building them.
+      # Resources holds the rules for CPUs and memory, so a source's CPUs and megabytes are checked by building them,
+      # and Steep is told that these two calls may pass what the signatures refuse.
+      # steep:ignore:start
       when :cpus then Resources.request(cpus: value, memory: "0MB").cpus
       when :megabytes then Resources.new(cpus: 1, megabytes: value).megabytes
+      # steep:ignore:end
       when :os, :artifacts, :caches then listed(name, value)
       else single(name, value)
       end

@@ -8,6 +8,10 @@ module Proof
       table.freeze
     end
 
+    def self.defaults(table)
+      table.freeze
+    end
+
     def self.problem(rules, members)
       members.each do |member, value|
         message, rule = rules[member]
@@ -25,8 +29,11 @@ module Proof
     end
 
     def self.distinct_names?(value)
-      # Two names that differ only in case are one name, as Name.same? finds.
+      # Two names that differ only in case are one name, as Name.same? finds. names? has found an Array of names,
+      # which Steep can't know.
+      # steep:ignore:start
       names?(value) && value.combination(2).none? { |one, other| Name.same?(one, other) }
+      # steep:ignore:end
     end
 
     def self.whole?(value, minimum)

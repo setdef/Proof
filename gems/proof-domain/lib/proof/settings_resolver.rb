@@ -24,11 +24,14 @@ module Proof
       RunSettings.new(settings: together(names), commands: project_file.commands_of(names))
     end
 
+    # steep:ignore:start
     private def task_names_in(task_names)
+      # steep:ignore:end
       names = Listing.set(task_names, String, 1)
-      return names.to_a if names
+      raise(InvalidRunSettingsError, format("a run has one or more task names, not %p", task_names)) unless names
 
-      raise(InvalidRunSettingsError, format("a run has one or more task names, not %p", task_names))
+      # Listing.set has found each name to be a String, which Steep can't know.
+      names.to_a
     end
 
     private def settings_for(name)

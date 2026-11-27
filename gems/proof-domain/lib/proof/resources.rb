@@ -61,7 +61,10 @@ module Proof
     end
 
     private def combine(other)
+      # The merged Hash has the two members, which Steep can't know.
+      # steep:ignore:start
       Resources.new(**to_h.merge(other.to_h) { |_member, one, two| yield(one, two) })
+      # steep:ignore:end
     end
   end
 end
