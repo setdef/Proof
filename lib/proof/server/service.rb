@@ -12,6 +12,19 @@ module Proof
         error.is_a?(Error) ? message : "the server can't start: #{message}"
       end
 
+      def self.without_experimental_warnings
+        # The fiber scheduler reads and writes through IO::Buffer, and Ruby warns once that IO::Buffer is experimental,
+        # which nobody who reads the server's log can act on. The switch is Ruby's for the whole process, so the server
+        # puts it back when it returns, and code that called it keeps the warnings it had.
+        before = Warning[:experimental]
+        Warning[:experimental] = false
+        begin
+          yield
+        ensure
+          Warning[:experimental] = before
+        end
+      end
+
       def initialize(home:, err:, host: nil)
         @root = Root.new(home:, err:, host:)
         @err = err
@@ -24,13 +37,10 @@ module Proof
         failed(e)
       end
 
-      private def as_the_process
-        # The fiber scheduler reads and writes through IO::Buffer, and Ruby warns once that IO::Buffer is experimental,
-        # which nobody who reads the server's log can act on. The server process is Proof's, so the switch is too.
-        Warning[:experimental] = false
+      private def as_the_process(&)
         previous = trap_signals
         begin
-          yield
+          Service.without_experimental_warnings(&)
         ensure
           previous.each { |signal, handler| Signal.trap(signal, handler) }
         end

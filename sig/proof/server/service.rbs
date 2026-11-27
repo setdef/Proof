@@ -13,8 +13,9 @@ module Proof
     # `INT` or `TERM`, and returns 0. When the server can't start, because of
     # its key or certificate, its port, or a file it can't write, it writes
     # the reason after `proof:` and returns 1. It sets what the server sets
-    # for its process while it serves, and puts back the signal handlers that
-    # were there before when it returns.
+    # for its process while it serves, and puts back the signal handlers and
+    # the switch for experimental warnings that were there before when it
+    # returns.
     #
     # Use it as the entry point of the server's process, through
     # `Proof::Server.serve`.
@@ -41,6 +42,10 @@ module Proof
       # ```
       def self.reason: (Error | SystemCallError error) -> String
 
+      # Runs the block with Ruby's warnings of experimental features off, and
+      # puts the switch back as it was.
+      def self.without_experimental_warnings: () { () -> void } -> void
+
       # Builds the server for the account whose home is `home`.
       #
       # - `home`: String, the account's home folder.
@@ -56,9 +61,9 @@ module Proof
 
       private
 
-      # Runs the block with what the server sets for its process: Ruby's
-      # warnings of experimental features off, and `INT` and `TERM` stopping
-      # the server.
+      # Runs the block with what the server sets for its process: `INT` and
+      # `TERM` stopping the server, and Ruby's warnings of experimental
+      # features off.
       def as_the_process: () { () -> void } -> void
 
       # Sets `INT` and `TERM` to stop the server, and returns the handlers

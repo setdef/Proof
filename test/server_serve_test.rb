@@ -35,12 +35,24 @@ class ServerServeTest < Minitest::Test
   end
 
   # The server's signal handlers last only as long as it serves, so code that called it keeps its own.
-  def test_the_handlers_from_before_are_back_once_it_returns
-    before = proc {}
-    previous = Signal.trap("TERM", before)
+  def test_the_handler_of_int_from_before_is_back_once_it_returns
+    assert_handler_back_after("INT")
+  end
+
+  def test_the_handler_of_term_from_before_is_back_once_it_returns
+    assert_handler_back_after("TERM")
+  end
+
+  # Ruby's warnings of experimental features are off for the server's process, and the server puts the switch back, so
+  # code that called it, as the tests do, still sees them.
+  def test_the_switch_for_experimental_warnings_is_back_once_it_returns
+    before = Warning[:experimental]
+    Warning[:experimental] = true
     serve_until_signal("TERM")
 
-    assert_same(before, Signal.trap("TERM", previous))
+    assert(Warning[:experimental])
+  ensure
+    Warning[:experimental] = before
   end
 
   def test_a_key_the_server_cant_use_stops_it_from_starting_with_status_one
@@ -76,6 +88,14 @@ class ServerServeTest < Minitest::Test
 
       assert_equal([0, "proof: stopped.\n"], [waiter.value.exitstatus, err.read])
     end
+  end
+
+  private def assert_handler_back_after(signal)
+    before = proc {}
+    previous = Signal.trap(signal, before)
+    serve_until_signal(signal)
+
+    assert_same(before, Signal.trap(signal, previous))
   end
 
   # Serves in a thread until it says it listens, sends this process +signal+, and returns the exit status. The server
