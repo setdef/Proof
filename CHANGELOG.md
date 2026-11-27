@@ -1,7 +1,10 @@
 # Changelog
 
-Every change that people who use Proof will see is listed here, and the ones that need something from you, such as a new setting in the pool file, say so.
+All notable changes to this project will be documented in this file.
 
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/). Releases are numbered `0.X.Y`.
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+[Unreleased]: https://github.com/setdef/Proof/commits/trunk
