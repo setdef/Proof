@@ -55,14 +55,33 @@ module Proof
     # ```
     def self.generate: () -> RunnerKey
 
+    # The bytes that begin the DER of every runner's public key: the
+    # algorithm, the curve by its name, and the head of the bit string that
+    # holds the point.
+    SPKI_HEAD: String
+
+    # The message of every refusal to read a key.
+    READ_REFUSAL: String
+
     # Reads a public key from the DER a join request carried. Raises
-    # `Proof::RunnerKeyError` unless `der` is an EC P-256 key.
+    # `Proof::RunnerKeyError` unless `der` is the DER that `public_der`
+    # gives for an EC P-256 key: the curve by its name, the point
+    # uncompressed, and no private half. A key written any other way would
+    # give other bytes back, and the tags are over the bytes the request
+    # carried.
     #
     # - `der`: String, the bytes `public_der` gives.
     #
     # ```ruby
     # runner = Proof::RunnerKey.generate
     # Proof::RunnerKey.read(runner.public_der).key.private? # => false
+    # ```
+    #
+    # The same key in PEM is refused:
+    #
+    # ```ruby
+    # # Wrong: raises Proof::RunnerKeyError
+    # Proof::RunnerKey.read(Proof::RunnerKey.generate.key.public_to_pem)
     # ```
     def self.read: (String der) -> RunnerKey
 
@@ -113,6 +132,14 @@ module Proof
     # runner.decrypt(runner.encrypt("runner token")) # => "runner token"
     # ```
     def decrypt: (EncryptedToken encrypted) -> String
+
+    # The EC key OpenSSL reads from `der`, or `nil` when it reads none.
+    private def self.parsed: (String der) -> OpenSSL::PKey::EC?
+
+    # The DER of `key`'s public key, built here: the curve by its name and
+    # the point uncompressed, whatever form OpenSSL keeps the key in. `nil`
+    # when `key` has no public half.
+    private def self.canonical: (OpenSSL::PKey::EC key) -> String?
 
     private
 
