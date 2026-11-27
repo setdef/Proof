@@ -1,11 +1,9 @@
 # frozen_string_literal: true
 
-require_relative("test_helper")
-require "fileutils"
+require_relative("support/coverage_probe")
 require "open3"
 require "rbconfig"
 require "shellwords"
-require "tmpdir"
 
 # Checks that every test run reports the coverage of that run alone.
 #
@@ -13,23 +11,7 @@ require "tmpdir"
 # so a run of one test file once reported the lines an earlier run of another
 # had covered. The gate would then pass a line no test runs now.
 class CoverageGateTest < Minitest::Test
-  HELPER = File.expand_path("test_helper.rb", __dir__)
-  PROBE = <<~RUBY
-    # frozen_string_literal: true
-
-    module Probe
-      def self.first
-        :first
-      end
-
-      def self.second
-        :second
-      end
-    end
-  RUBY
-  # Each test names a whole run of its own, so no variable of a parallel run reaches it.
-  ALONE = %w[TEST_ENV_NUMBER PARALLEL_TEST_GROUPS PARALLEL_PID_FILE].product([nil]).to_h.freeze
-  private_constant(:HELPER, :PROBE, :ALONE)
+  include CoverageProbe
 
   # The Ruby source of a test process that names its run +name+, starts
   # SimpleCov as the project's test helper does, and calls the +methods+ of
@@ -52,15 +34,6 @@ class CoverageGateTest < Minitest::Test
     File.write(File.join(root, "#{name}.rb"), script(name, methods))
     output, status = Open3.capture2e(ALONE, RbConfig.ruby, "#{name}.rb", chdir: root)
     [status, output]
-  end
-
-  # A test file of the probe project that calls the +methods+ of the probe.
-  def probe_test(root, name, methods)
-    File.write(File.join(root, "test", "#{name}_test.rb"), <<~RUBY)
-      class #{name.capitalize}Test < Minitest::Test
-        def test_probe = #{methods.inspect}.each { |method| Probe.public_send(method) }
-      end
-    RUBY
   end
 
   # The status and output of two parallel workers, each running one of the test files of +root+, a folder with a
@@ -117,15 +90,6 @@ class CoverageGateTest < Minitest::Test
 
       refute_predicate(status, :success?, output)
       assert_includes(output, "Line coverage: 4 / 5")
-    end
-  end
-
-  # Yields a folder with a +lib/probe.rb+ and an empty +test+ folder.
-  def in_probe_project
-    Dir.mktmpdir("coverage-gate-test") do |root|
-      FileUtils.mkdir_p([File.join(root, "lib"), File.join(root, "test")])
-      File.write(File.join(root, "lib", "probe.rb"), PROBE)
-      yield(root)
     end
   end
 end
