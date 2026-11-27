@@ -100,6 +100,13 @@ module Usage
 
     private def self.parts: (Reader reader) -> { path: Array[String], args: Array[Arg], flags: Array[Flag], groups: Array[Group], examples: Array[Example], subcommands: Array[Command], subcommand_required: bool }
 
+    # Whether the command is the program itself, the one command with no path.
+    #
+    # ```ruby
+    # [spec.commands.root.program?, remote&.program?] # => [true, false]
+    # ```
+    def program?: () -> bool
+
     # Whether the command can't run without one of its subcommands.
     #
     # ```ruby

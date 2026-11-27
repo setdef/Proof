@@ -32,6 +32,14 @@ class UsageSpecTest < Minitest::Test
     assert_equal(spec.commands.root, spec.commands.find([]))
   end
 
+  # The program is the one command with no path.
+  def test_only_the_command_with_no_path_is_the_program
+    commands = todo.commands
+
+    assert_predicate(commands.root, :program?)
+    refute_predicate(commands.find(["remote"]), :program?)
+  end
+
   # A typo finds nothing, so the caller decides what to do.
   def test_words_that_name_no_command_find_none
     spec = todo

@@ -18,7 +18,7 @@ module Usage
 
     private def commands
       # The program's subcommands are the commands, and a command's are its subcommands.
-      title = @command.path.empty? ? "Commands:" : "Subcommands:"
+      title = @command.program? ? "Commands:" : "Subcommands:"
       Layout.table(title, @command.subcommands.map { |child| [child.name, child.help.to_s] })
     end
   end

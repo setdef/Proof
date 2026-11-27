@@ -50,6 +50,10 @@ module Usage
       command
     end
 
+    def program?
+      path.empty?
+    end
+
     def subcommand_required?
       subcommand_required
     end
