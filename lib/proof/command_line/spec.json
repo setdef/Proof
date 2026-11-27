@@ -1635,7 +1635,7 @@
   "about": "Run your project's tests and builds on your spare computers, from your working tree or any commit",
   "about_long": "Proof sends your project from the computer you work on to the other Linux, Windows, and macOS\ncomputers you have, runs its tests and builds there, streams their output back, and exits with\ntheir status.\n\nThe task's output goes to standard output. The lines Proof prints go to standard error, and\neach begins with \"proof:\".",
   "license": "MIT",
-  "after_help_long": "Documentation: https://github.com/setdef/Proof/tree/trunk/doc\nReport a problem: https://github.com/setdef/Proof/issues",
+  "after_help_long": "Documentation: https://github.com/setdef/Proof/tree/trunk/doc\nReport a problem: https://forum.setdef.com/c/proof",
   "min_usage_version": "2.0.0",
   "examples": [
     {

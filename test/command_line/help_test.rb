@@ -29,7 +29,7 @@ class CommandLineHelpTest < Minitest::Test
     assert_equal(
       [
         "Documentation: https://github.com/setdef/Proof/tree/trunk/doc",
-        "Report a problem: https://github.com/setdef/Proof/issues",
+        "Report a problem: https://forum.setdef.com/c/proof",
       ],
       help.last(2)
     )
