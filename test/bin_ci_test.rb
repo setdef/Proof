@@ -18,6 +18,7 @@ class BinCiTest < Minitest::Test
     echo "trusted=$MISE_TRUSTED_CONFIG_PATHS"
     echo "dir=$(pwd -P)"
     echo "workers=$PARALLEL_TEST_PROCESSORS"
+    echo "nice=$(ps -o ni= -p $$ | tr -d " ")"
     exit 7
   SH
   private_constant(:ROOT, :BIN_CI, :FAKE_MISE)
@@ -93,6 +94,23 @@ class BinCiTest < Minitest::Test
       output, = run_with_fake_mise([["BUNDLE_PATH", File.join(outside, "bundle")]].to_h, dir: outside)
 
       assert_includes(output, "trusted=#{File.realpath(ROOT)}\n")
+    end
+  end
+
+  def test_an_empty_bundle_path_is_refused
+    output, status = run_with_fake_mise([["BUNDLE_PATH", ""]].to_h)
+
+    refute_predicate(status, :success?)
+    assert_includes(output, "bin/ci: BUNDLE_PATH is not set.")
+  end
+
+  def test_the_gate_runs_at_a_lower_priority_than_bin_ci_started_with
+    Dir.mktmpdir("bin-ci-outside") do |outside|
+      output, = run_with_fake_mise([["BUNDLE_PATH", File.join(outside, "bundle")]].to_h, dir: outside)
+      started_with = Process.getpriority(Process::PRIO_PROCESS, 0)
+
+      # The lowest priority is 19 on Linux and 20 on macOS, so a run that already has a low one may end up higher.
+      assert_operator(Integer(output[/^nice=(\d+)$/, 1], 10), :>=, [started_with + 10, 19].min)
     end
   end
 
