@@ -36,7 +36,7 @@ module Proof
   # ```
   class Retention < Data
     # For each member, the message when its value breaks the rule, and the rule.
-    RULES: Hash[Symbol, [String, MemberCheck::_Rule]]
+    RULES: Hash[Symbol, [String, MemberCheck::rule]]
 
     # How long the server keeps a run's record, a `Proof::Duration` of whole
     # days.

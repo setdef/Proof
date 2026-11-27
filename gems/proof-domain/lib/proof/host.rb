@@ -10,12 +10,12 @@ module Proof
   # steep:ignore:start
   class Host < Data.define(:name, :share, :person_active, :runners)
     # steep:ignore:end
-    RULES = {
+    RULES = MemberCheck.rules(
       name: [Name.message("a host's name", "nuc"), MemberCheck.method(:named?)],
       share: ["a host's share is resources, not %p", Resources.method(:===)],
       person_active: ["whether a person is active is true or false, not %p", MemberCheck.method(:flag?)],
-      runners: ["a host's runners are a list of runners with different names, not %p", Runner.method(:listed?)],
-    }.freeze
+      runners: ["a host's runners are a list of runners with different names, not %p", Runner.method(:listed?)]
+    )
     private_constant(:RULES)
 
     def initialize(name:, share:, person_active:, runners:)

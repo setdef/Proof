@@ -9,11 +9,11 @@ module Proof
     # steep:ignore:end
     DAY = 86_400
     WHOLE_DAYS = -> (value) { value.is_a?(Duration) && (value.seconds % DAY).zero? }
-    RULES = {
+    RULES = MemberCheck.rules(
       runs: ["retention runs is a duration in whole days, not %p", WHOLE_DAYS],
       output: ["retention output is a duration in whole days, not %p", WHOLE_DAYS],
-      artifacts: ["retention artifacts is a duration in whole days, not %p", WHOLE_DAYS],
-    }.freeze
+      artifacts: ["retention artifacts is a duration in whole days, not %p", WHOLE_DAYS]
+    )
     private_constant(:DAY, :WHOLE_DAYS, :RULES)
 
     def initialize(

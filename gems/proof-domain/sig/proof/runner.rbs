@@ -37,7 +37,7 @@ module Proof
   class Runner < Data
     # For each member, the message when its value breaks the rule, and the
     # rule.
-    RULES: Hash[Symbol, [String, MemberCheck::_Rule]]
+    RULES: Hash[Symbol, [String, MemberCheck::rule]]
 
     # The runner's name, as the pool file names it, frozen.
     attr_reader name: String

@@ -10,7 +10,7 @@ module Proof
     # steep:ignore:end
     PATH_OR_NOTHING = -> (value) { value.nil? || MemberCheck.named?(value) }
     NAMES = MemberCheck.method(:names?)
-    RULES = {
+    RULES = MemberCheck.rules(
       name: [Name.message("a repository's name", "lota"), MemberCheck.method(:named?)],
       url: [Name.message("a repository's url", "https://github.com/setdef/Lota.git"), MemberCheck.method(:named?)],
       credentials_file: [
@@ -28,8 +28,8 @@ module Proof
           "such as [\"test\"], not %p",
         NAMES,
       ],
-      poll: ["a repository's poll is a duration, not %p", Duration.method(:===)],
-    }.freeze
+      poll: ["a repository's poll is a duration, not %p", Duration.method(:===)]
+    )
     private_constant(:PATH_OR_NOTHING, :NAMES, :RULES)
 
     def initialize(name:, url:, branches:, tasks:, **optional)

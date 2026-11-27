@@ -86,7 +86,7 @@ module Proof
     MEMORY_MESSAGE: String
 
     # For each member, the message when its value breaks the rule, and the rule.
-    RULES: Hash[Symbol, [String, MemberCheck::_Rule]]
+    RULES: Hash[Symbol, [String, MemberCheck::rule]]
 
     # The number of CPUs, a whole number from 0.
     attr_reader cpus: Integer

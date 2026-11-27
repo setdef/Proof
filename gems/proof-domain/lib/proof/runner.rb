@@ -7,13 +7,13 @@ module Proof
   # steep:ignore:start
   class Runner < Data.define(:name, :os, :labels, :capacity, :connected)
     # steep:ignore:end
-    RULES = {
+    RULES = MemberCheck.rules(
       name: [Name.message("a runner's name", "nuc-linux"), MemberCheck.method(:named?)],
       os: ["a runner's OS is a Proof::OS, not %p", OS.method(:===)],
       labels: ["a runner's labels are a set of labels, not %p", LabelSet.method(:===)],
       capacity: ["a runner's capacity is resources, not %p", Resources.method(:===)],
-      connected: ["whether a runner is connected is true or false, not %p", MemberCheck.method(:flag?)],
-    }.freeze
+      connected: ["whether a runner is connected is true or false, not %p", MemberCheck.method(:flag?)]
+    )
     private_constant(:RULES)
 
     def self.listed?(given)

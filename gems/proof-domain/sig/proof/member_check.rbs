@@ -11,12 +11,23 @@ module Proof
       def call: (Object value) -> bool
     end
 
+    # What checks a member: an object that answers `call`, such as a
+    # `Method`, or a lambda.
+    type rule = _Rule | ^(Object value) -> bool
+
+    # The table of rules a class checks its members against, frozen. A class
+    # builds its table through this so that each entry is typed as a message
+    # and a rule.
+    #
+    # - `table`: a `Hash` from member to its message and its rule.
+    def self.rules: (Hash[Symbol, [String, rule]] table) -> Hash[Symbol, [String, rule]]
+
     # The message for the first member in `members` that breaks its rule in
     # `rules`, filled in by `format` with its value, or `nil`.
     #
     # - `rules`: a `Hash` from member to its message and its rule.
     # - `members`: a `Hash` from member to its value.
-    def self.problem: (Hash[Symbol, [String, _Rule]] rules, Hash[Symbol, Object] members) -> String?
+    def self.problem: (Hash[Symbol, [String, rule]] rules, Hash[Symbol, Object] members) -> String?
 
     # Whether `value` is a name, as `Proof::Name` says.
     def self.named?: (Object value) -> bool

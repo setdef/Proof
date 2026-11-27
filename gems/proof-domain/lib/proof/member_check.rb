@@ -4,6 +4,10 @@ require_relative("name")
 
 module Proof
   module MemberCheck
+    def self.rules(table)
+      table.freeze
+    end
+
     def self.problem(rules, members)
       members.each do |member, value|
         message, rule = rules[member]

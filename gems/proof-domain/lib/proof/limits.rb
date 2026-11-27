@@ -7,10 +7,10 @@ module Proof
   # steep:ignore:start
   class Limits < Data.define(:output, :artifacts)
     # steep:ignore:end
-    RULES = {
+    RULES = MemberCheck.rules(
       output: ["limits output is a size, not %p", Size.method(:===)],
-      artifacts: ["limits artifacts is a size, not %p", Size.method(:===)],
-    }.freeze
+      artifacts: ["limits artifacts is a size, not %p", Size.method(:===)]
+    )
     private_constant(:RULES)
 
     def initialize(output: Size.new(megabytes: 1024), artifacts: Size.new(megabytes: 16 * 1024))

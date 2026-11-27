@@ -35,7 +35,7 @@ module Proof
   # ```
   class Limits < Data
     # For each member, the message when its value breaks the rule, and the rule.
-    RULES: Hash[Symbol, [String, MemberCheck::_Rule]]
+    RULES: Hash[Symbol, [String, MemberCheck::rule]]
 
     # The most output the server keeps from one run.
     attr_reader output: Size

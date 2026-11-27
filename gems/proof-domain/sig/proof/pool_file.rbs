@@ -46,7 +46,7 @@ module Proof
   # ```
   class PoolFile < Data
     # For each member, the message when its value breaks the rule, and the rule.
-    RULES: Hash[Symbol, [String, MemberCheck::_Rule]]
+    RULES: Hash[Symbol, [String, MemberCheck::rule]]
 
     # The default of each member, for a part the pool file leaves out.
     DEFAULTS: Hash[Symbol, Object]

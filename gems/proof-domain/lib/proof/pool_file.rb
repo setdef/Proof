@@ -13,7 +13,7 @@ module Proof
   # steep:ignore:start
   class PoolFile < Data.define(:port, :retention, :limits, :defaults, :hosts, :repositories)
     # steep:ignore:end
-    RULES = {
+    RULES = MemberCheck.rules(
       port: ["a pool file's port is a Proof::Port, not %p", Port.method(:===)],
       retention: ["a pool file's retention is a Proof::Retention, not %p", Retention.method(:===)],
       limits: ["a pool file's limits are a Proof::Limits, not %p", Limits.method(:===)],
@@ -25,8 +25,8 @@ module Proof
       repositories: [
         "a pool file's repositories are a list of repository entries, not %p",
         -> (value) { value.is_a?(Array) && value.all?(RepositoryEntry) },
-      ],
-    }.freeze
+      ]
+    )
     DEFAULTS = {
       port: Port.new(number: 7443),
       retention: Retention.new,

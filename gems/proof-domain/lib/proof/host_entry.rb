@@ -10,15 +10,15 @@ module Proof
   # steep:ignore:start
   class HostEntry < Data.define(:name, :runners, :settings)
     # steep:ignore:end
-    RULES = {
+    RULES = MemberCheck.rules(
       name: [Name.message("a host's name", "nuc"), MemberCheck.method(:named?)],
       runners: [
         "a host entry's runners are one or more runner names that differ without regard to case, " \
           "each #{Name::TEXT}, such as [\"nuc-linux\"], not %p",
         MemberCheck.method(:distinct_names?),
       ],
-      settings: ["a host entry's settings are host settings, not %p", HostSettings.method(:===)],
-    }.freeze
+      settings: ["a host entry's settings are host settings, not %p", HostSettings.method(:===)]
+    )
     NO_BUDGET = "the host %p has no budget. Give its entry a budget, or give defaults one"
     private_constant(:RULES, :NO_BUDGET)
 

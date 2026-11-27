@@ -50,10 +50,10 @@ module Proof
     PATH_OR_NOTHING: ^(Object value) -> bool
 
     # The rule for branches and tasks: one or more names that differ.
-    NAMES: ^(Object value) -> bool
+    NAMES: MemberCheck::rule
 
     # For each member, the message when its value breaks the rule, and the rule.
-    RULES: Hash[Symbol, [String, MemberCheck::_Rule]]
+    RULES: Hash[Symbol, [String, MemberCheck::rule]]
 
     # The repository's name, as the entry writes it, frozen.
     attr_reader name: String
