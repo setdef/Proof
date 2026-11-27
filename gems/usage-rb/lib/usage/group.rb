@@ -7,8 +7,8 @@ module Usage
     KEYS = %w[name members required multiple].freeze
     private_constant(:KEYS)
 
-    def self.read(object, command)
-      reader = Reader.new(object, "group #{object[:name]} of #{command}", KEYS)
+    def self.read(object, parent)
+      reader = Reader.new(object, "group #{object[:name]} of #{parent}", KEYS)
       new(
         name: reader.text(:name).to_s,
         names: reader.texts(:members),

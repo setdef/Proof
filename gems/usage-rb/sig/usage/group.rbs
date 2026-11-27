@@ -47,12 +47,12 @@ module Usage
     # Reads a group from its object in the spec's JSON.
     #
     # - `object`: Hash, one entry of a command's `groups`.
-    # - `command`: String, where the group is, for the message of an error.
+    # - `parent`: String, the place of its command or program, for the message of an error, such as `"command add"`.
     #
     # ```ruby
     # Usage::Group.read({ name: "source", members: ["text"] }, "command add").required? # => false
     # ```
-    def self.read: (object object, String command) -> Group
+    def self.read: (object object, String parent) -> Group
 
     # Whether a member must be given.
     #

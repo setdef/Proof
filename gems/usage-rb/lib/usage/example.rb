@@ -7,8 +7,8 @@ module Usage
     KEYS = %w[code header help lang=""].freeze
     private_constant(:KEYS)
 
-    def self.read(object, command)
-      reader = Reader.new(object, "an example of #{command}", KEYS)
+    def self.read(object, parent)
+      reader = Reader.new(object, "an example of #{parent}", KEYS)
       new(code: reader.text(:code).to_s, header: reader.text(:header), help: reader.text(:help))
     end
   end

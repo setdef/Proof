@@ -9,8 +9,8 @@ module Usage
     CHOICE_KEYS = %w[choices strict=true strict=false].freeze
     private_constant(:KEYS, :VALUE_KEYS, :CHOICE_KEYS)
 
-    def self.read(object, command)
-      where = "flag #{object[:name]} of #{command}"
+    def self.read(object, parent)
+      where = "flag #{object[:name]} of #{parent}"
       reader = Reader.new(object, where, KEYS)
       new(
         **reader.descriptions,

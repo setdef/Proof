@@ -3,9 +3,9 @@ module Usage
   class Reader
     # A part of the spec that reads itself from its object, given where the object above it is.
     interface _Part[T]
-      # Reads the part from `object`, its object in the spec's JSON, where `where` is the place of the object above
+      # Reads the part from `object`, its object in the spec's JSON, where `parent` is the place of the object above
       # it, such as `"command add"`, for the messages of errors.
-      def read: (object object, String where) -> T
+      def read: (object object, String parent) -> T
     end
 
     @object: object

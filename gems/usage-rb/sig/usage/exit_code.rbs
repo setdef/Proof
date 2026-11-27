@@ -37,12 +37,12 @@ module Usage
     # whole number.
     #
     # - `object`: Hash, one entry of `exit_codes`.
-    # - `program`: String, where the program is in the spec, for the error's message, such as `"the program"`.
+    # - `parent`: String, the place of its command or program, for the message of an error, such as `"command add"`.
     #
     # ```ruby
     # # Wrong: raises Usage::SpecError
     # Usage::ExitCode.read({ code: "two" }, "the program")
     # ```
-    def self.read: (object object, String program) -> ExitCode
+    def self.read: (object object, String parent) -> ExitCode
   end
 end

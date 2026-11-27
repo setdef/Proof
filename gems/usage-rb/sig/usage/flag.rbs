@@ -97,13 +97,13 @@ module Usage
     # doesn't act on, such as a count, a default, or a value that may be left out.
     #
     # - `object`: Hash, one entry of a command's `flags`.
-    # - `command`: String, where the flag is, for the message of an error, such as `"command add"`.
+    # - `parent`: String, the place of its command or program, for the message of an error, such as `"command add"`.
     #
     # ```ruby
     # # Wrong: raises Usage::SpecError
     # Usage::Flag.read({ name: "color", long: ["color"], negate: "--no-color" }, "the program")
     # ```
-    def self.read: (object object, String command) -> Flag
+    def self.read: (object object, String parent) -> Flag
 
     private def self.valued: (Reader reader, String where) -> { value: String?, choices: Array[String], strict: bool, var: bool }
 

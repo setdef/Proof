@@ -42,11 +42,11 @@ module Usage
     # Reads an example from its object in the spec's JSON.
     #
     # - `object`: Hash, one entry of an `examples` list.
-    # - `command`: String, where the example is, for the message of an error.
+    # - `parent`: String, the place of its command or program, for the message of an error, such as `"command add"`.
     #
     # ```ruby
     # Usage::Example.read({ code: "todo list" }, "the program").header # => nil
     # ```
-    def self.read: (object object, String command) -> Example
+    def self.read: (object object, String parent) -> Example
   end
 end

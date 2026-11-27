@@ -52,12 +52,12 @@ module Usage
     # gem doesn't act on, such as a default or choices.
     #
     # - `object`: Hash, one entry of a command's `args`.
-    # - `command`: String, where the argument is, for the message of an error.
+    # - `parent`: String, the place of its command or program, for the message of an error, such as `"command add"`.
     #
     # ```ruby
     # Usage::Arg.read({ name: "text" }, "command add").to_s # => "[text]"
     # ```
-    def self.read: (object object, String command) -> Arg
+    def self.read: (object object, String parent) -> Arg
 
     # Whether the command can't run without it.
     #
