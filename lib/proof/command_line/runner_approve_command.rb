@@ -2,10 +2,9 @@
 
 module Proof
   module CommandLine
-    # steep:ignore:start
     class RunnerApproveCommand < Data.define(:code)
-      # steep:ignore:end
       # Steep reports as missing the members that Data.define makes, and the signature declares each one.
+      # @dynamic code, initialize
     end
   end
 end

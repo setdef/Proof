@@ -4,9 +4,7 @@ require_relative("fact")
 
 module Proof
   class Run
-    # steep:ignore:start
     class CommandEnded < Data.define(:at, :exit_status, :signal)
-      # steep:ignore:end
       include Fact
 
       LARGEST_EXIT_STATUS = 4_294_967_295
@@ -36,6 +34,8 @@ module Proof
           format("an exit status is a whole number from 0 to #{LARGEST_EXIT_STATUS}, not %p", given)
         )
       end
+
+      # @dynamic at, exit_status, signal
     end
   end
 end

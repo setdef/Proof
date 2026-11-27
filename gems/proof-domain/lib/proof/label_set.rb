@@ -4,9 +4,7 @@ require_relative("label")
 require_relative("listing")
 
 module Proof
-  # steep:ignore:start
   class LabelSet < Data.define(:labels)
-    # steep:ignore:end
     def self.of(*names)
       new(labels: names.map { |name| Label.new(name:) })
     end
@@ -25,5 +23,7 @@ module Proof
     def offers_every_label_of?(required)
       required.labels.subset?(labels)
     end
+
+    # @dynamic labels
   end
 end

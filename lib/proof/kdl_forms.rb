@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   class KdlForms < Data.define(:top, :forms)
-    # steep:ignore:end
     def [](name)
       forms.find { |form| form.name == name }
     end
@@ -20,5 +18,7 @@ module Proof
     def once?(node)
       !of(node).repeatable
     end
+
+    # @dynamic top, forms
   end
 end

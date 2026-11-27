@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   class RunId < Data.define(:minute, :characters)
-    # steep:ignore:end
     def self.generate(clock:, random:)
       new(minute: clock.now, characters: Crockford.random(5, random))
     end
@@ -42,5 +40,7 @@ module Proof
 
       raise(InvalidRunIdError, format("a run ID ends in five Crockford Base32 characters, not %p", given))
     end
+
+    # @dynamic minute, characters
   end
 end

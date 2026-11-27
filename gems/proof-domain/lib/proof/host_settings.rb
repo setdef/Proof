@@ -6,9 +6,7 @@ require_relative("resources")
 require_relative("size")
 
 module Proof
-  # steep:ignore:start
   class HostSettings < Data.define(:budget, :keep_free, :share, :active_for, :withheld)
-    # steep:ignore:end
     MESSAGES = {
       budget: "a host's budget is a size",
       keep_free: "a host's keep-free space is a size",
@@ -36,5 +34,7 @@ module Proof
         withheld: [withheld, lower.withheld].compact.reduce(:|)
       )
     end
+
+    # @dynamic budget, keep_free, share, active_for, withheld
   end
 end

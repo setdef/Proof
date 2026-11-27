@@ -2,10 +2,9 @@
 
 module Proof
   module CommandLine
-    # steep:ignore:start
     class LogsCommand < Data.define(:run, :tail, :no_pager)
-      # steep:ignore:end
       # Steep reports as missing the members that Data.define makes, and the signature declares each one.
+      # @dynamic run, tail, no_pager, initialize
     end
   end
 end

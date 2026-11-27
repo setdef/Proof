@@ -3,9 +3,7 @@
 require_relative("member_check")
 
 module Proof
-  # steep:ignore:start
   class Port < Data.define(:number)
-    # steep:ignore:end
     MESSAGE = "the server's port is a whole number from 1 to 65535, not %p"
     LARGEST = 65_535
     private_constant(:MESSAGE, :LARGEST)
@@ -15,5 +13,7 @@ module Proof
 
       super
     end
+
+    # @dynamic number
   end
 end

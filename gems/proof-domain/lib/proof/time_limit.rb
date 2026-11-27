@@ -3,9 +3,7 @@
 require_relative("duration_text")
 
 module Proof
-  # steep:ignore:start
   class TimeLimit < Data.define(:seconds)
-    # steep:ignore:end
     include Comparable
 
     MESSAGE = "timeout is a duration: a whole number from 1 and then s, m, or h in lowercase, " \
@@ -30,5 +28,7 @@ module Proof
     def <=>(other)
       seconds <=> other.seconds if other.is_a?(self.class)
     end
+
+    # @dynamic seconds
   end
 end

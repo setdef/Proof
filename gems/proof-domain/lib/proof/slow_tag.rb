@@ -3,12 +3,9 @@
 require "openssl"
 
 module Proof
-  # steep:ignore:start
   class SlowTag < Data.define(:bytes)
-    # steep:ignore:end
-    # steep:ignore:start
     class Cost < Data.define(:n, :r, :p, :length)
-      # steep:ignore:end
+      # @dynamic n, r, p, length, initialize
     end
 
     COST = Cost.new(n: 1 << 17, r: 8, p: 1, length: 32)
@@ -39,5 +36,7 @@ module Proof
       other.is_a?(self.class) && OpenSSL.fixed_length_secure_compare(bytes, other.bytes)
     end
     alias eql? ==
+
+    # @dynamic bytes, eql?
   end
 end

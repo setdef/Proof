@@ -6,9 +6,7 @@ module DocExamples
   #
   # +line+ is the line of the first line of +code+ in the file, so a line
   # inside the block maps to +line+ plus its offset.
-  # steep:ignore:start
   class Block < Data.define(:path, :line, :code, :skip_reason)
-    # steep:ignore:end
     # The marker that opens a block meant to raise: the first line of the
     # block says which error it raises.
     ERROR_MARKER = "# Wrong: raises "
@@ -42,5 +40,7 @@ module DocExamples
     def place(line_in_block = 1)
       "#{path}:#{line + line_in_block - 1}"
     end
+
+    # @dynamic path, line, code, skip_reason
   end
 end

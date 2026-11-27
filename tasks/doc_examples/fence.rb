@@ -7,7 +7,6 @@ module DocExamples
   # same character that is at least as long, so a longer fence can show a
   # shorter one. A run of backticks with a backtick after it on the same line
   # is inline code and opens nothing.
-  # steep:ignore:start
   class Fence
     PATTERN = /\A(`{3,}|~{3,})(.*)\z/
     private_constant(:PATTERN)
@@ -38,6 +37,7 @@ module DocExamples
       stripped = line.strip
       stripped.length >= @marks.length && stripped.delete(@marks.chr).empty?
     end
+
+    # @dynamic indent
   end
-  # steep:ignore:end
 end

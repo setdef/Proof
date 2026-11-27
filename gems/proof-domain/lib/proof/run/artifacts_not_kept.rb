@@ -4,9 +4,7 @@ require_relative("fact")
 
 module Proof
   class Run
-    # steep:ignore:start
     class ArtifactsNotKept < Data.define(:at, :reason)
-      # steep:ignore:end
       include Fact
 
       REASONS = %i[no_match over_limit refused_path short_of_space].freeze
@@ -23,6 +21,8 @@ module Proof
       def before_command?
         reason == :short_of_space
       end
+
+      # @dynamic at, reason
     end
   end
 end

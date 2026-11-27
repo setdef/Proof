@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   class Label < Data.define(:name)
-    # steep:ignore:end
     FORM = /\A[A-Za-z0-9](?:[A-Za-z0-9._-]{0,61}[A-Za-z0-9])?\z/
     MESSAGE = "a label is 1 to 63 ASCII letters, digits, hyphens, underscores, or dots, " \
       "beginning and ending with a letter or a digit, with no space, such as " \
@@ -32,5 +30,7 @@ module Proof
     def to_s
       name
     end
+
+    # @dynamic name, eql?
   end
 end

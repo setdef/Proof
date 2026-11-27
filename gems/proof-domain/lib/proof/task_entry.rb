@@ -4,9 +4,7 @@ require_relative("name")
 require_relative("task_settings")
 
 module Proof
-  # steep:ignore:start
   class TaskEntry < Data.define(:name, :command, :settings)
-    # steep:ignore:end
     def initialize(name:, command: nil, settings: TaskSettings.none)
       raise(InvalidTaskEntryError, format(Name.message("a task's name", "test"), name)) unless Name.valid?(name)
       raise(InvalidTaskEntryError, format("a task entry's command is text, not %p", command)) unless
@@ -16,5 +14,7 @@ module Proof
 
       super
     end
+
+    # @dynamic name, command, settings
   end
 end

@@ -6,9 +6,7 @@ require_relative("kept_file")
 
 module Proof
   module Server
-    # steep:ignore:start
     class IdentityFiles
-      # steep:ignore:end
       KEY = "key.pem"
       CERTIFICATE = "certificate.pem"
       ATTEMPTS = 2
@@ -55,6 +53,8 @@ module Proof
           KeptFile.write(@certificate_path, identity.certificate.to_pem, mode: 0o644)
         end
       end
+
+      # @dynamic key_path, certificate_path
     end
   end
 end

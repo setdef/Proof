@@ -4,9 +4,7 @@ require_relative("fact")
 
 module Proof
   class Run
-    # steep:ignore:start
     class Queued < Data.define(:at, :position, :os, :labels, :resources)
-      # steep:ignore:end
       include Fact
 
       def initialize(at:, position:, os:, labels:, resources:)
@@ -31,6 +29,8 @@ module Proof
 
         raise(InvalidFactError, format("a queued run requests resources with at least 1 CPU, not %p", given))
       end
+
+      # @dynamic at, position, os, labels, resources
     end
   end
 end

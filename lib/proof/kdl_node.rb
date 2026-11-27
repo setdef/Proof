@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   class KdlNode < Data.define(:name, :arguments, :properties, :children, :line)
-    # steep:ignore:end
     def self.each_after_first(nodes)
       nodes.each_with_index { |node, index| yield(node, first_named(node.name, nodes.take(index))) }
     end
@@ -28,5 +26,7 @@ module Proof
       nodes.find { |node| node.name == name }
     end
     private_class_method(:first_named)
+
+    # @dynamic name, arguments, properties, children, line, initialize
   end
 end

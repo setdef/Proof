@@ -8,9 +8,7 @@ require_relative("writer")
 
 module Proof
   module Sqlite
-    # steep:ignore:start
     class Runs
-      # steep:ignore:end
       attr_reader :path
 
       def initialize(path:)
@@ -63,6 +61,8 @@ module Proof
       private def all
         RunRows.runs(@facts.in_order.to_a)
       end
+
+      # @dynamic path
     end
   end
 end

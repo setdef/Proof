@@ -3,9 +3,7 @@
 require "openssl"
 
 module Proof
-  # steep:ignore:start
   class OneTimeCode < Data.define(:characters)
-    # steep:ignore:end
     LENGTH = 8
     public_constant(:LENGTH)
 
@@ -49,5 +47,7 @@ module Proof
       # pp defines Data#pretty_print to print every member, and IRB and the debugger print with it, not with inspect.
       printer.text(inspect)
     end
+
+    # @dynamic characters, eql?
   end
 end

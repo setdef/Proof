@@ -2,7 +2,6 @@
 
 module Proof
   module CommandLine
-    # steep:ignore:start
     class RunCommand < Data.define(
       :tasks,
       :script,
@@ -22,8 +21,9 @@ module Proof
       :detach,
       :json
     )
-      # steep:ignore:end
       # Steep reports as missing the members that Data.define makes, and the signature declares each one.
+      # @dynamic tasks, script, os, label, commit, project, cpus, memory, timeout
+      # @dynamic empty, keep, input, input_file, download, output, detach, json, initialize
     end
   end
 end

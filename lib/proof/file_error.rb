@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   class FileError < Error
-    # steep:ignore:end
     QUOTED_AS = "memory=\"8GB\""
     public_constant(:QUOTED_AS)
 
@@ -17,5 +15,7 @@ module Proof
       @reason = reason
       super("#{[path, line].compact.join(':')}: #{reason}")
     end
+
+    # @dynamic path, line, reason
   end
 end

@@ -2,10 +2,9 @@
 
 module Proof
   module CommandLine
-    # steep:ignore:start
     class Parsed < Data.define(:global, :command)
-      # steep:ignore:end
       # Steep reports as missing the members that Data.define makes, and the signature declares each one.
+      # @dynamic global, command, initialize
     end
   end
 end

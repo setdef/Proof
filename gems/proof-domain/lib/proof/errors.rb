@@ -107,9 +107,7 @@ module Proof
   class InvalidShortfallError < Error
   end
 
-  # steep:ignore:start
   class RunFitsNoHostError < Error
-    # steep:ignore:end
     attr_reader :host, :shortfalls
 
     def initialize(host:, shortfalls:)
@@ -121,6 +119,8 @@ module Proof
           "which could have #{shortfalls.join(' and ')} requested. Request less, or add a host with more."
       )
     end
+
+    # @dynamic host, shortfalls
   end
 
   class RunExistsError < Error
@@ -193,17 +193,17 @@ module Proof
     end
   end
 
-  # steep:ignore:start
   class GitFailedError < Error
-    # steep:ignore:end
     attr_reader :status, :error_output
 
     def initialize(subcommand:, status:, error_output:)
-      # The class line is ignored by Steep, which doesn't count attr_reader as defining the readers that
-      # the signature declares, and RuboCop rejects a method that only returns an instance variable.
+      # RuboCop rejects a method that only returns an instance variable, and Steep doesn't count attr_reader as
+      # defining the readers that the signature declares, so the annotation names them.
       @status = status
       @error_output = error_output
       super("git #{subcommand} failed (#{status.to_s.sub(/\Apid \d+ /, '')}): #{error_output.strip}")
     end
+
+    # @dynamic status, error_output
   end
 end

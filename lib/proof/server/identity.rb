@@ -5,9 +5,7 @@ require_relative("identity_error")
 
 module Proof
   module Server
-    # steep:ignore:start
     class Identity < Data.define(:key, :certificate)
-      # steep:ignore:end
       CURVE = "prime256v1"
       NAME = "Proof server"
       NO_EXPIRY = Time.utc(9999, 12, 31, 23, 59, 59)
@@ -74,6 +72,8 @@ module Proof
         EXTENSIONS.each { |extension| certificate.add_extension(factory.create_ext_from_string(extension)) }
         certificate
       end
+
+      # @dynamic key, certificate
     end
   end
 end

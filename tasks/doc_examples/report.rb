@@ -3,9 +3,7 @@
 module DocExamples
   # What a run found: how many blocks ran, each skipped block with its reason,
   # and each failure.
-  # steep:ignore:start
   class Report < Data.define(:ran, :skipped, :failures)
-    # steep:ignore:end
     # The one report that holds what each of +reports+ found.
     def self.combine(reports)
       new(ran: reports.sum(&:ran), skipped: reports.flat_map(&:skipped), failures: reports.flat_map(&:failures))
@@ -20,5 +18,7 @@ module DocExamples
     def summary
       ["Examples run: #{ran}. Examples skipped: #{skipped.size}.", *skipped.map { |line| "  skipped #{line}" }]
     end
+
+    # @dynamic ran, skipped, failures
   end
 end

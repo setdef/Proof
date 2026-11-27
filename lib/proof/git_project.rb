@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   class GitProject < Data.define(:root, :program)
-    # steep:ignore:end
     PARTIAL_SETTING = /^(extensions\.partialclone=.|remote\..+\.promisor=true$)/
     private_constant(:PARTIAL_SETTING)
 
@@ -47,5 +45,7 @@ module Proof
 
       raise(PartialCloneError.new(root:))
     end
+
+    # @dynamic root, program
   end
 end

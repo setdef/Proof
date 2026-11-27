@@ -4,9 +4,7 @@ require_relative("task_commands")
 require_relative("task_settings")
 
 module Proof
-  # steep:ignore:start
   class RunSettings < Data.define(:settings, :commands)
-    # steep:ignore:end
     def initialize(settings:, commands:)
       raise(InvalidRunSettingsError, format("a run has task settings, not %p", settings)) unless
         settings.is_a?(TaskSettings)
@@ -18,5 +16,7 @@ module Proof
 
       super(settings:, commands: commands.dup.freeze)
     end
+
+    # @dynamic settings, commands
   end
 end

@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   class OS < Data.define(:name)
-    # steep:ignore:end
     NAMES = %i[linux macos windows].freeze
     public_constant(:NAMES)
 
@@ -21,5 +19,7 @@ module Proof
     def to_s
       name.name
     end
+
+    # @dynamic name
   end
 end

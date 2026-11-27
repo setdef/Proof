@@ -3,9 +3,7 @@
 require_relative("setting_check")
 
 module Proof
-  # steep:ignore:start
   class TaskSettings < Data.define(:os, :labels, :cpus, :megabytes, :time_limit, :artifacts, :caches)
-    # steep:ignore:end
     REPLACING = %i[os cpus megabytes time_limit].freeze
     ADDING = %i[labels artifacts caches].freeze
     LARGEST = %i[cpus megabytes time_limit].freeze
@@ -36,5 +34,7 @@ module Proof
     private def added(other)
       ADDING.to_h { |member| [member, pair(member, other).compact.reduce(:|)] }
     end
+
+    # @dynamic os, labels, cpus, megabytes, time_limit, artifacts, caches
   end
 end

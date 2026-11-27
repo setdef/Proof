@@ -7,9 +7,7 @@ module Proof
     LINE = :proof_kdl_line
     private_constant(:LINE)
 
-    # steep:ignore:start
     class LocatedNode < KDL::Node
-      # steep:ignore:end
       attr_reader :line
 
       def initialize(name)
@@ -32,6 +30,8 @@ module Proof
           line:
         )
       end
+
+      # @dynamic line
     end
   end
 end

@@ -6,7 +6,6 @@ require_relative("skip")
 module DocExamples
   # A fenced block in a list of lines: the line that opens the fence, and the
   # line that ends it. A fence that nothing ends runs to the end of the lines.
-  # steep:ignore:start
   class Span
     attr_reader :start
 
@@ -48,6 +47,7 @@ module DocExamples
     def skip_reason
       Skip.reason(@lines, @start)
     end
+
+    # @dynamic start
   end
-  # steep:ignore:end
 end

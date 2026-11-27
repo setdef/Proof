@@ -2,10 +2,9 @@
 
 module Proof
   module CommandLine
-    # steep:ignore:start
     class GlobalFlags < Data.define(:quiet, :debug, :no_color, :no_input, :version)
-      # steep:ignore:end
       # Steep reports as missing the members that Data.define makes, and the signature declares each one.
+      # @dynamic quiet, debug, no_color, no_input, version, initialize
     end
   end
 end

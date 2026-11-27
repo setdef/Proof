@@ -3,9 +3,7 @@
 require "openssl"
 
 module Proof
-  # steep:ignore:start
   class TagMaker < Data.define(:cost)
-    # steep:ignore:end
     def sign_in(code, nonce:, fingerprint:)
       tag(code, "proof login", TagFields.nonce(nonce), TagFields.fingerprint(fingerprint))
     end
@@ -28,6 +26,8 @@ module Proof
       )
       SlowTag.new(bytes: derived)
     end
+
+    # @dynamic cost, initialize
   end
   private_constant(:TagMaker)
 end

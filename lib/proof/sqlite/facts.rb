@@ -5,9 +5,7 @@ require "rom-sql"
 
 module Proof
   module Sqlite
-    # steep:ignore:start
     class Facts < ROM::Relation[:sql]
-      # steep:ignore:end
       schema(:facts, infer: true)
 
       def of(run_id)
@@ -17,6 +15,8 @@ module Proof
       def in_order
         order(:run_id, :version)
       end
+
+      # @dynamic where, order, to_a, max, command, transaction, self.schema
     end
   end
 end

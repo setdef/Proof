@@ -3,9 +3,7 @@
 require_relative("path_text")
 
 module Proof
-  # steep:ignore:start
   class PathPattern < Data.define(:path)
-    # steep:ignore:end
     MESSAGE = "a path is relative to the workspace's root, so it is not empty, doesn't start with /, " \
       "and doesn't contain .., such as \"pkg/*.gem\" or \"tmp/engine/build\", not %p"
     private_constant(:MESSAGE)
@@ -15,5 +13,7 @@ module Proof
 
       super(path: -path)
     end
+
+    # @dynamic path
   end
 end

@@ -3,9 +3,7 @@
 require_relative("wait_check")
 
 module Proof
-  # steep:ignore:start
   class WaitReason < Data.define(:kind, :hosts, :runs)
-    # steep:ignore:end
     KINDS = %i[behind_runs person_active no_runner_connected no_label].freeze
     public_constant(:KINDS)
 
@@ -36,5 +34,7 @@ module Proof
 
       super(kind:, hosts: hosts.dup.freeze, runs: runs.dup.freeze)
     end
+
+    # @dynamic kind, hosts, runs
   end
 end

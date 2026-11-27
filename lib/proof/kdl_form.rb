@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   class KdlForm < Data.define(:name, :usage, :arguments, :properties, :required, :children, :needs, :repeatable)
-    # steep:ignore:end
     NONE = Array.new(0).freeze
     DEFAULTS = {
       arguments: 0..0, properties: NONE, required: NONE, children: NONE, needs: NONE, repeatable: false
@@ -47,5 +45,7 @@ module Proof
     def lacks_child?(child)
       !children.include?(child.name.to_sym)
     end
+
+    # @dynamic name, usage, arguments, properties, required, children, needs, repeatable
   end
 end

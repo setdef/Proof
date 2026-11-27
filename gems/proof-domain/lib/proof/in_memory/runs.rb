@@ -4,9 +4,7 @@ require_relative("records")
 
 module Proof
   module InMemory
-    # steep:ignore:start
     class Runs
-      # steep:ignore:end
       attr_reader :records
 
       def initialize(records: {})
@@ -45,6 +43,8 @@ module Proof
       private def all
         @lock.synchronize { Records.new(records).runs }
       end
+
+      # @dynamic records
     end
   end
 end

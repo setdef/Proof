@@ -2,10 +2,9 @@
 
 module Proof
   module CommandLine
-    # steep:ignore:start
     class TaskWords < Data.define(:name, :words)
-      # steep:ignore:end
       # Steep reports as missing the members that Data.define makes, and the signature declares each one.
+      # @dynamic name, words, initialize
     end
   end
 end

@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   class Shortfall < Data.define(:resource, :could_have, :requested)
-    # steep:ignore:end
     RESOURCES = %i[cpus memory].freeze
     public_constant(:RESOURCES)
 
@@ -40,5 +38,7 @@ module Proof
 
       "#{Shortfall.size(could_have)} of the #{Shortfall.size(requested)}"
     end
+
+    # @dynamic resource, could_have, requested
   end
 end

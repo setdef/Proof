@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Proof
-  # steep:ignore:start
   class KdlSyntaxReason < Data.define(:error, :quoted_as)
-    # steep:ignore:end
     QUOTE_HINT = ". If a value starts with a digit and continues with letters, put it in quotes, as in %s"
     private_constant(:QUOTE_HINT)
 
@@ -16,5 +14,7 @@ module Proof
       # The gem ends its message with the position, which the reason gives in its own words.
       error.message.delete_suffix(" (#{error.line}:#{error.column})")
     end
+
+    # @dynamic error, quoted_as, initialize
   end
 end

@@ -2,9 +2,7 @@
 
 module Proof
   module Server
-    # steep:ignore:start
     class CurrentPoolFile
-      # steep:ignore:end
       attr_reader :path, :pool_file, :mistake
 
       def initialize(path:)
@@ -32,6 +30,8 @@ module Proof
       def port
         (@pool_file || PoolFile.new).port.number
       end
+
+      # @dynamic path, pool_file, mistake
     end
   end
 end
