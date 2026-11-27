@@ -35,6 +35,13 @@ module Proof
   # Proof::Retention.new(runs: Proof::Duration.read("90m", units: [:m], name: "runs"))
   # ```
   class Retention < Data
+    # The seconds in a day, which every duration of a retention is a whole
+    # number of.
+    DAY: Integer
+
+    # The rule for a retention's durations: a `Proof::Duration` of whole days.
+    WHOLE_DAYS: ^(Object value) -> bool
+
     # For each member, the message when its value breaks the rule, and the rule.
     RULES: Hash[Symbol, [String, MemberCheck::rule]]
 

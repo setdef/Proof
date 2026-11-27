@@ -48,6 +48,9 @@ module Proof
     # with what the timeout was.
     MESSAGE: String
 
+    # The units a time limit may be written in, shortest first.
+    UNITS: Array[Symbol]
+
     # The length of the limit in seconds, a whole number from 1.
     attr_reader seconds: Integer
 

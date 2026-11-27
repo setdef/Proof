@@ -28,10 +28,7 @@ module Proof
     end
 
     def <=>(other)
-      case other
-      in TimeLimit(seconds: theirs) then seconds <=> theirs
-      else nil
-      end
+      seconds <=> other.seconds if other.is_a?(self.class)
     end
   end
 end

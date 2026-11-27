@@ -54,6 +54,10 @@ module Proof
     # The class each member holds.
     KINDS: Hash[Symbol, Class]
 
+    # The members a source replaces when it gives them, in contrast to
+    # `withheld`, whose labels add.
+    REPLACING: Array[Symbol]
+
     # The disk space Proof may use on the host, or `nil` when the source gives
     # none.
     attr_reader budget: Size?
