@@ -66,6 +66,8 @@ module Proof
 
     def parts_of: (Hash[Symbol, Array[KdlNode]] by_name) -> Hash[Symbol, Object]
 
+    def refuse_shared_names: (Hash[Symbol, Array[KdlNode]] by_name) -> void
+
     @path: String
     @refusal: PoolFileRefusal
     @readers: Array[PoolFileProperties | PoolFileHosts | PoolFileRepositories]

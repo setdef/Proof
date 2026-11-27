@@ -10,6 +10,16 @@ module Proof
     }.freeze
     private_constant(:KINDS)
 
+    def self.same?(one, other)
+      # The rule of the domain's PoolNames and of Proof::Label, String#casecmp?, which folds Unicode case. A name that
+      # isn't text, which the domain refuses later, compares as KDL read it.
+      (one.is_a?(String) && other.is_a?(String)) ? one.casecmp?(other) : one == other
+    end
+
+    def self.among?(names, name)
+      names.any? { |other| same?(other, name) }
+    end
+
     def initialize(refusal:)
       @refusal = refusal
     end

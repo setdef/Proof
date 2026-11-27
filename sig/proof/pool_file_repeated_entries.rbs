@@ -1,0 +1,55 @@
+module Proof
+  # Refuses a second entry with the name of an earlier one: a host or a
+  # repository named twice.
+  #
+  # A pool file has one entry for each host and each repository, and
+  # `proof status` shows each under its name. A second entry with a name the
+  # file has given would show two hosts, or two repositories, under one name.
+  # The domain refuses it, in `Proof::PoolFile`, but a mistake in what the file
+  # says needs a line, and the domain has none.
+  #
+  # This class refuses the second entry at its line, and names the first as
+  # that entry wrote the name. It compares names as `Proof::PoolFileNames.same?`
+  # does, without regard to case, so `nuc` and `NUC` are one host.
+  #
+  # Use it from `Proof::PoolFileReader`, once for the hosts and once for the
+  # repositories, since a host and a repository may share a name.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # path = "pool.kdl"
+  # hosts = Proof::KdlParser.parse("host nuc\nhost pc\nhost NUC\n", path:, error: Proof::PoolFileError)
+  # begin
+  #   Proof::PoolFileRepeatedEntries.new(hosts, refusal: Proof::PoolFileRefusal.new(path:)).check
+  # rescue Proof::PoolFileError => e
+  #   e.line # => 3
+  # end
+  # ```
+  class PoolFileRepeatedEntries
+    # Prepares to check `entries` and refuse with `refusal`.
+    #
+    # - `entries`: Array of `Proof::KdlNode`, the nodes of one kind in the
+    #   order the file has them, each with its name as its first argument,
+    #   which `Proof::KdlFormCheck` has checked.
+    # - `refusal`: `Proof::PoolFileRefusal`.
+    def initialize: (Array[KdlNode] entries, refusal: PoolFileRefusal) -> void
+
+    # Refuses the first of the entries whose name an earlier one has, and
+    # returns when no two share a name.
+    #
+    # ```ruby
+    # path = "pool.kdl"
+    # repositories = Proof::KdlParser.parse("repository lota url=\"u\"\nrepository proof url=\"v\"\n", path:, error: Proof::PoolFileError)
+    # Proof::PoolFileRepeatedEntries.new(repositories, refusal: Proof::PoolFileRefusal.new(path:)).check # refuses nothing
+    # ```
+    def check: () -> void
+
+    private
+
+    def refuse_after: (KdlNode entry, Integer index) -> void
+
+    @entries: Array[KdlNode]
+    @refusal: PoolFileRefusal
+  end
+end

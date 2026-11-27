@@ -22,9 +22,18 @@ module Proof
     end
 
     private def parts_of(by_name)
-      PoolFileSharedNames.new(by_name:, refusal: @refusal).check
+      refuse_shared_names(by_name)
       parts = @readers.map { |reader| reader.read(by_name) }
       parts.reduce({}, :merge)
+    end
+
+    private def refuse_shared_names(by_name)
+      # A second host is refused before a runner on two hosts, and both before a second repository, in the order the
+      # domain's PoolFile refuses them.
+      hosts = by_name[:host].to_a
+      PoolFileRepeatedEntries.new(hosts, refusal: @refusal).check
+      PoolFileSharedRunners.new(hosts, refusal: @refusal).check
+      PoolFileRepeatedEntries.new(by_name[:repository].to_a, refusal: @refusal).check
     end
   end
 end

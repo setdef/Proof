@@ -1,0 +1,56 @@
+module Proof
+  # Refuses a runner that two hosts list.
+  #
+  # A runner is one operating system on one host, and a host's CPUs and memory
+  # are counted across its runners. A runner listed on two hosts would count
+  # its CPUs and memory twice, under hosts that aren't one computer. The domain
+  # refuses it, in `Proof::PoolFile`, but a mistake in what the file says needs
+  # a line, and the domain has none.
+  #
+  # This class refuses the runner at the line of the later host's `runner`
+  # child, and names the earlier host. It compares names as
+  # `Proof::PoolFileNames.same?` does, without regard to case. A runner listed
+  # twice on one host is the host entry's mistake, which the domain refuses at
+  # the host's line.
+  #
+  # Use it from `Proof::PoolFileReader`.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # path = "pool.kdl"
+  # hosts = Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n}\nhost pc {\n  runner NUC-linux\n}\n", path:, error: Proof::PoolFileError)
+  # begin
+  #   Proof::PoolFileSharedRunners.new(hosts, refusal: Proof::PoolFileRefusal.new(path:)).check
+  # rescue Proof::PoolFileError => e
+  #   e.line # => 5
+  # end
+  # ```
+  class PoolFileSharedRunners
+    # Prepares to check `hosts` and refuse with `refusal`.
+    #
+    # - `hosts`: Array of `Proof::KdlNode`, the `host` nodes in the order the
+    #   file has them, which `Proof::KdlFormCheck` has checked.
+    # - `refusal`: `Proof::PoolFileRefusal`.
+    def initialize: (Array[KdlNode] hosts, refusal: PoolFileRefusal) -> void
+
+    # Refuses the first runner that an earlier host lists, and returns when
+    # each runner is on one host.
+    #
+    # ```ruby
+    # path = "pool.kdl"
+    # hosts = Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n}\nhost pc {\n  runner pc-wsl\n}\n", path:, error: Proof::PoolFileError)
+    # Proof::PoolFileSharedRunners.new(hosts, refusal: Proof::PoolFileRefusal.new(path:)).check # refuses nothing
+    # ```
+    def check: () -> void
+
+    private
+
+    def refuse_in: (KdlNode host, Integer index) -> void
+
+    def refuse_listed: (KdlNode child, kdl_value runner, Integer index) -> void
+
+    @hosts: Array[KdlNode]
+    @refusal: PoolFileRefusal
+  end
+end
