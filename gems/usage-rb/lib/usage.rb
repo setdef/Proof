@@ -11,15 +11,15 @@ require_relative("usage/group")
 require_relative("usage/help")
 require_relative("usage/keys")
 require_relative("usage/layout")
+require_relative("usage/lists")
 require_relative("usage/page")
 require_relative("usage/program_page")
 require_relative("usage/reader")
-require_relative("usage/rows")
 require_relative("usage/spec")
 require_relative("usage/spec_error")
 require_relative("usage/tables")
 require_relative("usage/version")
 
 module Usage
-  private_constant(:CommandPage, :Keys, :Layout, :Page, :ProgramPage, :Reader, :Rows, :Tables)
+  private_constant(:CommandPage, :Keys, :Layout, :Lists, :Page, :ProgramPage, :Reader, :Tables)
 end

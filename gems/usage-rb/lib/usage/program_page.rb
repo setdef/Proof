@@ -17,7 +17,7 @@ module Usage
     end
 
     private def ending
-      [Rows.exit_statuses(spec.exit_codes), spec.after_help]
+      [Lists.exit_statuses(spec.exit_codes), spec.after_help]
     end
   end
 end

@@ -17,7 +17,7 @@ module Usage
         title,
         Layout.paragraphs(description, WIDTH),
         usage,
-        Rows.examples(examples),
+        Lists.examples(examples),
         *Tables.new(@command, @spec.commands.global_flags(@command.path)).all,
         *ending,
       ]

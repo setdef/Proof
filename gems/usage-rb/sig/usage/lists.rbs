@@ -1,7 +1,7 @@
 module Usage
   # Writes each list of the help that holds parts of the spec: the examples, and the tables of commands, arguments,
   # flags, and exit statuses. Each is `nil` when it has nothing in it.
-  module Rows
+  module Lists
     # The widest line of an example's explanation.
     EXAMPLE_WIDTH: Integer
 

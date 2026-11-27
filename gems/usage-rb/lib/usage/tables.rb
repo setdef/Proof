@@ -10,10 +10,10 @@ module Usage
     def all
       # The program's subcommands are the commands, and a command's are its subcommands.
       [
-        Rows.commands(@command.program? ? "Commands:" : "Subcommands:", @command.subcommands),
-        Rows.arguments(@command.args),
-        Rows.flags("Flags:", @command.own_flags),
-        Rows.flags("Global flags:", @global_flags),
+        Lists.commands(@command.program? ? "Commands:" : "Subcommands:", @command.subcommands),
+        Lists.arguments(@command.args),
+        Lists.flags("Flags:", @command.own_flags),
+        Lists.flags("Global flags:", @global_flags),
       ]
     end
   end

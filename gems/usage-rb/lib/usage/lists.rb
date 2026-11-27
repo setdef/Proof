@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Usage
-  module Rows
+  module Lists
     EXAMPLE_WIDTH = 70
     private_constant(:EXAMPLE_WIDTH)
 
