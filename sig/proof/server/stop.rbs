@@ -1,0 +1,37 @@
+module Proof
+  module Server
+    # A request that the server stop, which a signal handler can make.
+    #
+    # A service manager stops the server with `TERM`, and a person at a
+    # terminal with Ctrl-C, which sends `INT`. Ruby runs a signal handler
+    # between two steps of the main thread, where it can't take a lock, and
+    # the server waits for its stop in a fiber that has to yield meanwhile.
+    #
+    # This class is a pipe: `ask` writes a byte without waiting, and `wait`
+    # waits until the pipe can be read, which yields to the fiber scheduler.
+    #
+    # Use it to stop the server from a signal handler or another thread.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # stop = Proof::Server::Stop.new
+    # stop.ask
+    # stop.wait # => nil
+    # ```
+    class Stop
+      # Makes the pipe.
+      def initialize: () -> void
+
+      # Asks for the stop. A second ask before the first is seen does
+      # nothing more.
+      def ask: () -> void
+
+      # Waits until the stop is asked for.
+      def wait: () -> void
+
+      @reader: IO
+      @writer: IO
+    end
+  end
+end

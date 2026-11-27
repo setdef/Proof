@@ -43,7 +43,7 @@ module ServerHttpsClient
     "sha256//#{[OpenSSL::Digest::SHA256.digest(certificate.public_key.public_to_der)].pack('m0')}"
   end
 
-  # Runs +server+, which answers +run+ with a task, in a thread with a fiber scheduler, gives the block +port+, and
+  # Runs +server+, which answers +start+ with a task, in a thread with a fiber scheduler, gives the block +port+, and
   # stops the server when the block returns. Returns what the block returns.
   def in_server_thread(server, port)
     reader, writer = IO.pipe
@@ -65,7 +65,7 @@ module ServerHttpsClient
 
   # Runs +server+ in the current fiber scheduler, says so on +ready+, and stops it once +reader+ can be read.
   def serve_until(server, reader, ready)
-    serving = server.run
+    serving = server.start
     ready << true
     reader.wait_readable
     serving.stop

@@ -1,0 +1,76 @@
+module Proof
+  module Server
+    # The server as the service of its account: the process a service
+    # manager starts and stops.
+    #
+    # `proof server setup` makes the server a service of the account it runs
+    # as, and the service manager stops it with `TERM`, as a person at a
+    # terminal does with Ctrl-C, which sends `INT`. The manager reads the
+    # exit status to learn whether the server stopped or failed, and its log
+    # keeps what the server wrote to standard error.
+    #
+    # This class serves with `Proof::Server::Root` until the process gets
+    # `INT` or `TERM`, and returns 0. When the server can't start, because of
+    # its key or certificate, its port, or a file it can't write, it writes
+    # the reason after `proof:` and returns 1. It sets what the server sets
+    # for its process while it serves, and puts back the signal handlers that
+    # were there before when it returns.
+    #
+    # Use it as the entry point of the server's process, through
+    # `Proof::Server.serve`.
+    #
+    # ## Examples
+    #
+    # <!-- skip-example: serves on port 7443 until the process gets INT or TERM -->
+    # ```ruby
+    # exit(Proof::Server::Service.new(home: Dir.home, err: $stderr).serve)
+    # ```
+    class Service
+      # The signals that stop the server: `INT`, from Ctrl-C, and `TERM`, from
+      # a service manager.
+      SIGNALS: Array[String]
+
+      # Why the server couldn't start, from `error`: a Proof error's own
+      # message, or a system error's after "the server can't start:".
+      #
+      # - `error`: Proof::Error or SystemCallError, what stopped the start.
+      #
+      # ```ruby
+      # Proof::Server::Service.reason(Errno::EACCES.new("key.pem")) # => "the server can't start: Permission denied - key.pem"
+      # Proof::Server::Service.reason(Proof::Server::ListenError.new("port 7443 is taken")) # => "port 7443 is taken"
+      # ```
+      def self.reason: (Error | SystemCallError error) -> String
+
+      # Builds the server for the account whose home is `home`.
+      #
+      # - `home`: String, the account's home folder.
+      # - `err`: IO, where the server's messages go: its standard error.
+      # - `host`: String, the address to listen on, or `nil`, the default,
+      #   for every address of the computer.
+      def initialize: (home: String, err: IO | StringIO, ?host: String?) -> void
+
+      # Serves until the process gets `INT` or `TERM`, and returns the exit
+      # status: 0 once the server has stopped, and 1, after the reason, when
+      # it couldn't start.
+      def serve: () -> Integer
+
+      private
+
+      # Runs the block with what the server sets for its process: Ruby's
+      # warnings of experimental features off, and `INT` and `TERM` stopping
+      # the server.
+      def as_the_process: () { () -> void } -> void
+
+      # Sets `INT` and `TERM` to stop the server, and returns the handlers
+      # they had before, by signal.
+      def trap_signals: () -> Hash[String, Signal::trap_command]
+
+      # Writes the reason the server couldn't start after `proof:`, and
+      # returns 1.
+      def failed: (Error | SystemCallError error) -> Integer
+
+      @root: Root
+      @err: IO | StringIO
+    end
+  end
+end

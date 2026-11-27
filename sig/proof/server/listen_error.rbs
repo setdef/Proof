@@ -1,0 +1,20 @@
+module Proof
+  module Server
+    # Raised when the server can't listen on its port.
+    #
+    # The port comes from the pool file, and another program, or a server
+    # already running, can hold it. The system's own message names the call
+    # and the address, where the person who reads it needs the port.
+    #
+    # The message names the port and gives the system's reason.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # error = Proof::Server::ListenError.new("the server can't listen on port 7443: Address already in use")
+    # error.message # => "the server can't listen on port 7443: Address already in use"
+    # ```
+    class ListenError < Error
+    end
+  end
+end

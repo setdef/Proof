@@ -1,0 +1,7 @@
+# Ruby's `Socket.tcp_server_sockets` takes a host as well as a port, and
+# returns a `Socket` for each address it listens on. The stdlib signature
+# lists only a port, and gives `TCPServer`s.
+class Socket
+  def self.tcp_server_sockets: (String? host, Integer port) -> Array[Socket]
+                             | ...
+end

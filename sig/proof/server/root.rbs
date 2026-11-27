@@ -1,0 +1,68 @@
+module Proof
+  module Server
+    # The server's composition root: what builds the server's objects and
+    # serves until it is stopped.
+    #
+    # The server is made of parts that each do one thing: the pool file it
+    # uses, its key and certificate, its HTTPS, and the answer to each
+    # request. Something has to build them in order, hand each its ports,
+    # and stop them together.
+    #
+    # This class reads the pool file, finds or makes the server's identity,
+    # listens on the pool file's port, or on 7443 when the file has no
+    # version without a mistake, and hands the HTTPS of the server's
+    # requests and the watch of the pool file to `Proof::Server::Fibers`,
+    # which serves until `stop` is called. It writes what it does to `err`,
+    # after `proof:`.
+    #
+    # Use it through `Proof::Server.serve`, which stops it on `INT` and
+    # `TERM`.
+    #
+    # ## Examples
+    #
+    # <!-- skip-example: serves on the pool file's port until another thread stops it, which a test does -->
+    # ```ruby
+    # root = Proof::Server::Root.new(home: Dir.home, err: $stderr)
+    # Thread.new { sleep(60).then { root.stop } }
+    # root.serve
+    # ```
+    class Root
+      # The server's requests: `GET /version`, answered by
+      # `Proof::Server::VersionRequest`.
+      #
+      # ```ruby
+      # Proof::Server::Root.requests.call({ "REQUEST_METHOD" => "GET", "PATH_INFO" => "/version" }).first # => 200
+      # ```
+      def self.requests: () -> Requests
+
+      # Builds the server for the account whose home is `home`.
+      #
+      # - `home`: String, the account's home folder.
+      # - `err`: IO, where the server's messages go: its standard error.
+      # - `host`: String, the address to listen on, or `nil`, the default,
+      #   for every address of the computer.
+      def initialize: (home: String, err: IO | StringIO, ?host: String?) -> void
+
+      # Serves until `stop` is called, then writes `proof: stopped.`. Raises
+      # `Proof::Server::IdentityError` for a key or certificate the server
+      # can't use, and `Proof::Server::ListenError` for a port it can't
+      # listen on, before it serves.
+      def serve: () -> void
+
+      # Asks the server to stop. Safe from a signal handler and from another
+      # thread.
+      def stop: () -> void
+
+      private
+
+      def https_for: (CurrentPoolFile current) -> Https
+
+      def listen: (Integer port) -> Array[Socket]
+
+      @paths: Paths
+      @err: IO | StringIO
+      @host: String?
+      @stop: Stop
+    end
+  end
+end

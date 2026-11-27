@@ -19,19 +19,23 @@ module Proof
       end
 
       def initialize(app:, identity:, sockets:, err:)
-        bound = IO::Endpoint::BoundEndpoint.new(nil, sockets)
-        @endpoint = IO::Endpoint::SSLEndpoint.new(bound, ssl_context: Https.context(identity))
+        @bound = IO::Endpoint::BoundEndpoint.new(nil, sockets)
+        @endpoint = IO::Endpoint::SSLEndpoint.new(@bound, ssl_context: Https.context(identity))
         @middleware = Falcon::Server.rack_middleware(app, cache: false)
         @err = err
       end
 
-      def run
+      def start
         # Falcon logs a refused handshake as a warning, with its backtrace, and a scanner of ports would fill the
         # server's log with them. The logger is the fiber's, so the server's fibers alone log only errors.
         logger = Console::Config::DEFAULT.make_logger(@err)
         logger.level = :error
         Console.logger = logger
         Falcon::Server.new(@middleware, @endpoint, protocol: Async::HTTP::Protocol::HTTP11, scheme: "https").run
+      end
+
+      def close
+        @bound.close
       end
     end
   end

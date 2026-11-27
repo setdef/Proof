@@ -24,7 +24,8 @@ module Proof
     # identity = Proof::Server::Identity.make(Proof::Server::Identity.new_key)
     # sockets = Socket.tcp_server_sockets(nil, 7443)
     # https = Proof::Server::Https.new(app: Proof::Server::Requests.new({}), identity:, sockets:, err: $stderr)
-    # Sync { https.run.wait }
+    # Sync { https.start.wait }
+    # https.close
     # ```
     class Https
       # A TLS context that speaks TLS 1.3 only, with `identity`'s key and
@@ -53,8 +54,13 @@ module Proof
       # Serves in a new task of the current fiber scheduler's task, and
       # returns the task, which serves until it is stopped. Sets the logger of
       # the current fiber, and the fibers it starts, to write only errors.
-      def run: () -> Async::Task
+      def start: () -> Async::Task
 
+      # Closes the sockets, so the port takes no more connections. Call it
+      # after the task `start` returned has stopped.
+      def close: () -> void
+
+      @bound: IO::Endpoint::BoundEndpoint
       @endpoint: IO::Endpoint::SSLEndpoint
       @middleware: Protocol::HTTP::Middleware
       @err: IO | StringIO

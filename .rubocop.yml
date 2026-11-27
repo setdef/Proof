@@ -100,6 +100,8 @@ ThreadSafety/NewThread:
     # command and the runners call it from other processes.
     - "test/server_https_client.rb"
     - "test/server_https_test.rb"
+    - "test/server_root_test.rb"
+    - "test/server_serve_test.rb"
 
 Style/IpAddresses:
   # Tests never reach the internet, so a server a test starts listens on the loopback address alone.
@@ -112,5 +114,7 @@ Style/StringHashKeys:
   # specification says, and the server's requests and their tests are written to it.
   Exclude:
     - "lib/proof/server/requests.rb"
+    - "lib/proof/server/root.rb"
     - "test/server_https_test.rb"
     - "test/server_requests_test.rb"
+    - "test/server_root_test.rb"

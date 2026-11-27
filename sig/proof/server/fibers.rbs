@@ -1,0 +1,50 @@
+module Proof
+  module Server
+    # The server's fibers, from its start until it is stopped.
+    #
+    # The server answers requests and checks the pool file every second, in
+    # one process, and a wait in either has to let the other go on. A stop
+    # can come from a signal handler or another thread, at any moment, and
+    # has to end both and close the port.
+    #
+    # This class starts a fiber scheduler, serves the HTTPS in it, and checks
+    # the pool file in a fiber of its own every second, with a sleep that
+    # yields. When the stop is asked for, it stops both, closes the HTTPS's
+    # sockets, and returns.
+    #
+    # Use it through `Proof::Server::Root`.
+    #
+    # ## Examples
+    #
+    # <!-- skip-example: serves on a port until another thread asks for the stop, which a test does -->
+    # ```ruby
+    # stop = Proof::Server::Stop.new
+    # Thread.new { sleep(60).then { stop.ask } }
+    # Proof::Server::Fibers.new(https:, watch:, stop:).serve
+    # ```
+    class Fibers
+      # How many seconds the server waits between checks of the pool file.
+      CHECK_EVERY: Integer
+
+      # Holds what the fibers serve and check.
+      #
+      # - `https`: Proof::Server::Https, the server's requests.
+      # - `watch`: Proof::Server::PoolFileWatch, the pool file's check.
+      # - `stop`: Proof::Server::Stop, what ends them.
+      def initialize: (https: Https, watch: PoolFileWatch, stop: Stop) -> void
+
+      # Serves and checks until the stop is asked for.
+      def serve: () -> void
+
+      private
+
+      def serve_in: (Async::Task task) -> void
+
+      def watch_every_second: () -> void
+
+      @https: Https
+      @watch: PoolFileWatch
+      @stop: Stop
+    end
+  end
+end

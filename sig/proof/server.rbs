@@ -11,6 +11,23 @@ module Proof
   # something names it, so `require "proof"` loads none of the gems they use.
   #
   # Use it to start the server, and to reach the parts it is made of.
+  #
+  # ## Examples
+  #
+  # <!-- skip-example: serves on port 7443 until the process gets INT or TERM -->
+  # ```ruby
+  # exit(Proof::Server.serve)
+  # ```
   module Server
+    # Serves as the server of the account whose home is `home` until the
+    # process gets `INT` or `TERM`, as `Proof::Server::Service#serve` does,
+    # and returns the exit status: 0 once it has stopped, and 1 when it
+    # couldn't start.
+    #
+    # - `home`: String, the account's home folder. Defaults to `Dir.home`.
+    # - `err`: IO, where the server's messages go. Defaults to `$stderr`.
+    # - `host`: String, the address to listen on, or `nil`, the default, for
+    #   every address of the computer.
+    def self.serve: (?home: String, ?err: IO | StringIO, ?host: String?) -> Integer
   end
 end

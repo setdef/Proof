@@ -1,0 +1,52 @@
+module Proof
+  module Server
+    # Where the server finds the pool file and keeps what it makes.
+    #
+    # The server runs as an account set aside for Proof, as a service of that
+    # account, with no folder of its own named anywhere. A person edits the
+    # pool file, and the server's key, certificate, and runs are what it
+    # makes and keeps.
+    #
+    # This class gives both paths under the account's home, as the XDG Base
+    # Directory Specification's defaults have them: the pool file in
+    # `~/.config/proof/pool.kdl`, and the server's own files in
+    # `~/.local/share/proof/server`.
+    #
+    # Use it to find the server's files from its account's home.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # paths = Proof::Server::Paths.under("/home/proof")
+    # paths.pool_file # => "/home/proof/.config/proof/pool.kdl"
+    # paths.folder # => "/home/proof/.local/share/proof/server"
+    # ```
+    class Paths < Data
+      # The pool file's path under the home.
+      POOL_FILE: String
+
+      # The server's folder under the home.
+      FOLDER: String
+
+      # The pool file's path.
+      attr_reader pool_file: String
+
+      # The folder of the server's key, certificate, and runs.
+      attr_reader folder: String
+
+      # The paths under `home`.
+      #
+      # - `home`: String, the home folder of the server's account.
+      def self.under: (String home) -> Paths
+
+      # Holds `pool_file` and `folder`.
+      #
+      # - `pool_file`: String, the pool file's path.
+      # - `folder`: String, the server's folder.
+      def initialize: (pool_file: String, folder: String) -> void
+
+      def self.new: (pool_file: String, folder: String) -> Paths
+                  | (String pool_file, String folder) -> Paths
+    end
+  end
+end

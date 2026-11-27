@@ -197,7 +197,7 @@ Options weighed:
 
 `Proof::Server::CurrentPoolFile` holds the pool file the server uses and the mistake that `proof status` shows. It reads each text whole with `Proof::PoolFileReader`, which builds every value before it returns any, so a text with a mistake on any line leaves the last version that had none in use, and becomes the mistake, with its path and line. A text with no mistake becomes the pool file and clears the mistake. Before the first text with no mistake there is no pool file, so a server that starts with a mistake runs no runs. A file the server can't read, such as one that isn't there, is a mistake with no line, and the last good version stays in use. `port` is the pool file's port, or 7443, the page's default, when there is none.
 
-`Proof::Server::PoolFileWatch` reads the file on each `check` and gives the text to `CurrentPoolFile` when it differs from the last text it read, so an edit takes effect for the next run without a restart. It compares the text, not the file's time or size, so an edit within one tick of the file system's clock, a copy that keeps the old time, and an edit that keeps the size are all read. For each text it reads, it writes lines to standard error, after `proof:`, where the service manager records them:
+`Proof::Server::PoolFileWatch` reads the file on each `check`, which the server makes when it starts and every second after, and gives the text to `CurrentPoolFile` when it differs from the last text it read, so an edit takes effect for the next run without a restart. It compares the text, not the file's time or size, so an edit within one tick of the file system's clock, a copy that keeps the old time, and an edit that keeps the size are all read. For each text it reads, it writes lines to standard error, after `proof:`, where the service manager records them:
 
 | What it read | Lines |
 | --- | --- |
@@ -442,6 +442,27 @@ Options weighed:
 
 - A Base32 gem: adds a dependency to a gem that has none, for an alphabet and a mapping that fit in one value object.
 
+### Where the server keeps its state
+
+The server keeps what it makes in one folder, `~/.local/share/proof/server/`, in the home of the account it runs as, on Linux and on macOS, and reads the pool file from `~/.config/proof/pool.kdl`, where a person edits it. `Proof::Server::Paths` gives both paths under a home. The folder, and every folder above it that the server makes, can be opened by the account alone.
+
+| Path in the folder | Holds |
+| --- | --- |
+| `key.pem` | The server's private key, which only the account can read |
+| `certificate.pem` | The server's certificate for that key |
+| `runs.db` | The store of runs, `Proof::Sqlite::Runs` |
+| `repositories/` | One bare Git repository for each project |
+
+The server's key, certificate, runs, and repositories are data a person would lose by losing the folder: every computer and runner that trusts the server knows it by its key, and the runs and repositories exist nowhere else. The [XDG Base Directory Specification](https://specifications.freedesktop.org/basedir/latest/), which [clig.dev](https://clig.dev/#configuration) says to follow, puts "user-specific data files" in `$XDG_DATA_HOME`, by default `~/.local/share`. It keeps `$XDG_STATE_HOME`, by default `~/.local/state`, for state "that is not important or portable enough to the user that it should be stored in `$XDG_DATA_HOME`", such as logs, history, and recently used files, and `$XDG_CONFIG_HOME`, by default `~/.config`, for configuration, which the pool file is. [Caddy](https://caddyserver.com/docs/conventions), which makes its certificates and keys itself, as Proof's server does, keeps them in `~/.local/share/caddy` on Linux, in a folder its documentation says "must not be treated as a cache". The pool file's page gives `~/.config` on every system, and mise, which installs Proof's tools, keeps its data in `~/.local/share/mise` on macOS as on Linux, so Proof uses the XDG folders on macOS too. The server reads no `XDG_DATA_HOME` or `XDG_CONFIG_HOME`, as the pool file's page gives one path, so every path in Proof's pages is the path on disk.
+
+Options weighed:
+
+- `~/.local/state/proof`, where Syncthing keeps its keys and database from version 1.27: the specification keeps that folder for what isn't important enough for `~/.local/share`, and the key is what every computer and runner knows the server by.
+- `~/.config/proof`, beside the pool file: the specification keeps that folder for configuration, and a tool that copies a person's configuration from computer to computer would copy the private key with it.
+- `~/Library/Application Support/Proof` on macOS, as Caddy and Syncthing use: a second layout, where the pool file's page already gives `~/.config` on every system.
+- `/var/lib/proof`: making it needs root, and the server runs as an ordinary account.
+- `~/.proof`: a folder in the home beside the specification's folders, the habit the specification exists to replace.
+
 ### Storage
 
 Storage is ROM, with `rom` and `rom-sql` over Sequel and the `sqlite3` gem. Sequel's `fiber_concurrency` extension and a busy handler that sleeps make a write waiting on a lock let other fibers run. The store refuses a second placement row for a run with a unique index, which ROM raises as `ROM::SQL::UniqueConstraintError`.
@@ -518,6 +539,28 @@ Options weighed:
 - dry-operation: adds dry-monads and Zeitwerk, 63 ms to every start of the command, and its transaction support ties use cases to Sequel.
 - dry-validation: loads dry-types into the domain through dry-schema.
 - dry-system: takes 61 ms to boot an empty container, for three composition roots.
+
+#### The server process
+
+`Proof::Server.serve` is the entry point of the server's process, which the service that `proof server setup` makes will start. It builds `Proof::Server::Service` and returns its exit status. The service traps `INT` and `TERM`, and either stops the server, so a service manager stops it with `TERM` and a person at a terminal with Ctrl-C. It returns 0 once the server has stopped, and 1, after the reason on standard error, when the server can't start. It puts back the handlers the two signals had before when it returns, and it turns off Ruby's warnings of experimental features, because the fiber scheduler reads and writes through `IO::Buffer` and Ruby warns once that `IO::Buffer` is experimental. A signal handler can't take a lock, so `Proof::Server::Stop` is a pipe: the handler writes a byte to it without waiting, and the server waits for the byte in a fiber, which yields.
+
+`Proof::Server::Root` is the server's composition root. It reads the pool file once, before it listens, so it knows the port: the pool file's `port`, or 7443, the page's default, when there is no version without a mistake. It then finds or makes the server's identity, listens on that port on every address of the computer, IPv4 and IPv6, with Ruby's `Socket.tcp_server_sockets`, and builds `Proof::Server::Https` with the table of requests. A change to the port takes effect when the server starts again, after `proof server setup` runs again, as the pool file's page says. `Proof::Server::Fibers` starts the fiber scheduler, serves the HTTPS in it, checks the pool file every second in a second fiber, with a `sleep` that yields, and stops both when the stop is asked for.
+
+What the server writes to standard error, after `proof:`, beyond what it writes about the pool file:
+
+| When | Line |
+| --- | --- |
+| It listens | `proof: listening on port PORT, with the fingerprint sha256//...` |
+| It has stopped | `proof: stopped.` |
+| Its key or certificate can't be used | `proof: PATH ...`, with what to do, as [The server's key and certificate](#the-servers-key-and-certificate) says |
+| Its port is taken | `proof: the server can't listen on port PORT: REASON`, with the system's text for the error, such as `Address already in use` |
+| A file it can't make | `proof: the server can't start: ` and Ruby's message |
+
+Options weighed:
+
+- Listening on `::` alone, which takes IPv4 too on Linux and macOS: on a computer with IPv6 turned off, the server couldn't listen at all. `Socket.tcp_server_sockets` makes one socket for each address family the computer has.
+- Falcon's service, through async-service: it reads a Ruby file of configuration and forks worker processes, where the pool file is the server's configuration and one process holds the queue.
+- Checking the pool file from a thread: every other wait in the server is a fiber's, and a thread would need a lock on the pool file in use.
 
 ### Documentation
 

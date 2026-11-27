@@ -29,6 +29,9 @@ module Async
   class Task
     # Stops the task and every task it started.
     def stop: () -> void
+
+    # Runs the block in a new task of this one, and returns the task.
+    def async: () { (Task task) -> void } -> Task
   end
 
   module HTTP
@@ -45,6 +48,9 @@ class IO
     # An endpoint over sockets that are already bound and listening.
     class BoundEndpoint
       def initialize: (nil endpoint, Array[Socket] sockets) -> void
+
+      # Closes every socket.
+      def close: () -> void
     end
 
     # An endpoint that speaks TLS over another one.
@@ -72,4 +78,11 @@ module Console
     # Sets the least severe level it writes, such as `:error`.
     def level=: (Symbol level) -> Symbol
   end
+end
+
+module Kernel
+  # Runs the block in a task of a fiber scheduler, which it starts when the
+  # thread has none, and returns what the block returns once every task the
+  # block started has ended.
+  def Sync: [T] () { (Async::Task task) -> T } -> T
 end
