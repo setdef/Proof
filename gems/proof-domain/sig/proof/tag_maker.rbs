@@ -1,0 +1,38 @@
+module Proof
+  # Computes the three slow tags at one cost.
+  #
+  # Proof computes every tag at `Proof::SlowTag::COST`, and its tests need
+  # the same tags at a cost that takes a millisecond. A cost passed as an
+  # argument could come from anywhere, a server's answer included.
+  #
+  # This class holds a cost and computes the tags at it. It is a private
+  # constant of `Proof`, so only `Proof::SlowTag`, at `COST`, and
+  # `Proof::Testing::QUICK_TAGS`, at the test cost, make one.
+  class TagMaker < Data
+    # The parameters of scrypt every tag is computed with.
+    attr_reader cost: SlowTag::Cost
+
+    def self.new: (cost: SlowTag::Cost) -> instance
+                | (SlowTag::Cost cost) -> instance
+
+    # Holds the cost every tag it computes is computed at.
+    #
+    # - `cost`: `Proof::SlowTag::Cost`.
+    def initialize: (cost: SlowTag::Cost) -> void
+
+    # The sign-in tag, as `Proof::SlowTag.sign_in` describes it.
+    def sign_in: (OneTimeCode code, nonce: String, fingerprint: String) -> SlowTag
+
+    # The join tag, as `Proof::SlowTag.join` describes it.
+    def join: (OneTimeCode code, runner_key: String) -> SlowTag
+
+    # The server's tag, as `Proof::SlowTag.server` describes it.
+    def server: (OneTimeCode code, fingerprint: String, runner_key: String) -> SlowTag
+
+    private
+
+    # The tag of `code` over `salt`, its fields joined each after its length.
+    # Raises `Proof::InvalidSlowTagError` unless `code` is a one-time code.
+    def tag: (Object code, *String salt) -> SlowTag
+  end
+end

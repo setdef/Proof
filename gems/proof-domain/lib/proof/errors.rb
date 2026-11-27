@@ -86,6 +86,9 @@ module Proof
   class InvalidOneTimeCodeError < Error
   end
 
+  class InvalidSlowTagError < Error
+  end
+
   class InvalidFactError < Error
   end
 

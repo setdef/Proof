@@ -334,6 +334,22 @@ Options weighed:
 - A fingerprint a person compares, or a longer code: people skip the comparison, agents can't make it, and a long code can't be typed from a text console.
 - The `localhost` gem: puts an IP address in a DNS-name field, adds a separate certificate authority, and writes under `~/.local/state`. Falcon's TLS setup loads only RSA keys.
 
+#### The code and the tags
+
+The one-time code and the slow tags are in the domain gem. They hold rules of the check and no state, and they need only Ruby's `openssl`, which is part of the standard library the domain may load.
+
+- `Proof::OneTimeCode` reads a code as Crockford's Base32, in lowercase with no hyphen, so every way of typing one code is one value, and refuses any other text without repeating it. It draws a new code's characters from the random source it is given. Its `==` compares with `OpenSSL.fixed_length_secure_compare`, and its `inspect` leaves the characters out. How long a code works and how many wrong attempts void it are kept by the server that issued it, so the value holds neither.
+- `Proof::SlowTag.sign_in`, `.join`, and `.server` compute `T`, `J`, and `S`. Each takes a `Proof::OneTimeCode`, never text, so a code is read before scrypt sees it. `Proof::LengthPrefixed` writes each salt field after its length in 8 bytes, the label first. The fingerprint goes in as the 32 bytes of its hash, read from the `sha256//` form that `Proof::Server::Identity#fingerprint` gives, and the runner's key as the bytes its join request carries. A nonce is 16 bytes. A tag is 32 bytes, checked when it is read from bytes, and two tags compare with `OpenSSL.fixed_length_secure_compare`.
+- `Proof::SlowTag::COST` holds the parameters, and no public method takes a cost. `Proof::TagMaker`, a private constant of `Proof`, computes the tags at the cost it holds. `Proof::SlowTag` makes one at `COST`, and `Proof::Testing::QUICK_TAGS` is one at N=2, r=1, p=1, which only the tests and the examples load.
+
+Both comparisons use `OpenSSL.fixed_length_secure_compare`. Each value checks its length when it is built, so the two sides of a comparison always have one length, and `OpenSSL.secure_compare` would hash both first to hide a length that isn't secret.
+
+Options weighed:
+
+- The code and the tags in `lib/proof`, behind a port of the domain: a port with one adapter and nothing to swap, since the domain may load `openssl`, and the domain's values would leave a code's comparison to each caller.
+- A cost passed to each method, with `COST` as its default: any caller could pass another, a value a server sent among them.
+- A test cost set in the process, by a variable or a method the tests call: the code that computes every tag would read it, in production too.
+
 #### The server's key and certificate
 
 `Proof::Server::IdentityFiles` keeps the key as `key.pem`, which only the server's account can read, and a certificate for it as `certificate.pem`, in the server's folder. On the server's first start neither file is there, and it makes both. On every start after that it reads them. Every computer and runner that trusts the server knows it by its key, and nothing re-pins by itself, so the server never replaces a key:

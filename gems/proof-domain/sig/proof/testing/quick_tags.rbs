@@ -1,0 +1,26 @@
+module Proof
+  module Testing
+    # The slow tags at the least cost scrypt takes (N=2, r=1, p=1, 32 bytes),
+    # so a test or an example computes one in a millisecond.
+    #
+    # `Proof::SlowTag` computes every tag at `Proof::SlowTag::COST`, a third
+    # of a second and 128 MiB each, and a test of every rule computes dozens.
+    #
+    # This constant has the methods `sign_in`, `join`, and `server`, which
+    # take what `Proof::SlowTag`'s methods of those names take. Only this file
+    # names the test cost, and Proof loads it only with `require
+    # "proof/testing"`, which nothing outside the tests does.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # require "proof/testing"
+    #
+    # code = Proof::OneTimeCode.parse("XK7P-42MQ")
+    # tag = Proof::Testing::QUICK_TAGS.join(code, runner_key: "runner key")
+    # tag.class # => Proof::SlowTag
+    # tag == Proof::Testing::QUICK_TAGS.join(code, runner_key: "runner key") # => true
+    # ```
+    QUICK_TAGS: TagMaker
+  end
+end

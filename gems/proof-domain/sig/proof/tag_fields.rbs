@@ -1,0 +1,31 @@
+module Proof
+  # Reads the fields a slow tag is computed over, and refuses one in the
+  # wrong form.
+  #
+  # A field in the wrong form gives a tag that never matches, which looks
+  # like a wrong code or an attacker: a fingerprint in hex where the other
+  # side has Base64, or a nonce cut short.
+  #
+  # This module checks each field and gives its bytes, so a mistake raises
+  # `Proof::InvalidSlowTagError` where it is made. It is a private constant
+  # of `Proof`.
+  module TagFields
+    # A fingerprint as `http.pinnedPubkey` takes it, with its Base64 as
+    # `hash`.
+    PIN: Regexp
+
+    # A tag's bytes, frozen. Raises unless `given` is a String of 32 bytes.
+    def self.tag: (Object given) -> String
+
+    # The nonce's bytes. Raises unless `given` is 16 bytes.
+    def self.nonce: (Object given) -> String
+
+    # The 32 bytes of the hash a fingerprint holds. Raises unless `given` is
+    # `sha256//` and the Base64 of 32 bytes, written the one way Base64
+    # writes them.
+    def self.fingerprint: (Object given) -> String
+
+    # The key's bytes. Raises unless `given` is a String that isn't empty.
+    def self.runner_key: (Object given) -> String
+  end
+end

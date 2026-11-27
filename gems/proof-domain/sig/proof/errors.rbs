@@ -163,6 +163,12 @@ module Proof
   class InvalidOneTimeCodeError < Error
   end
 
+  # Raised when a slow tag isn't 32 bytes, or is computed from anything but
+  # a `Proof::OneTimeCode`, a nonce of 16 bytes, a fingerprint as
+  # `http.pinnedPubkey` takes it, and a runner's key that isn't empty.
+  class InvalidSlowTagError < Error
+  end
+
   # Raised when one of a run's facts is built from a value that breaks its
   # rule: a time that isn't a `Time`, a count that isn't a whole number in its
   # range, a name that isn't a name, or a reason that isn't in its list.

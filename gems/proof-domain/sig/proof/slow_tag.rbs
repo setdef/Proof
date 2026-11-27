@@ -1,0 +1,213 @@
+module Proof
+  # A tag that shows its maker knows a one-time code: scrypt, keyed by the
+  # code, over a salt of length-prefixed fields.
+  #
+  # The command and every runner first learn the server's fingerprint over a
+  # network an attacker may control. A fingerprint the server merely sends
+  # proves nothing: an attacker in between sends its own. Only a person, who
+  # typed the one-time code on both sides, links the two ends. And the code
+  # has 40 bits, few enough to try every one against a fast hash.
+  #
+  # This class computes the three tags of the first-trust check in
+  # `doc/contributors/architecture.md`, "Certificates", at a cost of about a
+  # third of a second and 128 MiB each, so trying every code against one
+  # tag takes thousands of years on one processor:
+  #
+  # | Tag | Computed by | Over |
+  # | --- | --- | --- |
+  # | `sign_in` (`T`) | The server, for each sign-in code | `"proof login"`, a fresh nonce, the fingerprint |
+  # | `join` (`J`) | A runner, for its join request | `"proof join"`, the runner's public key |
+  # | `server` (`S`) | The computer that approves a runner | `"proof server"`, the fingerprint, the runner's public key |
+  #
+  # Each tag is computed from a `Proof::OneTimeCode`, never from text, so the
+  # code is read before scrypt sees it. The cost is `COST`, which no method
+  # takes as an argument, so nothing a server sends can lower it. Two tags
+  # compare in constant time.
+  #
+  # Use it to compute a tag, to read one that arrived as bytes, and to
+  # compare the two.
+  #
+  # ## Examples
+  #
+  # The examples compute their tags with `Proof::Testing::QUICK_TAGS`, which
+  # has the same methods as this class at the least cost scrypt takes, so
+  # each takes a millisecond. Proof never loads it outside its tests.
+  #
+  # The server computes a sign-in tag over a fresh nonce, and `proof login`
+  # computes its own over the fingerprint it saw. They match only when both
+  # had the same code and the same fingerprint:
+  #
+  # ```ruby
+  # require "proof/testing"
+  # require "securerandom"
+  #
+  # tags = Proof::Testing::QUICK_TAGS
+  # fingerprint = "sha256//ouNVSVyn9VS3HHXJN66+ylUann5nGKEOoewjqqBfQlY="
+  # nonce = SecureRandom.random_bytes(Proof::SlowTag::NONCE_LENGTH)
+  # shown = tags.sign_in(Proof::OneTimeCode.parse("Q8MR-2T4W"), nonce:, fingerprint:)
+  #
+  # tags.sign_in(Proof::OneTimeCode.parse("q8mr2t4w"), nonce:, fingerprint:) == shown # => true
+  # tags.sign_in(Proof::OneTimeCode.parse("Q8MR-2T4X"), nonce:, fingerprint:) == shown # => false
+  # ```
+  #
+  # A tag that arrived over the network is bytes. Read it as a tag, then
+  # compare:
+  #
+  # ```ruby
+  # received = Proof::SlowTag.new(bytes: shown.bytes)
+  # received == shown # => true
+  # ```
+  #
+  # A tag of text a person typed is refused, because the text isn't read yet:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::InvalidSlowTagError
+  # Proof::Testing::QUICK_TAGS.join("q8mr-2t4w", runner_key: "runner key")
+  # ```
+  class SlowTag < Data
+    # The parameters of scrypt: the cost `n`, the block size `r`, the
+    # parallelization `p`, and the `length` of what it gives, in bytes, as
+    # RFC 7914 names them.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # Proof::SlowTag::COST.n # => 131072
+    # ```
+    class Cost < Data
+      # The CPU and memory cost, a power of 2.
+      attr_reader n: Integer
+
+      # The block size.
+      attr_reader r: Integer
+
+      # The parallelization.
+      attr_reader p: Integer
+
+      # The length of what scrypt gives, in bytes.
+      attr_reader length: Integer
+
+      def self.new: (n: Integer, r: Integer, p: Integer, length: Integer) -> instance
+                  | (Integer n, Integer r, Integer p, Integer length) -> instance
+
+      # Holds the parameters as given. OpenSSL checks them when it computes
+      # a tag: `n` is a power of 2 above 1.
+      #
+      # - `n`: Integer, the cost.
+      # - `r`: Integer, the block size.
+      # - `p`: Integer, the parallelization.
+      # - `length`: Integer, in bytes.
+      def initialize: (n: Integer, r: Integer, p: Integer, length: Integer) -> void
+    end
+
+    # The parameters every tag is computed with: N=2^17, r=8, p=1, and 32
+    # bytes. Each tag takes 128 MiB of memory, 128 times `n` times `r` bytes.
+    COST: Cost
+
+    # The length of a sign-in tag's nonce, 16 bytes. Make each with
+    # `SecureRandom.random_bytes(Proof::SlowTag::NONCE_LENGTH)`.
+    NONCE_LENGTH: Integer
+
+    # The 32 bytes scrypt gave, frozen, in the binary encoding.
+    attr_reader bytes: String
+
+    def self.new: (bytes: String) -> instance
+                | (String bytes) -> instance
+
+    # The tag the server keeps for one sign-in code, and that `proof login`
+    # computes over the fingerprint it saw: `T` in the architecture.
+    #
+    # - `code`: `Proof::OneTimeCode`, the sign-in code.
+    # - `nonce`: String, 16 bytes the server drew for this code alone.
+    # - `fingerprint`: String, the server's fingerprint as
+    #   `http.pinnedPubkey` takes it: `sha256//` and the Base64 of the
+    #   SHA-256 of the public key's DER, as `Proof::Server::Identity#fingerprint`
+    #   gives it.
+    #
+    # Raises `Proof::InvalidSlowTagError` when `code` isn't a one-time code,
+    # the nonce isn't 16 bytes, or the fingerprint isn't in that form. Takes
+    # about a third of a second and 128 MiB, and holds the thread for that
+    # time.
+    #
+    # ```ruby
+    # require "proof/testing"
+    #
+    # code = Proof::OneTimeCode.parse("Q8MR-2T4W")
+    # fingerprint = "sha256//ouNVSVyn9VS3HHXJN66+ylUann5nGKEOoewjqqBfQlY="
+    # Proof::Testing::QUICK_TAGS.sign_in(code, nonce: "n" * 16, fingerprint:).bytes.bytesize # => 32
+    # ```
+    def self.sign_in: (OneTimeCode code, nonce: String, fingerprint: String) -> SlowTag
+
+    # The tag a runner sends in its join request, and that the computer that
+    # approves it computes for each pending request: `J` in the
+    # architecture. Compute it over each request's own key: a tag over one
+    # key never matches a request that carries another.
+    #
+    # - `code`: `Proof::OneTimeCode`, the runner's code.
+    # - `runner_key`: String, the bytes of the runner's public key, as its
+    #   join request carries them.
+    #
+    # Raises `Proof::InvalidSlowTagError` when `code` isn't a one-time code or
+    # the key is empty. Costs what `sign_in` costs.
+    #
+    # ```ruby
+    # require "proof/testing"
+    #
+    # code = Proof::OneTimeCode.parse("XK7P-42MQ")
+    # sent = Proof::Testing::QUICK_TAGS.join(code, runner_key: "runner key")
+    # Proof::Testing::QUICK_TAGS.join(code, runner_key: "another key") == sent # => false
+    # ```
+    def self.join: (OneTimeCode code, runner_key: String) -> SlowTag
+
+    # The tag the computer that approves a runner computes, and the runner
+    # checks over the fingerprint it saw before it pins it: `S` in the
+    # architecture.
+    #
+    # - `code`: `Proof::OneTimeCode`, the runner's code.
+    # - `fingerprint`: String, the server's fingerprint, in the form
+    #   `sign_in` takes.
+    # - `runner_key`: String, the bytes of the runner's public key.
+    #
+    # Raises `Proof::InvalidSlowTagError` as `sign_in` and `join` do. Costs
+    # what `sign_in` costs.
+    #
+    # ```ruby
+    # require "proof/testing"
+    #
+    # code = Proof::OneTimeCode.parse("XK7P-42MQ")
+    # fingerprint = "sha256//ouNVSVyn9VS3HHXJN66+ylUann5nGKEOoewjqqBfQlY="
+    # sent = Proof::Testing::QUICK_TAGS.server(code, fingerprint:, runner_key: "runner key")
+    # Proof::Testing::QUICK_TAGS.server(code, fingerprint:, runner_key: "runner key") == sent # => true
+    # ```
+    def self.server: (OneTimeCode code, fingerprint: String, runner_key: String) -> SlowTag
+
+    # Reads a tag from its bytes, such as a tag that arrived over the
+    # network. Raises `Proof::InvalidSlowTagError` unless `bytes` is a String
+    # of 32 bytes.
+    #
+    # - `bytes`: String, in any encoding.
+    def initialize: (bytes: Object) -> void
+
+    # Whether `other` is a tag with the same bytes. OpenSSL's
+    # `fixed_length_secure_compare` compares them, so the time it takes is
+    # the same wherever two tags differ. Anything but a tag is not equal, the
+    # tag's own bytes included.
+    #
+    # - `other`: Object, usually another tag.
+    #
+    # ```ruby
+    # Proof::SlowTag.new(bytes: "a" * 32) == Proof::SlowTag.new(bytes: "a" * 32) # => true
+    # Proof::SlowTag.new(bytes: "a" * 32) == "a" * 32 # => false
+    # ```
+    def ==: (Object other) -> bool
+
+    # The same as `==`.
+    #
+    # - `other`: Object, usually another tag.
+    #
+    # ```ruby
+    # Proof::SlowTag.new(bytes: "a" * 32).eql?(Proof::SlowTag.new(bytes: "b" * 32)) # => false
+    # ```
+    def eql?: (Object other) -> bool
+  end
+end
