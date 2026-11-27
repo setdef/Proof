@@ -13,7 +13,7 @@ module Usage
       where = "flag #{object[:name]} of #{parent}"
       reader = Reader.new(object, where, KEYS)
       new(
-        **reader.descriptions,
+        **reader.name_and_help,
         short: reader.texts(:short),
         long: reader.texts(:long),
         **valued(reader, where),

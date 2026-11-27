@@ -9,7 +9,7 @@ module Usage
       Keys.check(@object, where, keys)
     end
 
-    def descriptions
+    def name_and_help
       { name: text(:name).to_s, help: text(:help), help_long: text(:help_long) }
     end
 

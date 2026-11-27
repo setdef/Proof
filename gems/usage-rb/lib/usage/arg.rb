@@ -9,7 +9,7 @@ module Usage
 
     def self.read(object, parent)
       reader = Reader.new(object, "argument #{object[:name]} of #{parent}", KEYS)
-      new(required: reader.boolean(:required), var: reader.boolean(:var), **reader.descriptions)
+      new(required: reader.boolean(:required), var: reader.boolean(:var), **reader.name_and_help)
     end
 
     def required?

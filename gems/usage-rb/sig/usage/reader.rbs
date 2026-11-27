@@ -16,7 +16,7 @@ module Usage
     def initialize: (object object, String where, keys keys) -> void
 
     # The name, as the String under `name` or an empty String, and the one-line and the longer description.
-    def descriptions: () -> { name: String, help: String?, help_long: String? }
+    def name_and_help: () -> { name: String, help: String?, help_long: String? }
 
     # The String under `key`, or `nil` when it is left out.
     def text: (Symbol key) -> String?

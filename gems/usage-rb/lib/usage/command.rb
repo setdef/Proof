@@ -41,7 +41,7 @@ module Usage
     def self.read(object)
       where = place(object[:full_cmd])
       reader = Reader.new(object, where, KEYS)
-      command = new(**reader.descriptions, **parts(reader))
+      command = new(**reader.name_and_help, **parts(reader))
       # A word after a command with both would be an argument or a subcommand's name, and usage decides by rules the
       # parser doesn't follow.
       raise(SpecError, "#{where} has both arguments and subcommands, which usage-rb doesn't support") unless
