@@ -20,13 +20,13 @@ Proof is developed on the Ruby that Fledge's apps carry, which [mise](https://mi
 
 ## Run the checks
 
-Run all of them before every commit:
+Run all of them before every push, with `BUNDLE_PATH` set to a folder outside the repository, where RuboCop and REUSE won't read the gems:
 
 ```console
-$ bundle exec rake
+$ BUNDLE_PATH=$HOME/.cache/proof-bundle bin/ci
 ```
 
-The command exits 0 when every check passes, with no errors and no warnings. It runs:
+`bin/ci` refuses a `BUNDLE_PATH` that is unset or inside the repository. It runs `mise exec -- bundle exec rake` at a low priority, with half as many test processes as the computer has processors (set `PARALLEL_TEST_PROCESSORS` to change that). Rake starts every check at once and exits 0 when every check passes, with no errors and no warnings. CI runs the same checks with `bundle exec rake` on Linux and macOS for every commit on the trunk. The checks are:
 
 | Check | What fails it |
 | --- | --- |
@@ -40,7 +40,7 @@ The command exits 0 when every check passes, with no errors and no warnings. It 
 | Documentation examples | A Ruby example in a Markdown page or an `.rbs` comment that raises, or shows a wrong `# =>` value. The failure shows the file and line |
 | CLI spec | `usage lint` finding a fault, or a file generated from the spec that differs from it |
 
-Run one check while you work: `bundle exec rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `docs:placement`, `docs:examples`, `usage:lint`, or `usage:references`. `bundle exec rake lint:fix` corrects the RuboCop offenses it can.
+Run one check while you work: `bundle exec rake -T` lists them with what each one checks. `bundle exec rake lint:fix` corrects the RuboCop offenses it can.
 
 Tests never reach the internet. Use local fakes.
 

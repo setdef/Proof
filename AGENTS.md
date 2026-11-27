@@ -21,12 +21,12 @@ How Proof is built, with the libraries and layout and the options each beat: `do
 
 ## Commands
 
-- The gate, before every commit: `MISE_TRUSTED_CONFIG_PATHS=$PWD mise exec -- bundle exec rake`, with `BUNDLE_PATH` pointing outside the repository, where RuboCop and REUSE won't read the gems. It runs the tests with 100% line and branch coverage, RuboCop with every cop on, Steep, RubyCritic, REUSE, RDoc coverage, the comment-placement check, the Ruby examples in the docs, the CLI spec's lint, and the check that the three files generated from it match it. It must pass with zero errors and zero warnings.
+- The gate, before every push: `bin/ci`, with `BUNDLE_PATH` pointing outside the repository, where RuboCop and REUSE won't read the gems. `bin/ci` refuses a `BUNDLE_PATH` that is unset or inside the repository, then runs these checks at once through `nice mise exec -- bundle exec rake`, with half as many test processes as the computer has processors (`PARALLEL_TEST_PROCESSORS` overrides that), so the computer stays usable. The checks are the tests, in parallel processes, with 100% line and branch coverage of the whole suite, RuboCop with every cop on, Steep, RubyCritic, REUSE, RDoc coverage, the comment-placement check, the Ruby examples in the docs, the CLI spec's lint, the check that the three files generated from it match it, and a frozen `bundle install`. It must pass with zero errors and zero warnings. CI runs the same checks with `bundle exec rake` on Linux and macOS for every trunk commit.
 - RubyCritic's gate fails unless every file is rated A, reek and flay report no smells or duplication, and the overall score is at least 95. That floor may rise, never fall. `tasks/critic_faults.rb` reads RubyCritic's JSON report, because RubyCritic has no option that fails on a rating or a smell; its `--minimum-score` enforces the score.
-- One gate at a time: `rake test:ruby`, `rubocop`, `steep`, `rubycritic`, `reuse:lint`, `rdoc:coverage`, `docs:placement`, `docs:examples`, `usage:lint`, `usage:references`.
+- `rake -T` lists the single checks and what each one checks. Run one as `MISE_TRUSTED_CONFIG_PATHS=$PWD mise exec -- bundle exec rake steep`.
 - Fix what a gate can fix: `rake lint:fix` corrects RuboCop offenses.
 - Run Ruby as `bundle exec ruby`, never `ruby -Ilib:test`.
-- Don't run `bin/setup` or install a pre-commit hook: the hooks of a clone's worktrees are shared. Run `mise install` and `bundle install`.
+- `bin/setup` is for a person setting up a clone. Agents don't run it, or install any hook: it installs a pre-commit hook, and every worktree of a clone shares its hooks, so a hook one agent installs runs in every agent's worktree and in the owner's. Run `mise install` and `bundle install` instead.
 - Set `PAGER=cat` for `git`.
 - Lint the CLI spec: `usage lint proof.usage.kdl`
 - After any change to `proof.usage.kdl`, regenerate the three files made from it:
