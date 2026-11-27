@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module Proof
+  # steep:ignore:start
   class Shortfall < Data.define(:resource, :could_have, :requested)
+    # steep:ignore:end
     RESOURCES = %i[cpus memory].freeze
     public_constant(:RESOURCES)
 

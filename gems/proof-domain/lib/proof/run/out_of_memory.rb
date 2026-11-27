@@ -5,7 +5,9 @@ require_relative("final")
 
 module Proof
   class Run
+    # steep:ignore:start
     class OutOfMemory < Data.define(:at)
+      # steep:ignore:end
       include Fact
       include Final
     end

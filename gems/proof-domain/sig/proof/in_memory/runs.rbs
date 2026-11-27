@@ -46,6 +46,8 @@ module Proof
     # Proof::InMemory::Runs.new(records: runs.records).find(id).state # => :running
     # ```
     class Runs
+      @lock: Thread::Mutex
+
       # Each stored run's facts, by run ID. Two stores given one `Hash` share
       # what they store.
       attr_reader records: Hash[RunId, Array[Run::Fact]]

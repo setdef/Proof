@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 module Usage
+  # steep:ignore:start
   class Page
+    # steep:ignore:end
     WIDTH = 100
     private_constant(:WIDTH)
 

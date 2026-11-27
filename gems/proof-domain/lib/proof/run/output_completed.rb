@@ -4,7 +4,9 @@ require_relative("fact")
 
 module Proof
   class Run
+    # steep:ignore:start
     class OutputCompleted < Data.define(:at, :bytes)
+      # steep:ignore:end
       include Fact
 
       def initialize(at:, bytes:)

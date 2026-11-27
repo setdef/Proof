@@ -4,7 +4,9 @@ require_relative("fact")
 
 module Proof
   class Run
+    # steep:ignore:start
     class Placed < Data.define(:at, :host, :runner)
+      # steep:ignore:end
       include Fact
 
       def initialize(at:, host:, runner:)

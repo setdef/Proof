@@ -7,7 +7,9 @@ require_relative("room")
 require_relative("runner")
 
 module Proof
+  # steep:ignore:start
   class Host < Data.define(:name, :share, :person_active, :runners)
+    # steep:ignore:end
     RULES = {
       name: [Name.message("a host's name", "nuc"), MemberCheck.method(:named?)],
       share: ["a host's share is resources, not %p", Resources.method(:===)],

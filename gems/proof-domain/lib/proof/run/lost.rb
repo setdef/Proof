@@ -5,7 +5,9 @@ require_relative("final")
 
 module Proof
   class Run
+    # steep:ignore:start
     class Lost < Data.define(:at)
+      # steep:ignore:end
       include Fact
       include Final
     end

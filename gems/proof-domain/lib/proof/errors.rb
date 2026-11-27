@@ -101,7 +101,9 @@ module Proof
   class InvalidShortfallError < Error
   end
 
+  # steep:ignore:start
   class RunFitsNoHostError < Error
+    # steep:ignore:end
     attr_reader :host, :shortfalls
 
     def initialize(host:, shortfalls:)
