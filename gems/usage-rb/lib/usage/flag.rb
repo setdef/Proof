@@ -38,6 +38,11 @@ module Usage
       value.is_a?(String)
     end
 
+    def accepts?(word)
+      # A flag with no choices is strict, and has nothing to check its value against.
+      choices.empty? || !strict || choices.include?(word)
+    end
+
     def switches
       short.map { |letter| "-#{letter}" } + long.map { |word| "--#{word}" }
     end

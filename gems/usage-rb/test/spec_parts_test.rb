@@ -36,6 +36,17 @@ class UsageSpecPartsTest < Minitest::Test
     assert_equal([[], true], [json.choices, json.strict?])
   end
 
+  # A flag takes one of its strict choices, any value when its choices aren't strict, and any value when it has none.
+  def test_a_flag_accepts_a_value_its_choices_allow
+    sort = flag(["list"], "sort")
+    tag = flag(["add"], "tag")
+    file = flag(["add"], "file")
+
+    assert_equal([true, false], [sort.accepts?("due"), sort.accepts?("du")])
+    assert_equal([true, true], [tag.accepts?("home"), tag.accepts?("garden")])
+    assert(file.accepts?("notes.txt"))
+  end
+
   # `var`, `requires`, and `global` are each false or empty unless the spec sets them.
   def test_a_flag_repeats_requires_and_passes_on_only_as_the_spec_says
     assert_equal([true, false], [flag(["add"], "tag").repeatable?, flag(["list"], "sort").repeatable?])

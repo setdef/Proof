@@ -135,6 +135,22 @@ module Usage
     # ```
     def takes_value?: () -> bool
 
+    # Whether the flag takes `word` as its value: one of its choices when they are strict, and any word when they
+    # aren't or when it has none.
+    #
+    # - `word`: String, the value as typed.
+    #
+    # ```ruby
+    # sort = Usage::Flag.read(
+    #   { name: "sort", long: ["sort"], arg: { name: "key", choices: { choices: ["due", "added"] } } },
+    #   "command list"
+    # )
+    # [sort.accepts?("due"), sort.accepts?("size")] # => [true, false]
+    # [tag.accepts?("home"), tag.accepts?("garden")] # => [true, true]
+    # due.accepts?("friday") # => true
+    # ```
+    def accepts?: (String word) -> bool
+
     # Every way to type the flag: the short names with one hyphen, then the long names with two.
     #
     # ```ruby

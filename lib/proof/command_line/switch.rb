@@ -26,11 +26,10 @@ module Proof
         # OptionParser takes the next word as a value even when it looks like a flag, and its own list of choices
         # completes the front of a choice, where usage refuses both. So the value is checked here.
         spoken = @flag.switches.last.to_s
-        choices = @flag.choices
         raise(Mistake, @messages.flag_for_value(spoken, value)) if Tokens.flag?(value)
-        return if choices.empty? || !@flag.strict? || choices.include?(value)
+        return if @flag.accepts?(value)
 
-        raise(Mistake, @messages.bad_choice(spoken, value, choices))
+        raise(Mistake, @messages.bad_choice(spoken, value, @flag.choices))
       end
     end
   end
