@@ -15,6 +15,3 @@ namespace :steep do
     MESSAGE
   end
 end
-
-# The steep task is defined in tasks/shared/steep.rake, which loads first.
-Rake::Task[:steep].enhance(%w[steep:loads])

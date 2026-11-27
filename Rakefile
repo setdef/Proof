@@ -20,6 +20,7 @@ multitask default: %w[
   rubocop
   rubycritic
   steep
+  steep:loads
   reuse:lint
   rdoc:coverage
   docs:placement
