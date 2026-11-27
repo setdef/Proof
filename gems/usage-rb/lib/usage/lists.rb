@@ -40,7 +40,8 @@ module Usage
 
     def self.text(flag)
       choices = flag.choices
-      "#{flag.help}#{" (#{flag.strict? ? 'one of' : 'such as'} #{choices.join(', ')})" unless choices.empty?}"
+      values = choices.values
+      "#{flag.help}#{" (#{choices.strict? ? 'one of' : 'such as'} #{values.join(', ')})" unless values.empty?}"
     end
     private_class_method(:text)
   end

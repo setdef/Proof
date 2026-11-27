@@ -2,7 +2,7 @@
 
 module Usage
   # steep:ignore:start
-  class Flag < Data.define(:name, :short, :long, :value, :help, :help_long, :choices, :strict, :requires, :var, :global)
+  class Flag < Data.define(:name, :short, :long, :value, :help, :help_long, :choices, :requires, :var, :global)
     # steep:ignore:end
     KEYS = %w[name usage help help_long help_first_line short long var global arg requires hide=false].freeze
     VALUE_KEYS = %w[name usage choices required=true double_dash="Optional" hide=false].freeze
@@ -30,17 +30,12 @@ module Usage
       global
     end
 
-    def strict?
-      strict
-    end
-
     def takes_value?
       value.is_a?(String)
     end
 
     def accepts?(word)
-      # A flag with no choices is strict, and has nothing to check its value against.
-      choices.empty? || !strict || choices.include?(word)
+      choices.accepts?(word)
     end
 
     def switches
@@ -56,8 +51,7 @@ module Usage
       choices = value&.nested(:choices, CHOICE_KEYS)
       {
         value: value&.text(:name),
-        choices: choices&.texts(:choices) || [],
-        strict: !choices&.false?(:strict),
+        choices: Choices.new(values: choices&.texts(:choices) || [], strict: !choices&.false?(:strict)),
         var:,
       }
     end

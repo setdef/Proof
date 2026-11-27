@@ -31,9 +31,9 @@ class UsageSpecPartsTest < Minitest::Test
     tag = flag(["add"], "tag")
     json = flag(["list"], "json")
 
-    assert_equal([%w[due added], true], [sort.choices, sort.strict?])
-    assert_equal([%w[home work], false], [tag.choices, tag.strict?])
-    assert_equal([[], true], [json.choices, json.strict?])
+    assert_equal(Usage::Choices.new(values: %w[due added], strict: true), sort.choices)
+    assert_equal(Usage::Choices.new(values: %w[home work], strict: false), tag.choices)
+    assert_equal(Usage::Choices.new(values: [], strict: true), json.choices)
   end
 
   # A flag takes one of its strict choices, any value when its choices aren't strict, and any value when it has none.

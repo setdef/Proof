@@ -29,7 +29,7 @@ module Proof
         raise(Mistake, @messages.flag_for_value(spoken, value)) if Tokens.flag?(value)
         return if @flag.accepts?(value)
 
-        raise(Mistake, @messages.bad_choice(spoken, value, @flag.choices))
+        raise(Mistake, @messages.bad_choice(spoken, value, @flag.choices.values))
       end
     end
   end

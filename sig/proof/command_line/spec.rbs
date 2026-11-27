@@ -27,7 +27,7 @@ module Proof
     # flag = Proof::CommandLine::Spec.load.commands.find(["run"])&.own_flags&.find { |each| each.name == "os" }
     # flag&.switches # => ["--os"]
     # flag&.takes_value? # => true
-    # flag&.choices # => ["linux", "macos", "windows", "any", "all"]
+    # flag&.choices&.values # => ["linux", "macos", "windows", "any", "all"]
     # ```
     module Spec
       # The path of the JSON file the spec is read from.

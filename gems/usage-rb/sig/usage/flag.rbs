@@ -29,7 +29,7 @@ module Usage
   #     arg: { name: "tag", choices: { choices: ["home", "work"], strict: false } } },
   #   "command add"
   # )
-  # [tag.choices, tag.strict?, tag.repeatable?] # => [["home", "work"], false, true]
+  # [tag.choices.values, tag.choices.strict?, tag.repeatable?] # => [["home", "work"], false, true]
   # ```
   class Flag < Data
     # The keys of a flag's object that the gem accepts. A hidden flag isn't supported.
@@ -60,11 +60,8 @@ module Usage
     # The longer description, or `nil`.
     attr_reader help_long: String?
 
-    # The values the flag accepts, or an empty list when it takes any.
-    attr_reader choices: Array[String]
-
-    # Whether a value outside `choices` is a mistake. A flag with no choices is strict, and has nothing to check.
-    attr_reader strict: bool
+    # The values the flag offers, and whether it takes others.
+    attr_reader choices: Choices
 
     # The switches that must come with this flag, such as `["--download"]`.
     attr_reader requires: Array[String]
@@ -75,8 +72,8 @@ module Usage
     # Whether the flag works on every command under the one that has it.
     attr_reader global: bool
 
-    def self.new: (name: String, short: Array[String], long: Array[String], value: String?, help: String?, help_long: String?, choices: Array[String], strict: bool, requires: Array[String], var: bool, global: bool) -> instance
-                | (String name, Array[String] short, Array[String] long, String? value, String? help, String? help_long, Array[String] choices, bool strict, Array[String] requires, bool var, bool global) -> instance
+    def self.new: (name: String, short: Array[String], long: Array[String], value: String?, help: String?, help_long: String?, choices: Choices, requires: Array[String], var: bool, global: bool) -> instance
+                | (String name, Array[String] short, Array[String] long, String? value, String? help, String? help_long, Choices choices, Array[String] requires, bool var, bool global) -> instance
 
     # Builds a flag from its parts.
     #
@@ -86,12 +83,11 @@ module Usage
     # - `value`: String or `nil`, the name of the value.
     # - `help`: String or `nil`, the one-line description.
     # - `help_long`: String or `nil`, the longer description.
-    # - `choices`: Array of String, the values it accepts.
-    # - `strict`: bool, whether a value outside the choices is a mistake.
+    # - `choices`: `Usage::Choices`, the values it offers.
     # - `requires`: Array of String, the switches that must come with it.
     # - `var`: bool, whether it repeats.
     # - `global`: bool, whether it works on every command under its own.
-    def initialize: (name: String, short: Array[String], long: Array[String], value: String?, help: String?, help_long: String?, choices: Array[String], strict: bool, requires: Array[String], var: bool, global: bool) -> void
+    def initialize: (name: String, short: Array[String], long: Array[String], value: String?, help: String?, help_long: String?, choices: Choices, requires: Array[String], var: bool, global: bool) -> void
 
     # Reads a flag from its object in the spec's JSON, and raises `Usage::SpecError` when it uses anything the gem
     # doesn't act on, such as a count, a default, or a value that may be left out.
@@ -105,7 +101,7 @@ module Usage
     # ```
     def self.read: (object object, String parent) -> Flag
 
-    private def self.valued: (Reader reader, String where) -> { value: String?, choices: Array[String], strict: bool, var: bool }
+    private def self.valued: (Reader reader, String where) -> { value: String?, choices: Choices, var: bool }
 
     # Whether the flag may repeat, each time adding a value.
     #
@@ -120,13 +116,6 @@ module Usage
     # due.global? # => false
     # ```
     def global?: () -> bool
-
-    # Whether a value outside the choices is a mistake.
-    #
-    # ```ruby
-    # due.strict? # => true
-    # ```
-    def strict?: () -> bool
 
     # Whether the flag takes a value, as `--due friday` does.
     #

@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative("usage/arg")
+require_relative("usage/choices")
 require_relative("usage/command")
 require_relative("usage/command_page")
 require_relative("usage/command_tree")

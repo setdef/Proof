@@ -84,7 +84,7 @@ module CommandLineContract
     end
 
     private def flag_cases(command, base, flag)
-      value = flag.choices.first || "v"
+      value = flag.choices.values.first || "v"
       cases = flag.switches.flat_map { |switch| switch_cases(command, base, flag, switch, value) }
       cases += flag.requires.map { |required| [*base, flag.switches.last, *(value if flag.takes_value?), required] }
       cases + abbreviations(base, flag, value)
@@ -99,7 +99,7 @@ module CommandLineContract
     end
 
     private def choices_cut(base, flag)
-      flag.choices.map { |choice| [*base, flag.switches.last, front(choice)] }
+      flag.choices.values.map { |choice| [*base, flag.switches.last, front(choice)] }
     end
 
     private def switch_cases(command, base, flag, switch, value)
@@ -108,7 +108,7 @@ module CommandLineContract
       ahead = [*given, *base]
       return [[*base, switch], before, ahead, [*base, switch, switch]] unless flag.takes_value?
 
-      other = flag.choices[1] || "w"
+      other = flag.choices.values[1] || "w"
       [[*base, switch, value], before, ahead, [*base, switch, value, switch, other], [*base, "#{switch}=#{value}"]] +
         [[*base, switch], [*base, switch, "-x"], [*base, switch, "bogus"]]
     end

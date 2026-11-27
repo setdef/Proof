@@ -41,7 +41,7 @@ class UsageSpecRefusalTest < Minitest::Test
   def test_strict_choices_are_true_or_false
     flag = '"arg": {"name": "x", "choices": {"choices": ["a"], "strict": %s}}'
 
-    assert_predicate(read(with_flag(flag % "true")).commands.root.flags.first, :strict?)
+    assert_predicate(read(with_flag(flag % "true")).commands.root.flags.first&.choices, :strict?)
     assert_equal(
       "flag v of the program, in arg, in choices sets strict to \"no\", which usage-rb doesn't support",
       refusal(with_flag(flag % '"no"'))

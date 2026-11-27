@@ -1,0 +1,59 @@
+module Usage
+  # The values a flag offers, and whether it takes others.
+  #
+  # A flag such as `--sort` takes one of a few words, and a flag such as `--tag` suggests a few and takes any. The
+  # parser checks a word against them and the help lists them, so the two have to read the same values by one rule.
+  #
+  # This class holds the values and whether they are strict, and says whether a word is accepted.
+  #
+  # Use it to check a flag's value and to list what a flag takes.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # sort = Usage::Choices.new(values: ["due", "added"], strict: true)
+  # [sort.accepts?("due"), sort.accepts?("size")] # => [true, false]
+  # tag = Usage::Choices.new(values: ["home", "work"], strict: false)
+  # tag.accepts?("garden") # => true
+  # ```
+  #
+  # With no values there is nothing to check, so every word is accepted:
+  #
+  # ```ruby
+  # Usage::Choices.new(values: [], strict: true).accepts?("anything") # => true
+  # ```
+  class Choices < Data
+    # The values, in the spec's order, or an empty list when the flag takes any word.
+    attr_reader values: Array[String]
+
+    # Whether a word outside `values` is a mistake.
+    attr_reader strict: bool
+
+    def self.new: (values: Array[String], strict: bool) -> instance
+                | (Array[String] values, bool strict) -> instance
+
+    # Builds choices from their parts.
+    #
+    # - `values`: Array of String, the values offered.
+    # - `strict`: bool, whether a word outside them is a mistake.
+    def initialize: (values: Array[String], strict: bool) -> void
+
+    # Whether a word outside the values is a mistake.
+    #
+    # ```ruby
+    # [sort.strict?, tag.strict?] # => [true, false]
+    # ```
+    def strict?: () -> bool
+
+    # Whether `word` is accepted: one of the values when they are strict, and any word when they aren't or when there
+    # are none.
+    #
+    # - `word`: String, as typed.
+    #
+    # ```ruby
+    # [sort.accepts?("added"), tag.accepts?("work")] # => [true, true]
+    # ```
+    def accepts?: (String word) -> bool
+  end
+end
