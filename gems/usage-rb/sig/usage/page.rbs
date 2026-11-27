@@ -1,6 +1,6 @@
 module Usage
-  # The help of the program: the sections every help has, in order, with the program's own texts, its commands,
-  # its exit statuses, and the spec's closing text.
+  # One page of help: the sections every help has, in order. Each kind of page, the program's or a command's, gives
+  # the texts that open it, its examples, and the sections that end it.
   class Page
     @spec: Spec
     @command: Command
@@ -16,18 +16,28 @@ module Usage
 
     private
 
+    attr_reader spec: Spec
+
     attr_reader command: Command
 
     def title: () -> String?
 
     def usage: () -> String
 
+    def words: () -> Array[String]
+
+    def subcommand: () -> String?
+
+    # The one-line description after the title.
     def about: () -> String
 
+    # The longer description under the title, or `nil`.
     def description: () -> String?
 
+    # The examples after the usage line.
     def examples: () -> Array[Example]
 
+    # The sections after the tables, each `nil` when it has nothing in it.
     def ending: () -> Array[String?]
   end
 end

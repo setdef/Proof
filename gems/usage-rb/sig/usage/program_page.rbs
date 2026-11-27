@@ -1,0 +1,14 @@
+module Usage
+  # The help of the program: its texts and its commands, then its exit statuses and the spec's closing text.
+  class ProgramPage < Page
+    private
+
+    def about: () -> String
+
+    def description: () -> String?
+
+    def examples: () -> Array[Example]
+
+    def ending: () -> Array[String?]
+  end
+end

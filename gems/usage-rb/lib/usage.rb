@@ -12,6 +12,7 @@ require_relative("usage/help")
 require_relative("usage/keys")
 require_relative("usage/layout")
 require_relative("usage/page")
+require_relative("usage/program_page")
 require_relative("usage/reader")
 require_relative("usage/rows")
 require_relative("usage/spec")
@@ -20,5 +21,5 @@ require_relative("usage/tables")
 require_relative("usage/version")
 
 module Usage
-  private_constant(:CommandPage, :Keys, :Layout, :Page, :Reader, :Rows, :Tables)
+  private_constant(:CommandPage, :Keys, :Layout, :Page, :ProgramPage, :Reader, :Rows, :Tables)
 end
