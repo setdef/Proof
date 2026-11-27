@@ -9,9 +9,5 @@ module Usage
 
     # Each table, or `nil` for one with no rows. The program's subcommands are titled as its commands.
     def all: () -> Array[String?]
-
-    private
-
-    def commands: () -> String?
   end
 end

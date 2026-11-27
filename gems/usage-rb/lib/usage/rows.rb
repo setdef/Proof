@@ -10,6 +10,14 @@ module Usage
       ["Examples:", *lines].join("\n") unless lines.empty?
     end
 
+    def self.commands(title, list)
+      Layout.table(title, list.map { |command| [command.name, command.help.to_s] })
+    end
+
+    def self.arguments(list)
+      Layout.table("Arguments:", list.map { |arg| [arg.to_s, arg.help.to_s] })
+    end
+
     def self.flags(title, list)
       Layout.table(title, list.map { |flag| [label(flag), text(flag)] })
     end
