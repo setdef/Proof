@@ -96,6 +96,8 @@ To uninstall Proof from a computer, run `proof runner uninstall` or `proof serve
 
 Open an issue at [github.com/setdef/Proof/issues](https://github.com/setdef/Proof/issues). Include the output of `proof status`, the run's ID, and `proof logs RUN_ID` for the run that went wrong. When Proof hits an error it can't explain, it saves a debug log under `~/.local/state/proof/` and prints a link to a new issue with the details filled in.
 
+Report a security problem privately, as [SECURITY.md](SECURITY.md) says, never in the issue tracker.
+
 ## Contributing
 
 [CONTRIBUTING.md](CONTRIBUTING.md) says how to build Proof, run its tests, and propose a change.
