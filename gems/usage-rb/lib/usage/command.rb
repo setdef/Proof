@@ -83,7 +83,7 @@ module Usage
       {
         path: reader.texts(:full_cmd),
         args: reader.parts(:args, ArgFormat),
-        flags: reader.parts(:flags, Flag),
+        flags: reader.parts(:flags, FlagFormat),
         groups: reader.parts(:groups, GroupFormat),
         examples: reader.parts(:examples, ExampleFormat),
         subcommands: reader.members(:subcommands).map { |child| read(child) },

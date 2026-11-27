@@ -4,7 +4,7 @@ module Usage
   # The parser and the help both ask what a flag is called, whether it takes a value, which values it accepts, and
   # what it needs beside it. Asked of the JSON each time, the answers would differ wherever a key is left out.
   #
-  # This class holds those answers, with usage's default for each key the JSON leaves out.
+  # This class holds those answers, each as the spec gives it or as usage's default.
   #
   # Use it to list a command's switches and to check a value against a flag's choices.
   #
@@ -12,10 +12,14 @@ module Usage
   #
   # ```ruby
   # require "usage"
-  # due = Usage::Flag.read(
-  #   { name: "due", short: ["d"], long: ["due"], arg: { name: "date" } },
-  #   "command add"
-  # )
+  # spec = Usage::Spec.read(<<~JSON)
+  #   {"cmd": {"flags": [
+  #     {"name": "due", "short": ["d"], "long": ["due"], "arg": {"name": "date"}},
+  #     {"name": "tag", "long": ["tag"], "var": true,
+  #      "arg": {"name": "tag", "choices": {"choices": ["home", "work"], "strict": false}}},
+  #     {"name": "sort", "long": ["sort"], "arg": {"name": "key", "choices": {"choices": ["due", "added"]}}}]}}
+  # JSON
+  # due, tag, sort = spec.commands.root.flags
   # due.switches # => ["-d", "--due"]
   # due.value # => "date"
   # due.takes_value? # => true
@@ -24,24 +28,9 @@ module Usage
   # A flag can limit its value to choices, and accept others when the choices aren't strict:
   #
   # ```ruby
-  # tag = Usage::Flag.read(
-  #   { name: "tag", long: ["tag"], var: true,
-  #     arg: { name: "tag", choices: { choices: ["home", "work"], strict: false } } },
-  #   "command add"
-  # )
   # [tag.choices.values, tag.choices.strict?, tag.repeatable?] # => [["home", "work"], false, true]
   # ```
   class Flag < Data
-    # The keys of a flag's object that the gem accepts. A hidden flag isn't supported.
-    KEYS: keys
-
-    # The keys of the object that describes a flag's value. A value that may be left out, or one with other rules for
-    # `--`, isn't supported.
-    VALUE_KEYS: keys
-
-    # The keys of the object that lists a value's choices. `strict` is `true` or `false`.
-    CHOICE_KEYS: keys
-
     # The flag's name in the spec, such as `"dry-run"`.
     attr_reader name: String
 
@@ -89,20 +78,6 @@ module Usage
     # - `global`: bool, whether it works on every command under its own.
     def initialize: (name: String, short: Array[String], long: Array[String], value: String?, help: String?, help_long: String?, choices: Choices, requires: Array[String], repeatable: bool, global: bool) -> void
 
-    # Reads a flag from its object in the spec's JSON, and raises `Usage::SpecError` when it uses anything the gem
-    # doesn't act on, such as a count, a default, or a value that may be left out.
-    #
-    # - `object`: Hash, one entry of a command's `flags`.
-    # - `parent`: String, the place of its command or program, for the message of an error, such as `"command add"`.
-    #
-    # ```ruby
-    # # Wrong: raises Usage::SpecError
-    # Usage::Flag.read({ name: "color", long: ["color"], negate: "--no-color" }, "the program")
-    # ```
-    def self.read: (object object, String parent) -> Flag
-
-    private def self.valued: (Reader reader, String where) -> { value: String?, choices: Choices, repeatable: bool }
-
     # Whether the flag may repeat, each time adding a value.
     #
     # ```ruby
@@ -130,10 +105,6 @@ module Usage
     # - `word`: String, the value as typed.
     #
     # ```ruby
-    # sort = Usage::Flag.read(
-    #   { name: "sort", long: ["sort"], arg: { name: "key", choices: { choices: ["due", "added"] } } },
-    #   "command list"
-    # )
     # [sort.accepts?("due"), sort.accepts?("size")] # => [true, false]
     # [tag.accepts?("home"), tag.accepts?("garden")] # => [true, true]
     # due.accepts?("friday") # => true

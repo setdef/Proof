@@ -56,7 +56,8 @@ class UsageSpecPartsTest < Minitest::Test
 
   # `help` and `help_long` are a flag's texts.
   def test_a_flag_has_its_descriptions
-    flag = Usage::Flag.read({ name: "x", long: ["x"], help: "One line", help_long: "More" }, "here")
+    flags = read('{"cmd": {"flags": [{"name": "x", "long": ["x"], "help": "One line", "help_long": "More"}]}}')
+    flag = flags.commands.root.flags.first || flunk
 
     assert_equal(["One line", "More"], [flag.help, flag.help_long])
   end

@@ -11,6 +11,7 @@ require_relative("usage/example_format")
 require_relative("usage/exit_code")
 require_relative("usage/exit_code_format")
 require_relative("usage/flag")
+require_relative("usage/flag_format")
 require_relative("usage/group")
 require_relative("usage/group_format")
 require_relative("usage/help")
@@ -31,6 +32,7 @@ module Usage
     :CommandPage,
     :ExampleFormat,
     :ExitCodeFormat,
+    :FlagFormat,
     :GroupFormat,
     :Keys,
     :Layout,
