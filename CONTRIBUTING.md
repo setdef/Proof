@@ -105,7 +105,7 @@ Proof runs other people's tests and builds on other people's computers, so treat
 - Never call `Marshal.load` or `YAML.unsafe_load` on data from outside the process.
 - Never develop or test on a pool people use. Use virtual machines. Prove what a virtual machine can't show, such as a real GPU or a Windows desktop, on one real host only, in a window its owner agreed to beforehand.
 - Use root only inside a disposable virtual machine. Never hand a person a root command that hasn't run there.
-- Commits, issues, comments, docs, and code hold only what anyone could find in public sources. Never put in them anyone's computer or account names, private paths, pool records, or anything said in a private conversation, and never quote a person from one. An ADR lists its deciders by role, with links to the public issues.
+- Commits, issues, comments, docs, and code contain only what anyone could find in public sources. Never put in them anyone's computer or account names, private paths, pool records, or anything said in a private conversation, and never quote a person from one. An ADR lists its deciders by role, with links to the public issues.
 
 ## Quality gates
 
@@ -125,11 +125,11 @@ Ask the maintainer before you change any of these:
 
 ## Copyright and licenses
 
-The project follows the [REUSE Specification](https://reuse.software/spec-3.3/). SPDX headers in files are only for content under a copyleft or share-alike license. Snippet comments are used for ported code, complying with their license. Examples in documentation also use Snippet comments, MIT-0. `REUSE.toml` holds the license information for content under a permissive or public-domain license. The project's own files are MIT for code and configuration and CC-BY-4.0 for documentation, both permissive, so they have no SPDX headers; `REUSE.toml` covers them.
+The project follows the [REUSE Specification](https://reuse.software/spec-3.3/). SPDX headers in files are only for content under a copyleft or share-alike license. Ported code goes between snippet comments, as its license requires. Examples in documentation also use Snippet comments, MIT-0. `REUSE.toml` contains the license information for content under a permissive or public-domain license. The project's own files are MIT for code and configuration and CC-BY-4.0 for documentation, both permissive, so they have no SPDX headers; `REUSE.toml` covers them.
 
-A file under a copyleft or share-alike license must not be copied from elsewhere without permission from the maintainer. An approved copyleft or share-alike file, or a file copied under a permissive or public-domain license, has that license in its own SPDX header, and the license's text goes in `LICENSES/`. Run `reuse lint` before you push when copying or porting code.
+A file under a copyleft or share-alike license must not be copied from elsewhere without permission from the maintainer. An approved copyleft or share-alike file, or a file copied under a permissive or public-domain license, has that license in its SPDX header, and the license's text goes in `LICENSES/`. Run `reuse lint` before you push when copying or porting code.
 
-Code ported from another project (an algorithm translated into Ruby, a table, a regex, etc.), as opposed to code only inspired by it, goes between `# SPDX-SnippetBegin` and `# SPDX-SnippetEnd` comments in its file. Inside them, give the upstream license as `SPDX-License-Identifier`, the upstream copyright as `SPDX-SnippetCopyrightText`, and an `SPDX-SnippetComment` that names the upstream project and file and says what the port changed. `reuse lint` must still pass.
+Code ported from another project (an algorithm translated into Ruby, a table, a regex, etc.), as opposed to code only inspired by it, goes between `# SPDX-SnippetBegin` and `# SPDX-SnippetEnd` comments in its file. Inside them, give the upstream license as `SPDX-License-Identifier`, the upstream copyright as `SPDX-SnippetCopyrightText`, and an `SPDX-SnippetComment` that gives the upstream project's name and file and says what the port changed. `reuse lint` must still pass.
 
 ## Miscellaneous
 
