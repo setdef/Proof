@@ -16,31 +16,32 @@ module Usage
       [
         title,
         Layout.paragraphs(description, WIDTH),
-        usage,
+        UsageLine.new(words:, command:).to_s,
         Lists.examples(examples),
-        *Tables.new(@command, @spec.commands.global_flags(@command.path)).all,
+        *tables,
         *ending,
       ]
     end
 
     # Each kind of page reads the spec and the command through these readers, and gives its own about, description,
-    # examples, and ending.
+    # examples, title for the table of commands, and ending.
     private(attr_reader(:spec, :command))
 
     private def title
       Layout.paragraphs("#{words.join(' ')} - #{about}", WIDTH)
     end
 
-    private def usage
-      "Usage: #{[*words, '[FLAGS]', subcommand, *@command.args.map(&:to_s)].compact.join(' ')}"
+    private def tables
+      [
+        Lists.commands(commands_title, command.subcommands),
+        Lists.arguments(command.args),
+        Lists.flags("Flags:", command.own_flags),
+        Lists.flags("Global flags:", spec.commands.global_flags(command.path)),
+      ]
     end
 
     private def words
-      [@spec.bin, *@command.path]
-    end
-
-    private def subcommand
-      (@command.subcommand_required? ? "<SUBCOMMAND>" : "[COMMAND]") unless @command.subcommands.empty?
+      [spec.bin, *command.path]
     end
   end
 end

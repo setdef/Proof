@@ -16,6 +16,10 @@ module Usage
       spec.examples
     end
 
+    private def commands_title
+      "Commands:"
+    end
+
     private def ending
       [Lists.exit_statuses(spec.exit_codes), spec.after_help]
     end

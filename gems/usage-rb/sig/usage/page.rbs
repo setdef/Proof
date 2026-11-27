@@ -1,6 +1,6 @@
 module Usage
   # One page of help: the sections every help has, in order. Each kind of page, the program's or a command's, gives
-  # the texts that open it, its examples, and the sections that end it.
+  # the texts that open it, its examples, the title of its table of commands, and the sections that end it.
   class Page
     @spec: Spec
     @command: Command
@@ -22,11 +22,9 @@ module Usage
 
     def title: () -> String?
 
-    def usage: () -> String
+    def tables: () -> Array[String?]
 
     def words: () -> Array[String]
-
-    def subcommand: () -> String?
 
     # The one-line description after the title.
     def about: () -> String
@@ -36,6 +34,9 @@ module Usage
 
     # The examples after the usage line.
     def examples: () -> Array[Example]
+
+    # The title of the table of the command's subcommands. The program's subcommands are its commands.
+    def commands_title: () -> String
 
     # The sections after the tables, each `nil` when it has nothing in it.
     def ending: () -> Array[String?]

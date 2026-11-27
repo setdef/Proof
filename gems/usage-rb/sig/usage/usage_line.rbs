@@ -1,0 +1,24 @@
+module Usage
+  # The usage line of one page of help: the words that run the command, `[FLAGS]`, the subcommand it takes, and its
+  # arguments, such as `Usage: todo add [FLAGS] [text]`.
+  class UsageLine < Data
+    # The program's name and the command's path, as typed, such as `["todo", "add"]`.
+    attr_reader words: Array[String]
+
+    # The command the line is for.
+    attr_reader command: Command
+
+    def self.new: (words: Array[String], command: Command) -> instance
+                | (Array[String] words, Command command) -> instance
+
+    # Takes the words that run the command, and the command.
+    def initialize: (words: Array[String], command: Command) -> void
+
+    # The line, starting with `Usage:`.
+    def to_s: () -> String
+
+    private
+
+    def subcommand: () -> String?
+  end
+end

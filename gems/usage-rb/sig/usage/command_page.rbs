@@ -10,6 +10,8 @@ module Usage
 
     def examples: () -> Array[Example]
 
+    def commands_title: () -> String
+
     def ending: () -> Array[String?]
   end
 end

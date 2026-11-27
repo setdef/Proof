@@ -17,9 +17,9 @@ require_relative("usage/program_page")
 require_relative("usage/reader")
 require_relative("usage/spec")
 require_relative("usage/spec_error")
-require_relative("usage/tables")
+require_relative("usage/usage_line")
 require_relative("usage/version")
 
 module Usage
-  private_constant(:CommandPage, :Keys, :Layout, :Lists, :Page, :ProgramPage, :Reader, :Tables)
+  private_constant(:CommandPage, :Keys, :Layout, :Lists, :Page, :ProgramPage, :Reader, :UsageLine)
 end

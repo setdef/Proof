@@ -16,6 +16,10 @@ module Usage
       command.examples
     end
 
+    private def commands_title
+      "Subcommands:"
+    end
+
     private def ending
       []
     end
