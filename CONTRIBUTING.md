@@ -1,64 +1,143 @@
-# Contributing
+<!-- ONLY HUMANS MAY EDIT THIS FILE! -->
 
-This page shows how to set up a computer to work on Proof, run the checks a change has to pass, and regenerate the CLI reference when you change the CLI. It is for people who change Proof's code or docs; to use Proof on a project, start with the [README](README.md).
+# Working on Proof
 
-[AGENTS.md](AGENTS.md) holds the rules every change follows, whether a person or a coding agent writes it: what Proof is for, the decisions not to work against, and the standards for Ruby, tests, and commits. Read it before your first change.
+These are the working rules for everyone who changes this repository: people, and the AI agents they run. They are the project's shared rules, so they apply to every contributor, humans and AI agents alike.
 
-## Set up
+## The Tao of Proof
 
-Proof is developed on the Ruby that Fledge's apps carry, which [mise](https://mise.jdx.dev/) installs from `mise.toml` along with the other tools the checks use. The checks run on Linux and macOS; Windows isn't set up yet.
+Proof serves three values. Never serve one by spending another.
 
-1. Install [mise](https://mise.jdx.dev/getting-started.html).
-2. From a clone of the repository, install the tools, then the gems:
+1. Get the work off the computer the developer works at: no hammered CPU or memory, no windows on their screen.
+2. Run the work where the developer can't: other operating systems, GPUs, desktops, emulators, Simulators.
+3. Be CI for trunk-based development, before and after the push, answering sooner than pushing and polling would.
 
-   ```console
-   $ mise install
-   $ bundle install
-   ```
+- Leave every host usable by the person working or gaming at it.
+- Never report a pass that didn't happen.
 
-   `mise install` installs Ruby 4.1.0-preview1 and the other tools `mise.toml` pins. If your shell doesn't activate mise, run each command through `mise exec --`, as in `mise exec -- bundle install`.
+Why these pull against each other, and how Proof balances them, is in [How Proof works](docs/how-proof-works.md#three-values-in-balance).
 
-## Run the checks
+## What the project is
 
-Run all of them before every push, with `BUNDLE_PATH` set to a folder outside the repository, where RuboCop and REUSE won't read the gems:
+Proof runs a project's tests and builds on the developer's spare computers, from the working tree or any commit. It sends the project from the computer the developer works on to their other Linux, Windows, and macOS computers, which Proof calls hosts, runs the work there, streams its output back, and exits with its status.
+
+## Committing to the trunk
+
+The project practices trunk-based development.
+
+- **Run the gate** with `BUNDLE_PATH` set to a folder outside the repository: `bin/ci`.
+- **Check code or tests that behave differently on Windows, on Windows.** This covers anything that reads `File::ALT_SEPARATOR` or `Gem.win_platform?`, and anything that depends on paths, line endings, `fork`, or signals.
+- **Check a change to `.github/workflows/*.yml`** by loading the file with `YAML.safe_load_file` and running each changed `run:` string exactly as YAML parsed it.
+- **When the push is refused because `trunk` moved,** read the diff, rebase, run the gate again if risky, and push again. Read the diff every time, even when the incoming commit messages look unrelated: two changes can rebase cleanly and still break each other.
+- **After you push, wait for nothing.** Don't watch a CI/Proof run or poll for its result. Check work before the push, not after it.
+- **Keep every push releasable.** When a goal takes several commits, hide the unfinished code behind a feature flag or build it by branch by abstraction, and land it in slices.
+- **Every agent pushes the commits it wrote immediately.** Nobody collects other agents' commits to land them, nobody sets a landing order or asks others to stop pushing, and nobody keeps working with gate-passing unpushed commits.
+- **Fix or quarantine a flaky test right away,** recording the reason, instead of rerunning it until it passes. Never delete or disable a test to make the build faster.
+- **Review on origin.** Review never blocks a push that passes the gate, because follow-up commits and reverts handle feedback.
+
+## Spikes
+
+A spike, prototype, or probe is throwaway code. It never reaches `trunk`, and nobody pushes it anywhere else either, except a probe that needs CI's runners, which may go on a throwaway branch if needed. When it's done and you've [written things down](#writing-things-down) delete the spike. Write production code afresh after the decision, and never grow it from a spike.
+
+## Commit messages
+
+Write every commit message in the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) format: `<type>(<scope>): <description>`, or `<type>: <description>` with no scope.
+
+- The type is one of `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`, or `revert`, in lowercase.
+- The scope is optional. It is the part of the code the change affects, in lowercase.
+- The description is a short summary in the imperative mood ("add", not "added" or "adds"), with no period at the end.
+- A body, after a blank line, explains why this implementation was chosen over others. It never re-states the diff or explains anything obvious from reading the patch.
+- A breaking change has a `BREAKING CHANGE: <description>` footer.
+- An agent commit has a `Co-authored-by: <model-and-version>` footer.
+
+For example: `feat(cli): add a flag that runs on one host`, or `docs: describe the project file`.
+
+## Writing code
+
+- **Get each fact from its source.** Run the tool, read the current documentation or source, or read a run's result. This matters most for facts that depend on a version, such as a gem's API or how Ruby behaves in a given version, because memory about a dependency goes stale, especially for projects that change often. Never pass on an AI agent's or a tool's claim as fact without checking it, and say which facts you checked and which you didn't.
+- **Reuse before you build.** The project carries as little code as it can. Before you write a parser, protocol, server, format reader, cryptographic primitive, or anything else of that kind, look for reliable code that already exists: the Ruby standard library first, then Ruby's bundled gems, then gems that are maintained, documented, and tested. Code written for this repository in place of a library needs the same written reason that a new dependency does.
+- **Code is a liability.** The more code the project carries, the more can go wrong and the harder it is to maintain.
+- **Improve software design** according to the Boy Scout Rule, with refactorings in separate commits before implementation. Make the change easy (warning: this may be hard), then make the easy change.
+- **TDD tests every change in behavior.** Confirm that each new test fails without the change: a test that passes either way proves nothing. Tests never reach the internet; use local fakes.
+- **Update the user documentation** in the same commit as a change to anything users see. Watch your prose style, and follow [the style guide](docs/contributors/style-guide.md). A change to the CLI, or to what agents should do, changes `skills/proof/` in the same commit.
+- **Write the doc comment** for every public class, module, constant, and method in the matching `.rbs` declaration in `sig/`, following [the documentation style guide](docs/contributors/documentation_style.md). A comment directly above a `def`, `class`, or `module` in `lib/` would be RDoc documentation, which doesn't go in `.rb` files. Don't leave commented-out code, history notes, or decorative divider comments in the source.
+- **Comment why, not what.** Rename a variable or extract a method instead of explaining unclear code. Write a comment for a reason the code can't show, such as a constraint from outside the project or the choice of an algorithm. Therefore, `.rb` files should have very few comments.
+
+## Writing things down
+
+### Glossary
+
+Use [the glossary](docs/glossary.md)'s words, in code as in prose; a new idea gets a glossary entry before it gets a name.
+
+### When and Where
+
+Record these where the next contributor will find it. (What lives only in a chat, or on one machine, gets lost.) Write each thing in its axis's home, and nowhere else:
+
+| Axis | As it is | As it will be |
+| - | - | - |
+| Requirements: what the software does for its users | User documentation† | Issues |
+| Contract: what a caller can rely on | Doc comments; the changelog, for changes over time | Issues |
+| Architecture: the few decisions the structure rests on | Accepted ADRs | Proposed ADRs |
+| Design: how each part works, and why | Design documents | Nowhere |
+| Behavior: what the code does | Tests | Nowhere |
+| Facts that constrain the design | The design document or ADR they constrain; until that exists, the issue whose work they constrain | Nowhere |
+
+- **Decide a design at the last responsible moment,** while building it, with the facts in hand, then record it as it is. Never write a design, or a behavior, ahead of the code, in an issue or anywhere else.
+- **A design document explains a part to the people who change it:** its concepts, how its pieces fit, why it is shaped this way, its traps, and what it deliberately doesn't do. It doesn't restate the code: no fields, option types, step-by-step restatements of the code, or private call graphs.
+- **Change a design document when a design decision changes,** never because behavior did. The two vary independently.
+- **A doc comment describes the contract from the caller's side,** never how the code does the work inside.
+- **Check a fact at its source before anything rests on it,** on the platform it's about. A decision that rests on an unchecked fact waits.
+- **Record a fact found before its design exists as a fact, not a decision:** what was spiked or checked, how, on which platform and version, and the result. It waits in the issue whose work it constrains. When the design or architecture is decided, the relevant facts go in that design document or ADR.
+- **Issues may represent proposed or accepted** requirements or contracts, and an issue that doesn't specify which can't be assumed to have already been accepted or denied.
+- **`CHANGELOG.md` follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow [Semantic Versioning](https://semver.org/).** It lists only what changes for the people who use the project: new commands, flags, and public APIs; behavior they can observe; deprecations; removals; and breaking changes. Write each entry for them, never as a restatement of a diff or a commit message. Tests, documentation, refactorings, examples, tooling, CI, and style changes stay out. New entries go under Unreleased, which covers the time since the last tag, so a commit that undoes an earlier unreleased change removes its entry. Once a release's section is dated, never edit it.
+- † **In a project being built under README-Driven Development,** the user documentation is written ahead of the code, as its requirements. Everywhere else, it describes only what the software does today.
+- **Proof is built under README-Driven Development,** so its user documentation is its requirements. When the code and the docs disagree, change the code, or change both in one commit and say why.
+
+## Security
+
+Proof runs other people's tests and builds on other people's computers, so treat every path, setting, and line of output that comes from them as untrusted input.
+
+- Start a subprocess with an array of arguments, never a single string a shell would parse.
+- Build file paths from parts with `File.join` or `Pathname`, and check that a path built from outside input stays inside the directory you meant it for.
+- Never hardcode a secret, such as an API key. Take a secret from a file or standard input, never from a flag or an environment variable: the system shows every process's arguments to other users in its process listing, and every child process inherits the environment. Never print a secret.
+- Before every network request, have the program say on standard error what it is about to do, and give the request a time limit, so that no command waits on the network in silence or forever.
+- A run's code runs with the rights of an account that isn't root. Never widen what it can reach.
+- Never call `Marshal.load` or `YAML.unsafe_load` on data from outside the process.
+- Never develop or test on a pool people use. Use virtual machines. Prove what a virtual machine can't show, such as a real GPU or a Windows desktop, on one real host only, in a window its owner agreed to beforehand.
+- Use root only inside a disposable virtual machine. Never hand a person a root command that hasn't run there.
+- Commits, issues, comments, docs, and code hold only what anyone could find in public sources. Never put in them anyone's computer or account names, private paths, pool records, or anything said in a private conversation, and never quote a person from one. An ADR lists its deciders by role, with links to the public issues.
+
+## Quality gates
+
+`bundle exec rake` runs the quality gates: the tests, RuboCop, Steep, RubyCritic, `reuse lint`, RDoc coverage, `docs:placement` (which fails on a doc comment in a `.rb` file), the Ruby examples in the documentation, and the CLI spec's checks. Every change has to pass all of them, with zero errors and zero warnings. Their thresholds only ever go up. When a change fails a gate, fix the change; never lower a threshold, turn off a check, or exclude code to get it through.
+
+Coverage is 100% for each file, on every system CI tests. A test skipped on one system can drop that system's branch coverage below 100% and turn its job red, even though every test passes. Never skip a test on one system to make it pass. Pass the system-dependent value in, such as a path separator or a platform flag, so the test runs everywhere.
+
+When a gate (a RubyCritic score, a Reek smell, a RuboCop length limit) pushes the design, it's actually pushing you to remember OOA&D & OOP best practices. They properly flag bad code, but their suggestions are naive. Don't game them or comply naively; take responsibility for the object design improving over time.
+
+### What the maintainer decides
+
+Ask the maintainer before you change any of these:
+
+- product scope
+- licensing
+- significant changes to UX/DX (commands, flags, environment variables, file formats, etc).
+
+## Copyright and licenses
+
+The project follows the [REUSE Specification](https://reuse.software/spec-3.3/). SPDX headers in files are only for content under a copyleft or share-alike license. Snippet comments are used for ported code, complying with their license. Examples in documentation also use Snippet comments, MIT-0. `REUSE.toml` holds the license information for content under a permissive or public-domain license. The project's own files are MIT for code and configuration and CC-BY-4.0 for documentation, both permissive, so they have no SPDX headers; `REUSE.toml` covers them.
+
+A file under a copyleft or share-alike license must not be copied from elsewhere without permission from the maintainer. An approved copyleft or share-alike file, or a file copied under a permissive or public-domain license, has that license in its own SPDX header, and the license's text goes in `LICENSES/`. Run `reuse lint` before you push when copying or porting code.
+
+Code ported from another project (an algorithm translated into Ruby, a table, a regex, etc.), as opposed to code only inspired by it, goes between `# SPDX-SnippetBegin` and `# SPDX-SnippetEnd` comments in its file. Inside them, give the upstream license as `SPDX-License-Identifier`, the upstream copyright as `SPDX-SnippetCopyrightText`, and an `SPDX-SnippetComment` that names the upstream project and file and says what the port changed. `reuse lint` must still pass.
+
+## Miscellaneous
+
+Three files are generated from [`proof.usage.kdl`](proof.usage.kdl): the CLI reference in two pages, `docs/reference/cli.md` and `skills/proof/references/cli.md`, and `lib/proof/command_line/spec.json`, which the command line reads to print help. Never edit them by hand. After changing the spec, lint it and regenerate all three in the same commit:
 
 ```console
-$ BUNDLE_PATH=$HOME/.cache/proof-bundle bin/ci
-```
-
-`bin/ci` refuses a `BUNDLE_PATH` that is unset or inside the repository. It runs `mise exec -- bundle exec rake` at a low priority, with half as many processes as the computer has processors, for the tests and for the documentation examples alike (set `PARALLEL_TEST_PROCESSORS` to change that). Rake starts every check at once and exits 0 when every check passes, with no errors and no warnings. CI runs the same checks with `bundle exec rake` on Linux and macOS for every commit on the trunk. The checks are:
-
-| Check | What fails it |
-| --- | --- |
-| Tests | A failing test, or a line or branch no test runs (SimpleCov's minimum is 100% for each file) |
-| RuboCop | Any offense, with every cop on |
-| Steep | A type error, `untyped` in a `.rbs` file, or a Steep target that fails to load, which leaves its files unchecked |
-| RubyCritic | A file rated below A, a smell (from reek), duplication (from flay), or an overall score below 95. The failure names each file, its rating, and each smell |
-| REUSE | A file that `REUSE.toml` gives no copyright or license |
-| RDoc coverage | A public class, module, constant, or method with no documentation, counting the comments in `sig/**/*.rbs` |
-| Comment placement | A comment in `lib/` directly above a `def`, `class`, or `module`, where RDoc would take it as documentation |
-| Documentation examples | A Ruby example in a Markdown page or an `.rbs` comment that raises, or shows a wrong `# =>` value. The failure shows the file and line |
-| CLI spec | `usage lint` finding a fault, or a file generated from the spec that differs from it |
-
-Run one check while you work: `bundle exec rake -T` lists them with what each one checks. `bundle exec rake lint:fix` corrects the RuboCop offenses it can.
-
-Tests never reach the internet. Use local fakes.
-
-## Regenerate the files made from the CLI spec
-
-Three files are generated from [`proof.usage.kdl`](proof.usage.kdl): the CLI reference in two pages, `doc/reference/cli.md` and `skills/proof/references/cli.md`, and `lib/proof/command_line/spec.json`, which the command line reads to print help. After you change the spec, regenerate all three:
-
-```console
-$ usage generate markdown --file proof.usage.kdl --out-file doc/reference/cli.md
+$ usage lint proof.usage.kdl
+$ usage generate markdown --file proof.usage.kdl --out-file docs/reference/cli.md
 $ usage generate markdown --file proof.usage.kdl --out-file skills/proof/references/cli.md
 $ usage generate json --file proof.usage.kdl > lib/proof/command_line/spec.json
 ```
-
-Never edit these files by hand. If one differs from what the spec generates, `bundle exec rake usage:references` fails and prints these three commands.
-
-## Write the change
-
-- Documentation follows [the style guide](doc/contributors/style-guide.md), and the API documentation in `sig/**/*.rbs` follows [the documentation style guide](doc/contributors/documentation_style.md).
-- Use the words in [the glossary](doc/glossary.md).
-- What Proof builds next, and what 1.0 leaves out, is in [the plan](doc/contributors/plan.md).
-- To propose a change, open an [issue](https://github.com/setdef/Proof/issues) that describes it, or a pull request with the change and its tests.
