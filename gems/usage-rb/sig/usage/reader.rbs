@@ -6,18 +6,18 @@ module Usage
     interface _Part[T]
       # Reads the part from `object`, its object in the spec's JSON, where `parent` is the place of the object above
       # it, such as `"command add"`, for the messages of errors.
-      def read: (object object, String parent) -> T
+      def read: (object object, Place parent) -> T
     end
 
     @object: object
-    @where: String
+    @place: Place
 
     # Takes the object, where it is in the spec for the messages of errors, and the keys the gem accepts there, and
     # raises `Usage::SpecError` for any other key or value. A key whose value is `null` reads as left out.
-    def initialize: (object object, String where, keys keys) -> void
+    def initialize: (object object, Place place, keys keys) -> void
 
-    # The name, as the String under `name` or an empty String, and the one-line and the longer description.
-    def name_and_help: () -> { name: String, help: String?, help_long: String? }
+    # Raises `Usage::SpecError` saying the part this object holds does `what`, which the gem doesn't support.
+    def unsupported: (String what) -> bot
 
     # The String under `key`, or `nil` when it is left out.
     def text: (Symbol key) -> String?
@@ -51,7 +51,5 @@ module Usage
     private
 
     def list: (Symbol key) -> Array[json]
-
-    def refuse: (Symbol key, String form) -> bot
   end
 end

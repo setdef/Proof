@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require_relative("named_format")
+
 module Usage
   module CommandFormat
     KEYS = %w[
@@ -26,19 +28,18 @@ module Usage
     private_constant(:KEYS)
 
     def self.read(object)
-      where = place(object[:full_cmd])
-      reader = Reader.new(object, where, KEYS)
-      command = Command.new(**reader.name_and_help, **parts(reader))
+      reader = Reader.new(object, place(object[:full_cmd]), KEYS)
+      command = Command.new(**NamedFormat.name_and_help(reader), **parts(reader))
       # A word after a command with both would be an argument or a subcommand's name, and usage decides by rules the
       # parser doesn't follow.
-      raise(SpecError, "#{where} has both arguments and subcommands, which usage-rb doesn't support") unless
+      reader.unsupported("has both arguments and subcommands") unless
         command.args.empty? || command.subcommands.empty?
 
       command
     end
 
     def self.place(words)
-      (words.is_a?(Array) && !words.empty?) ? "command #{words.join(' ')}" : "the program"
+      words.is_a?(Array) ? Place.command(words) : Place::PROGRAM
     end
     private_class_method(:place)
 

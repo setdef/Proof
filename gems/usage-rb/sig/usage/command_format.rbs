@@ -10,7 +10,7 @@ module Usage
     # doesn't act on, and when a command has both arguments and subcommands.
     def self.read: (object object) -> Command
 
-    private def self.place: (json words) -> String
+    private def self.place: (json words) -> Place
 
     private def self.parts: (Reader reader) -> { path: Array[String], args: Array[Arg], flags: Array[Flag], groups: Array[Group], examples: Array[Example], subcommands: Array[Command], subcommand_required: bool }
   end

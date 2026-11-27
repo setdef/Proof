@@ -1,0 +1,7 @@
+module Usage
+  # How the spec's JSON names and describes a command, a flag, or an argument, for the formats of the three.
+  module NamedFormat
+    # The name, as the String under `name` or an empty String, and the one-line and the longer description.
+    def self.name_and_help: (Reader reader) -> { name: String, help: String?, help_long: String? }
+  end
+end

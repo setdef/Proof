@@ -6,7 +6,7 @@ module Usage
     private_constant(:KEYS)
 
     def self.read(object, parent)
-      reader = Reader.new(object, "an example of #{parent}", KEYS)
+      reader = Reader.new(object, parent.child("an example"), KEYS)
       Example.new(code: reader.text(:code).to_s, header: reader.text(:header), help: reader.text(:help))
     end
   end

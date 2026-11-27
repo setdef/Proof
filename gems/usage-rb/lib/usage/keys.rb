@@ -4,12 +4,12 @@ require "json"
 
 module Usage
   module Keys
-    def self.check(object, where, keys)
+    def self.check(object, place, keys)
       # A key the reader doesn't know, or a value it can't act on, would change what the spec means if it were
       # skipped, so each is refused by name, and the gem can learn it later without changing what it accepts now.
       object.each do |key, value|
         refusal = refusal(key.to_s, JSON.generate(value), keys)
-        raise(SpecError, "#{where} #{refusal}, which usage-rb doesn't support") if refusal
+        place.unsupported(refusal) if refusal
       end
     end
 

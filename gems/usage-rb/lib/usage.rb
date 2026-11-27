@@ -19,7 +19,9 @@ require_relative("usage/help")
 require_relative("usage/keys")
 require_relative("usage/layout")
 require_relative("usage/lists")
+require_relative("usage/named_format")
 require_relative("usage/page")
+require_relative("usage/place")
 require_relative("usage/program_page")
 require_relative("usage/reader")
 require_relative("usage/spec")
@@ -40,7 +42,9 @@ module Usage
     :Keys,
     :Layout,
     :Lists,
+    :NamedFormat,
     :Page,
+    :Place,
     :ProgramPage,
     :Reader,
     :SpecFormat,

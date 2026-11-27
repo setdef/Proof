@@ -1,0 +1,32 @@
+module Usage
+  # Where a part is in the spec, as an error names it, such as `flag v of command rm`, and the errors that name it.
+  class Place < Data
+    # The program itself, the place of every part that belongs to no command.
+    PROGRAM: Place
+
+    # The place as words, such as `"flag v of command rm"`.
+    attr_reader name: String
+
+    def self.new: (name: String) -> instance
+                | (String name) -> instance
+
+    # Takes the place as words.
+    def initialize: (name: String) -> void
+
+    # The place of the command whose words are `path`, or the program's for an empty path.
+    def self.command: (Array[json] path) -> Place
+
+    # The place of `part`, such as `"flag v"`, among the parts of this place.
+    def child: (String part) -> Place
+
+    # The place of the object under `key` of this place's object.
+    def within: (Symbol key) -> Place
+
+    # Raises `Usage::SpecError` saying the part here does `what`, such as `"repeats with no value"`, which the gem
+    # doesn't support.
+    def unsupported: (String what) -> bot
+
+    # Raises `Usage::SpecError` saying the part here has `key` that isn't `form`, such as `"a string"`.
+    def mistyped: (Symbol key, String form) -> bot
+  end
+end

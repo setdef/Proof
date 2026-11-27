@@ -6,7 +6,7 @@ module Usage
     private_constant(:KEYS)
 
     def self.read(object, parent)
-      reader = Reader.new(object, "an exit code of #{parent}", KEYS)
+      reader = Reader.new(object, parent.child("an exit code"), KEYS)
       ExitCode.new(status: reader.number(:code), help: reader.text(:help).to_s)
     end
   end

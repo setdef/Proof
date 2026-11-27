@@ -14,8 +14,8 @@ module Usage
     # Reads a flag from `object`, one entry of a command's `flags`, where `parent` is the place of its command, such as
     # `"command add"`, and raises `Usage::SpecError` for anything the gem doesn't act on, such as a count, a default,
     # or a value that may be left out.
-    def self.read: (object object, String parent) -> Flag
+    def self.read: (object object, Place parent) -> Flag
 
-    private def self.valued: (Reader reader, String where) -> { value: String?, choices: Choices, repeatable: bool }
+    private def self.valued: (Reader reader) -> { value: String?, choices: Choices, repeatable: bool }
   end
 end

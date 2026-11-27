@@ -6,7 +6,7 @@ module Usage
     private_constant(:KEYS)
 
     def self.read(object, parent)
-      reader = Reader.new(object, "group #{object[:name]} of #{parent}", KEYS)
+      reader = Reader.new(object, parent.child("group #{object[:name]}"), KEYS)
       Group.new(
         name: reader.text(:name).to_s,
         names: reader.texts(:members),

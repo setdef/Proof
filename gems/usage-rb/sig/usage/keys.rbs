@@ -2,7 +2,7 @@ module Usage
   # Checks the keys of one object of the spec's JSON against those the gem accepts for its kind.
   module Keys
     # Raises `Usage::SpecError` for a key of `object` that `keys` doesn't list, or whose value isn't the one it lists.
-    def self.check: (object object, String where, keys keys) -> void
+    def self.check: (object object, Place place, keys keys) -> void
 
     private def self.refusal: (String key, String value, keys keys) -> String?
   end

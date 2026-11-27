@@ -7,6 +7,6 @@ module Usage
 
     # Reads an argument from `object`, one entry of a command's `args`, where `parent` is the place of its command,
     # such as `"command add"`, and raises `Usage::SpecError` for anything the gem doesn't act on.
-    def self.read: (object object, String parent) -> Arg
+    def self.read: (object object, Place parent) -> Arg
   end
 end

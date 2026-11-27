@@ -28,7 +28,7 @@ module Usage
     private_constant(:KEYS, :ENV_KEYS)
 
     def self.read(text)
-      reader = Reader.new(json(text), "the program", KEYS)
+      reader = Reader.new(json(text), Place::PROGRAM, KEYS)
       check_usage_version(reader.text(:min_usage_version))
       Spec.new(**described(reader), **parts(reader), **environment(reader))
     end
@@ -43,7 +43,8 @@ module Usage
 
     def self.check_usage_version(wanted)
       return unless wanted
-      raise(SpecError, "the program has min_usage_version that isn't a version") unless Gem::Version.correct?(wanted)
+
+      Place::PROGRAM.mistyped(:min_usage_version, "a version") unless Gem::Version.correct?(wanted)
       # A newer usage may write keys or values this gem has never seen, and would read differently.
       return if Gem::Version.new(wanted) <= Gem::Version.new(USAGE_VERSION)
 

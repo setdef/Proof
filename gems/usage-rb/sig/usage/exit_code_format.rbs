@@ -6,6 +6,6 @@ module Usage
 
     # Reads an exit status from `object`, one entry of `exit_codes`, where `parent` is the place of the program, and
     # raises `Usage::SpecError` when its code isn't a whole number.
-    def self.read: (object object, String parent) -> ExitCode
+    def self.read: (object object, Place parent) -> ExitCode
   end
 end

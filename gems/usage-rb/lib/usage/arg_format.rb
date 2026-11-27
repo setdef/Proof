@@ -1,13 +1,19 @@
 # frozen_string_literal: true
 
+require_relative("named_format")
+
 module Usage
   module ArgFormat
     KEYS = %w[name usage help help_long help_first_line required var double_dash="Optional" hide=false].freeze
     private_constant(:KEYS)
 
     def self.read(object, parent)
-      reader = Reader.new(object, "argument #{object[:name]} of #{parent}", KEYS)
-      Arg.new(required: reader.boolean(:required), repeatable: reader.boolean(:var), **reader.name_and_help)
+      reader = Reader.new(object, parent.child("argument #{object[:name]}"), KEYS)
+      Arg.new(
+        **NamedFormat.name_and_help(reader),
+        required: reader.boolean(:required),
+        repeatable: reader.boolean(:var)
+      )
     end
   end
 end
