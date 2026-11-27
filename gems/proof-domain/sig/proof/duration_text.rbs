@@ -23,7 +23,7 @@ module Proof
     # - `text`: Object, such as `"90s"`. Any value is accepted, and only a
     #   String in the form gives a number.
     # - `units`: Array of Symbol, the units that count, such as `[:s, :m, :h]`.
-    def self.seconds: (Object text, Array[Symbol] units) -> Integer?
+    def self.seconds: (Object? text, Array[Symbol] units) -> Integer?
 
     private def self.form: (Array[Symbol] units) -> Regexp
   end

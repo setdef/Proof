@@ -71,6 +71,6 @@ module Proof
     # ```ruby
     # Proof::TaskEntry.new(name: "lint:ruby").name # => "lint:ruby"
     # ```
-    def initialize: (name: String, ?command: String?, ?settings: TaskSettings) -> void
+    def initialize: (name: String, ?command: String?, ?settings: Object) -> void
   end
 end

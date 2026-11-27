@@ -72,7 +72,7 @@ module Proof
     # ```ruby
     # Proof::ProjectFile.new(entries: [Proof::TaskEntry.new(name: "test")]).entries.size # => 1
     # ```
-    def initialize: (?defaults: TaskSettings, ?entries: Array[TaskEntry]) -> void
+    def initialize: (?defaults: Object, ?entries: Object) -> void
 
     # The entry with `name`. A name with no entry gets an entry that has that
     # name, no command, and settings that give nothing, because a task with no

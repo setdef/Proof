@@ -52,6 +52,6 @@ module Proof
     #
     # - `settings`: `Proof::TaskSettings`, with no setting `nil`.
     # - `commands`: Hash, task name to command or `nil`.
-    def initialize: (settings: TaskSettings, commands: Hash[String, String?]) -> void
+    def initialize: (settings: Object, commands: Hash[String, String?]) -> void
   end
 end

@@ -28,6 +28,6 @@ module Proof
     #
     # - `text`: Object, such as `"8GB"`. Any value is accepted, and only a
     #   String in the form gives a number.
-    def self.megabytes: (Object text) -> Integer?
+    def self.megabytes: (Object? text) -> Integer?
   end
 end

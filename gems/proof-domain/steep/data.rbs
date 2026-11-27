@@ -1,7 +1,10 @@
 # Steep reads Data#initialize as BasicObject's, which takes no arguments, so a
 # subclass that checks its members and then calls super fails the type check.
-# This says what Data does: each member arrives as a keyword. It sits outside
-# sig/ because RDoc reads sig/, and Data is Ruby's, not Proof's.
+# This says what Data does: each member arrives as a keyword. It also names
+# Data.members, which Steep's copy of Data lacks. It sits outside sig/ because
+# RDoc reads sig/, and Data is Ruby's, not Proof's.
 class Data
+  def self.members: () -> Array[Symbol]
+
   def initialize: (**top) -> void
 end

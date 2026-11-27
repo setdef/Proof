@@ -2,7 +2,9 @@
 
 module Proof
   class Run
+    # steep:ignore:start
     module Fact
+      # steep:ignore:end
       def self.count(value, minimum, message)
         return value if value.is_a?(Integer) && value >= minimum
 
@@ -10,7 +12,11 @@ module Proof
       end
 
       def self.name_of(value, message)
-        return -value if MemberCheck.named?(value)
+        # named? has found a String, which Steep can't know.
+        # steep:ignore:start
+        frozen = -value if MemberCheck.named?(value)
+        # steep:ignore:end
+        return frozen if frozen
 
         raise(InvalidFactError, format(message, value))
       end

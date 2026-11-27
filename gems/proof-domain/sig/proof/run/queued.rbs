@@ -67,7 +67,7 @@ module Proof
       # - `os`: an `Array` or `Set` of `Proof::OS`.
       # - `labels`: LabelSet, the labels a runner needs.
       # - `resources`: Resources, the CPUs and memory requested.
-      def initialize: (at: Time, position: Integer, os: Array[OS] | Set[OS], labels: LabelSet, resources: Resources) -> void
+      def initialize: (at: Time, position: Integer, os: Array[OS] | Set[OS], labels: Object, resources: Resources) -> void
 
       private
 

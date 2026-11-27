@@ -80,7 +80,7 @@ module Proof
       #
       # - `at`: Time, from the server's clock, in any zone.
       # - `members`: the fact's other members, by keyword.
-      def initialize: (at: Time, **top members) -> void
+      def initialize: (at: Object, **top members) -> void
     end
   end
 end
