@@ -1,6 +1,6 @@
 # When a run fails or waits
 
-Find out why a run failed, waited, or never started, from what Proof prints, and what to put in an issue when that isn't enough.
+Find out why a run failed, waited, or never started, from what Proof prints, and what to put in a forum topic when that isn't enough.
 
 ## Start with the exit status
 
@@ -21,7 +21,7 @@ With one run, the last line `proof run` prints is the result, and `proof` exits 
 
 With several runs, such as `--os all`, `proof` exits with one status for all of them: [Exit status with several runs](several-operating-systems.md#exit-status-with-several-runs) gives the order.
 
-When `proof` itself fails, it prints no result line, saves a debug log under `~/.local/state/proof/`, and prints a link to a new issue with the details filled in.
+When `proof` itself fails, it prints no result line, saves a debug log under `~/.local/state/proof/`, and prints a link to a new topic in [Proof's forum category](https://forum.setdef.com/c/proof) with the details filled in.
 
 ## Read the whole output
 
@@ -63,9 +63,9 @@ The host's CPUs and memory stay held until its runner reports that the run's pro
 
 Setup checks everything before it changes anything, and stops with a message saying what's missing: an administrator step, a group, a package, a signed-in session. Do what it says, and run setup again. Setup is safe to run any number of times.
 
-## What to put in an issue
+## What to put in a forum topic
 
-Open an issue at [github.com/setdef/Proof/issues](https://github.com/setdef/Proof/issues), with:
+Post a new topic in [Proof's forum category](https://forum.setdef.com/c/proof), with:
 
 - the command you ran, and everything it printed;
 - the output of `proof status`;

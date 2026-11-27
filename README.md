@@ -1,6 +1,6 @@
 # Proof
 
-[![CI](https://github.com/setdef/Proof/actions/workflows/ci.yml/badge.svg?branch=trunk)](https://github.com/setdef/Proof/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/setdef/Proof)](https://github.com/setdef/Proof/releases) [![License](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsetdef%2FProof%2Ftrunk%2Fproof.gemspec&search=spec%5C.license%20%3D%20%22(.*)%22&replace=%241&label=License&color=a2c93e)](https://spdx.org/licenses/MIT.html) [![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-a2c93e)](#compatibility) [![Certified Shovelware](https://justin.searls.co/img/shovelware.svg)](https://justin.searls.co/shovelware/)
+[![CI](https://github.com/setdef/Proof/actions/workflows/ci.yml/badge.svg?branch=trunk)](https://github.com/setdef/Proof/actions/workflows/ci.yml) [![Release](https://img.shields.io/github/v/release/setdef/Proof)](https://github.com/setdef/Proof/releases) [![License](https://img.shields.io/badge/dynamic/regex?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsetdef%2FProof%2Ftrunk%2Fproof.gemspec&search=spec%5C.license%20%3D%20%22(.*)%22&replace=%241&label=License&color=a2c93e)](https://spdx.org/licenses/MIT.html) [![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20Linux%20%7C%20Windows-a2c93e)](#compatibility) [![Forum: Discussion](https://img.shields.io/badge/forum-discussion-5865F2.svg?logo=discourse)](https://forum.setdef.com/tags/c/proof/15/discussion) [![Forum: Bug Reports](https://img.shields.io/badge/forum-bug_reports-4954d5.svg?logo=discourse)](https://forum.setdef.com/tags/c/proof/15/bug) [![Forum: Announcements](https://img.shields.io/badge/forum-announcements-3b44ac.svg?logo=discourse)](https://forum.setdef.com/tags/c/proof/15/announcement) [![Certified Shovelware](https://justin.searls.co/img/shovelware.svg)](https://justin.searls.co/shovelware/)
 
 Run your project's tests and builds on your spare computers, from your working tree or any commit.
 
@@ -94,9 +94,11 @@ To uninstall Proof from a computer, run `proof runner uninstall` or `proof serve
 
 ## Reporting problems
 
-Open an issue at [github.com/setdef/Proof/issues](https://github.com/setdef/Proof/issues). Include the output of `proof status`, the run's ID, and `proof logs RUN_ID` for the run that went wrong. When Proof hits an error it can't explain, it saves a debug log under `~/.local/state/proof/` and prints a link to a new issue with the details filled in.
+Ask questions and report problems on the [Proof forum](https://forum.setdef.com/c/proof). Include the output of `proof status`, the run's ID, and `proof logs RUN_ID` for the run that went wrong. When Proof hits an error it can't explain, it saves a debug log under `~/.local/state/proof/` and prints a link to a new topic in the forum category with the details filled in. GitHub Issues are open to the project's collaborators only.
 
-Report a security problem privately, as [SECURITY.md](SECURITY.md) says, never in the Discussions.
+Report a security problem privately, as [SECURITY.md](SECURITY.md) says, never in the forum category.
+
+To send a patch, post it on the forum, or email it with `git send-email` to `replies+proof@forum.setdef.com`. [git-send-email.io](https://git-send-email.io) shows how to set that up.
 
 ## Contributing
 

@@ -36,4 +36,4 @@ Each guide does one job, from a pool that already has a server and one runner. I
 
 - [Upgrade the pool](upgrade.md): upgrade the server, and let the runners follow.
 - [Remove a runner or the server](remove.md): revoke a runner, uninstall Proof from a computer, and delete what it kept.
-- [When a run fails or waits](troubleshooting.md): read the result line and exit status, find why a run is queued, and what to put in an issue.
+- [When a run fails or waits](troubleshooting.md): read the result line and exit status, find why a run is queued, and what to put in a forum topic.

@@ -69,7 +69,7 @@ The API reference is the RDoc in the `.rbs` files of the `sig` folder.
 
 ## Reporting problems
 
-Report a problem in [Proof's issues](https://github.com/setdef/Proof/issues).
+Report a problem in [Proof's forum category](https://forum.setdef.com/c/proof).
 
 ## License
 

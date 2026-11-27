@@ -2,7 +2,7 @@
 
 In this tutorial, we set up a Proof pool of one server and one Linux runner, and run a project's tests on it from the computer you work on. By the end, you'll have run a task on another host, seen a failing run and what `proof` does with it, and checked a commit apart from your uncommitted changes. It takes about 30 minutes, most of it waiting for downloads.
 
-If you get stuck, [open an issue](https://github.com/setdef/Proof/issues) with the command you ran and everything it printed. Words in bold are defined in the [glossary](glossary.md).
+If you get stuck, [post in Proof's forum category](https://forum.setdef.com/c/proof) with the command you ran and everything it printed. Words in bold are defined in the [glossary](glossary.md).
 
 ## What you need
 
@@ -124,7 +124,7 @@ proof: nuc-linux passed (4s)
 proof: exit=0 runners=1 passed=1 failed=0
 ```
 
-If `proof verify` reports a failure, its message says which step failed and what to do. That message, with the output of `proof status`, is what to put in an issue if it doesn't help.
+If `proof verify` reports a failure, its message says which step failed and what to do. That message, with the output of `proof status`, is what to put in a forum topic if it doesn't help.
 
 From here on, every command runs on `laptop`.
 
