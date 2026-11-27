@@ -6,7 +6,8 @@ module Proof
     public_constant(:ALPHABET)
 
     def self.read(text)
-      return unless text.valid_encoding?
+      # The alphabet is ASCII, and Ruby raises when it compares ASCII with text such as UTF-16, whose bytes differ.
+      return unless text.valid_encoding? && text.encoding.ascii_compatible?
 
       reading = text.downcase(:ascii).tr("oil", "011")
       reading if /\A[0-9a-hjkmnp-tv-z]*\z/.match?(reading)

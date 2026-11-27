@@ -75,6 +75,14 @@ class OneTimeCodeTest < Minitest::Test
     end
   end
 
+  # Text in an encoding whose characters aren't ASCII bytes, such as UTF-16, is refused like any other text that isn't a
+  # code, not with an error about encodings.
+  def test_text_in_an_encoding_that_isnt_ascii_compatible_is_refused
+    ["Q8MR-2T4W".encode("UTF-16LE"), "Q8MR2T4W".encode("UTF-32BE")].each do |text|
+      assert_raises(Proof::InvalidOneTimeCodeError, text.encoding.to_s) { Proof::OneTimeCode.parse(text) }
+    end
+  end
+
   # The constructor reads its characters as the alphabet writes them, and refuses anything but 8 of them.
   def test_the_constructor_reads_the_characters_and_refuses_anything_else
     assert_equal("q8mr2t40", Proof::OneTimeCode.new(characters: "Q8MR2T4O").characters)
