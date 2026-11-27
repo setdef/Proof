@@ -62,6 +62,27 @@ class NameTest < Minitest::Test
     end
   end
 
+  # Glossary, "name": Proof compares the names of hosts, runners, and repositories without regard to case, so `nuc` and
+  # `NUC` are one name.
+  def test_names_that_differ_only_in_case_are_the_same_name
+    [%w[nuc NUC], %w[NUC nuc], %w[Nuc nUC], %w[nuc nuc]].each do |one, other|
+      assert(Proof::Name.same?(one, other), "#{one} and #{other}")
+    end
+  end
+
+  # Names that differ in more than case are two names, whatever their length.
+  def test_names_that_differ_in_more_than_case_are_not_the_same_name
+    [%w[nuc nuc-linux], %w[nuc pc], ["nuc", "nuc "], ["a", ""]].each do |one, other|
+      refute(Proof::Name.same?(one, other), "#{one.inspect} and #{other.inspect}")
+    end
+  end
+
+  # The comparison folds the case of letters beyond ASCII, as `String#casecmp?` does and `String#casecmp` does not.
+  def test_names_that_differ_only_in_the_case_of_an_accented_letter_are_the_same_name
+    assert(Proof::Name.same?("Ünal", "ünal"))
+    assert(Proof::Name.same?("Édith", "édith"))
+  end
+
   # Every error the domain raises is a Proof::Error.
   def test_the_error_is_a_proof_error
     assert_operator(Proof::InvalidNameError, :<, Proof::Error)

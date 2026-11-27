@@ -13,6 +13,11 @@ module Proof
   # place. A reader asks for a name with `read`, which names whose name it is
   # and gives a name that works, so the message tells the person what to write.
   #
+  # It holds the rule for comparing names too: the names of hosts, runners, and
+  # repositories are one name when they differ only in case, so `nuc` and `NUC`
+  # are the same host. A value that holds names and a reader of the pool file
+  # compare them with `same?`, so no two places write the rule.
+  #
   # Use it from a value that holds a name, and from a reader that refuses a
   # blank name at its own line.
   #
@@ -29,6 +34,13 @@ module Proof
   # ```ruby
   # Proof::Name.valid?("  ") # => false
   # Proof::Name.valid?("\t") # => false
+  # ```
+  #
+  # Two names that differ only in case are one name:
+  #
+  # ```ruby
+  # Proof::Name.same?("nuc", "NUC") # => true
+  # Proof::Name.same?("nuc", "nuc-linux") # => false
   # ```
   #
   # A blank name is refused, and the message says what a name is and gives one
@@ -72,6 +84,21 @@ module Proof
     # Proof::Name.message("a host's name", "nuc") # => "a host's name is text with at least one character that isn't white space, such as nuc, not %p"
     # ```
     def self.message: (String what, String example) -> String
+
+    # Whether two names are one name: they are the same text, or differ only in
+    # case. It compares with `String#casecmp?`, which folds the case of letters
+    # beyond ASCII, so `"Ünal"` and `"ünal"` are one name. A label has a rule of
+    # its own, which `Proof::Label` holds, and a branch or a task name compares
+    # as written, so this is for the names of hosts, runners, and repositories.
+    #
+    # - `one`, `other`: String, each a name.
+    #
+    # ```ruby
+    # Proof::Name.same?("nuc", "NUC") # => true
+    # Proof::Name.same?("Ünal", "ünal") # => true
+    # Proof::Name.same?("nuc", "pc") # => false
+    # ```
+    def self.same?: (String one, String other) -> bool
 
     # A frozen copy of `value`, and raises `Proof::InvalidNameError` unless
     # `value` is a name. The message says whose name it is, what a name is, and

@@ -16,6 +16,11 @@ module Proof
       "#{what} is #{TEXT}, such as #{example}, not %p"
     end
 
+    def self.same?(one, other)
+      # String#casecmp? folds Unicode case, where String#casecmp folds only ASCII letters.
+      one.casecmp?(other)
+    end
+
     def self.read(value, what:, example:)
       raise(InvalidNameError, format(message(what, example), value)) unless valid?(value)
 
