@@ -90,6 +90,13 @@ module Usage
     # absent, so a spec that declares none gives an empty list.
     #
     # ```ruby
+    # statuses = Usage::Spec.read(<<~JSON)
+    #   {"exit_codes": [{"code": 0, "help": "Done."}, {"code": 1, "help": "Failed."}],
+    #    "cmd": {"subcommands": {"remote": {"name": "remote", "full_cmd": ["remote"],
+    #      "exit_codes": [{"code": 1, "help": "No such remote."}, {"code": 3, "help": "Remote is down."}]}}}}
+    # JSON
+    # statuses.commands.at(["remote"]).exit_codes.map { |code| [code.status, code.help] }
+    # # => [[0, "Done."], [1, "No such remote."], [3, "Remote is down."]]
     # spec.commands.at(["remote", "add"]).exit_codes # => []
     # ```
     def exit_codes: () -> Array[ExitCode]
