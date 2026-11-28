@@ -33,10 +33,8 @@ module Proof
       # of the entry. Every kind has its words, and Steep is told that a lookup in a Hash finds them.
       return value unless value.is_a?(String)
 
-      what, example = KINDS[kind]
-      # steep:ignore:start
+      what, example = KINDS[kind] #: [String, String]
       @refusal.checking(child) { Name.read(value, what:, example:) }
-      # steep:ignore:end
     end
   end
 end
