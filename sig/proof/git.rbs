@@ -11,7 +11,9 @@ module Proof
   # a `Proof::Error` for a git that is missing or fails. No shell reads the
   # arguments, so a branch named `$(rm -rf ~)` is only a name.
   #
-  # Use it as the one place where Proof starts git.
+  # Proof's code starts git only through this class. A test or a Rake task
+  # that starts git itself takes the variables to clear from
+  # `Proof::Git.cleared_environment`.
   #
   # ## Examples
   #
@@ -28,7 +30,7 @@ module Proof
   class Git
     # The variables to hand to `Open3` or `Process.spawn` so that the program it starts inherits no `GIT_*` variable:
     # each `GIT_*` variable of this process, named by a String, with `nil` as its value. Merge the variables a run
-    # needs into it, as `Proof::Git#run` does. Use it wherever a test or a task starts git itself.
+    # needs into the result. Read it when you start git, because it lists the variables the process has at that time.
     def self.cleared_environment: () -> Hash[String, nil]
 
     # Prepares to run git in `folder`.
