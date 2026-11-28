@@ -316,7 +316,7 @@ Options weighed:
 
 `Proof::Server::Requests` is the Rack application the server serves. It holds a table of paths, each with the answer to each method it takes, and the composition root builds it. A path the table doesn't have gets 404, and a method its path doesn't take gets 405 with the `allow` header, each with an `error` in JSON, so the command can tell a request the server lacks, as on a server of another version, from one that failed. Each answer in the table is an object with `call(env)`: it takes the request apart, calls its use case with the parts, and turns the result into JSON, so a use case sees no HTTP and a test calls it with no server. The composition root hands each use case its ports when it builds the answer.
 
-`GET /version` is answered by `Proof::Server::VersionRequest` with `{"version":"0.1.0"}`, the server's `Proof::VERSION`. It needs no token, because the command checks the version before it signs in, and it calls no use case, because it has no rule to check and no port to call.
+`GET /version` is answered by `Proof::Server::VersionRequest` with `{"version":"0.0.0"}` in a build that isn't a release, the server's `Proof::VERSION`. It needs no token, because the command checks the version before it signs in, and it calls no use case, because it has no rule to check and no port to call.
 
 Options weighed:
 

@@ -6,7 +6,8 @@ module Proof
     # command checks the server's on each call, before it sends anything, so
     # it can say which one to upgrade.
     #
-    # This class answers with `{"version":"0.1.0"}`, in JSON, whatever the
+    # This class answers with `{"version":"0.0.0"}` in a build that isn't a
+    # release, in JSON, whatever the
     # request holds. It has no rule to check and no port to call, so it
     # calls no use case. The request needs no token, because the command
     # checks the version before it signs in.

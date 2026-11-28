@@ -1,4 +1,4 @@
 module Proof
-  # The version of Proof, always `0.X.Y`.
+  # The version of Proof, always `0.X.Y`: `0.0.0` in a build that isn't a release.
   VERSION: String
 end
