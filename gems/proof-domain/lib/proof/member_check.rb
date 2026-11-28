@@ -22,12 +22,13 @@ module Proof
 
     def self.distinct_names?(value)
       # Two names that differ only in case are one name, as Name.same? finds. names? has found an Array of names,
-      # which Steep can't know.
+      # which Steep can't know. Steep also reads each member of a pair from combination as possibly nil, and a pair has
+      # two names.
+      return false unless names?(value)
+
       names = value #: Array[String]
-      # Steep reads each member of a pair from combination as possibly nil.
-      # steep:ignore:start
-      names?(value) && names.combination(2).none? { |one, other| Name.same?(one, other) }
-      # steep:ignore:end
+      pairs = names.combination(2) #: Enumerator[[String, String], Array[String]]
+      pairs.none? { |one, other| Name.same?(one, other) }
     end
 
     def self.whole?(value, minimum)
