@@ -19,12 +19,12 @@ module Proof
       verdicts = WaitCheck.verdicts(queued, hosts, holding)
       return if verdicts.key?(:fits)
 
-      kind = WaitCheck.nearest(verdicts)
+      kind = nearest(verdicts)
       new(
         kind:,
         hosts: verdicts.fetch(kind, []).map(&:name),
         # Runs are in the way only when they are the nearest reason, so this is empty for every other kind.
-        runs: WaitCheck.holders(verdicts.fetch(:behind_runs, []), holding)
+        runs: holders(verdicts.fetch(:behind_runs, []), holding)
       )
     end
 
@@ -34,6 +34,19 @@ module Proof
 
       super(kind:, hosts: hosts.dup.freeze, runs: runs.dup.freeze)
     end
+
+    def self.nearest(verdicts)
+      KINDS.find { |kind| verdicts.key?(kind) } || :no_runner_connected
+    end
+    private_class_method(:nearest)
+
+    def self.holders(hosts, holding)
+      # A run is placed on one host, so no run is here twice.
+      held = hosts.flat_map { |host| host.holding(holding) }
+      held.sort_by! { |run| run.queued.position }
+      held.map(&:id)
+    end
+    private_class_method(:holders)
 
     # @dynamic kind, hosts, runs
   end

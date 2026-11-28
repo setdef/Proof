@@ -2,11 +2,12 @@ module Proof
   # What stops a queued run on one runner, in one place.
   #
   # `Proof::WaitReason` asks this module about each runner of a run's
-  # operating systems, and keeps the nearest answer. A pair here is a host and
-  # one of its runners. It is a private constant of `Proof`.
+  # operating systems, and chooses among the answers. A pair here is a host
+  # and one of its runners. It is a private constant of `Proof`.
   module WaitCheck
-    # For each kind of verdict, the hosts with a runner of the run's operating
-    # systems that got it, each host once.
+    # For each verdict, `:fits` or one of `WaitReason::KINDS`, the hosts with a
+    # runner of the run's operating systems that got it, each host once. A
+    # verdict that no runner got isn't a key.
     def self.verdicts: (Run::Queued queued, Array[Host] hosts, Array[Run] holding) -> Hash[Symbol, Array[Host]]
 
     # Each host in `hosts` paired with each of its runners of the run's
@@ -15,11 +16,6 @@ module Proof
 
     # Each host in `pairs` once, by name.
     def self.hosts_of: (Array[[Host, Runner]] pairs) -> Array[Host]
-
-    # The nearest kind of reason among `verdicts`, or `:no_runner_connected`
-    # when there are none, as for a run whose operating systems have no
-    # runner.
-    def self.nearest: (Hash[Symbol, Array[Host]] verdicts) -> Symbol
 
     # What stops the run `queued` describes on the runner of `pair`, checked
     # in this order:
@@ -37,9 +33,5 @@ module Proof
     # - `:behind_runs`: the run would fit if the runs holding the host ended.
     # - `:person_active`: the run fits only while nobody is active there.
     def self.in_the_way: (Resources resources, [Host, Runner] pair, Array[Run] holding) -> Symbol
-
-    # The IDs of the runs in `holding` that hold any of `hosts`, in queue
-    # order.
-    def self.holders: (Array[Host] hosts, Array[Run] holding) -> Array[RunId]
   end
 end

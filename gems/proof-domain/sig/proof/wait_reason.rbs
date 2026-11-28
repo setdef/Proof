@@ -95,6 +95,15 @@ module Proof
     # ```
     def self.of: (Run::Queued queued, Array[Host] hosts, Array[Run] holding) -> WaitReason?
 
+    # The nearest of `KINDS` among the keys of `verdicts`, as
+    # `Proof::WaitCheck.verdicts` returns them, or `:no_runner_connected` when
+    # none is a key, as for a run whose operating systems have no runner.
+    private def self.nearest: (Hash[Symbol, Array[Host]] verdicts) -> Symbol
+
+    # The IDs of the runs in `holding` that hold any of `hosts`, in queue
+    # order.
+    private def self.holders: (Array[Host] hosts, Array[Run] holding) -> Array[RunId]
+
     # Builds a reason, and raises `Proof::InvalidWaitReasonError` unless
     # `kind` is one of `KINDS`.
     #

@@ -118,7 +118,7 @@ Options weighed:
   - `ClosestHost` holds how `check` finds the host that fits the most of a run that none could ever take, and builds the error that names it. It isn't in `Placement` for the same reason: `Placement` with it would be rated B, and its methods use none of its state.
   - `Room` holds a host's capacity from its runners, and what is left of resources after the runs that hold them and what the host keeps for a person. It isn't in `Host` because `Host` would then be rated B.
   - `PoolNames` holds the rules about names that a pool file's entries may not share: two hosts with one name, a runner on two hosts, and two repositories with one name, each compared without regard to case with `Proof::Name.same?`, which holds that rule for the domain and for the readers, and `MemberCheck` compares the runners of a host with it too. It isn't in `PoolFile` because `PoolFile` would then be rated B.
-  - `WaitCheck` holds what stops one run on one runner, the nearest of those reasons across runners, and the runs that hold a host. `WaitReason` is the value that gives the answer, and the helper isn't in it because `WaitReason` would then be rated B.
+  - `WaitCheck` holds what stops one run on one runner, and groups the runners' verdicts by host. `WaitReason` chooses the nearest of those verdicts and lists the runs that hold the hosts, because both use what `WaitReason` knows: the order of its kinds and the runs it lists. The verdicts aren't in `WaitReason` because it would then be rated B.
 
 Options weighed:
 

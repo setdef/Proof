@@ -16,10 +16,6 @@ module Proof
       by_name.values
     end
 
-    def self.nearest(verdicts)
-      WaitReason::KINDS.find { |kind| verdicts.key?(kind) } || :no_runner_connected
-    end
-
     def self.verdict(queued, pair, holding)
       host, runner = pair
       resources = queued.resources
@@ -35,13 +31,6 @@ module Proof
 
       # It could fit this runner some time, so either the runs on its host or the person there are in the way.
       resources.fits_within?(host.free_on(runner, [])) ? :behind_runs : :person_active
-    end
-
-    def self.holders(hosts, holding)
-      # A run is placed on one host, so no run is here twice.
-      held = hosts.flat_map { |host| host.holding(holding) }
-      held.sort_by! { |run| run.queued.position }
-      held.map(&:id)
     end
   end
   private_constant(:WaitCheck)
