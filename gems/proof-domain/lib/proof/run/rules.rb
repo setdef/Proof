@@ -5,9 +5,7 @@ require_relative("endings")
 require_relative("facts")
 
 module Proof
-  # steep:ignore:start
   class Run
-    # steep:ignore:end
     module Rules
       MESSAGES = {
         first: "a run's first fact, and only its first, is that it was queued",
@@ -69,7 +67,7 @@ module Proof
     end
     private_constant(:Rules)
 
-    # Steep wants every opening of a class to define all the methods that the signature declares for it, and this
-    # file opens Run only to hold a module.
+    # @dynamic ==, cancel_asked?, ending, eql?, facts, hash, holds_resources?, id, initialize, placement, queued, state
+    # @dynamic version, with_fact
   end
 end
