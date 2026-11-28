@@ -69,7 +69,7 @@ module Proof
 
     def refuse_shared_names: (Hash[Symbol, Array[KdlNode]] by_name) -> void
 
-    @path: String
+    @file: KdlFile
     @refusal: PoolFileRefusal
     @readers: Array[PoolFileProperties | PoolFileHosts | PoolFileRepositories]
   end

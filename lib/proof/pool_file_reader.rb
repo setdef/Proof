@@ -10,15 +10,13 @@ module Proof
     end
 
     def initialize(path:)
-      @path = path
-      @refusal = PoolFileRefusal.new(path:)
+      @file = KdlFile.new(path:, error: PoolFileError, forms: PoolFileForms, messages: PoolFileRefusal::MESSAGES)
+      @refusal = @file.refusal(PoolFileRefusal)
       @readers = [PoolFileProperties, PoolFileHosts, PoolFileRepositories].map { |kind| kind.new(refusal: @refusal) }
     end
 
     def read(text)
-      nodes = KdlParser.parse(text, path: @path, error: PoolFileError)
-      KdlFormCheck.new(forms: PoolFileForms, refusal: @refusal).check(nodes)
-      PoolFile.new(**parts_of(nodes.group_by { |node| node.name.to_sym }))
+      PoolFile.new(**parts_of(@file.nodes_by_name(text, refusal: @refusal)))
     end
 
     private def parts_of(by_name)

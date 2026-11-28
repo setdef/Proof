@@ -25,10 +25,11 @@ module Proof
       missing: "a %<name>p node needs the %<kind>s %<missing>p, as in %<usage>s",
     }.freeze
     EARLIER = -> (node) { { entry: node.arguments.first, line: node.line } }
-    private_constant(:MESSAGES, :EARLIER)
+    public_constant(:MESSAGES)
+    private_constant(:EARLIER)
 
-    def initialize(path:)
-      super(path:, error: PoolFileError, messages: MESSAGES, forms: PoolFileForms)
+    def initialize(path:, error: PoolFileError, messages: MESSAGES, forms: PoolFileForms)
+      super
     end
 
     def repeated_entry(node, first)

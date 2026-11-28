@@ -26,7 +26,13 @@ module Proof
     # Prepares to refuse as the file at `path`.
     #
     # - `path`: String, the file's path.
-    def initialize: (path: String) -> void
+    # - `error`: the `Proof::FileError` subclass to raise. Defaults to
+    #   `Proof::ProjectFileError`.
+    # - `messages`: Hash from a message's name to its text. Defaults to
+    #   `MESSAGES`.
+    # - `forms`: `Proof::KdlForms`, the forms of the file's nodes. Defaults to
+    #   `Proof::ProjectFileForms`.
+    def initialize: (path: String, ?error: singleton(FileError), ?messages: Hash[Symbol, String], ?forms: KdlForms) -> void
 
     # Refuses a node with a number of arguments its form doesn't take: a
     # `defaults` node with any, a `task` with no name or with more than a name

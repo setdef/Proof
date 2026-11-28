@@ -1,0 +1,77 @@
+module Proof
+  # One of Proof's KDL files, described by its path, its error, its forms, and
+  # its messages.
+  #
+  # The project file and the pool file are each KDL that a person writes, and
+  # each is read the same way: the text is parsed into nodes, every node is
+  # checked against its form, and a mistake is refused in the file's words, with
+  # the file's path and error. Those four facts describe one file, and each step
+  # of the reading needs some of them, so they travel together.
+  #
+  # This class holds them. It builds the file's refusal, and reads the file's
+  # text into its checked nodes, grouped by name. It reads no value from a
+  # node: that is the work of the reader of the kind of file.
+  #
+  # Use it from the reader of a kind of KDL file.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # file = Proof::KdlFile.new(path: "pool.kdl", error: Proof::PoolFileError, forms: Proof::PoolFileForms, messages: Proof::PoolFileRefusal::MESSAGES)
+  # refusal = file.refusal(Proof::PoolFileRefusal)
+  # file.nodes_by_name("server port=8443\nlimits\n", refusal:).keys # => [:server, :limits]
+  # ```
+  #
+  # A mistake in the text is refused at its line, with the file's path:
+  #
+  # ```ruby
+  # # Wrong: raises Proof::PoolFileError
+  # file.nodes_by_name("cluster\n", refusal:)
+  # ```
+  class KdlFile < Data
+    # What a `kind` of refusal is built from: the file's four facts.
+    interface _Refused[R]
+      # Builds a refusal of the kind, as `Proof::KdlRefusal.new` does.
+      def new: (path: String, error: singleton(FileError), messages: Hash[Symbol, String], forms: KdlForms) -> R
+    end
+
+    # The file's path, for its errors.
+    attr_reader path: String
+
+    # The `Proof::FileError` subclass that the file's mistakes raise.
+    attr_reader error: singleton(FileError)
+
+    # The forms of the file's nodes.
+    attr_reader forms: KdlForms
+
+    # The file's messages, by name, for `format` to fill in.
+    attr_reader messages: Hash[Symbol, String]
+
+    # Describes a KDL file.
+    #
+    # - `path`: String, the file's path.
+    # - `error`: the `Proof::FileError` subclass to raise.
+    # - `forms`: `Proof::KdlForms`, the forms of the file's nodes.
+    # - `messages`: Hash from a message's name to its text.
+    def self.new: (path: String, error: singleton(FileError), forms: KdlForms, messages: Hash[Symbol, String]) -> instance
+                | (String path, singleton(FileError) error, KdlForms forms, Hash[Symbol, String] messages) -> instance
+
+    # Gives the refusal of this file: a `kind` that has the file's path, error,
+    # messages, and forms.
+    #
+    # - `kind`: the `Proof::KdlRefusal` subclass for the kind of file, such as
+    #   `Proof::PoolFileRefusal`, which has the refusals only that kind has.
+    def refusal: [R < KdlRefusal] (_Refused[R] kind) -> R
+
+    # Reads `text` and gives its nodes, checked against the file's forms and
+    # grouped by name, with each group in the order the file has it. A name the
+    # file doesn't use has no group. Raises the file's error at the line of the
+    # first mistake: text that isn't KDL 2, and then the first node, property,
+    # or child that its form refuses.
+    #
+    # - `text`: String, the file's text.
+    # - `refusal`: `Proof::KdlRefusal`, from `#refusal`, which the check refuses
+    #   with.
+    def nodes_by_name: (String text, refusal: KdlRefusal) -> Hash[Symbol, Array[KdlNode]]
+  end
+end

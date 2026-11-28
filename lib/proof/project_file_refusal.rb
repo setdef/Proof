@@ -27,10 +27,11 @@ module Proof
         "Leave the command out to run the mise task of the same name",
     }.freeze
     ARGUMENTS = { defaults: :defaults_arguments, task: :task_arguments }.freeze
-    private_constant(:MESSAGES, :ARGUMENTS)
+    public_constant(:MESSAGES)
+    private_constant(:ARGUMENTS)
 
-    def initialize(path:)
-      super(path:, error: ProjectFileError, messages: MESSAGES, forms: ProjectFileForms)
+    def initialize(path:, error: ProjectFileError, messages: MESSAGES, forms: ProjectFileForms)
+      super
     end
 
     def node_arguments(node, count)

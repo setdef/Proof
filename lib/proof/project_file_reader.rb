@@ -18,15 +18,14 @@ module Proof
 
     def initialize(path:)
       @path = path
-      @refusal = ProjectFileRefusal.new(path:)
+      @file = KdlFile.new(path:, error: ProjectFileError, forms: ProjectFileForms, messages: ProjectFileRefusal::MESSAGES)
+      @refusal = @file.refusal(ProjectFileRefusal)
       @settings = ProjectFileSettings.new(refusal: @refusal)
     end
 
     def read(text)
-      parsed = KdlParser.parse(text, path: @path, error: ProjectFileError)
-      nodes = KdlFormCheck.new(forms: ProjectFileForms, refusal: @refusal).check(parsed)
-      by_name = nodes.group_by(&:name)
-      ProjectFile.new(defaults: defaults_of(by_name["defaults"]&.first), entries: tasks_of(by_name.fetch("task", [])))
+      by_name = @file.nodes_by_name(text, refusal: @refusal)
+      ProjectFile.new(defaults: defaults_of(by_name[:defaults]&.first), entries: tasks_of(by_name.fetch(:task, [])))
     end
 
     def read_from(project, id)

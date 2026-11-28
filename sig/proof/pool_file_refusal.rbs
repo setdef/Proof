@@ -23,7 +23,13 @@ module Proof
     # Prepares to refuse as the file at `path`.
     #
     # - `path`: String, the file's path.
-    def initialize: (path: String) -> void
+    # - `error`: the `Proof::FileError` subclass to raise. Defaults to
+    #   `Proof::PoolFileError`.
+    # - `messages`: Hash from a message's name to its text. Defaults to
+    #   `MESSAGES`.
+    # - `forms`: `Proof::KdlForms`, the forms of the file's nodes. Defaults to
+    #   `Proof::PoolFileForms`.
+    def initialize: (path: String, ?error: singleton(FileError), ?messages: Hash[Symbol, String], ?forms: KdlForms) -> void
 
     # Refuses a second entry that has the name of an earlier one, such as a
     # second host with a host's name. `first` is the earlier entry.
