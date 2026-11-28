@@ -4,9 +4,7 @@
 require_relative("facts")
 
 module Proof
-  # steep:ignore:start
   class Run
-    # steep:ignore:end
     module Endings
       # @type var needs: Hash[Class, [Symbol, String]]
       needs = {
@@ -68,7 +66,7 @@ module Proof
     end
     private_constant(:Endings)
 
-    # Steep wants every opening of a class to define all the methods that the signature declares for it, and this
-    # file opens Run only to hold a module.
+    # @dynamic ==, cancel_asked?, ending, eql?, facts, hash, holds_resources?, id, initialize, placement, queued, state
+    # @dynamic version, with_fact
   end
 end
