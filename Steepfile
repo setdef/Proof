@@ -55,7 +55,7 @@ target :usage do
 end
 
 target :tasks do
-  signature "tasks/sig", "sig/proof/git.rbs"
+  signature "tasks/sig", "sig/proof/git.rbs", "gems/proof-domain/sig/proof/errors.rbs"
   check "tasks/ruby_doc_comments.rb"
   check "tasks/doc_examples.rb"
   check "tasks/doc_examples"

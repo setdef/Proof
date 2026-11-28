@@ -82,4 +82,12 @@ class DocExamplesTest < Minitest::Test
       assert_equal(["Examples run: 0. Examples skipped: 0."], DocExamples.check(root).summary)
     end
   end
+
+  def test_a_folder_git_cannot_list_fails_with_gits_message
+    Dir.mktmpdir("doc-examples-test") do |root|
+      error = assert_raises(Proof::GitFailedError) { DocExamples.check(root) }
+
+      assert_match(/\Agit ls-files failed .*not a git repository/i, error.message)
+    end
+  end
 end

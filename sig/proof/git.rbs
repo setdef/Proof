@@ -11,9 +11,8 @@ module Proof
   # a `Proof::Error` for a git that is missing or fails. No shell reads the
   # arguments, so a branch named `$(rm -rf ~)` is only a name.
   #
-  # Proof's code starts git only through this class. A test or a Rake task
-  # that starts git itself takes the variables to clear from
-  # `Proof::Git.cleared_environment`.
+  # Proof's code starts git only through this class. A test that starts git
+  # itself takes the variables to clear from `Proof::Git.cleared_environment`.
   #
   # ## Examples
   #

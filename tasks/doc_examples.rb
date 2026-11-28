@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "open3"
+require_relative("../gems/proof-domain/lib/proof/errors")
 require_relative("../lib/proof/git")
 require_relative("doc_examples/report")
 require_relative("doc_examples/runner")
@@ -39,8 +39,10 @@ module DocExamples
   # The paths, relative to +root+, of the files whose examples run: the
   # Markdown pages and +.rbs+ files that Git tracks, and those it doesn't
   # ignore, except the generated pages and the files deleted from the folder.
+  # Raises +Proof::GitFailedError+ when Git can't list them, so that a check
+  # which found no pages can't pass.
   def self.files(root)
-    listing, = Open3.capture2(Proof::Git.cleared_environment, "git", *LISTING, chdir: root)
+    listing = Proof::Git.new(folder: root).run(*LISTING)
     paths = listing.split("\0").sort - GENERATED
     paths.select { |path| File.file?(File.join(root, path)) }
   end
