@@ -2,6 +2,7 @@
 
 require_relative("server_https_client")
 require_relative("test_helper")
+require_relative("xdg_environment")
 require "json"
 require "socket"
 require "stringio"
@@ -9,9 +10,11 @@ require "tmpdir"
 
 # Issue 64: the server makes its key and certificate on its first start and keeps them, serves HTTPS on the pool file's
 # port, reads the pool file again when it changes, and answers the server's version. It keeps its state in
-# ~/.local/share/proof/server and reads the pool file from ~/.config/proof/pool.kdl, as architecture.md says.
+# ~/.local/share/proof/server and reads the pool file from ~/.config/proof/pool.kdl, as architecture.md says. Issue 131:
+# `XDG_DATA_HOME` and `XDG_CONFIG_HOME` move them.
 class ServerRootTest < Minitest::Test
   include ServerHttpsClient
+  include XdgEnvironment
 
   def setup
     @home = Dir.mktmpdir
@@ -36,6 +39,18 @@ class ServerRootTest < Minitest::Test
     serving { nil }
 
     assert_equal(%w[certificate.pem key.pem], Dir.children(File.join(@home, ".local", "share", "proof", "server")).sort)
+  end
+
+  def test_the_server_keeps_its_key_and_certificate_in_xdg_data_home_and_reads_the_pool_file_in_xdg_config_home
+    config = File.join(@home, "elsewhere", "config", "proof", "pool.kdl")
+    FileUtils.mkdir_p(File.dirname(config))
+    File.write(config, "server port=#{@port}\n")
+    data = File.join(@home, "elsewhere", "data")
+
+    with_xdg(data:, config: File.join(@home, "elsewhere", "config")) { serving { nil } }
+
+    assert_equal(%w[certificate.pem key.pem], Dir.children(File.join(data, "proof", "server")).sort)
+    assert_includes(@err.string, "proof: read #{config},")
   end
 
   # A client that trusted the server's key on its first start still trusts it on the next.

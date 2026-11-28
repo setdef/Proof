@@ -1,12 +1,13 @@
 module Proof
   # Reads a pool file's text into a `Proof::PoolFile`.
   #
-  # `~/.config/proof/pool.kdl` is text that a person writes, in KDL 2, on the
-  # computer that runs the server. The server reads it from its own disk. A
-  # mistake in it must stop the server from using it, with the line and the
-  # reason, and never reach a run as a setting nobody meant. The domain refuses a
-  # bad size, duration, or label on its own, but it has no line to name, and it
-  # doesn't know which nodes and properties the file may have.
+  # The pool file, `~/.config/proof/pool.kdl` or
+  # `$XDG_CONFIG_HOME/proof/pool.kdl`, is text that a person writes, in KDL 2,
+  # on the computer that runs the server. The server reads it from its own
+  # disk. A mistake in it must stop the server from using it, with the line and
+  # the reason, and never reach a run as a setting nobody meant. The domain
+  # refuses a bad size, duration, or label on its own, but it has no line to
+  # name, and it doesn't know which nodes and properties the file may have.
   #
   # This class reads the text with `Proof::KdlParser`, refuses a node, property,
   # or child the pool file page doesn't list, builds each value with the domain's own

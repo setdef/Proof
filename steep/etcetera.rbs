@@ -1,0 +1,14 @@
+# The parts of the etcetera gem that Proof calls. The gem ships signatures, but
+# Steep checks against these, so a call the gem doesn't answer is an error
+# here and not in a run.
+module Etcetera
+  module BaseStrategy
+    class Xdg
+      def initialize: (home_dir: Pathname) -> void
+
+      def config_dir: () -> Pathname
+
+      def data_dir: () -> Pathname
+    end
+  end
+end

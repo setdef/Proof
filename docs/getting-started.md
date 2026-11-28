@@ -72,7 +72,7 @@ proof:   start the Proof server as a service of this account, on port 7443
 proof: nothing changed, because of --dry-run
 ```
 
-Setup touches only the `proof` account's folders and services. When the list looks right, run it for real:
+Setup touches only the `proof` account's folders and services. Its paths start with `~/.config` and `~/.local/share`, unless the account's environment sets `XDG_CONFIG_HOME` or `XDG_DATA_HOME` to an absolute path, which they then start with instead. When the list looks right, run it for real:
 
 ```console
 proof@server $ proof server setup

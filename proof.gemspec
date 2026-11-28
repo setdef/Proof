@@ -27,6 +27,9 @@ Gem::Specification.new do |spec|
   spec.add_dependency("sqlite3", "~> 2.10")
   # The server's HTTPS, with each connection on a fiber. It loads when the server starts, never with `require "proof"`.
   spec.add_dependency("falcon", "~> 0.57.0")
+  # The folders the server keeps its state in and reads its pool file from: the XDG base directories on every system it
+  # runs on. It loads when the server finds them, never with `require "proof"`.
+  spec.add_dependency("etcetera", "~> 0.12.0")
 
   spec.metadata["rubygems_mfa_required"] = "true"
   spec.metadata["source_code_uri"] = spec.homepage

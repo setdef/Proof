@@ -7,25 +7,28 @@ module Proof
     # pool file, and the server's key, certificate, and runs are what it
     # makes and keeps.
     #
-    # This class gives both paths under the account's home, as the XDG Base
-    # Directory Specification's defaults have them: the pool file in
-    # `~/.config/proof/pool.kdl`, and the server's own files in
-    # `~/.local/share/proof/server`.
+    # This class gives both paths as the XDG Base Directory Specification
+    # has them: the pool file in `proof/pool.kdl` under `$XDG_CONFIG_HOME`, and
+    # the server's own files in `proof/server` under `$XDG_DATA_HOME`. A
+    # variable that is unset, empty, or not an absolute path counts as unset,
+    # and the folder is then `~/.config` or `~/.local/share`, with `~` the
+    # account's home. This holds on Linux and on macOS alike.
     #
-    # Use it to find the server's files from its account's home.
+    # Use it to find the server's files for an account.
     #
     # ## Examples
     #
+    # <!-- skip-example: reads XDG_DATA_HOME and XDG_CONFIG_HOME from the environment of the process that runs it -->
     # ```ruby
-    # paths = Proof::Server::Paths.under("/home/proof")
+    # paths = Proof::Server::Paths.find("/home/proof")
     # paths.pool_file # => "/home/proof/.config/proof/pool.kdl"
     # paths.folder # => "/home/proof/.local/share/proof/server"
     # ```
     class Paths < Data
-      # The pool file's path under the home.
+      # The pool file's path under the config folder.
       POOL_FILE: String
 
-      # The server's folder under the home.
+      # The server's folder under the data folder.
       FOLDER: String
 
       # The pool file's path.
@@ -34,10 +37,11 @@ module Proof
       # The folder of the server's key, certificate, and runs.
       attr_reader folder: String
 
-      # The paths under `home`.
+      # The paths for the account whose home is `home`, from the environment
+      # of this process.
       #
       # - `home`: String, the home folder of the server's account.
-      def self.under: (String home) -> Paths
+      def self.find: (String home) -> Paths
 
       # Holds `pool_file` and `folder`.
       #

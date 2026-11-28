@@ -1,6 +1,6 @@
 # Pool file reference
 
-The pool file is `~/.config/proof/pool.kdl`, on the computer that runs the **server**. It describes the whole **pool**: each **host**, with its disk **budget**, the **share** of its CPUs and memory that Proof keeps free for a **person**, and any **labels** it must not offer; each repository whose pushed commits Proof runs tasks on; and how long the server keeps runs. Words in bold are defined in the [glossary](../glossary.md).
+The pool file is `~/.config/proof/pool.kdl`, on the computer that runs the **server**, or `$XDG_CONFIG_HOME/proof/pool.kdl` when `XDG_CONFIG_HOME` is set to an absolute path in the server's environment. It describes the whole **pool**: each **host**, with its disk **budget**, the **share** of its CPUs and memory that Proof keeps free for a **person**, and any **labels** it must not offer; each repository whose pushed commits Proof runs tasks on; and how long the server keeps runs. Words in bold are defined in the [glossary](../glossary.md).
 
 `proof server setup` writes the file, and `proof runner approve` adds a host to it, saying what it added. Everything else in it is yours to change. The server reads the file again whenever it changes, so a change takes effect for the next run without a restart.
 

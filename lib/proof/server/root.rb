@@ -10,7 +10,7 @@ module Proof
       end
 
       def initialize(home:, err:, host: nil)
-        @paths = Paths.under(home)
+        @paths = Paths.find(home)
         @err = err
         @host = host
         @stop = Stop.new

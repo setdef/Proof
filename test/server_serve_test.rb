@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require_relative("test_helper")
+require_relative("xdg_environment")
 require "open3"
 require "rbconfig"
 require "socket"
@@ -11,6 +12,8 @@ require "tmpdir"
 # service manager stops it with TERM, and a person at a terminal with Ctrl-C, which sends INT. It exits 0 when it was
 # stopped and 1 when it couldn't start, with the reason on standard error.
 class ServerServeTest < Minitest::Test
+  include XdgEnvironment
+
   LIB = File.expand_path("../lib", __dir__)
   private_constant(:LIB)
 
@@ -87,7 +90,8 @@ class ServerServeTest < Minitest::Test
   # A fresh Ruby process with Proof's lib folder on its load path starts the server, as the service will.
   def test_a_new_process_serves_until_term_and_exits_with_zero
     code = 'require("proof"); exit(Proof::Server.serve(host: "127.0.0.1"))'
-    Open3.popen3({ "HOME" => @home }, RbConfig.ruby, "-I", LIB, "-e", code) do |_, _, err, waiter|
+    environment = { HOME: @home, XDG_DATA_HOME: nil, XDG_CONFIG_HOME: nil }.transform_keys(&:to_s)
+    Open3.popen3(environment, RbConfig.ruby, "-I", LIB, "-e", code) do |_, _, err, waiter|
       assert_includes(err.gets.to_s, "proof: read ")
       assert_includes(err.gets.to_s, "proof: listening on port #{@port}")
       Process.kill("TERM", waiter.pid)
