@@ -46,6 +46,16 @@ class ReleaseTaskTest < Minitest::Test
     end
   end
 
+  def test_the_task_refuses_a_second_argument_with_status_two_and_changes_nothing
+    in_project do |root|
+      before = files(root)
+      output, status = rake_stamp(root, "v0.4.0,v0.5.0")
+
+      assert_equal(2, status.exitstatus, output)
+      assert_equal(before, files(root))
+    end
+  end
+
   def test_the_task_refuses_no_tag_with_status_two
     in_project do |root|
       output, status = rake_stamp(root)
