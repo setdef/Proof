@@ -14,7 +14,7 @@ module Proof
       runners: [
         "a host entry's runners are one or more runner names that differ without regard to case, " \
           "each #{Name::TEXT}, such as [\"nuc-linux\"], not %p",
-        Name.method(:distinct?),
+        Name.method(:distinct_list?),
       ],
       settings: ["a host entry's settings are host settings, not %p", HostSettings.method(:===)],
     }

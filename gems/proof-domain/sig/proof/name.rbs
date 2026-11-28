@@ -17,7 +17,7 @@ module Proof
   # repositories are one name when they differ only in case, so `nuc` and `NUC`
   # are the same host. A value that holds names and a reader of the pool file
   # compare them with `same?`, so no two places write the rule. A value that
-  # holds a list of names asks `list?` or `distinct?` whether the list is one.
+  # holds a list of names asks `list?` or `distinct_list?` whether the list is one.
   #
   # Use it from a value that holds a name, and from a reader that refuses a
   # blank name at its own line.
@@ -78,7 +78,7 @@ module Proof
     # Whether `value` is an `Array` of one or more names, with no name twice as
     # written, so `["nuc", "NUC"]` is a list and `["nuc", "nuc"]` isn't. A value
     # that isn't an `Array`, an empty `Array`, and an `Array` with a member that
-    # isn't a name are not lists. Use `distinct?` for names that must differ
+    # isn't a name are not lists. Use `distinct_list?` for names that must differ
     # without regard to case.
     #
     # - `value`: Object, any value.
@@ -92,17 +92,17 @@ module Proof
     def self.list?: (Object? value) -> bool
 
     # Whether `value` is an `Array` of one or more names, no two of which are
-    # one name as `same?` finds, so `["nuc-linux", "NUC-LINUX"]` isn't distinct.
-    # Whatever isn't a `list?` isn't distinct.
+    # one name as `same?` finds, so `["nuc-linux", "NUC-LINUX"]` isn't a
+    # distinct list. Whatever isn't a `list?` isn't one either.
     #
     # - `value`: Object, any value.
     #
     # ```ruby
-    # Proof::Name.distinct?(["nuc-linux", "nuc-windows"]) # => true
-    # Proof::Name.distinct?(["nuc-linux", "NUC-LINUX"]) # => false
-    # Proof::Name.distinct?([]) # => false
+    # Proof::Name.distinct_list?(["nuc-linux", "nuc-windows"]) # => true
+    # Proof::Name.distinct_list?(["nuc-linux", "NUC-LINUX"]) # => false
+    # Proof::Name.distinct_list?([]) # => false
     # ```
-    def self.distinct?: (Object? value) -> bool
+    def self.distinct_list?: (Object? value) -> bool
 
     # The message for a value that isn't a name, with one `%p` for `format` to
     # fill in with the value.

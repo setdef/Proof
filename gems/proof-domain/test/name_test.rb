@@ -83,6 +83,32 @@ class NameTest < Minitest::Test
     assert(Proof::Name.same?("Édith", "édith"))
   end
 
+  # A list of names is an Array of one or more names with none written twice, so names that differ in case are still a
+  # list.
+  def test_an_array_of_names_with_none_written_twice_is_a_list
+    [["a"], %w[a b], %w[a A], %w[é É]].each { |names| assert(Proof::Name.list?(names), "#{names.inspect} is a list") }
+  end
+
+  # Whatever else is given is not a list: an empty Array, a name written twice, a member that isn't a name, a Set, and
+  # a single name.
+  def test_anything_else_is_not_a_list
+    [[], %w[a a], ["a", 1], [nil], ["", "a"], [["a"]], Set["a"], "a", nil].each do |value|
+      refute(Proof::Name.list?(value), value.inspect)
+    end
+  end
+
+  # Names that differ only in case are one name, so a list that has two is not a distinct list.
+  def test_a_list_of_names_that_all_differ_without_regard_to_case_is_a_distinct_list
+    assert(Proof::Name.distinct_list?(%w[a b]))
+    refute(Proof::Name.distinct_list?(%w[a A]))
+    refute(Proof::Name.distinct_list?(%w[é É]))
+  end
+
+  # Whatever is not a list is not a distinct list.
+  def test_whatever_is_not_a_list_is_not_a_distinct_list
+    [[], %w[a a], ["a", 1], Set["a"], "a", nil].each { |value| refute(Proof::Name.distinct_list?(value), value.inspect) }
+  end
+
   # Every error the domain raises is a Proof::Error.
   def test_the_error_is_a_proof_error
     assert_operator(Proof::InvalidNameError, :<, Proof::Error)
