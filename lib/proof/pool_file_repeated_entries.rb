@@ -8,12 +8,13 @@ module Proof
     end
 
     def check
-      repeat = Name.first_repeat(@entries.map { |entry| entry.arguments.first })
-      return unless repeat
+      @entries.each_with_index { |entry, index| refuse_after(entry, index) }
+    end
 
-      # first_repeat found two positions in the list it was given, which has one name for each entry.
-      first, second = @entries.values_at(repeat.first, repeat.last) #: [KdlNode, KdlNode]
-      @refusal.repeated_entry(second, first)
+    private def refuse_after(entry, index)
+      name = entry.arguments.first
+      first = @entries.take(index).find { |other| PoolFileNames.same?(other.arguments.first, name) }
+      @refusal.repeated_entry(entry, first) if first
     end
   end
 end

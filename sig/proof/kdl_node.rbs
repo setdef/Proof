@@ -103,5 +103,15 @@ module Proof
     # node.pairs_named("runner").map { |argument, child| [argument, child.line] } # => [["r1", 2], ["r2", 2], ["r3", 3]]
     # ```
     def pairs_named: (String name) -> Array[[kdl_value, KdlNode]]
+
+    # The arguments of every child with this name, in order, as one list.
+    #
+    # - `name`: String, a child's name.
+    #
+    # ```ruby
+    # node = Proof::KdlParser.parse("host a {\n  runner r1 r2\n  runner r3\n}\n", path: "pool.kdl", error: Proof::PoolFileError).first
+    # node.arguments_named("runner") # => ["r1", "r2", "r3"]
+    # ```
+    def arguments_named: (String name) -> Array[kdl_value]
   end
 end

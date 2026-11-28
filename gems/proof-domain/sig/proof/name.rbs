@@ -17,9 +17,7 @@ module Proof
   # repositories are one name when they differ only in case, so `nuc` and `NUC`
   # are the same host. A value that holds names and a reader of the pool file
   # compare them with `same?`, so no two places write the rule. A value that
-  # holds a list of names asks `list?` or `distinct_list?` whether the list is one,
-  # and a pool file's readers and the domain ask `first_repeat` which name in a
-  # list repeats an earlier one.
+  # holds a list of names asks `list?` or `distinct_list?` whether the list is one.
   #
   # Use it from a value that holds a name, and from a reader that refuses a
   # blank name at its own line.
@@ -131,30 +129,6 @@ module Proof
     # Proof::Name.same?("nuc", "pc") # => false
     # ```
     def self.same?: (String one, String other) -> bool
-
-    # Where the first name that repeats an earlier name is in `names`, and where
-    # the earlier name is: the positions of the two, earlier first, or `nil`
-    # when no name repeats an earlier one. The first repeat is the one whose
-    # later name comes first in the list, and its earlier name is the first
-    # name it repeats. Two names that are text repeat each other as `same?`
-    # finds, so `"nuc"` and `"NUC"` do. A value that isn't text, which the
-    # domain refuses elsewhere with its own message, repeats only an equal
-    # value, so `5` and `"5"` don't.
-    #
-    # - `names`: Array of names in the order a file gives them. A value that
-    #   isn't a name is compared as it is, never refused here.
-    #
-    # ```ruby
-    # Proof::Name.first_repeat(["nuc", "pc", "NUC"]) # => [0, 2]
-    # Proof::Name.first_repeat(["nuc", "pc", "mac", "PC", "NUC"]) # => [1, 3]
-    # Proof::Name.first_repeat(["nuc", "pc"]) # => nil
-    # Proof::Name.first_repeat(["5", 5]) # => nil
-    # ```
-    def self.first_repeat: (Array[Object?] names) -> [Integer, Integer]?
-
-    private def self.earlier_repeat: (Array[Object?] names, Integer later) -> Integer?
-
-    private def self.repeat?: (Object? one, Object? other) -> bool
 
     # A frozen copy of `value`, and raises `Proof::InvalidNameError` unless
     # `value` is a name. The message says whose name it is, what a name is, and

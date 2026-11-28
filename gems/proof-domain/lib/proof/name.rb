@@ -35,26 +35,6 @@ module Proof
       one.casecmp?(other)
     end
 
-    def self.first_repeat(names)
-      names.each_index do |later|
-        earlier = earlier_repeat(names, later)
-        return [earlier, later] if earlier
-      end
-      nil
-    end
-
-    def self.earlier_repeat(names, later)
-      names.take(later).index { |other| repeat?(other, names[later]) }
-    end
-    private_class_method(:earlier_repeat)
-
-    def self.repeat?(one, other)
-      # Text compares as same? does. A value that isn't text, which the domain refuses with its own message, is one name
-      # only with an equal value.
-      (one.is_a?(String) && other.is_a?(String)) ? same?(one, other) : one == other
-    end
-    private_class_method(:repeat?)
-
     def self.read(value, what:, example:)
       raise(InvalidNameError, format(message(what, example), value)) unless valid?(value)
 

@@ -5,27 +5,19 @@ module Proof
     def initialize(hosts, refusal:)
       @hosts = hosts
       @refusal = refusal
-      @seen = []
     end
 
     def check
-      @seen.clear
-      @hosts.each { |host| check_host(host) }
+      @hosts.each_with_index { |host, index| refuse_in(host, index) }
     end
 
-    private def check_host(host)
-      host.pairs_named("runner").each { |pair| check_runner(host, pair) }
+    private def refuse_in(host, index)
+      host.pairs_named("runner").each { |runner, child| refuse_listed(child, runner, index) }
     end
 
-    private def check_runner(host, pair)
-      runner, child = pair
-      repeat = Name.first_repeat(@seen.map(&:first) + [runner])
-      return @seen << [runner, host] unless repeat
-
-      # The runners seen repeat none, so the runner repeats the one at the position first_repeat found.
-      _, earlier = @seen[repeat.first] #: [kdl_value, KdlNode]
-      # A runner twice on one host is the host entry's mistake.
-      @refusal.shared_runner(child, runner, earlier) unless earlier.equal?(host)
+    private def refuse_listed(child, runner, index)
+      first = @hosts.take(index).find { |host| PoolFileNames.among?(host.arguments_named("runner"), runner) }
+      @refusal.shared_runner(child, runner, first) if first
     end
   end
 end

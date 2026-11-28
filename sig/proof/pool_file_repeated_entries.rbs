@@ -9,7 +9,7 @@ module Proof
   # says needs a line, and the domain has none.
   #
   # This class refuses the second entry at its line, and names the first as
-  # that entry wrote the name. It compares names as `Proof::Name.first_repeat`
+  # that entry wrote the name. It compares names as `Proof::PoolFileNames.same?`
   # does, without regard to case, so `nuc` and `NUC` are one host.
   #
   # Use it from `Proof::PoolFileReader`, once for the hosts and once for the
@@ -44,6 +44,10 @@ module Proof
     # Proof::PoolFileRepeatedEntries.new(repositories, refusal: Proof::PoolFileRefusal.new(path:)).check # refuses nothing
     # ```
     def check: () -> void
+
+    private
+
+    def refuse_after: (KdlNode entry, Integer index) -> void
 
     @entries: Array[KdlNode]
     @refusal: PoolFileRefusal
