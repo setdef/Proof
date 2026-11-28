@@ -14,7 +14,7 @@ module Usage
     def global_flags
       # A flag is global to every command under the one that has it, so a command takes those of each command in its
       # lineage, from the program down.
-      commands.flat_map(&:global_flags)
+      commands.flat_map(&:flags).select(&:global?)
     end
 
     def flags

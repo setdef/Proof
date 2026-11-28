@@ -22,7 +22,7 @@ module Usage
   # remote = spec.commands.find(["remote"])
   # remote&.subcommand_names # => ["add"]
   # remote&.subcommand_required? # => true
-  # spec.commands.root.global_flags.map(&:name) # => ["quiet"]
+  # spec.commands.at([]).global_flags.map(&:name) # => ["quiet"]
   # ```
   #
   # A command can't have both arguments and subcommands, because the gem couldn't tell which a word is:
@@ -121,12 +121,5 @@ module Usage
     # spec.commands.root.own_flags # => []
     # ```
     def own_flags: () -> Array[Flag]
-
-    # The flags the command passes on to every command under it, in the spec's order.
-    #
-    # ```ruby
-    # spec.commands.root.global_flags.map(&:switches) # => [["-q", "--quiet"]]
-    # ```
-    def global_flags: () -> Array[Flag]
   end
 end

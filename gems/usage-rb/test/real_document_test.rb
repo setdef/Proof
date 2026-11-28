@@ -17,7 +17,7 @@ class UsageRealDocumentTest < Minitest::Test
     spec = read(DOCUMENT)
 
     assert_equal(["todo", "Keep a list", ["add"]], [spec.bin, spec.about, spec.commands.root.subcommands.map(&:name)])
-    assert_equal(["quiet"], spec.commands.root.global_flags.map(&:name))
+    assert_equal(["quiet"], spec.commands.at([]).global_flags.map(&:name))
   end
 
   # The defaults are read as the program's help shows them.

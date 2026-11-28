@@ -125,7 +125,7 @@ module CommandLineContract
     end
 
     private def globals(command, base)
-      switches = @spec.commands.root.global_flags.flat_map(&:switches)
+      switches = @spec.commands.at([]).global_flags.flat_map(&:switches)
       switches.flat_map { |switch| [[switch, *base], [*base, switch], [*command.path, switch, *words(command)]] } +
         [[*base, "-qd"], [*base, "-q", "-d"], ["-qd", *base], ["--nope", *base], ["-x", *base], ["--quie", *base]]
     end

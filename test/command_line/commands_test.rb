@@ -48,7 +48,7 @@ class CommandLineCommandsTest < Minitest::Test
 
   # proof.usage.kdl: the flags marked `global=#true` are the members of the global flags.
   def test_the_global_flags_hold_the_flags_marked_global
-    expected = SPEC.commands.root.global_flags.map { |flag| flag.name.tr("-", "_").to_sym }
+    expected = SPEC.commands.at([]).global_flags.map { |flag| flag.name.tr("-", "_").to_sym }
 
     assert_equal(expected.to_set, Proof::CommandLine::GlobalFlags.members.to_set)
   end

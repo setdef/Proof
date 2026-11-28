@@ -34,10 +34,6 @@ module Usage
       flags.reject(&:global?)
     end
 
-    def global_flags
-      flags.select(&:global?)
-    end
-
     # @dynamic name, path, help, help_long, args, flags, subcommands, groups, examples, exit_codes
     # @dynamic subcommand_required, initialize
   end

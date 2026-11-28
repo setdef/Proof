@@ -59,11 +59,11 @@ class UsageSpecTest < Minitest::Test
 
   # `global` marks the flags a command passes on.
   def test_a_command_tells_its_own_flags_from_the_ones_it_passes_on
-    root = todo.commands.root
+    tree = todo.commands
 
-    assert_equal(%w[quiet debug], root.global_flags.map(&:name))
-    assert_empty(root.own_flags)
-    assert_equal(%w[sort json output], todo.commands.find(["list"])&.own_flags&.map(&:name))
+    assert_equal(%w[quiet debug], tree.at([]).global_flags.map(&:name))
+    assert_empty(tree.root.own_flags)
+    assert_equal(%w[sort json output], tree.find(["list"])&.own_flags&.map(&:name))
   end
 
   # `unknown_env` names a prefix and the variables with it to allow.
