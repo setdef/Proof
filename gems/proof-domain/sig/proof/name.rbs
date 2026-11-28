@@ -160,13 +160,14 @@ module Proof
     # `value` is a name. The message says whose name it is, what a name is, and
     # gives one that works.
     #
-    # - `value`: Object, what a file wrote.
+    # - `value`: Object, what a file wrote. `nil` and anything else that isn't a
+    #   name raise.
     # - `what`: String, whose name it is, such as `"a host's name"`.
     # - `example`: String, a name that works for it, such as `"nuc"`.
     #
     # ```ruby
     # Proof::Name.read("nuc", what: "a host's name", example: "nuc") # => "nuc"
     # ```
-    def self.read: (Object value, what: String, example: String) -> String
+    def self.read: (Object? value, what: String, example: String) -> String
   end
 end
