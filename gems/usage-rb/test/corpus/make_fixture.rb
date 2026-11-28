@@ -11,7 +11,7 @@ require "tmpdir"
 
 # Turns the KDL spec of a vector into the JSON that the gem reads.
 module SpecJson
-  # The JSON, parsed, that `usage generate json` writes for +kdl+.
+  # The JSON, parsed, that `usage generate json` writes for `kdl`.
   def self.of(kdl)
     Dir.mktmpdir do |dir|
       file = File.join(dir, "spec.usage.kdl")

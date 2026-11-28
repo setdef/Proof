@@ -23,28 +23,28 @@ class UsageCorpusTest < Minitest::Test
   def test_every_vector_agrees_is_refused_or_is_a_known_difference
     unlisted = VERDICTS.select { |id, verdict| verdict == :differs && !known_differences.key?(id) }
 
-    assert_empty(unlisted.keys, "These vectors differ from the corpus. Fix the gem, or list each with its reason.")
+    assert_empty(unlisted.keys, "These vectors differ from the corpus. Fix the gem, or list each with its reason")
   end
 
   # The list of differences never holds a vector that agrees.
   def test_a_known_difference_still_differs
     stale = known_differences.keys.reject { |id| VERDICTS[id] == :differs }
 
-    assert_empty(stale, "These vectors no longer differ from the corpus. Take them off the list.")
+    assert_empty(stale, "These vectors no longer differ from the corpus. Take them off the list")
   end
 
   # The gem refuses each spec the list says it refuses.
   def test_a_refused_spec_is_still_refused
     stale = refused.reject { |id| VERDICTS[id] == :refused }
 
-    assert_empty(stale, "The gem reads these specs now. Take them off the list, and list any that differ.")
+    assert_empty(stale, "The gem reads these specs now. Take them off the list, and list any that differ")
   end
 
   # The gem refuses no spec that the list leaves out.
   def test_every_refused_spec_is_listed
     unlisted = VERDICTS.select { |id, verdict| verdict == :refused && !refused.include?(id) }
 
-    assert_empty(unlisted.keys, "The gem refuses these specs. List them as refused.")
+    assert_empty(unlisted.keys, "The gem refuses these specs. List them as refused")
   end
 
   # A vector renamed or dropped by a later release leaves nothing on the list.
