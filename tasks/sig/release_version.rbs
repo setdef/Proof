@@ -1,0 +1,24 @@
+class ReleaseVersion
+  class Refusal < StandardError
+  end
+
+  class Failure < StandardError
+  end
+
+  NUMBER: String
+  TAG: Regexp
+  VERSION_FILE: String
+  ASSIGNMENT: Regexp
+
+  @version: String
+
+  def self.stamp: (String root, String? tag) -> String
+
+  def initialize: (String? tag) -> void
+
+  def stamp: (String root) -> String
+
+  private
+
+  def lock: (String root, String path, String before) -> void
+end

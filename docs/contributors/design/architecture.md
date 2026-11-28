@@ -611,3 +611,18 @@ Options weighed:
 
 - `unreferenced!` on each target, so none loads another's signatures: the domain gem's and usage gem's signatures are also in `lib`'s list, and Steep gives a signature file to the first target that lists it, so `lib` would stop seeing them.
 - A check of Steep's output for a target that reports nothing: Steep prints nothing for a target that fails to load and for one with no errors alike.
+
+### A release's version
+
+The committed version of Proof is `0.0.0`, in `lib/proof/version.rb` and in `Gemfile.lock`: the version of a build that isn't a release, and Fledge's default. A release gets its version in the checkout that builds it, and no commit is made for it, so a release never waits for a commit to reach a busy trunk and pass CI. The version has to be committed in some form, because Bundler in frozen mode, which the gate and CI use, refuses a gemspec or path gem whose version differs from `Gemfile.lock`, and Fledge refuses a path gem whose version differs from the lockfile too. Fledge also evaluates the gemspec at build time and ships the result, so `Proof::VERSION`, which `proof.gemspec` reads from `lib/proof/version.rb` as text, and the lockfile have to agree in the checkout that Fledge builds.
+
+`rake release:stamp[TAG]` makes them agree. Given a tag such as `v0.2.0`, or `0.2.0`, it writes the version without its `v` into `lib/proof/version.rb` and runs `bundle lock` with `BUNDLE_FROZEN` set to false, so a frozen environment doesn't refuse the lockfile's change. The release workflow calls it in its own checkout. Nobody runs it on trunk's committed tree, and a stamped checkout fails `test/proof_test.rb`, which checks that the committed version is `0.0.0`.
+
+The task takes three whole numbers with no leading zeros and an optional leading `v`. A prerelease, a build suffix, or any other form is refused with exit status 2 and a message that says what the task takes, and nothing changes. The task checks the form and not the major number, because that releases are `0.X.Y` is a rule of the release process, not of stamping. A version file with no `VERSION`, or a `bundle lock` that fails, exits with status 1, and a failed lock puts the version file back. `ReleaseVersion`, in `tasks/release_version.rb`, holds the code, and `test/release_version_test.rb` runs it on a throwaway copy of a small project, never on this checkout.
+
+The path gems, `gems/proof-domain` and `gems/usage-rb`, keep their own versions. Neither is published, and the lockfile already agrees with them.
+
+Options weighed:
+
+- A release commit that sets the version, as Fledge makes: Fledge's users install it through Bundler from the tagged commit's files, so its version has to be in them. Nobody installs Proof that way, and the commit would have to reach a busy trunk and pass CI before the tag could go on it.
+- Stamping `Proof::VERSION` alone, with no `bundle lock`: the gemspec reads the same file, so the gemspec and the lockfile would disagree within one build, and frozen Bundler and Fledge would both refuse it.

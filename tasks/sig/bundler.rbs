@@ -1,0 +1,4 @@
+# The part of Bundler that the tasks use.
+module Bundler
+  def self.with_unbundled_env: [T] () { () -> T } -> T
+end

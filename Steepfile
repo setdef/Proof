@@ -59,6 +59,7 @@ target :tasks do
   check "tasks/ruby_doc_comments.rb"
   check "tasks/doc_examples.rb"
   check "tasks/doc_examples"
+  check "tasks/release_version.rb"
 
   configure_code_diagnostics(Steep::Diagnostic::Ruby.all_error)
 
