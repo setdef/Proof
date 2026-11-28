@@ -25,6 +25,10 @@ class UsageHelpTest < Minitest::Test
     Global flags:
       -q, --quiet  Print less
       -d, --debug
+
+    Exit statuses:
+      0  It worked.
+      2  A mistake.
   TEXT
   private_constant(:ADD)
 
@@ -61,12 +65,26 @@ class UsageHelpTest < Minitest::Test
     assert_includes(help("remote").lines, "Usage: todo remote [FLAGS] <SUBCOMMAND>\n")
   end
 
-  # Only the program's help lists the statuses and ends with its closing text.
-  def test_a_commands_help_lists_subcommands_and_neither_exit_statuses_nor_the_closing_text
+  # Only the program's help ends with its closing text.
+  def test_a_commands_help_lists_subcommands_and_not_the_closing_text
     text = help("remote")
 
     assert_includes(text, "Subcommands:\n  add\n  remove\n")
-    refute_match(/Exit statuses:|Report a problem/, text)
+    refute_match(/Report a problem/, text)
+  end
+
+  # A command's help ends with the statuses that apply to it, the program's among them, as usage's reference lists them.
+  def test_a_commands_help_lists_the_exit_statuses_that_apply_to_it
+    spec = read(<<~JSON)
+      {"bin": "t", "exit_codes": [{"code": 0, "help": "It worked."}],
+       "cmd": {"subcommands": {"push": {"name": "push", "full_cmd": ["push"],
+         "exit_codes": [{"code": 75, "help": "The server went away."}]}}}}
+    JSON
+
+    assert_equal(
+      ["Exit statuses:", "  0   It worked.", "  75  The server went away."],
+      Usage::Help.new(spec).text(["push"]).lines(chomp: true).last(3)
+    )
   end
 
   # Strict choices are "one of", and others "such as".

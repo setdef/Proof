@@ -21,7 +21,7 @@ module Usage
     end
 
     private def ending
-      [Lists.exit_statuses("Exit statuses:", lineage.exit_codes), spec.after_help]
+      [spec.after_help]
     end
   end
 end

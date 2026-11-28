@@ -5,8 +5,8 @@ module Usage
   # description changes in one place only.
   #
   # This class writes each command's help from the spec, in one layout: the name and what it does, the longer
-  # description, the usage line, the examples, then a table each of subcommands, arguments, flags, and global flags.
-  # The program's help also lists the exit statuses and ends with the spec's closing text. Each flag shows its
+  # description, the usage line, the examples, then a table each of subcommands, arguments, flags, global flags, and
+  # the exit statuses that apply to the command. The program's help ends with the spec's closing text. Each flag shows its
   # one-line description and its choices. Lines that run past 100 characters, and table rows past 77,
   # wrap at spaces.
   #

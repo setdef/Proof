@@ -128,8 +128,8 @@ The server keeps one copy of each project's repository. It repacks each one, and
 Most runs come from coding agents, inside agent harnesses, and `proof` is built for how harnesses behave:
 
 - **Nothing for a shell to parse.** Every task and script runs as `proof run NAME` or `proof run --script FILE`, because harnesses refuse compound commands such as `bash -c '...'` from their sub-agents.
-- **`TERM` cancels the run.** A harness that stops an agent sends `TERM`, often twice, to the whole process tree. `proof run` cancels its run on the first, and exits once the server has heard, or after a bounded wait. `proof watch` stops watching and leaves the run going.
-- **A closed pipe cancels the run too.** When standard output is closed, as by a pipe into `head`, `proof` cancels the run and exits with 141, rather than let it go on unseen.
+- **`TERM` cancels the run.** A harness that stops an agent sends `TERM`, often twice, to the whole process tree. `proof run` cancels its run on the first, and exits once the server has heard, or after a bounded wait. `proof watch` stops watching, leaves the run going, and exits with 143.
+- **A closed pipe cancels the run too.** When standard output is closed, as by a pipe into `head`, `proof run` cancels the run and exits with 141, rather than let it go on unseen. `proof watch` stops watching, leaves the run going, and exits with 141.
 - **The result is never lost.** The run's ID is in the first lines, and `proof watch ID` exits with the run's status, so an agent that started `proof` in the background, or whose harness ended, can still learn how the run ended.
 - **`proof` never sits silent.** It prints a line before it connects to anything.
 - **A mistake says what to do next.** Each message says what went wrong in plain words and ends with the command to run next. Proof keeps a debug log under `~/.local/state/proof/`, never in the current folder.

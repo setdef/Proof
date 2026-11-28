@@ -39,6 +39,7 @@ module Usage
         Lists.arguments("Arguments:", command.args),
         Lists.flags("Flags:", command.own_flags),
         Lists.flags("Global flags:", lineage.global_flags),
+        Lists.exit_statuses("Exit statuses:", lineage.exit_codes),
       ]
     end
 

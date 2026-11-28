@@ -422,7 +422,45 @@
             "lang": ""
           }
         ],
-        "headings": []
+        "headings": [],
+        "exit_codes": [
+          {
+            "code": 0,
+            "help": "The run succeeded."
+          },
+          {
+            "code": 2,
+            "help": "Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests."
+          },
+          {
+            "code": 75,
+            "help": "A runner or its host went away, or Proof couldn't reach the server. Run the same command again."
+          },
+          {
+            "code": 78,
+            "help": "The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started."
+          },
+          {
+            "code": 124,
+            "help": "The run reached its time limit, and the runner ended it."
+          },
+          {
+            "code": 130,
+            "help": "The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it."
+          },
+          {
+            "code": 137,
+            "help": "The run held more memory than it requested while its host ran short, or was killed."
+          },
+          {
+            "code": 141,
+            "help": "Standard output was closed, as by a pipe into head, and Proof canceled the run."
+          },
+          {
+            "code": 143,
+            "help": "Proof received TERM, as when an agent harness stops it, and canceled the run."
+          }
+        ]
       },
       "watch": {
         "full_cmd": [
@@ -473,7 +511,45 @@
             "lang": ""
           }
         ],
-        "headings": []
+        "headings": [],
+        "exit_codes": [
+          {
+            "code": 0,
+            "help": "The run succeeded."
+          },
+          {
+            "code": 2,
+            "help": "The command line has a mistake."
+          },
+          {
+            "code": 75,
+            "help": "The run's runner or its host went away, or Proof couldn't reach the server. If Proof couldn't reach the server, run the same command again."
+          },
+          {
+            "code": 78,
+            "help": "The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started."
+          },
+          {
+            "code": 124,
+            "help": "The run reached its time limit, and the runner ended it."
+          },
+          {
+            "code": 130,
+            "help": "Someone canceled the run, and the result line says who; or you pressed Ctrl-C, and Proof stopped watching and left the run going."
+          },
+          {
+            "code": 137,
+            "help": "The run held more memory than it requested while its host ran short, or was killed."
+          },
+          {
+            "code": 141,
+            "help": "Standard output was closed, as by a pipe into head; Proof stopped watching and left the run going."
+          },
+          {
+            "code": 143,
+            "help": "Proof received TERM, as when an agent harness stops it; Proof stopped watching and left the run going."
+          }
+        ]
       },
       "logs": {
         "full_cmd": [
@@ -549,7 +625,21 @@
             "lang": ""
           }
         ],
-        "headings": []
+        "headings": [],
+        "exit_codes": [
+          {
+            "code": 0,
+            "help": "The command did what it was asked."
+          },
+          {
+            "code": 2,
+            "help": "The command line has a mistake."
+          },
+          {
+            "code": 75,
+            "help": "Proof couldn't reach the server. Run the same command again."
+          }
+        ]
       },
       "cancel": {
         "full_cmd": [
@@ -588,7 +678,21 @@
             "lang": ""
           }
         ],
-        "headings": []
+        "headings": [],
+        "exit_codes": [
+          {
+            "code": 0,
+            "help": "The command did what it was asked."
+          },
+          {
+            "code": 2,
+            "help": "The command line has a mistake."
+          },
+          {
+            "code": 75,
+            "help": "Proof couldn't reach the server. Run the same command again."
+          }
+        ]
       },
       "download": {
         "full_cmd": [
@@ -675,7 +779,21 @@
             "lang": ""
           }
         ],
-        "headings": []
+        "headings": [],
+        "exit_codes": [
+          {
+            "code": 0,
+            "help": "The command did what it was asked."
+          },
+          {
+            "code": 2,
+            "help": "The command line has a mistake."
+          },
+          {
+            "code": 75,
+            "help": "Proof couldn't reach the server. Run the same command again."
+          }
+        ]
       },
       "status": {
         "full_cmd": [
@@ -716,7 +834,21 @@
             "lang": ""
           }
         ],
-        "headings": []
+        "headings": [],
+        "exit_codes": [
+          {
+            "code": 0,
+            "help": "The command did what it was asked."
+          },
+          {
+            "code": 2,
+            "help": "The command line has a mistake."
+          },
+          {
+            "code": 75,
+            "help": "Proof couldn't reach the server. Run the same command again."
+          }
+        ]
       },
       "login": {
         "full_cmd": [
@@ -774,7 +906,21 @@
             "lang": ""
           }
         ],
-        "headings": []
+        "headings": [],
+        "exit_codes": [
+          {
+            "code": 0,
+            "help": "The command did what it was asked."
+          },
+          {
+            "code": 2,
+            "help": "The command line has a mistake."
+          },
+          {
+            "code": 75,
+            "help": "Proof couldn't reach the server. Run the same command again."
+          }
+        ]
       },
       "logout": {
         "full_cmd": [
@@ -801,7 +947,21 @@
             "lang": ""
           }
         ],
-        "headings": []
+        "headings": [],
+        "exit_codes": [
+          {
+            "code": 0,
+            "help": "The command did what it was asked."
+          },
+          {
+            "code": 2,
+            "help": "The command line has a mistake."
+          },
+          {
+            "code": 75,
+            "help": "Proof couldn't reach the server. Run the same command again."
+          }
+        ]
       },
       "verify": {
         "full_cmd": [
@@ -841,7 +1001,21 @@
             "lang": ""
           }
         ],
-        "headings": []
+        "headings": [],
+        "exit_codes": [
+          {
+            "code": 0,
+            "help": "The command did what it was asked."
+          },
+          {
+            "code": 2,
+            "help": "The command line has a mistake."
+          },
+          {
+            "code": 75,
+            "help": "Proof couldn't reach the server. Run the same command again."
+          }
+        ]
       },
       "skill": {
         "full_cmd": [
@@ -901,7 +1075,17 @@
                 "lang": ""
               }
             ],
-            "headings": []
+            "headings": [],
+            "exit_codes": [
+              {
+                "code": 0,
+                "help": "The command did what it was asked."
+              },
+              {
+                "code": 2,
+                "help": "The command line has a mistake."
+              }
+            ]
           }
         },
         "args": [],
@@ -916,7 +1100,17 @@
         "aliases": [],
         "hidden_aliases": [],
         "examples": [],
-        "headings": []
+        "headings": [],
+        "exit_codes": [
+          {
+            "code": 0,
+            "help": "The command did what it was asked."
+          },
+          {
+            "code": 2,
+            "help": "The command line has a mistake."
+          }
+        ]
       },
       "server": {
         "full_cmd": [
@@ -972,7 +1166,17 @@
                 "lang": ""
               }
             ],
-            "headings": []
+            "headings": [],
+            "exit_codes": [
+              {
+                "code": 0,
+                "help": "The command did what it was asked."
+              },
+              {
+                "code": 2,
+                "help": "The command line has a mistake."
+              }
+            ]
           },
           "upgrade": {
             "full_cmd": [
@@ -1015,7 +1219,17 @@
                 "lang": ""
               }
             ],
-            "headings": []
+            "headings": [],
+            "exit_codes": [
+              {
+                "code": 0,
+                "help": "The command did what it was asked."
+              },
+              {
+                "code": 2,
+                "help": "The command line has a mistake."
+              }
+            ]
           },
           "uninstall": {
             "full_cmd": [
@@ -1058,7 +1272,17 @@
                 "lang": ""
               }
             ],
-            "headings": []
+            "headings": [],
+            "exit_codes": [
+              {
+                "code": 0,
+                "help": "The command did what it was asked."
+              },
+              {
+                "code": 2,
+                "help": "The command line has a mistake."
+              }
+            ]
           }
         },
         "args": [],
@@ -1073,7 +1297,17 @@
         "aliases": [],
         "hidden_aliases": [],
         "examples": [],
-        "headings": []
+        "headings": [],
+        "exit_codes": [
+          {
+            "code": 0,
+            "help": "The command did what it was asked."
+          },
+          {
+            "code": 2,
+            "help": "The command line has a mistake."
+          }
+        ]
       },
       "runner": {
         "full_cmd": [
@@ -1176,7 +1410,21 @@
                 "lang": ""
               }
             ],
-            "headings": []
+            "headings": [],
+            "exit_codes": [
+              {
+                "code": 0,
+                "help": "The command did what it was asked."
+              },
+              {
+                "code": 2,
+                "help": "The command line has a mistake."
+              },
+              {
+                "code": 75,
+                "help": "Proof couldn't reach the server. Run the same command again."
+              }
+            ]
           },
           "approve": {
             "full_cmd": [
@@ -1215,7 +1463,21 @@
                 "lang": ""
               }
             ],
-            "headings": []
+            "headings": [],
+            "exit_codes": [
+              {
+                "code": 0,
+                "help": "The command did what it was asked."
+              },
+              {
+                "code": 2,
+                "help": "The command line has a mistake."
+              },
+              {
+                "code": 75,
+                "help": "Proof couldn't reach the server. Run the same command again."
+              }
+            ]
           },
           "start": {
             "full_cmd": [
@@ -1243,7 +1505,17 @@
                 "lang": ""
               }
             ],
-            "headings": []
+            "headings": [],
+            "exit_codes": [
+              {
+                "code": 0,
+                "help": "The command did what it was asked."
+              },
+              {
+                "code": 2,
+                "help": "The command line has a mistake."
+              }
+            ]
           },
           "stop": {
             "full_cmd": [
@@ -1286,7 +1558,17 @@
                 "lang": ""
               }
             ],
-            "headings": []
+            "headings": [],
+            "exit_codes": [
+              {
+                "code": 0,
+                "help": "The command did what it was asked."
+              },
+              {
+                "code": 2,
+                "help": "The command line has a mistake."
+              }
+            ]
           },
           "list": {
             "full_cmd": [
@@ -1327,7 +1609,21 @@
                 "lang": ""
               }
             ],
-            "headings": []
+            "headings": [],
+            "exit_codes": [
+              {
+                "code": 0,
+                "help": "The command did what it was asked."
+              },
+              {
+                "code": 2,
+                "help": "The command line has a mistake."
+              },
+              {
+                "code": 75,
+                "help": "Proof couldn't reach the server. Run the same command again."
+              }
+            ]
           },
           "revoke": {
             "full_cmd": [
@@ -1380,7 +1676,21 @@
                 "lang": ""
               }
             ],
-            "headings": []
+            "headings": [],
+            "exit_codes": [
+              {
+                "code": 0,
+                "help": "The command did what it was asked."
+              },
+              {
+                "code": 2,
+                "help": "The command line has a mistake."
+              },
+              {
+                "code": 75,
+                "help": "Proof couldn't reach the server. Run the same command again."
+              }
+            ]
           },
           "uninstall": {
             "full_cmd": [
@@ -1423,7 +1733,17 @@
                 "lang": ""
               }
             ],
-            "headings": []
+            "headings": [],
+            "exit_codes": [
+              {
+                "code": 0,
+                "help": "The command did what it was asked."
+              },
+              {
+                "code": 2,
+                "help": "The command line has a mistake."
+              }
+            ]
           }
         },
         "args": [],
@@ -1438,7 +1758,17 @@
         "aliases": [],
         "hidden_aliases": [],
         "examples": [],
-        "headings": []
+        "headings": [],
+        "exit_codes": [
+          {
+            "code": 0,
+            "help": "The command did what it was asked."
+          },
+          {
+            "code": 2,
+            "help": "The command line has a mistake."
+          }
+        ]
       },
       "hook": {
         "full_cmd": [
@@ -1498,7 +1828,17 @@
                 "lang": ""
               }
             ],
-            "headings": []
+            "headings": [],
+            "exit_codes": [
+              {
+                "code": 0,
+                "help": "The command did what it was asked."
+              },
+              {
+                "code": 2,
+                "help": "The command line has a mistake."
+              }
+            ]
           },
           "uninstall": {
             "full_cmd": [
@@ -1526,7 +1866,17 @@
                 "lang": ""
               }
             ],
-            "headings": []
+            "headings": [],
+            "exit_codes": [
+              {
+                "code": 0,
+                "help": "The command did what it was asked."
+              },
+              {
+                "code": 2,
+                "help": "The command line has a mistake."
+              }
+            ]
           }
         },
         "args": [],
@@ -1541,7 +1891,17 @@
         "aliases": [],
         "hidden_aliases": [],
         "examples": [],
-        "headings": []
+        "headings": [],
+        "exit_codes": [
+          {
+            "code": 0,
+            "help": "The command did what it was asked."
+          },
+          {
+            "code": 2,
+            "help": "The command line has a mistake."
+          }
+        ]
       }
     },
     "args": [],
@@ -1661,44 +2021,6 @@
       "header": "Come back to a run",
       "help": "Streams run m3d8q's output and exits with its status.",
       "lang": ""
-    }
-  ],
-  "exit_codes": [
-    {
-      "code": 0,
-      "help": "The run succeeded, or the command did what it was asked."
-    },
-    {
-      "code": 2,
-      "help": "Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests."
-    },
-    {
-      "code": 75,
-      "help": "A runner or its host went away, or Proof couldn't reach the server. Run the same command again."
-    },
-    {
-      "code": 78,
-      "help": "The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started."
-    },
-    {
-      "code": 124,
-      "help": "The run reached its time limit, and the runner ended it."
-    },
-    {
-      "code": 130,
-      "help": "The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it."
-    },
-    {
-      "code": 137,
-      "help": "The run held more memory than it requested while its host ran short, or was killed."
-    },
-    {
-      "code": 141,
-      "help": "Standard output was closed, as by a pipe into head, and Proof canceled the run."
-    },
-    {
-      "code": 143,
-      "help": "Proof received TERM, as when an agent harness stops it, and canceled the run."
     }
   ],
   "unknown_flags": "error",

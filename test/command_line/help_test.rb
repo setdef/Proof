@@ -41,9 +41,16 @@ class CommandLineHelpTest < Minitest::Test
     assert_empty(COMMANDS.reject { |command| help.any? { |line| line.start_with?("  #{command.name} ") } })
   end
 
-  # proof.usage.kdl: `exit_code` nodes, which the help lists with the statuses.
-  def test_the_programs_help_lists_the_exit_statuses
-    assert_includes(help, "  130  The run was canceled: you interrupted Proof with Ctrl-C, or someone")
+  # proof.usage.kdl: each command's `exit_code` nodes, which its help lists with the statuses.
+  def test_a_commands_help_lists_the_exit_statuses_it_can_return
+    assert_includes(help("run"), "  130  The run was canceled: you interrupted Proof with Ctrl-C, or someone")
+    assert_includes(help("status"), "  75  Proof couldn't reach the server. Run the same command again.")
+  end
+
+  # A status that only a run gives, such as 78, isn't listed under a command that starts none.
+  def test_a_commands_help_leaves_out_the_statuses_it_cannot_return
+    refute(help("status").any? { |line| line.start_with?("  78 ") })
+    refute_includes(help, "Exit statuses:")
   end
 
   # clig.dev: "Lead with examples."

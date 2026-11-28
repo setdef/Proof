@@ -1,5 +1,5 @@
 module Usage
-  # The help of the program: its texts and its commands, then its exit statuses and the spec's closing text.
+  # The help of the program: its texts and its commands, and the spec's closing text at the end.
   class ProgramPage < Page
     private
 

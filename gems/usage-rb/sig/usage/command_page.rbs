@@ -1,6 +1,5 @@
 module Usage
-  # The help of a command under the program: its own texts and its subcommands, with no exit statuses and no
-  # closing text.
+  # The help of a command under the program: its own texts and its subcommands, with no closing text.
   class CommandPage < Page
     private
 

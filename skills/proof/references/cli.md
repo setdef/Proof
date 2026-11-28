@@ -54,20 +54,6 @@ proof watch m3d8q
 - **`-d --debug`** — Print what Proof does at each step, to standard error
 - **`--version`** — Prints `proof VERSION` to standard output, where VERSION is the version of this build, and exits with 0.
 
-## Exit Status
-
-| Code | Meaning |
-| ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
-
 ## `proof run`
 
 - **Usage:** `proof run [FLAGS] [task] [args]…`
@@ -133,7 +119,7 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
+| `0` | The run succeeded. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
@@ -220,15 +206,15 @@ Streams a run's output until it ends, and exits with its status. Picks up a run 
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
+| `0` | The run succeeded. |
+| `2` | The command line has a mistake. |
+| `75` | The run's runner or its host went away, or Proof couldn't reach the server. If Proof couldn't reach the server, run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
 | `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
+| `130` | Someone canceled the run, and the result line says who; or you pressed Ctrl-C, and Proof stopped watching and left the run going. |
 | `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `141` | Standard output was closed, as by a pipe into head; Proof stopped watching and left the run going. |
+| `143` | Proof received TERM, as when an agent harness stops it; Proof stopped watching and left the run going. |
 
 ### Examples
 
@@ -254,15 +240,9 @@ Prints a run's whole output. Works for any run Proof still keeps, finished or no
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
+| `75` | Proof couldn't reach the server. Run the same command again. |
 
 ### Examples
 
@@ -290,15 +270,9 @@ Cancels runs, and ends everything their commands started. A run that is still qu
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
+| `75` | Proof couldn't reach the server. Run the same command again. |
 
 ### Examples
 
@@ -325,15 +299,9 @@ Download a run's artifacts
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
+| `75` | Proof couldn't reach the server. Run the same command again. |
 
 ### Examples
 
@@ -361,15 +329,9 @@ Shows the runners, the queue for each operating system, and your recent runs, wi
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
+| `75` | Proof couldn't reach the server. Run the same command again. |
 
 ### Examples
 
@@ -394,15 +356,9 @@ Signs in to a pool's server from this computer. Asks for the one-time code that 
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
+| `75` | Proof couldn't reach the server. Run the same command again. |
 
 ### Examples
 
@@ -421,15 +377,9 @@ Sign out of the pool's server from this computer, and delete the token Proof kep
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
+| `75` | Proof couldn't reach the server. Run the same command again. |
 
 ### Examples
 
@@ -451,15 +401,9 @@ Send a known run to every runner, and report each result
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
+| `75` | Proof couldn't reach the server. Run the same command again. |
 
 ### Examples
 
@@ -477,15 +421,8 @@ Install Proof's Agent Skill, which teaches coding agents to use Proof
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
 
 ## `proof skill install`
 
@@ -501,15 +438,8 @@ Install the Agent Skill that matches this version of Proof
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
 
 ### Examples
 
@@ -533,15 +463,8 @@ Set up, upgrade, or uninstall the server, on the computer it runs on
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
 
 ## `proof server setup`
 
@@ -557,15 +480,8 @@ Sets up this computer as the pool's server. Run it as the account the server wil
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
 
 ### Examples
 
@@ -593,15 +509,8 @@ Upgrade the server; its runners upgrade themselves to match
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
 
 ### Examples
 
@@ -623,15 +532,8 @@ Stop the server and delete it, with every run's record, output, and artifacts
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
 
 ### Examples
 
@@ -649,15 +551,8 @@ Add, approve, list, and remove runners
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
 
 ## `proof runner setup`
 
@@ -684,15 +579,9 @@ when you run setup again. On Windows, also sets up a runner in WSL. Safe to run 
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
+| `75` | Proof couldn't reach the server. Run the same command again. |
 
 ### Examples
 
@@ -714,15 +603,9 @@ Lets a runner that asked to join into the pool, and adds its host to the pool fi
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
+| `75` | Proof couldn't reach the server. Run the same command again. |
 
 ### Examples
 
@@ -741,15 +624,8 @@ Start this computer's runner again after `proof runner stop`
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
 
 ### Examples
 
@@ -771,15 +647,8 @@ Stop this computer's runner, and cancel its runs, until `proof runner start`
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
 
 ### Examples
 
@@ -801,15 +670,9 @@ List the runners, with their versions, labels, and resources
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
+| `75` | Proof couldn't reach the server. Run the same command again. |
 
 ### Examples
 
@@ -834,15 +697,9 @@ Remove a runner from the pool, and revoke its token
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
+| `75` | Proof couldn't reach the server. Run the same command again. |
 
 ### Examples
 
@@ -864,15 +721,8 @@ Stop this computer's runner, and delete its workspaces and caches
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
 
 ### Examples
 
@@ -890,15 +740,8 @@ Install or remove a Git pre-push hook that runs a task
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
 
 ## `proof hook install`
 
@@ -917,15 +760,8 @@ Adds a pre-push hook to this clone that runs a task on the commits you push. Git
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
 
 ### Examples
 
@@ -944,15 +780,8 @@ Remove the pre-push hook that Proof installed in this clone
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded, or the command did what it was asked. |
-| `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
-| `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
-| `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
-| `124` | The run reached its time limit, and the runner ended it. |
-| `130` | The run was canceled: you interrupted Proof with Ctrl-C, or someone else, or the pool, canceled it. The result line says who canceled it. |
-| `137` | The run held more memory than it requested while its host ran short, or was killed. |
-| `141` | Standard output was closed, as by a pipe into head, and Proof canceled the run. |
-| `143` | Proof received TERM, as when an agent harness stops it, and canceled the run. |
+| `0` | The command did what it was asked. |
+| `2` | The command line has a mistake. |
 
 ### Examples
 
