@@ -163,14 +163,15 @@ The codes `proof server setup` and `proof runner setup` print also prove the ser
 
 ## What Proof doesn't do
 
-- **Windows doesn't host the server, and `proof` doesn't run on it.** The [README](../README.md#compatibility) lists the systems for each role, and the Linux distributions a runner supports.
-- **A run never takes a whole host.** The server leaves each host's [share](#how-proof-gives-way-to-a-person) free and places a run only on what remains, so a benchmark that needs an idle host isn't a run.
-- **A run never uses a person's own desktop,** and none sends real keyboard or mouse input to one. A task with the `desktop` label gets [a display of its own](#what-a-runner-gives-each-run), or a session of the runner's account on macOS.
-- **A run's place in the queue never changes.** The server has [no priorities](#how-the-server-places-a-run), so nothing moves a run ahead of another.
-- **The server places a run by its request alone.** It never places or sizes a run from the history of earlier runs.
-- **A run's record keeps no list of the processes it started.** It holds the fields [the server keeps of a run](#what-the-server-keeps-of-a-run), and the runner ends every process of the run.
-- **Runs on one runner are separated only by folders and by the runner's account.** A run's command can read another project's files in that account, as [the section on what a runner gives each run](#what-a-runner-gives-each-run) says.
-- **Proof reports no result to a forge,** such as a GitHub commit status. The result is the run's state, its output, and `proof`'s exit status.
+- **Windows doesn't host the server, and `proof` doesn't run on it.** The [README](../README.md#compatibility) lists the systems for each role.
+- **A runner supports only the Linux distributions the [README](../README.md#compatibility) lists.**
+- **No run takes a whole host,** as a benchmark might need. A run requests CPUs and memory, and the server places other runs on what remains of the host, as [the section on placing a run](#how-the-server-places-a-run) says.
+- **A run never uses a person's real desktop, and never sends real input to one.** The `desktop` label gives a task [a place to open windows](#what-a-runner-gives-each-run) that isn't a person's.
+- **Runs have no priorities, and nothing moves a run ahead in the queue.**
+- **The server never places or sizes a run from the history of earlier runs.**
+- **Proof keeps no record of every process a run started.** The server keeps [the fields of a run's record](#what-the-server-keeps-of-a-run), and the runner ends every process of the run when the run ends.
+- **Proof gives runs no isolation beyond separate folders and the runner's account.** Runs on one runner share that account, and [the README](../README.md#limitations) says what follows.
+- **Proof reports no result to a forge,** such as a GitHub commit status. [Run tasks on pushed commits](guides/run-tasks-on-pushed-commits.md) says where to read results.
 
 ## Why Proof is built this way
 
