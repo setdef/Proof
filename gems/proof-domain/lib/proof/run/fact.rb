@@ -10,12 +10,11 @@ module Proof
       end
 
       def self.name_of(value, message)
+        raise(InvalidFactError, format(message, value)) unless Name.valid?(value)
+
         # valid? has found a String, which Steep can't know.
         text = value #: String
-        frozen = -text if Name.valid?(value)
-        return frozen if frozen
-
-        raise(InvalidFactError, format(message, value))
+        -text
       end
 
       def self.listed(facts)
