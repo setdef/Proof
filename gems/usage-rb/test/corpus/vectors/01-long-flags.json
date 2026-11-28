@@ -1,0 +1,2707 @@
+{
+  "section": "long-flags",
+  "about": "How `--name` tokens bind. Long names match exactly — there is no abbreviation inference — and a value may be attached with `=` or given as the following word.",
+  "vectors": [
+    {
+      "id": "long-boolean-present",
+      "doc": "A flag with no argument binds true when present.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--force\"\n",
+      "argv": [
+        "--force"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "force": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--force]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "--force",
+              "short": [],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-boolean-absent",
+      "doc": "An absent boolean flag is not bound at all, rather than bound false.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--force\"\n",
+      "argv": [],
+      "expect": {
+        "ok": {}
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--force]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "--force",
+              "short": [],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-attached",
+      "doc": "`--flag=value` binds the text after the first `=`.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\"\n",
+      "argv": [
+        "--jobs=8"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": "8"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-detached",
+      "doc": "`--flag value` binds the following word.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\"\n",
+      "argv": [
+        "--jobs",
+        "8"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": "8"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-attached-keeps-later-equals",
+      "doc": "Only the first `=` separates; the rest belongs to the value, so `--set=a=b` yields `a=b`.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--set <kv>\"\n",
+      "argv": [
+        "--set=a=b"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "set": "a=b"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--set <kv>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "set",
+              "usage": "--set <kv>",
+              "short": [],
+              "long": [
+                "set"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "kv",
+                "usage": "<kv>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-attached-leading-equals",
+      "doc": "Only the first `=` separates, seen from the other side: `--set==a` is a value of `=a` rather than an empty value followed by junk.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--set <kv>\"\n",
+      "argv": [
+        "--set==a"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "set": "=a"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--set <kv>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "set",
+              "usage": "--set <kv>",
+              "short": [],
+              "long": [
+                "set"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "kv",
+                "usage": "<kv>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-attached-empty",
+      "doc": "`--flag=` binds the empty string. Present-but-empty is a different state from absent, and only the attached form can express it.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\"\n",
+      "argv": [
+        "--jobs="
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": ""
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-boolean-with-empty-attached-value",
+      "doc": "`--force=` on a flag that holds no value leaves nothing behind. An empty value means something only to a flag that takes one, and a stray empty word would otherwise be read as a positional.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--force\"\narg \"[file]\"\n",
+      "argv": [
+        "--force="
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "force": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--force] [file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "--force",
+              "short": [],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-boolean-with-attached-value",
+      "doc": "`--force=yes` on a flag that holds no value sets the flag and drops the value. Handing the leftover to the positionals would re-split one token into two, filling an argument the caller never typed a word for; clap rejects the token outright, which a spec parsing a command line it does not own cannot do.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--force\"\narg \"[file]\"\n",
+      "argv": [
+        "--force=yes"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "force": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--force] [file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "--force",
+              "short": [],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-attached-flaglike",
+      "doc": "An attached value binds even when it looks like a flag: `=` has already settled where the value came from.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\"\nflag \"--force\"\n",
+      "argv": [
+        "--jobs=--force"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": "--force"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>] [--force]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            },
+            {
+              "name": "force",
+              "usage": "--force",
+              "short": [],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-detached-empty",
+      "doc": "An empty token is not flag-like, so `--jobs \"\"` binds the empty string. The attached form is the only way to write an empty value in one token, not the only way to pass one.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\"\n",
+      "argv": [
+        "--jobs",
+        ""
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": ""
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-is-one-token",
+      "doc": "A value is the token the shell produced, never re-split: `--include a,b` is one pattern containing a comma. Parsers that split on a delimiter make `,` unpassable, which is why clap stopped doing it by default in 4.0 and specs generated from clap assume it is off.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--include <pattern>\" var=#true\n",
+      "argv": [
+        "--include",
+        "a,b"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "include": [
+              "a,b"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--include <pattern>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "include",
+              "usage": "--include <pattern>",
+              "short": [],
+              "long": [
+                "include"
+              ],
+              "var": true,
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "pattern",
+                "usage": "<pattern>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-missing",
+      "doc": "A flag needing a value that ends the command line is an error.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\"\n",
+      "argv": [
+        "--jobs"
+      ],
+      "expect": {
+        "error": "missing_flag_value"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-rejects-flaglike-next-word",
+      "doc": "A detached value must not itself look like a flag, so a forgotten value is reported rather than swallowed. Use the attached form to pass a value that begins with a dash.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\"\nflag \"--force\"\n",
+      "argv": [
+        "--jobs",
+        "--force"
+      ],
+      "expect": {
+        "error": "missing_flag_value"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>] [--force]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            },
+            {
+              "name": "force",
+              "usage": "--force",
+              "short": [],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-rejects-the-separator",
+      "doc": "A `--` is flag-like too, so it cannot be swallowed as a detached value: the separator belongs to the command line, not to whichever flag happens to precede it.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\"\narg \"[file]\"\n",
+      "argv": [
+        "--jobs",
+        "--",
+        "x"
+      ],
+      "expect": {
+        "error": "missing_flag_value"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>] [file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-accepts-negative-number",
+      "doc": "A flag can opt into accepting a negative number as its detached value without accepting every dash-prefixed word.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--offset <n>\" allow_negative_numbers=#true\n",
+      "argv": [
+        "--offset",
+        "-1"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "offset": "-1"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--offset <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "offset",
+              "usage": "--offset <n>",
+              "short": [],
+              "long": [
+                "offset"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "allow_negative_numbers": true,
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-unknown",
+      "doc": "An unrecognized long flag is offered to the positionals like any other word. A spec is often parsing a command line whose flags belong to something else, so a token it has not heard of is more likely data in transit than a mistake.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--force\"\narg \"[file]\"\n",
+      "argv": [
+        "--wat"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "file": "--wat"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--force] [file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "--force",
+              "short": [],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-no-abbreviation",
+      "doc": "A unique prefix of a long name is not accepted as the flag. Abbreviation inference makes adding a flag a breaking change for anyone who typed a prefix that was unique until now, so the grammar has none — the token becomes a word, and here there is no argument to hold it.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--force\"\n",
+      "argv": [
+        "--for"
+      ],
+      "expect": {
+        "error": "unexpected_arg"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--force]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "--force",
+              "short": [],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-many-dashes-names-nothing",
+      "doc": "A run of dashes is read as a long flag whose name happens to be dashes, matches nothing, and so becomes a word like any other unrecognized flag. There is no separate rule for `---`, and only a bare `--` is the separator.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[file]\"\n",
+      "argv": [
+        "-----"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "file": "-----"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-alias-binds-the-flag-name",
+      "doc": "A flag may declare several long names; the extra ones are aliases, and every one of them binds under the flag's name. Renaming a flag is done by adding a name, not by breaking the old one.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--force --overwrite\"\n",
+      "argv": [
+        "--overwrite"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "force": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--force]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "--force",
+              "short": [],
+              "long": [
+                "force",
+                "overwrite"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-repeated-keeps-the-last",
+      "doc": "A flag that is neither `var` nor `count` may still be given twice, and the later occurrence wins. A repeat is a correction — typically a wrapper appending to a command line it did not write — so the last word on the subject is the one that counts.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\"\n",
+      "argv": [
+        "--jobs",
+        "1",
+        "--jobs",
+        "2"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": "2"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-boolean-repeated",
+      "doc": "The same for a flag holding no value: giving `--force` twice is not an error and not a count, just true.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--force\"\n",
+      "argv": [
+        "--force",
+        "--force"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "force": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--force]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "--force",
+              "short": [],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-repeated-var",
+      "doc": "A `var` flag collects each occurrence in order.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--include <pattern>\" var=#true\n",
+      "argv": [
+        "--include",
+        "a",
+        "--include",
+        "b"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "include": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--include <pattern>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "include",
+              "usage": "--include <pattern>",
+              "short": [],
+              "long": [
+                "include"
+              ],
+              "var": true,
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "pattern",
+                "usage": "<pattern>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-variadic-flag-arg",
+      "doc": "A flag whose argument is variadic takes several values from one occurrence, which is what the trailing ellipsis in `<pattern>...` declares.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--include <pattern>...\"\n",
+      "argv": [
+        "--include",
+        "a",
+        "b"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "include": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--include <pattern>…]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "include",
+              "usage": "--include <pattern>…",
+              "short": [],
+              "long": [
+                "include"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "pattern",
+                "usage": "<pattern>",
+                "required": true,
+                "double_dash": "Optional",
+                "var": true,
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-variadic-flag-arg-attached-first-value",
+      "doc": "The `=` settles where the first value came from and nothing more, so a variadic argument goes on collecting from the words after it. Stopping at the attached one would make `--include=a b` and `--include a b` mean different things for no reason a caller could see.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--include <pattern>...\"\n",
+      "argv": [
+        "--include=a",
+        "b"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "include": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--include <pattern>…]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "include",
+              "usage": "--include <pattern>…",
+              "short": [],
+              "long": [
+                "include"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "pattern",
+                "usage": "<pattern>",
+                "required": true,
+                "double_dash": "Optional",
+                "var": true,
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-repeatable-flag-is-not-greedy",
+      "doc": "A `var` flag whose argument is not variadic takes exactly one value per occurrence. It is repetition, not greed, so the word after its value is still available to a positional.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--include <pattern>\" var=#true\narg \"[target]\"\n",
+      "argv": [
+        "--include",
+        "a",
+        "b"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "include": [
+              "a"
+            ]
+          },
+          "args": {
+            "target": "b"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--include <pattern>] [target]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "target",
+              "usage": "[target]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "include",
+              "usage": "--include <pattern>",
+              "short": [],
+              "long": [
+                "include"
+              ],
+              "var": true,
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "pattern",
+                "usage": "<pattern>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-negation",
+      "doc": "A flag with `negate` binds false when the negating form is used.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--color\" negate=\"--no-color\" default=#true\n",
+      "argv": [
+        "--no-color"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "color": false
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--color]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "color",
+              "usage": "--color",
+              "short": [],
+              "long": [
+                "color"
+              ],
+              "hide": false,
+              "global": false,
+              "default": [
+                "true"
+              ],
+              "negate": "--no-color"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-negation-with-attached-value",
+      "doc": "Dropping a value the flag cannot hold does not drop which form was typed: `--no-color=yes` still binds false. The two rules meet here, and reading the whole token to decide the form would make the negation depend on whether a value happened to be attached.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--color\" negate=\"--no-color\" default=#true\n",
+      "argv": [
+        "--no-color=yes"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "color": false
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--color]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "color",
+              "usage": "--color",
+              "short": [],
+              "long": [
+                "color"
+              ],
+              "hide": false,
+              "global": false,
+              "default": [
+                "true"
+              ],
+              "negate": "--no-color"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-negation-default",
+      "doc": "With neither form given, a negatable flag takes its declared default.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--color\" negate=\"--no-color\" default=#true\n",
+      "argv": [],
+      "expect": {
+        "ok": {
+          "flags": {
+            "color": true
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--color]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "color",
+              "usage": "--color",
+              "short": [],
+              "long": [
+                "color"
+              ],
+              "hide": false,
+              "global": false,
+              "default": [
+                "true"
+              ],
+              "negate": "--no-color"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "unknown-flags-error-rejects-the-token",
+      "doc": "A CLI that owns all of its flags declares `unknown_flags \"error\"` and gets typo detection: the token is refused rather than passed along as data.",
+      "spec": "name \"ex\"\nbin \"ex\"\nunknown_flags \"error\"\nflag \"--force\"\narg \"[file]\"\n",
+      "argv": [
+        "--wat"
+      ],
+      "expect": {
+        "error": "unknown_flag"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--force] [file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "--force",
+              "short": [],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": "error"
+      }
+    },
+    {
+      "id": "unknown-flags-error-still-takes-negative-numbers",
+      "doc": "Even when refusing unknown flags, a positional can opt into the narrower negative-number carve-out.",
+      "spec": "name \"ex\"\nbin \"ex\"\nunknown_flags \"error\"\narg \"[offset]\" allow_negative_numbers=#true\n",
+      "argv": [
+        "-1"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "offset": "-1"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[offset]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "offset",
+              "usage": "[offset]",
+              "required": false,
+              "double_dash": "Optional",
+              "allow_negative_numbers": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": "error"
+      }
+    },
+    {
+      "id": "long-value-allow-hyphen-takes-flaglike",
+      "doc": "A flag declared `allow_hyphen_values` takes a detached value that looks like a flag, which is the only way `--args -destroy` can bind `-destroy` rather than reading `-d` as a short.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-d --working-dir <DIR>\"\nflag \"-a --args <ARGS>\" allow_hyphen_values=#true\n",
+      "argv": [
+        "--args",
+        "-destroy"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "args": "-destroy"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-d --working-dir <DIR>] [-a --args <ARGS>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "working-dir",
+              "usage": "-d --working-dir <DIR>",
+              "short": [
+                "d"
+              ],
+              "long": [
+                "working-dir"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "DIR",
+                "usage": "<DIR>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            },
+            {
+              "name": "args",
+              "usage": "-a --args <ARGS>",
+              "short": [
+                "a"
+              ],
+              "long": [
+                "args"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "ARGS",
+                "usage": "<ARGS>",
+                "required": true,
+                "double_dash": "Automatic",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-allow-hyphen-takes-the-separator",
+      "doc": "A `--` is flag-like too, so an `allow_hyphen_values` flag takes it as the value rather than ending flag interpretation. `ex -a -- -x` then binds `--` and leaves `-x` for the argument, matching clap.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--args <ARGS>\" allow_hyphen_values=#true\narg \"[rest]...\"\n",
+      "argv": [
+        "--args",
+        "--",
+        "-x"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "args": "--"
+          },
+          "args": {
+            "rest": [
+              "-x"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--args <ARGS>] [rest]…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "rest",
+              "usage": "[rest]…",
+              "required": false,
+              "double_dash": "Optional",
+              "var": true,
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "args",
+              "usage": "--args <ARGS>",
+              "short": [],
+              "long": [
+                "args"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "ARGS",
+                "usage": "<ARGS>",
+                "required": true,
+                "double_dash": "Automatic",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-variadic-allow-hyphen-first-value",
+      "doc": "A variadic flag's first value may be hyphenated when `allow_hyphen_values` is set. Later values still stop at a flag-like token, so a second occurrence of the flag is not eaten.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--args <ARGS>...\" allow_hyphen_values=#true\n",
+      "argv": [
+        "--args",
+        "-x",
+        "b",
+        "c"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "args": [
+              "-x",
+              "b",
+              "c"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--args <ARGS>…]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "args",
+              "usage": "--args <ARGS>…",
+              "short": [],
+              "long": [
+                "args"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "ARGS",
+                "usage": "<ARGS>",
+                "required": true,
+                "double_dash": "Automatic",
+                "var": true,
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-repeatable-allow-hyphen-each-occurrence",
+      "doc": "A repeatable flag takes one hyphenated value per occurrence, so `-a -val1 -a -val2` is two values rather than one occurrence eating the second `-a`.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-a --args <ARGS>\" var=#true allow_hyphen_values=#true\n",
+      "argv": [
+        "-a",
+        "-val1",
+        "-a",
+        "-val2"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "args": [
+              "-val1",
+              "-val2"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-a --args <ARGS>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "args",
+              "usage": "-a --args <ARGS>",
+              "short": [
+                "a"
+              ],
+              "long": [
+                "args"
+              ],
+              "var": true,
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "ARGS",
+                "usage": "<ARGS>",
+                "required": true,
+                "double_dash": "Automatic",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-require-equals-attached",
+      "doc": "`require_equals` accepts the attached form: `--inspect=9229` binds. aube's `--inspect` is the fleet case.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--inspect <PORT>\" require_equals=#true\n",
+      "argv": [
+        "--inspect=9229"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "inspect": "9229"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--inspect=<PORT>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "inspect",
+              "usage": "--inspect=<PORT>",
+              "short": [],
+              "long": [
+                "inspect"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "PORT",
+                "usage": "<PORT>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "require_equals": true
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-require-equals-refuses-detached",
+      "doc": "`require_equals` refuses the following word: `--inspect 9229` is a missing value, not a port of 9229.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--inspect <PORT>\" require_equals=#true\n",
+      "argv": [
+        "--inspect",
+        "9229"
+      ],
+      "expect": {
+        "error": "missing_flag_value"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--inspect=<PORT>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "inspect",
+              "usage": "--inspect=<PORT>",
+              "short": [],
+              "long": [
+                "inspect"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "PORT",
+                "usage": "<PORT>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "require_equals": true
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-require-equals-still-takes-empty-attached",
+      "doc": "`--inspect=` is still present-but-empty: the `=` settled that a value was given, even though it is empty.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--inspect <PORT>\" require_equals=#true\n",
+      "argv": [
+        "--inspect="
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "inspect": ""
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--inspect=<PORT>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "inspect",
+              "usage": "--inspect=<PORT>",
+              "short": [],
+              "long": [
+                "inspect"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "PORT",
+                "usage": "<PORT>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "require_equals": true
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-default-missing-bare",
+      "doc": "`default_missing` is the value when the flag is given with none: `--color` binds `always`. clap's `default_missing_value`.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--color <WHEN>\" default_missing=\"always\"\n",
+      "argv": [
+        "--color"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "color": "always"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--color [WHEN]]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "color",
+              "usage": "--color [WHEN]",
+              "short": [],
+              "long": [
+                "color"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "WHEN",
+                "usage": "<WHEN>",
+                "required": false,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "default_missing": "always"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-default-missing-attached",
+      "doc": "An attached value still wins: `--color=never` is `never`, not the missing default.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--color <WHEN>\" default_missing=\"always\"\n",
+      "argv": [
+        "--color=never"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "color": "never"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--color [WHEN]]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "color",
+              "usage": "--color [WHEN]",
+              "short": [],
+              "long": [
+                "color"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "WHEN",
+                "usage": "<WHEN>",
+                "required": false,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "default_missing": "always"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-default-missing-detached",
+      "doc": "Without `require_equals`, a following word is still the value: `--color never` binds `never`.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--color <WHEN>\" default_missing=\"always\"\n",
+      "argv": [
+        "--color",
+        "never"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "color": "never"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--color [WHEN]]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "color",
+              "usage": "--color [WHEN]",
+              "short": [],
+              "long": [
+                "color"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "WHEN",
+                "usage": "<WHEN>",
+                "required": false,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "default_missing": "always"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-default-missing-next-is-flag",
+      "doc": "A flag-like next token is not taken as the value, so `--color --verbose` colours with the missing default and still sets verbose.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--color <WHEN>\" default_missing=\"always\"\nflag \"--verbose\"\n",
+      "argv": [
+        "--color",
+        "--verbose"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "color": "always",
+            "verbose": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--color [WHEN]] [--verbose]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "color",
+              "usage": "--color [WHEN]",
+              "short": [],
+              "long": [
+                "color"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "WHEN",
+                "usage": "<WHEN>",
+                "required": false,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "default_missing": "always"
+            },
+            {
+              "name": "verbose",
+              "usage": "--verbose",
+              "short": [],
+              "long": [
+                "verbose"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "long-value-default-missing-with-require-equals",
+      "doc": "Combined with `require_equals`, a following word is not the value: `--inspect 80` binds the missing default and leaves `80` for a positional.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--inspect <PORT>\" require_equals=#true default_missing=\"9229\"\narg \"[rest]\"\n",
+      "argv": [
+        "--inspect",
+        "80"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "inspect": "9229"
+          },
+          "args": {
+            "rest": "80"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--inspect[=PORT]] [rest]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "rest",
+              "usage": "[rest]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "inspect",
+              "usage": "--inspect[=PORT]",
+              "short": [],
+              "long": [
+                "inspect"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "PORT",
+                "usage": "<PORT>",
+                "required": false,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "require_equals": true,
+              "default_missing": "9229"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    }
+  ]
+}

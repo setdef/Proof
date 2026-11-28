@@ -24,3 +24,11 @@ SPDX-License-Identifier = "CC-BY-4.0"
 path = ".pre-commit-config.yaml"
 SPDX-FileCopyrightText = "2020 Free Software Foundation Europe e.V."
 SPDX-License-Identifier = "CC0-1.0"
+
+# usage's argv conformance corpus, copied from the corpus folder of usage's
+# repository at the tag v7.4.1, with a `spec_json` field added to each vector.
+# usage's LICENSE at that tag is MIT, with the copyright below.
+[[annotations]]
+path = "gems/usage-rb/test/corpus/vectors/**"
+SPDX-FileCopyrightText = ["2025 Jeff Dickey", "2026 setdef <kerrick@setdef.com>"]
+SPDX-License-Identifier = "MIT"

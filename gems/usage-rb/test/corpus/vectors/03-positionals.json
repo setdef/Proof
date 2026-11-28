@@ -1,0 +1,1087 @@
+{
+  "section": "positionals",
+  "about": "How words that are not flags bind to declared arguments. Arguments fill in declaration order; a variadic takes everything left over.",
+  "vectors": [
+    {
+      "id": "arg-required-filled",
+      "doc": "A required argument takes the first non-flag word.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<file>\"\n",
+      "argv": [
+        "a.txt"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "file": "a.txt"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<file>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "<file>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "arg-required-missing",
+      "doc": "A required argument with nothing to fill it is an error.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<file>\"\n",
+      "argv": [],
+      "expect": {
+        "error": "missing_required_arg"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<file>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "<file>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "arg-optional-absent",
+      "doc": "An optional argument left unfilled is simply absent.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[file]\"\n",
+      "argv": [],
+      "expect": {
+        "ok": {}
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "arg-order",
+      "doc": "Two arguments fill in declaration order, regardless of what the values look like.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<src>\"\narg \"<dst>\"\n",
+      "argv": [
+        "from",
+        "to"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "src": "from",
+            "dst": "to"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<src> <dst>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "src",
+              "usage": "<src>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false
+            },
+            {
+              "name": "dst",
+              "usage": "<dst>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "arg-interleaved-with-flags",
+      "doc": "Flags and positionals may interleave; a flag between two words does not change which argument each word fills.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-f --force\"\narg \"<src>\"\narg \"<dst>\"\n",
+      "argv": [
+        "from",
+        "-f",
+        "to"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "force": true
+          },
+          "args": {
+            "src": "from",
+            "dst": "to"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-f --force] <src> <dst>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "src",
+              "usage": "<src>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false
+            },
+            {
+              "name": "dst",
+              "usage": "<dst>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "-f --force",
+              "short": [
+                "f"
+              ],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "arg-too-many",
+      "doc": "More words than there are arguments to hold them is an error, not silent truncation.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<file>\"\n",
+      "argv": [
+        "a",
+        "b"
+      ],
+      "expect": {
+        "error": "unexpected_arg"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<file>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "<file>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "arg-variadic-collects-rest",
+      "doc": "A variadic argument collects every remaining word.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<files>...\"\n",
+      "argv": [
+        "a",
+        "b",
+        "c"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "files": [
+              "a",
+              "b",
+              "c"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<files>…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "files",
+              "usage": "<files>…",
+              "required": true,
+              "double_dash": "Optional",
+              "var": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "arg-variadic-after-fixed",
+      "doc": "A fixed argument is filled before a following variadic starts collecting.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<cmd>\"\narg \"[rest]...\"\n",
+      "argv": [
+        "run",
+        "a",
+        "b"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "cmd": "run",
+            "rest": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<cmd> [rest]…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "cmd",
+              "usage": "<cmd>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false
+            },
+            {
+              "name": "rest",
+              "usage": "[rest]…",
+              "required": false,
+              "double_dash": "Optional",
+              "var": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "arg-variadic-empty",
+      "doc": "An optional variadic given nothing is absent rather than an empty list.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[rest]...\"\n",
+      "argv": [],
+      "expect": {
+        "ok": {}
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[rest]…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "rest",
+              "usage": "[rest]…",
+              "required": false,
+              "double_dash": "Optional",
+              "var": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "arg-variadic-min",
+      "doc": "`var_min` is enforced: too few values is an error.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<files>\" var=#true var_min=2\n",
+      "argv": [
+        "a"
+      ],
+      "expect": {
+        "error": "var_too_few"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<files>…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "files",
+              "usage": "<files>…",
+              "required": true,
+              "double_dash": "Optional",
+              "var": true,
+              "var_min": 2,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "arg-variadic-max",
+      "doc": "A variadic stops at its bound, so the words past it belong to whatever comes next — and with nothing after it, the third word has nowhere to go. `var_too_many` cannot arise for a variadic any more: it describes a repeatable flag given more times than its bound allows. This used to be recorded as a divergence — the corpus wanted `var_too_many` and usage-lib said `unexpected_arg` — and adopting the limit reading is what made the two agree.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<files>\" var=#true var_max=2\n",
+      "argv": [
+        "a",
+        "b",
+        "c"
+      ],
+      "expect": {
+        "error": "unexpected_arg"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<files>…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "files",
+              "usage": "<files>…",
+              "required": true,
+              "double_dash": "Optional",
+              "var": true,
+              "var_max": 2,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "arg-empty-word",
+      "doc": "An empty token is a word, so it fills an argument rather than being skipped. A shell that produced `\"\"` meant to pass something, and dropping it would shift every argument after it.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[file]\"\n",
+      "argv": [
+        ""
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "file": ""
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "arg-value-is-one-token",
+      "doc": "A variadic collects tokens, not fields: `a,b` is one value however many commas it holds. Splitting is the caller's business, as it is for a flag's value.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<files>...\"\n",
+      "argv": [
+        "a,b",
+        "c"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "files": [
+              "a,b",
+              "c"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<files>…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "files",
+              "usage": "<files>…",
+              "required": true,
+              "double_dash": "Optional",
+              "var": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "arg-value-looks-like-negative-number",
+      "doc": "A positional can opt into treating a negative number as a value rather than an unknown flag.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<offset>\" allow_negative_numbers=#true\n",
+      "argv": [
+        "-1"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "offset": "-1"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<offset>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "offset",
+              "usage": "<offset>",
+              "required": true,
+              "double_dash": "Optional",
+              "allow_negative_numbers": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "a-bound-stops-a-variadic",
+      "doc": "`var_max` is a limit on how many words a variadic takes, not only a check on how many it got: once it is full the next argument gets the rest. Without that, `[a]… [b]` could never be filled, and clap's `num_args` — which every generated spec comes from — behaves this way.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[a]\" var=#true var_max=1\narg \"[b]\"\n",
+      "argv": [
+        "x",
+        "y"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "a": [
+              "x"
+            ],
+            "b": "y"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[a]… [b]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "a",
+              "usage": "[a]…",
+              "required": false,
+              "double_dash": "Optional",
+              "var": true,
+              "var_max": 1,
+              "hide": false
+            },
+            {
+              "name": "b",
+              "usage": "[b]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "a-bound-does-not-invent-somewhere-to-put-the-rest",
+      "doc": "The bound stops the variadic even when nothing follows it, so the extra word has nowhere to go and is an error rather than a silently dropped value.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[a]\" var=#true var_max=1\n",
+      "argv": [
+        "x",
+        "y"
+      ],
+      "expect": {
+        "error": "unexpected_arg"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[a]…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "a",
+              "usage": "[a]…",
+              "required": false,
+              "double_dash": "Optional",
+              "var": true,
+              "var_max": 1,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "an-unbounded-variadic-still-takes-everything",
+      "doc": "Unbounded is the common case and unchanged: nothing after it can be filled, which is why declaring an argument there is refused.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[a]\" var=#true\n",
+      "argv": [
+        "x",
+        "y",
+        "z"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "a": [
+              "x",
+              "y",
+              "z"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[a]…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "a",
+              "usage": "[a]…",
+              "required": false,
+              "double_dash": "Optional",
+              "var": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "a-bound-stops-a-variadic-flag",
+      "doc": "The same rule for a flag whose one occurrence collects: `--include` takes the two words its bound allows, and the third is the positional's.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--include <pattern>…\" {\n  arg \"<pattern>…\" var=#true var_max=2\n}\narg \"[out]\"\n",
+      "argv": [
+        "--include",
+        "a",
+        "b",
+        "c"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "include": [
+              "a",
+              "b"
+            ]
+          },
+          "args": {
+            "out": "c"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--include <pattern>…] [out]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "out",
+              "usage": "[out]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "include",
+              "usage": "--include <pattern>…",
+              "short": [],
+              "long": [
+                "include"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "pattern",
+                "usage": "<pattern>…",
+                "required": true,
+                "double_dash": "Optional",
+                "var": true,
+                "var_max": 2,
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "a-bound-counts-one-occurrence",
+      "doc": "The bound is on what one occurrence takes, not on the list the occurrences build up, so a second `--include` starts counting again. Reading it as a total would make the same declaration mean fewer values per occurrence the more often the flag is given.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--include <pattern>…\" {\n  arg \"<pattern>…\" var=#true var_max=2\n}\n",
+      "argv": [
+        "--include",
+        "a",
+        "b",
+        "--include",
+        "c",
+        "d"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "include": [
+              "a",
+              "b",
+              "c",
+              "d"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--include <pattern>…]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "include",
+              "usage": "--include <pattern>…",
+              "short": [],
+              "long": [
+                "include"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "pattern",
+                "usage": "<pattern>…",
+                "required": true,
+                "double_dash": "Optional",
+                "var": true,
+                "var_max": 2,
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    }
+  ]
+}

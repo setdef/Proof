@@ -1,0 +1,531 @@
+{
+  "section": "global-flags",
+  "about": "A `global` flag is recognized by the command that declares it and by everything beneath it, so it may appear before or after any subcommand word.",
+  "vectors": [
+    {
+      "id": "global-before-subcommand",
+      "doc": "A global flag declared at the root works before the subcommand.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-v --verbose\" global=#true\ncmd \"install\"\n",
+      "argv": [
+        "--verbose",
+        "install"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [
+            "install"
+          ],
+          "flags": {
+            "verbose": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-v --verbose] [SUBCOMMAND]",
+          "subcommands": {
+            "install": {
+              "full_cmd": [
+                "install"
+              ],
+              "usage": "install",
+              "subcommands": {},
+              "args": [],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "install",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [
+            {
+              "name": "verbose",
+              "usage": "-v --verbose",
+              "short": [
+                "v"
+              ],
+              "long": [
+                "verbose"
+              ],
+              "hide": false,
+              "global": true
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "global-after-subcommand",
+      "doc": "The same flag works after the subcommand.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-v --verbose\" global=#true\ncmd \"install\"\n",
+      "argv": [
+        "install",
+        "--verbose"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [
+            "install"
+          ],
+          "flags": {
+            "verbose": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-v --verbose] [SUBCOMMAND]",
+          "subcommands": {
+            "install": {
+              "full_cmd": [
+                "install"
+              ],
+              "usage": "install",
+              "subcommands": {},
+              "args": [],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "install",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [
+            {
+              "name": "verbose",
+              "usage": "-v --verbose",
+              "short": [
+                "v"
+              ],
+              "long": [
+                "verbose"
+              ],
+              "hide": false,
+              "global": true
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "global-with-value-after-subcommand",
+      "doc": "A global flag that takes a value binds it the same way at any depth.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-C --cd <dir>\" global=#true\ncmd \"install\"\n",
+      "argv": [
+        "install",
+        "-C",
+        "/tmp"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [
+            "install"
+          ],
+          "flags": {
+            "cd": "/tmp"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-C --cd <dir>] [SUBCOMMAND]",
+          "subcommands": {
+            "install": {
+              "full_cmd": [
+                "install"
+              ],
+              "usage": "install",
+              "subcommands": {},
+              "args": [],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "install",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [
+            {
+              "name": "cd",
+              "usage": "-C --cd <dir>",
+              "short": [
+                "C"
+              ],
+              "long": [
+                "cd"
+              ],
+              "hide": false,
+              "global": true,
+              "arg": {
+                "name": "dir",
+                "usage": "<dir>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "global-at-depth-two",
+      "doc": "Inheritance is not limited to one level.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-v --verbose\" global=#true\ncmd \"settings\" {\n  cmd \"set\"\n}\n",
+      "argv": [
+        "settings",
+        "set",
+        "--verbose"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [
+            "settings",
+            "set"
+          ],
+          "flags": {
+            "verbose": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-v --verbose] [SUBCOMMAND]",
+          "subcommands": {
+            "settings": {
+              "full_cmd": [
+                "settings"
+              ],
+              "usage": "settings [SUBCOMMAND]",
+              "subcommands": {
+                "set": {
+                  "full_cmd": [
+                    "settings",
+                    "set"
+                  ],
+                  "usage": "settings set",
+                  "subcommands": {},
+                  "args": [],
+                  "flags": [],
+                  "mounts": [],
+                  "unknown_flags": null,
+                  "hide": false,
+                  "args_override_self": true,
+                  "name": "set",
+                  "aliases": [],
+                  "hidden_aliases": [],
+                  "examples": [],
+                  "headings": []
+                }
+              },
+              "args": [],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "settings",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [
+            {
+              "name": "verbose",
+              "usage": "-v --verbose",
+              "short": [
+                "v"
+              ],
+              "long": [
+                "verbose"
+              ],
+              "hide": false,
+              "global": true
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "global-declared-on-subcommand-not-visible-at-root",
+      "doc": "`global` propagates downward only. A flag declared global on a subcommand is not a flag before that subcommand is reached, so the token is a word — and the root declares no argument to hold one.",
+      "spec": "name \"ex\"\nbin \"ex\"\ncmd \"install\" {\n  flag \"-f --force\" global=#true\n}\n",
+      "argv": [
+        "--force",
+        "install"
+      ],
+      "expect": {
+        "error": "unexpected_arg"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[SUBCOMMAND]",
+          "subcommands": {
+            "install": {
+              "full_cmd": [
+                "install"
+              ],
+              "usage": "install [-f --force]",
+              "subcommands": {},
+              "args": [],
+              "flags": [
+                {
+                  "name": "force",
+                  "usage": "-f --force",
+                  "short": [
+                    "f"
+                  ],
+                  "long": [
+                    "force"
+                  ],
+                  "hide": false,
+                  "global": true
+                }
+              ],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "install",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "global-shadowed-by-subcommand-flag",
+      "doc": "A subcommand may declare its own flag with the same name as an inherited global; below that point the subcommand's flag is the one that binds. mise does this deliberately, redeclaring several root globals on `run` with different shorts.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-j --jobs <n>\" global=#true\ncmd \"run\" {\n  flag \"-j --jobs <n>\"\n}\n",
+      "argv": [
+        "run",
+        "--jobs",
+        "4"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [
+            "run"
+          ],
+          "flags": {
+            "jobs": "4"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-j --jobs <n>] [SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run [-j --jobs <n>]",
+              "subcommands": {},
+              "args": [],
+              "flags": [
+                {
+                  "name": "jobs",
+                  "usage": "-j --jobs <n>",
+                  "short": [
+                    "j"
+                  ],
+                  "long": [
+                    "jobs"
+                  ],
+                  "hide": false,
+                  "global": false,
+                  "arg": {
+                    "name": "n",
+                    "usage": "<n>",
+                    "required": true,
+                    "double_dash": "Optional",
+                    "hide": false
+                  }
+                }
+              ],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "-j --jobs <n>",
+              "short": [
+                "j"
+              ],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": true,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    }
+  ]
+}

@@ -1,0 +1,1011 @@
+{
+  "section": "double-dash",
+  "about": "A bare `--` stops flag interpretation: everything after it is a value, however much it looks like a flag. Arguments can also require, or preserve, the separator.",
+  "vectors": [
+    {
+      "id": "dd-protects-flaglike-value",
+      "doc": "After `--`, a flag-looking word binds as a value.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-f --force\"\narg \"<file>\"\n",
+      "argv": [
+        "--",
+        "--force"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "file": "--force"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-f --force] <file>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "<file>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "-f --force",
+              "short": [
+                "f"
+              ],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "dd-flags-before-still-parse",
+      "doc": "Flags before the separator parse normally.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-f --force\"\narg \"<file>\"\n",
+      "argv": [
+        "--force",
+        "--",
+        "-x"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "force": true
+          },
+          "args": {
+            "file": "-x"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-f --force] <file>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "<file>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "-f --force",
+              "short": [
+                "f"
+              ],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "dd-subcommand-word-is-a-value",
+      "doc": "After the separator a word no longer routes, so `ex -- install` passes the string `install` to the argument instead of running the command. Stopping flag interpretation stops command selection with it: both are ways a token can mean something other than data.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[file]\"\ncmd \"install\"\n",
+      "argv": [
+        "--",
+        "install"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "file": "install"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[file] [SUBCOMMAND]",
+          "subcommands": {
+            "install": {
+              "full_cmd": [
+                "install"
+              ],
+              "usage": "install",
+              "subcommands": {},
+              "args": [],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "install",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "dd-consumed-not-a-value",
+      "doc": "The separator itself is consumed rather than bound to an argument.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<a>\"\narg \"[b]\"\n",
+      "argv": [
+        "--",
+        "one"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "a": "one"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<a> [b]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "a",
+              "usage": "<a>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false
+            },
+            {
+              "name": "b",
+              "usage": "[b]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "dd-second-is-a-value",
+      "doc": "Only the first `--` separates; a later one is an ordinary value, since flag interpretation has already stopped.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<rest>...\"\n",
+      "argv": [
+        "--",
+        "a",
+        "--",
+        "b"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "rest": [
+              "a",
+              "--",
+              "b"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<rest>…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "rest",
+              "usage": "<rest>…",
+              "required": true,
+              "double_dash": "Optional",
+              "var": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "dd-variadic-collects-everything-after",
+      "doc": "A variadic after the separator collects the whole tail verbatim, which is how a wrapper CLI forwards an inner command line untouched.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-f --force\"\narg \"<cmd>...\"\n",
+      "argv": [
+        "--",
+        "npm",
+        "run",
+        "test",
+        "--force"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "cmd": [
+              "npm",
+              "run",
+              "test",
+              "--force"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-f --force] <cmd>…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "cmd",
+              "usage": "<cmd>…",
+              "required": true,
+              "double_dash": "Optional",
+              "var": true,
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "-f --force",
+              "short": [
+                "f"
+              ],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "dd-required-satisfied",
+      "doc": "An argument declared `double_dash=\"required\"` accepts a value once the separator has been given.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<-- cmd>\"\n",
+      "argv": [
+        "--",
+        "ls"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "cmd": "ls"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<-- cmd>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "cmd",
+              "usage": "<-- cmd>",
+              "required": true,
+              "double_dash": "Required",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "dd-required-rejected-without-separator",
+      "doc": "The same argument rejects a value given before the separator.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<-- cmd>\"\n",
+      "argv": [
+        "ls"
+      ],
+      "expect": {
+        "error": "arg_requires_double_dash"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<-- cmd>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "cmd",
+              "usage": "<-- cmd>",
+              "required": true,
+              "double_dash": "Required",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "dd-optional-accepts-either-side",
+      "doc": "The default, `double_dash=\"optional\"`, accepts a value on either side of the separator.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<file>\"\n",
+      "argv": [
+        "a.txt"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "file": "a.txt"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<file>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "<file>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "dd-preserve-keeps-separator-as-value",
+      "doc": "With `double_dash=\"preserve\"`, the separator is kept as a value instead of being consumed — needed by CLIs that pass along command lines containing their own separators.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<args>...\" double_dash=\"preserve\"\n",
+      "argv": [
+        "a",
+        "--",
+        "b"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "args": [
+              "a",
+              "--",
+              "b"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<args>…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "args",
+              "usage": "<args>…",
+              "required": true,
+              "double_dash": "Preserve",
+              "var": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "dd-trailing-values-can-keep-delimiters",
+      "doc": "`dont_delimit_trailing_values` splits ordinary positional values but preserves the same delimiter after `--`, matching clap's command-wide trailing policy.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndont_delimit_trailing_values #true\narg \"<values>...\" delimiter=\",\"\n",
+      "argv": [
+        "a,b",
+        "--",
+        "c,d"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "values": [
+              "a",
+              "b",
+              "c,d"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<values>…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "values",
+              "usage": "<values>…",
+              "required": true,
+              "double_dash": "Optional",
+              "var": true,
+              "delimiter": ",",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "dont_delimit_trailing_values": true,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "dd-automatic-behaves-as-if-separated",
+      "doc": "With `double_dash=\"automatic\"`, the first value an argument takes stops flag interpretation for everything after it, so a wrapper can forward flags without the caller typing `--`.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-f --force\"\narg \"<files>...\" double_dash=\"automatic\"\n",
+      "argv": [
+        "a",
+        "--force"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "files": [
+              "a",
+              "--force"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-f --force] <files>…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "files",
+              "usage": "<files>…",
+              "required": true,
+              "double_dash": "Automatic",
+              "var": true,
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "-f --force",
+              "short": [
+                "f"
+              ],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "dd-trailing-separator-is-a-value",
+      "doc": "A separator at the very end is a value too, since flag parsing stopped at the first one. This is the command line from the report that first raised it: `-- hello -- goodbye --`.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<args>...\"\n",
+      "argv": [
+        "--",
+        "hello",
+        "--",
+        "goodbye",
+        "--"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "args": [
+              "hello",
+              "--",
+              "goodbye",
+              "--"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<args>…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "args",
+              "usage": "<args>…",
+              "required": true,
+              "double_dash": "Optional",
+              "var": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "variadic-then-double-dash-variadic",
+      "doc": "A variadic takes every remaining word, so nothing can follow it — except an argument that requires a `--`, which is exactly what stops the variadic. mise declares this on `run`, `exec` and `git`.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[args]\" var=#true\narg \"[-- rest]\" var=#true\n",
+      "argv": [
+        "a",
+        "b",
+        "--",
+        "c",
+        "d"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "args": [
+              "a",
+              "b"
+            ],
+            "rest": [
+              "c",
+              "d"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[args]… [-- rest]…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "args",
+              "usage": "[args]…",
+              "required": false,
+              "double_dash": "Optional",
+              "var": true,
+              "hide": false
+            },
+            {
+              "name": "rest",
+              "usage": "[-- rest]…",
+              "required": false,
+              "double_dash": "Required",
+              "var": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "variadic-then-double-dash-variadic-without-separator",
+      "doc": "Without the `--`, the first variadic keeps everything and the second stays empty — which is why mise declares it optional.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[args]\" var=#true\narg \"[-- rest]\" var=#true\n",
+      "argv": [
+        "a",
+        "b",
+        "c"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "args": [
+              "a",
+              "b",
+              "c"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[args]… [-- rest]…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "args",
+              "usage": "[args]…",
+              "required": false,
+              "double_dash": "Optional",
+              "var": true,
+              "hide": false
+            },
+            {
+              "name": "rest",
+              "usage": "[-- rest]…",
+              "required": false,
+              "double_dash": "Required",
+              "var": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "a-bound-before-the-separator-is-not-charged-after-it",
+      "doc": "Each variadic counts its own words. A bounded one before the `--` must not lend its count to the argument after it, which would otherwise stop early or at once.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[first]\" var=#true var_max=3\narg \"[-- rest]\" var=#true var_max=2\n",
+      "argv": [
+        "a",
+        "b",
+        "--",
+        "c",
+        "d"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "first": [
+              "a",
+              "b"
+            ],
+            "rest": [
+              "c",
+              "d"
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[first]… [-- rest]…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "first",
+              "usage": "[first]…",
+              "required": false,
+              "double_dash": "Optional",
+              "var": true,
+              "var_max": 3,
+              "hide": false
+            },
+            {
+              "name": "rest",
+              "usage": "[-- rest]…",
+              "required": false,
+              "double_dash": "Required",
+              "var": true,
+              "var_max": 2,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    }
+  ]
+}

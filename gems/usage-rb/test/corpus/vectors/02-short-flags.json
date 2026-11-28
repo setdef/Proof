@@ -1,0 +1,2025 @@
+{
+  "section": "short-flags",
+  "about": "How `-x` tokens bind. A short flag taking a value accepts it attached, attached after `=`, or as the following word. Several value-less shorts may be bundled in one token.",
+  "vectors": [
+    {
+      "id": "short-boolean",
+      "doc": "A short alias sets the flag it belongs to, recorded under the flag's name.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-f --force\"\n",
+      "argv": [
+        "-f"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "force": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-f --force]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "-f --force",
+              "short": [
+                "f"
+              ],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-detached",
+      "doc": "`-j 8` binds the following word.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-j --jobs <n>\"\n",
+      "argv": [
+        "-j",
+        "8"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": "8"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-j --jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "-j --jobs <n>",
+              "short": [
+                "j"
+              ],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-attached",
+      "doc": "`-j8` binds the rest of the token. mise relies on this for `-C/tmp` and `-Edev`.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-j --jobs <n>\"\n",
+      "argv": [
+        "-j8"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": "8"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-j --jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "-j --jobs <n>",
+              "short": [
+                "j"
+              ],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-attached-path",
+      "doc": "An attached value keeps every character after the flag letter, including leading slashes and equals-free punctuation.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-C --cd <dir>\"\n",
+      "argv": [
+        "-C/tmp/x"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "cd": "/tmp/x"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-C --cd <dir>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "cd",
+              "usage": "-C --cd <dir>",
+              "short": [
+                "C"
+              ],
+              "long": [
+                "cd"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "dir",
+                "usage": "<dir>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-equals",
+      "doc": "`-j=8` binds `8`, not `=8`. A single leading `=` is a separator, matching the long form.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-j --jobs <n>\"\n",
+      "argv": [
+        "-j=8"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": "8"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-j --jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "-j --jobs <n>",
+              "short": [
+                "j"
+              ],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-equals-leading-equals",
+      "doc": "Only one `=` is a separator, so `-j==8` binds `=8`. A value that begins with `=` is reachable, rather than being eaten by a second round of separator-stripping.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-j --jobs <n>\"\n",
+      "argv": [
+        "-j==8"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": "=8"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-j --jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "-j --jobs <n>",
+              "short": [
+                "j"
+              ],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-equals-empty",
+      "doc": "`-j=` binds the empty string, matching `--jobs=`. Both attached forms can express present-but-empty.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-j --jobs <n>\"\n",
+      "argv": [
+        "-j="
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": ""
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-j --jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "-j --jobs <n>",
+              "short": [
+                "j"
+              ],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-detached-empty",
+      "doc": "An empty token is not flag-like, so it is an ordinary detached value here too.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-j --jobs <n>\"\n",
+      "argv": [
+        "-j",
+        ""
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": ""
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-j --jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "-j --jobs <n>",
+              "short": [
+                "j"
+              ],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-detached-bare-dash",
+      "doc": "`-f -` binds `-`, the conventional name for stdin. A lone dash is not flag-like, so the rule refusing flag-like detached values does not reach it — without that, `sort -o -` could not be written.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-f --file <file>\"\n",
+      "argv": [
+        "-f",
+        "-"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "file": "-"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-f --file <file>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "file",
+              "usage": "-f --file <file>",
+              "short": [
+                "f"
+              ],
+              "long": [
+                "file"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-missing",
+      "doc": "A value-taking short at the end of the command line is an error.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-j --jobs <n>\"\n",
+      "argv": [
+        "-j"
+      ],
+      "expect": {
+        "error": "missing_flag_value"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-j --jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "-j --jobs <n>",
+              "short": [
+                "j"
+              ],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-bundle",
+      "doc": "Value-less shorts may share a token: `-ab` sets both.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-a --all\"\nflag \"-b --brief\"\n",
+      "argv": [
+        "-ab"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "all": true,
+            "brief": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-a --all] [-b --brief]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "all",
+              "usage": "-a --all",
+              "short": [
+                "a"
+              ],
+              "long": [
+                "all"
+              ],
+              "hide": false,
+              "global": false
+            },
+            {
+              "name": "brief",
+              "usage": "-b --brief",
+              "short": [
+                "b"
+              ],
+              "long": [
+                "brief"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-bundle-then-value",
+      "doc": "A bundle may end with a value-taking short, which then consumes the remainder of the token.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-a --all\"\nflag \"-j --jobs <n>\"\n",
+      "argv": [
+        "-aj8"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "all": true,
+            "jobs": "8"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-a --all] [-j --jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "all",
+              "usage": "-a --all",
+              "short": [
+                "a"
+              ],
+              "long": [
+                "all"
+              ],
+              "hide": false,
+              "global": false
+            },
+            {
+              "name": "jobs",
+              "usage": "-j --jobs <n>",
+              "short": [
+                "j"
+              ],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-bundle-unknown-letter",
+      "doc": "A token containing an unrecognized letter is not a bundle at all, so none of its letters are applied — `-az` does not set `-a`. Here it becomes a word, and there is no argument to hold it.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-a --all\"\n",
+      "argv": [
+        "-az"
+      ],
+      "expect": {
+        "error": "unexpected_arg"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-a --all]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "all",
+              "usage": "-a --all",
+              "short": [
+                "a"
+              ],
+              "long": [
+                "all"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-bundle-unknown-letter-applies-nothing",
+      "doc": "The same rejection, seen from the side that matters: with an argument free to take the token, `-a` must still be unset. A token containing an unrecognized letter was never a bundle, so none of its letters apply — the previous vector cannot show this, because both readings produce the same error.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-a --all\"\narg \"[file]\"\n",
+      "argv": [
+        "-az"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "file": "-az"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-a --all] [file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "all",
+              "usage": "-a --all",
+              "short": [
+                "a"
+              ],
+              "long": [
+                "all"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-boolean-with-attached-value-is-not-a-bundle",
+      "doc": "`=` is a separator only for a short that takes a value. After one that does not, it is just an unrecognized letter, so `-f=yes` is not a bundle and `-f` is not set — the whole token becomes a word, as `-az` does.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-f --force\"\narg \"[file]\"\n",
+      "argv": [
+        "-f=yes"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "file": "-f=yes"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-f --force] [file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [
+            {
+              "name": "force",
+              "usage": "-f --force",
+              "short": [
+                "f"
+              ],
+              "long": [
+                "force"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-count",
+      "doc": "A `count` flag records how many times it appeared, so `-vvv` is three.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-v --verbose\" count=#true\n",
+      "argv": [
+        "-vvv"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "verbose": [
+              true,
+              true,
+              true
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-v --verbose]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "verbose",
+              "usage": "-v --verbose",
+              "short": [
+                "v"
+              ],
+              "long": [
+                "verbose"
+              ],
+              "hide": false,
+              "global": false,
+              "count": true
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-count-separate-tokens",
+      "doc": "The same count reached through separate tokens gives the same result.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-v --verbose\" count=#true\n",
+      "argv": [
+        "-v",
+        "-v"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "verbose": [
+              true,
+              true
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-v --verbose]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "verbose",
+              "usage": "-v --verbose",
+              "short": [
+                "v"
+              ],
+              "long": [
+                "verbose"
+              ],
+              "hide": false,
+              "global": false,
+              "count": true
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-bundle-with-count",
+      "doc": "A counting short keeps counting inside a bundle, so `-avv` is `-a` once and `-v` twice.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-a --all\"\nflag \"-v --verbose\" count=#true\n",
+      "argv": [
+        "-avv"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "all": true,
+            "verbose": [
+              true,
+              true
+            ]
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-a --all] [-v --verbose]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "all",
+              "usage": "-a --all",
+              "short": [
+                "a"
+              ],
+              "long": [
+                "all"
+              ],
+              "hide": false,
+              "global": false
+            },
+            {
+              "name": "verbose",
+              "usage": "-v --verbose",
+              "short": [
+                "v"
+              ],
+              "long": [
+                "verbose"
+              ],
+              "hide": false,
+              "global": false,
+              "count": true
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "bare-dash-is-positional",
+      "doc": "A lone `-` is a value, conventionally meaning stdin, not a flag.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<file>\"\n",
+      "argv": [
+        "-"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "file": "-"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<file>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "<file>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-unknown",
+      "doc": "An unrecognized short flag is a word too, for the same reason as the long form.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[file]\"\n",
+      "argv": [
+        "-z"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "file": "-z"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "unknown-flags-error-rejects-a-whole-bundle",
+      "doc": "Refusing unknown flags, an unrecognized letter fails the whole token rather than applying the letters before it — a partly-applied bundle would be worse than a rejected one.",
+      "spec": "name \"ex\"\nbin \"ex\"\nunknown_flags \"error\"\nflag \"-a --all\"\n",
+      "argv": [
+        "-az"
+      ],
+      "expect": {
+        "error": "unknown_flag"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-a --all]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "all",
+              "usage": "-a --all",
+              "short": [
+                "a"
+              ],
+              "long": [
+                "all"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": "error"
+      }
+    },
+    {
+      "id": "short-digit-token-that-is-not-a-number",
+      "doc": "`-1x` is not a number, so it is a flag-shaped token that names nothing — a CLI refusing unknown flags hears about it rather than having it slip through as a value.",
+      "spec": "name \"ex\"\nbin \"ex\"\nunknown_flags \"error\"\narg \"[file]\"\n",
+      "argv": [
+        "-1x"
+      ],
+      "expect": {
+        "error": "unknown_flag"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": "error"
+      }
+    },
+    {
+      "id": "short-exponent-number-is-a-value",
+      "doc": "`-1e5` is a number, so it is a value even where unknown flags are refused. The two parsers disagreed about this when one used a float parse and the other a hand-written scanner, which is why the edges are pinned here.",
+      "spec": "name \"ex\"\nbin \"ex\"\nunknown_flags \"error\"\narg \"[offset]\" allow_negative_numbers=#true\n",
+      "argv": [
+        "-1e5"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "offset": "-1e5"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[offset]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "offset",
+              "usage": "[offset]",
+              "required": false,
+              "double_dash": "Optional",
+              "allow_negative_numbers": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": "error"
+      }
+    },
+    {
+      "id": "short-fractional-exponent-is-a-value",
+      "doc": "A signed exponent on a fraction is still a number.",
+      "spec": "name \"ex\"\nbin \"ex\"\nunknown_flags \"error\"\narg \"[offset]\" allow_negative_numbers=#true\n",
+      "argv": [
+        "-1.5e-3"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "offset": "-1.5e-3"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[offset]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "offset",
+              "usage": "[offset]",
+              "required": false,
+              "double_dash": "Optional",
+              "allow_negative_numbers": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": "error"
+      }
+    },
+    {
+      "id": "short-infinity-is-not-a-number-here",
+      "doc": "`-inf` parses as a float but is not treated as one: a token like that is far likelier to be a misspelled flag than a number somebody meant to pass, so a CLI refusing unknown flags hears about it.",
+      "spec": "name \"ex\"\nbin \"ex\"\nunknown_flags \"error\"\narg \"[offset]\"\n",
+      "argv": [
+        "-inf"
+      ],
+      "expect": {
+        "error": "unknown_flag"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[offset]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "offset",
+              "usage": "[offset]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": "error"
+      }
+    },
+    {
+      "id": "short-bare-exponent-is-not-a-number",
+      "doc": "An exponent needs digits of its own, so `-1e` names nothing.",
+      "spec": "name \"ex\"\nbin \"ex\"\nunknown_flags \"error\"\narg \"[offset]\"\n",
+      "argv": [
+        "-1e"
+      ],
+      "expect": {
+        "error": "unknown_flag"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[offset]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "offset",
+              "usage": "[offset]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": "error"
+      }
+    },
+    {
+      "id": "short-value-allow-hyphen-takes-flaglike",
+      "doc": "The short form of `allow_hyphen_values`: `-a -destroy` binds `-destroy` rather than reading `-d` as a different short and attaching `estroy`.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-d --working-dir <DIR>\"\nflag \"-a --args <ARGS>\" allow_hyphen_values=#true\n",
+      "argv": [
+        "-a",
+        "-destroy"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "args": "-destroy"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-d --working-dir <DIR>] [-a --args <ARGS>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "working-dir",
+              "usage": "-d --working-dir <DIR>",
+              "short": [
+                "d"
+              ],
+              "long": [
+                "working-dir"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "DIR",
+                "usage": "<DIR>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            },
+            {
+              "name": "args",
+              "usage": "-a --args <ARGS>",
+              "short": [
+                "a"
+              ],
+              "long": [
+                "args"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "ARGS",
+                "usage": "<ARGS>",
+                "required": true,
+                "double_dash": "Automatic",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-require-equals-attached",
+      "doc": "A short's attached form still binds under `require_equals`: `-i9229` never needed a following word.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-i --inspect <PORT>\" require_equals=#true\n",
+      "argv": [
+        "-i9229"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "inspect": "9229"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-i --inspect=<PORT>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "inspect",
+              "usage": "-i --inspect=<PORT>",
+              "short": [
+                "i"
+              ],
+              "long": [
+                "inspect"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "PORT",
+                "usage": "<PORT>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "require_equals": true
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-require-equals-equals-form",
+      "doc": "`-i=9229` is attached too: the `=` is a separator, not a following word.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-i --inspect <PORT>\" require_equals=#true\n",
+      "argv": [
+        "-i=9229"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "inspect": "9229"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-i --inspect=<PORT>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "inspect",
+              "usage": "-i --inspect=<PORT>",
+              "short": [
+                "i"
+              ],
+              "long": [
+                "inspect"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "PORT",
+                "usage": "<PORT>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "require_equals": true
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-require-equals-refuses-detached",
+      "doc": "`-i 9229` is the following word, so `require_equals` refuses it the same way `--inspect 9229` is refused.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-i --inspect <PORT>\" require_equals=#true\n",
+      "argv": [
+        "-i",
+        "9229"
+      ],
+      "expect": {
+        "error": "missing_flag_value"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-i --inspect=<PORT>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "inspect",
+              "usage": "-i --inspect=<PORT>",
+              "short": [
+                "i"
+              ],
+              "long": [
+                "inspect"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "PORT",
+                "usage": "<PORT>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "require_equals": true
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-default-missing-bare",
+      "doc": "The short form of `default_missing`: `-c` with no following word binds the missing default.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-c --color <WHEN>\" default_missing=\"always\"\n",
+      "argv": [
+        "-c"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "color": "always"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-c --color [WHEN]]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "color",
+              "usage": "-c --color [WHEN]",
+              "short": [
+                "c"
+              ],
+              "long": [
+                "color"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "WHEN",
+                "usage": "<WHEN>",
+                "required": false,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "default_missing": "always"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-default-missing-attached",
+      "doc": "A short's attached form still binds: `-cnever` is `never`.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-c --color <WHEN>\" default_missing=\"always\"\n",
+      "argv": [
+        "-cnever"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "color": "never"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-c --color [WHEN]]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "color",
+              "usage": "-c --color [WHEN]",
+              "short": [
+                "c"
+              ],
+              "long": [
+                "color"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "WHEN",
+                "usage": "<WHEN>",
+                "required": false,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "default_missing": "always"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "short-value-default-missing-next-is-flag",
+      "doc": "`-c -v` colours with the missing default and still sets verbose.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"-c --color <WHEN>\" default_missing=\"always\"\nflag \"-v --verbose\"\n",
+      "argv": [
+        "-c",
+        "-v"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "color": "always",
+            "verbose": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[-c --color [WHEN]] [-v --verbose]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "color",
+              "usage": "-c --color [WHEN]",
+              "short": [
+                "c"
+              ],
+              "long": [
+                "color"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "WHEN",
+                "usage": "<WHEN>",
+                "required": false,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "default_missing": "always"
+            },
+            {
+              "name": "verbose",
+              "usage": "-v --verbose",
+              "short": [
+                "v"
+              ],
+              "long": [
+                "verbose"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    }
+  ]
+}

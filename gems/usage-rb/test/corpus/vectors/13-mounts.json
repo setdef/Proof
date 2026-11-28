@@ -1,0 +1,448 @@
+{
+  "section": "mounts",
+  "about": "Mount commands discover specs at parse time. Their stdout is injected by exact run string so the grammar does not depend on a shell, executable, filesystem, or host platform.",
+  "vectors": [
+    {
+      "id": "root-mount-discovers-command",
+      "doc": "An unknown command name triggers the root mount and is re-examined against the commands it contributes.",
+      "spec": "name \"ex\"\nbin \"ex\"\nmount run=\"discover commands\"\n",
+      "argv": [
+        "dynamic",
+        "--force"
+      ],
+      "mounts": {
+        "discover commands": "name \"plugins\"\nbin \"plugins\"\ncmd \"dynamic\" {\n  flag \"--force\"\n}\n"
+      },
+      "expect": {
+        "ok": {
+          "cmd": [
+            "dynamic"
+          ],
+          "flags": {
+            "force": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "",
+          "subcommands": {},
+          "args": [],
+          "flags": [],
+          "mounts": [
+            {
+              "run": "discover commands",
+              "overrides_default": false
+            }
+          ],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "nested-mount-discovers-command",
+      "doc": "A mount on a selected command contributes its children at that command rather than at the root.",
+      "spec": "name \"ex\"\nbin \"ex\"\ncmd \"plugin\" {\n  mount run=\"discover plugin commands\"\n}\n",
+      "argv": [
+        "plugin",
+        "run",
+        "task"
+      ],
+      "mounts": {
+        "discover plugin commands": "name \"plugin\"\nbin \"plugin\"\ncmd \"run\" {\n  arg \"<task>\"\n}\n"
+      },
+      "expect": {
+        "ok": {
+          "cmd": [
+            "plugin",
+            "run"
+          ],
+          "args": {
+            "task": "task"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[SUBCOMMAND]",
+          "subcommands": {
+            "plugin": {
+              "full_cmd": [
+                "plugin"
+              ],
+              "usage": "plugin",
+              "subcommands": {},
+              "args": [],
+              "flags": [],
+              "mounts": [
+                {
+                  "run": "discover plugin commands",
+                  "overrides_default": false
+                }
+              ],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "plugin",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-subcommand-outranks-root-mount",
+      "doc": "A root mount that does not opt into overriding the default cannot claim an unmatched word from that default.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"run\"\nmount run=\"discover commands\"\ncmd \"run\" {\n  arg \"<task>\"\n}\n",
+      "argv": [
+        "dynamic"
+      ],
+      "mounts": {
+        "discover commands": "name \"plugins\"\nbin \"plugins\"\ncmd \"dynamic\"\n"
+      },
+      "expect": {
+        "ok": {
+          "cmd": [
+            "run"
+          ],
+          "args": {
+            "task": "dynamic"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run <task>",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "task",
+                  "usage": "<task>",
+                  "required": true,
+                  "double_dash": "Optional",
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [],
+          "mounts": [
+            {
+              "run": "discover commands",
+              "overrides_default": false
+            }
+          ],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "run",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "root-mount-can-override-default-subcommand",
+      "doc": "A root mount with overrides_default may discover a command before the default consumes its name.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"run\"\nmount run=\"discover commands\" overrides_default=#true\ncmd \"run\" {\n  arg \"<task>\"\n}\n",
+      "argv": [
+        "dynamic"
+      ],
+      "mounts": {
+        "discover commands": "name \"plugins\"\nbin \"plugins\"\ncmd \"dynamic\"\n"
+      },
+      "expect": {
+        "ok": {
+          "cmd": [
+            "dynamic"
+          ]
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run <task>",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "task",
+                  "usage": "<task>",
+                  "required": true,
+                  "double_dash": "Optional",
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [],
+          "mounts": [
+            {
+              "run": "discover commands",
+              "overrides_default": true
+            }
+          ],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "run",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "mounted-command-owns-colliding-flag",
+      "doc": "After crossing a mount boundary, the mounted command's local spelling owns a name that also belongs to the mounting CLI's global flag.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--env <root-env>\" global=#true\nmount run=\"discover task\"\n",
+      "argv": [
+        "task",
+        "--env",
+        "task-env"
+      ],
+      "mounts": {
+        "discover task": "name \"tasks\"\nbin \"tasks\"\ncmd \"task\" {\n  flag \"--env <task-env>\"\n}\n"
+      },
+      "expect": {
+        "ok": {
+          "cmd": [
+            "task"
+          ],
+          "flags": {
+            "env": "task-env"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--env <root-env>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "env",
+              "usage": "--env <root-env>",
+              "short": [],
+              "long": [
+                "env"
+              ],
+              "hide": false,
+              "global": true,
+              "arg": {
+                "name": "root-env",
+                "usage": "<root-env>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [
+            {
+              "run": "discover task",
+              "overrides_default": false
+            }
+          ],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "mounted-root-flags-merge-at-mount-point",
+      "doc": "Flags on the mounted spec's root are accepted at the command holding the mount, alongside its discovered children.",
+      "spec": "name \"ex\"\nbin \"ex\"\ncmd \"plugin\" {\n  mount run=\"discover plugin root\"\n}\n",
+      "argv": [
+        "plugin",
+        "--verbose",
+        "run"
+      ],
+      "mounts": {
+        "discover plugin root": "name \"plugin\"\nbin \"plugin\"\nflag \"--verbose\"\ncmd \"run\"\n"
+      },
+      "expect": {
+        "ok": {
+          "cmd": [
+            "plugin",
+            "run"
+          ],
+          "flags": {
+            "verbose": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[SUBCOMMAND]",
+          "subcommands": {
+            "plugin": {
+              "full_cmd": [
+                "plugin"
+              ],
+              "usage": "plugin",
+              "subcommands": {},
+              "args": [],
+              "flags": [],
+              "mounts": [
+                {
+                  "run": "discover plugin root",
+                  "overrides_default": false
+                }
+              ],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "plugin",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    }
+  ]
+}

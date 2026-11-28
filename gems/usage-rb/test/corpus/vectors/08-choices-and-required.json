@@ -1,0 +1,2023 @@
+{
+  "section": "choices-and-required",
+  "about": "Constraints checked after binding: declared choices, required flags, variadic bounds, and the relationships between flags. These do not affect which token binds where, only whether the result is accepted.",
+  "vectors": [
+    {
+      "id": "choice-valid",
+      "doc": "A value among the declared choices is accepted.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--shell <shell>\" {\n  choices \"bash\" \"zsh\" \"fish\"\n}\n",
+      "argv": [
+        "--shell",
+        "zsh"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "shell": "zsh"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--shell <shell>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "shell",
+              "usage": "--shell <shell>",
+              "short": [],
+              "long": [
+                "shell"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "shell",
+                "usage": "<shell>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false,
+                "choices": {
+                  "choices": [
+                    "bash",
+                    "zsh",
+                    "fish"
+                  ]
+                }
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "choice-invalid",
+      "doc": "A value outside the declared choices is rejected.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--shell <shell>\" {\n  choices \"bash\" \"zsh\" \"fish\"\n}\n",
+      "argv": [
+        "--shell",
+        "csh"
+      ],
+      "expect": {
+        "error": "invalid_choice"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--shell <shell>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "shell",
+              "usage": "--shell <shell>",
+              "short": [],
+              "long": [
+                "shell"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "shell",
+                "usage": "<shell>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false,
+                "choices": {
+                  "choices": [
+                    "bash",
+                    "zsh",
+                    "fish"
+                  ]
+                }
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "choice-is-case-sensitive",
+      "doc": "Choices match exactly. Case-insensitive matching would have to be declared, not assumed.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--shell <shell>\" {\n  choices \"bash\" \"zsh\"\n}\n",
+      "argv": [
+        "--shell",
+        "ZSH"
+      ],
+      "expect": {
+        "error": "invalid_choice"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--shell <shell>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "shell",
+              "usage": "--shell <shell>",
+              "short": [],
+              "long": [
+                "shell"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "shell",
+                "usage": "<shell>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false,
+                "choices": {
+                  "choices": [
+                    "bash",
+                    "zsh"
+                  ]
+                }
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "choice-on-arg",
+      "doc": "Positionals carry choices too.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<shell>\" {\n  choices \"bash\" \"zsh\"\n}\n",
+      "argv": [
+        "bash"
+      ],
+      "expect": {
+        "ok": {
+          "args": {
+            "shell": "bash"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<shell>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "shell",
+              "usage": "<shell>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false,
+              "choices": {
+                "choices": [
+                  "bash",
+                  "zsh"
+                ]
+              }
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "choice-checked-for-every-value-of-a-variadic",
+      "doc": "Each value a variadic collects is checked, not only the first. A list that is valid up to its last element is not a valid list.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<shell>...\" {\n  choices \"bash\" \"zsh\"\n}\n",
+      "argv": [
+        "bash",
+        "tcsh"
+      ],
+      "expect": {
+        "error": "invalid_choice"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<shell>…",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "shell",
+              "usage": "<shell>…",
+              "required": true,
+              "double_dash": "Optional",
+              "var": true,
+              "hide": false,
+              "choices": {
+                "choices": [
+                  "bash",
+                  "zsh"
+                ]
+              }
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "choice-checked-for-every-occurrence-of-a-flag",
+      "doc": "The same for a repeatable flag: every occurrence carries a value, and every value is checked.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--shell <shell>\" var=#true {\n  choices \"bash\" \"zsh\"\n}\n",
+      "argv": [
+        "--shell",
+        "bash",
+        "--shell",
+        "tcsh"
+      ],
+      "expect": {
+        "error": "invalid_choice"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--shell <shell>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "shell",
+              "usage": "--shell <shell>",
+              "short": [],
+              "long": [
+                "shell"
+              ],
+              "var": true,
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "shell",
+                "usage": "<shell>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false,
+                "choices": {
+                  "choices": [
+                    "bash",
+                    "zsh"
+                  ]
+                }
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "choice-checked-on-a-value-from-the-environment",
+      "doc": "Choices constrain the value, not the command line, so a value arriving from `env` is checked like any other. Otherwise the environment would be a way around the declaration.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--shell <shell>\" env=\"EX_SHELL\" {\n  choices \"bash\" \"zsh\"\n}\n",
+      "argv": [],
+      "env": {
+        "EX_SHELL": "tcsh"
+      },
+      "expect": {
+        "error": "invalid_choice"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--shell <shell>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "shell",
+              "usage": "--shell <shell>",
+              "short": [],
+              "long": [
+                "shell"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "shell",
+                "usage": "<shell>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false,
+                "choices": {
+                  "choices": [
+                    "bash",
+                    "zsh"
+                  ]
+                }
+              },
+              "env": "EX_SHELL"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "required-flag-present",
+      "doc": "A required flag that is given parses normally.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--file <file>\" required=#true\n",
+      "argv": [
+        "--file",
+        "a.txt"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "file": "a.txt"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<--file <file>>",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "file",
+              "usage": "--file <file>",
+              "short": [],
+              "long": [
+                "file"
+              ],
+              "required": true,
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "required-flag-missing",
+      "doc": "A required flag that is absent is an error.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--file <file>\" required=#true\n",
+      "argv": [],
+      "expect": {
+        "error": "missing_required_flag"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<--file <file>>",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "file",
+              "usage": "--file <file>",
+              "short": [],
+              "long": [
+                "file"
+              ],
+              "required": true,
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "required-unless-satisfied-by-other",
+      "doc": "`required_unless` is satisfied when the named alternative is present.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--file <file>\" required_unless=\"--stdin\"\nflag \"--stdin\"\n",
+      "argv": [
+        "--stdin"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "stdin": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--file <file>] [--stdin]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "file",
+              "usage": "--file <file>",
+              "short": [],
+              "long": [
+                "file"
+              ],
+              "required_unless": [
+                "--stdin"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            },
+            {
+              "name": "stdin",
+              "usage": "--stdin",
+              "short": [],
+              "long": [
+                "stdin"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "required-unless-unsatisfied",
+      "doc": "With neither flag present, the requirement stands.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--file <file>\" required_unless=\"--stdin\"\nflag \"--stdin\"\n",
+      "argv": [],
+      "expect": {
+        "error": "missing_required_flag"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--file <file>] [--stdin]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "file",
+              "usage": "--file <file>",
+              "short": [],
+              "long": [
+                "file"
+              ],
+              "required_unless": [
+                "--stdin"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            },
+            {
+              "name": "stdin",
+              "usage": "--stdin",
+              "short": [],
+              "long": [
+                "stdin"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "overrides-last-wins",
+      "doc": "Two flags that override each other leave only the last one given.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--file <file>\" overrides=\"--stdin\"\nflag \"--stdin\" overrides=\"--file\"\n",
+      "argv": [
+        "--stdin",
+        "--file",
+        "a.txt"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "file": "a.txt"
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--file <file>] [--stdin]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "file",
+              "usage": "--file <file>",
+              "short": [],
+              "long": [
+                "file"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "overrides": [
+                "--stdin"
+              ]
+            },
+            {
+              "name": "stdin",
+              "usage": "--stdin",
+              "short": [],
+              "long": [
+                "stdin"
+              ],
+              "hide": false,
+              "global": false,
+              "overrides": [
+                "--file"
+              ]
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "overrides-loser-is-not-refilled-from-env",
+      "doc": "The command line said `--stdin` came last, so `--file` lost. A flag that lost an override is not merely unset: filling it from the environment afterwards would leave both standing and undo the last-one-wins.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--file <file>\" env=\"EX_FILE\" overrides=\"--stdin\"\nflag \"--stdin\"\n",
+      "argv": [
+        "--file",
+        "typed",
+        "--stdin"
+      ],
+      "env": {
+        "EX_FILE": "from-env"
+      },
+      "expect": {
+        "ok": {
+          "flags": {
+            "stdin": true
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--file <file>] [--stdin]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "file",
+              "usage": "--file <file>",
+              "short": [],
+              "long": [
+                "file"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "overrides": [
+                "--stdin"
+              ],
+              "env": "EX_FILE"
+            },
+            {
+              "name": "stdin",
+              "usage": "--stdin",
+              "short": [],
+              "long": [
+                "stdin"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "overrides-do-not-erase-an-invalid-choice",
+      "doc": "`--trace` came last, so `--log-level` lost and holds nothing by the end. That settles which of the two is in effect; it does not make `v` one of the choices. Only a later occurrence of `--log-level` itself can replace the word it was given — a different flag winning the pair is not a correction of what was typed.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--log-level <level>\" overrides=\"--trace\" {\n  choices \"debug\" \"info\"\n}\nflag \"--trace\"\n",
+      "argv": [
+        "--log-level",
+        "v",
+        "--trace"
+      ],
+      "expect": {
+        "error": "invalid_choice"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--log-level <level>] [--trace]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "log-level",
+              "usage": "--log-level <level>",
+              "short": [],
+              "long": [
+                "log-level"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "level",
+                "usage": "<level>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false,
+                "choices": {
+                  "choices": [
+                    "debug",
+                    "info"
+                  ]
+                }
+              },
+              "overrides": [
+                "--trace"
+              ]
+            },
+            {
+              "name": "trace",
+              "usage": "--trace",
+              "short": [],
+              "long": [
+                "trace"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "conflicts-both-given",
+      "doc": "Two flags declared to conflict cannot be given together. Unlike `overrides`, where the last one wins, a conflict is a mistake to report rather than an order to resolve.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--file <file>\" conflicts=\"--stdin\"\nflag \"--stdin\"\nflag \"--url <url>\"\n",
+      "argv": [
+        "--file",
+        "a.txt",
+        "--stdin"
+      ],
+      "expect": {
+        "error": "conflicting_flags"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[FLAGS]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "file",
+              "usage": "--file <file>",
+              "short": [],
+              "long": [
+                "file"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "conflicts": [
+                "--stdin"
+              ]
+            },
+            {
+              "name": "stdin",
+              "usage": "--stdin",
+              "short": [],
+              "long": [
+                "stdin"
+              ],
+              "hide": false,
+              "global": false
+            },
+            {
+              "name": "url",
+              "usage": "--url <url>",
+              "short": [],
+              "long": [
+                "url"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "url",
+                "usage": "<url>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "conflicts-either-order",
+      "doc": "The conflict is declared on `--file` only, and still applies when `--stdin` comes first: the relationship is between the two flags, not between a flag and the tokens after it.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--file <file>\" conflicts=\"--stdin\"\nflag \"--stdin\"\nflag \"--url <url>\"\n",
+      "argv": [
+        "--stdin",
+        "--file",
+        "a.txt"
+      ],
+      "expect": {
+        "error": "conflicting_flags"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[FLAGS]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "file",
+              "usage": "--file <file>",
+              "short": [],
+              "long": [
+                "file"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "conflicts": [
+                "--stdin"
+              ]
+            },
+            {
+              "name": "stdin",
+              "usage": "--stdin",
+              "short": [],
+              "long": [
+                "stdin"
+              ],
+              "hide": false,
+              "global": false
+            },
+            {
+              "name": "url",
+              "usage": "--url <url>",
+              "short": [],
+              "long": [
+                "url"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "url",
+                "usage": "<url>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "conflicts-one-given",
+      "doc": "A declared conflict costs nothing when only one side is given.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--file <file>\" conflicts=\"--stdin\"\nflag \"--stdin\"\nflag \"--url <url>\"\n",
+      "argv": [
+        "--stdin"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "stdin": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[FLAGS]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "file",
+              "usage": "--file <file>",
+              "short": [],
+              "long": [
+                "file"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "conflicts": [
+                "--stdin"
+              ]
+            },
+            {
+              "name": "stdin",
+              "usage": "--stdin",
+              "short": [],
+              "long": [
+                "stdin"
+              ],
+              "hide": false,
+              "global": false
+            },
+            {
+              "name": "url",
+              "usage": "--url <url>",
+              "short": [],
+              "long": [
+                "url"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "url",
+                "usage": "<url>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "conflicts-unrelated-flag",
+      "doc": "Only the named flag conflicts; an unnamed one alongside it is fine.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--file <file>\" conflicts=\"--stdin\"\nflag \"--stdin\"\nflag \"--url <url>\"\n",
+      "argv": [
+        "--file",
+        "a.txt",
+        "--url",
+        "u"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "file": "a.txt",
+            "url": "u"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[FLAGS]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "file",
+              "usage": "--file <file>",
+              "short": [],
+              "long": [
+                "file"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "conflicts": [
+                "--stdin"
+              ]
+            },
+            {
+              "name": "stdin",
+              "usage": "--stdin",
+              "short": [],
+              "long": [
+                "stdin"
+              ],
+              "hide": false,
+              "global": false
+            },
+            {
+              "name": "url",
+              "usage": "--url <url>",
+              "short": [],
+              "long": [
+                "url"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "url",
+                "usage": "<url>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "conflicts-one-side-from-env",
+      "doc": "A value from the environment counts as given: `--file` conflicts with `--stdin` even though only `--stdin` was typed. clap, argparse and usage all treat an environment variable as a value source rather than as a weaker kind of default.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--file <file>\" env=\"EX_FILE\" conflicts=\"--stdin\"\nflag \"--stdin\" env=\"EX_STDIN\"\n",
+      "argv": [
+        "--stdin"
+      ],
+      "env": {
+        "EX_FILE": "a.txt"
+      },
+      "expect": {
+        "error": "conflicting_flags"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--file <file>] [--stdin]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "file",
+              "usage": "--file <file>",
+              "short": [],
+              "long": [
+                "file"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "conflicts": [
+                "--stdin"
+              ],
+              "env": "EX_FILE"
+            },
+            {
+              "name": "stdin",
+              "usage": "--stdin",
+              "short": [],
+              "long": [
+                "stdin"
+              ],
+              "hide": false,
+              "global": false,
+              "env": "EX_STDIN"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "conflicts-both-sides-from-env",
+      "doc": "Neither side was typed and the conflict still holds, which is what makes the rule uniform: the check asks whether a flag has a value, not how it got one.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--file <file>\" env=\"EX_FILE\" conflicts=\"--stdin\"\nflag \"--stdin\" env=\"EX_STDIN\"\n",
+      "argv": [],
+      "env": {
+        "EX_FILE": "a.txt",
+        "EX_STDIN": "1"
+      },
+      "expect": {
+        "error": "conflicting_flags"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--file <file>] [--stdin]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "file",
+              "usage": "--file <file>",
+              "short": [],
+              "long": [
+                "file"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "conflicts": [
+                "--stdin"
+              ],
+              "env": "EX_FILE"
+            },
+            {
+              "name": "stdin",
+              "usage": "--stdin",
+              "short": [],
+              "long": [
+                "stdin"
+              ],
+              "hide": false,
+              "global": false,
+              "env": "EX_STDIN"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "flag-var-too-few",
+      "doc": "`var_min` is enforced for a repeatable flag, not only for positionals.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--include <pattern>\" var=#true var_min=2\n",
+      "argv": [
+        "--include",
+        "a"
+      ],
+      "expect": {
+        "error": "var_too_few"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--include <pattern>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "include",
+              "usage": "--include <pattern>",
+              "short": [],
+              "long": [
+                "include"
+              ],
+              "var": true,
+              "var_min": 2,
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "pattern",
+                "usage": "<pattern>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "flag-var-too-many",
+      "doc": "`var_max` is likewise enforced for a repeatable flag.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--include <pattern>\" var=#true var_max=1\n",
+      "argv": [
+        "--include",
+        "a",
+        "--include",
+        "b"
+      ],
+      "expect": {
+        "error": "var_too_many"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--include <pattern>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "include",
+              "usage": "--include <pattern>",
+              "short": [],
+              "long": [
+                "include"
+              ],
+              "var": true,
+              "var_max": 1,
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "pattern",
+                "usage": "<pattern>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "requires-if-value-matches",
+      "doc": "A value-conditional requirement is enforced when the declaring flag explicitly has the named value.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--format <format>\" {\n  requires_if \"json\" \"--schema\"\n}\nflag \"--schema <file>\"\n",
+      "argv": [
+        "--format",
+        "json"
+      ],
+      "expect": {
+        "error": "missing_required_flag"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--format <format>] [--schema <file>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "format",
+              "usage": "--format <format>",
+              "short": [],
+              "long": [
+                "format"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "format",
+                "usage": "<format>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "requires_if": [
+                {
+                  "value": "json",
+                  "requires": "--schema"
+                }
+              ]
+            },
+            {
+              "name": "schema",
+              "usage": "--schema <file>",
+              "short": [],
+              "long": [
+                "schema"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "requires-if-value-does-not-match",
+      "doc": "A different value does not activate the conditional requirement.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--format <format>\" {\n  requires_if \"json\" \"--schema\"\n}\nflag \"--schema <file>\"\n",
+      "argv": [
+        "--format",
+        "text"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "format": "text"
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--format <format>] [--schema <file>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "format",
+              "usage": "--format <format>",
+              "short": [],
+              "long": [
+                "format"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "format",
+                "usage": "<format>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "requires_if": [
+                {
+                  "value": "json",
+                  "requires": "--schema"
+                }
+              ]
+            },
+            {
+              "name": "schema",
+              "usage": "--schema <file>",
+              "short": [],
+              "long": [
+                "schema"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "requires-if-is-satisfied",
+      "doc": "The conditional requirement disappears once the flag it names has a value.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--format <format>\" {\n  requires_if \"json\" \"--schema\"\n}\nflag \"--schema <file>\"\n",
+      "argv": [
+        "--format",
+        "json",
+        "--schema",
+        "schema.json"
+      ],
+      "expect": {
+        "ok": {
+          "flags": {
+            "format": "json",
+            "schema": "schema.json"
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--format <format>] [--schema <file>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "format",
+              "usage": "--format <format>",
+              "short": [],
+              "long": [
+                "format"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "format",
+                "usage": "<format>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "requires_if": [
+                {
+                  "value": "json",
+                  "requires": "--schema"
+                }
+              ]
+            },
+            {
+              "name": "schema",
+              "usage": "--schema <file>",
+              "short": [],
+              "long": [
+                "schema"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "requires-if-environment-is-explicit",
+      "doc": "An environment value is explicit and activates a matching conditional requirement, as it does in clap.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--format <format>\" env=\"EX_FORMAT\" {\n  requires_if \"json\" \"--schema\"\n}\nflag \"--schema <file>\"\n",
+      "argv": [],
+      "env": {
+        "EX_FORMAT": "json"
+      },
+      "expect": {
+        "error": "missing_required_flag"
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--format <format>] [--schema <file>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "format",
+              "usage": "--format <format>",
+              "short": [],
+              "long": [
+                "format"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "format",
+                "usage": "<format>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "requires_if": [
+                {
+                  "value": "json",
+                  "requires": "--schema"
+                }
+              ],
+              "env": "EX_FORMAT"
+            },
+            {
+              "name": "schema",
+              "usage": "--schema <file>",
+              "short": [],
+              "long": [
+                "schema"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "requires-if-default-is-not-explicit",
+      "doc": "A default does not activate a value-conditional requirement because nobody supplied it.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--format <format>\" default=\"json\" {\n  requires_if \"json\" \"--schema\"\n}\nflag \"--schema <file>\"\n",
+      "argv": [],
+      "expect": {
+        "ok": {
+          "flags": {
+            "format": "json"
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--format <format>] [--schema <file>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "format",
+              "usage": "--format <format>",
+              "short": [],
+              "long": [
+                "format"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "format",
+                "usage": "<format>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "default": [
+                "json"
+              ],
+              "requires_if": [
+                {
+                  "value": "json",
+                  "requires": "--schema"
+                }
+              ]
+            },
+            {
+              "name": "schema",
+              "usage": "--schema <file>",
+              "short": [],
+              "long": [
+                "schema"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "file",
+                "usage": "<file>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              }
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    }
+  ]
+}

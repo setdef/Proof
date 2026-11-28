@@ -1,0 +1,1113 @@
+{
+  "section": "default-subcommand",
+  "about": "Where a word goes when it names no subcommand. `default_subcommand` makes `mise build` mean `mise run build`: the word selects nothing, so the parser descends into the named command and the word is re-examined there. It is declared once, for the whole spec.",
+  "vectors": [
+    {
+      "id": "default-route",
+      "doc": "A word naming no subcommand descends into the default one and binds as its argument.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"run\"\ncmd \"run\" {\n  arg \"[TASK]\"\n}\n",
+      "argv": [
+        "build"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [
+            "run"
+          ],
+          "args": {
+            "TASK": "build"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run [TASK]",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "TASK",
+                  "usage": "[TASK]",
+                  "required": false,
+                  "double_dash": "Optional",
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "run",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-beats-the-root-own-arg",
+      "doc": "The declaring command's own positional does not win. This is what makes the property more than a synonym for an argument, and it is mise's shape exactly: the root has `[TASK]` and `run` has one too.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"run\"\narg \"[ROOT_TASK]\"\ncmd \"run\" {\n  arg \"[TASK]\"\n}\n",
+      "argv": [
+        "build"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [
+            "run"
+          ],
+          "args": {
+            "TASK": "build"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[ROOT_TASK] [SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run [TASK]",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "TASK",
+                  "usage": "[TASK]",
+                  "required": false,
+                  "double_dash": "Optional",
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [
+            {
+              "name": "ROOT_TASK",
+              "usage": "[ROOT_TASK]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "run",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-not-used-when-named",
+      "doc": "A word that does name a subcommand selects it; the default is only for words that name nothing.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"run\"\ncmd \"run\" {\n  arg \"[TASK]\"\n}\ncmd \"install\"\n",
+      "argv": [
+        "install"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [
+            "install"
+          ]
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run [TASK]",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "TASK",
+                  "usage": "[TASK]",
+                  "required": false,
+                  "double_dash": "Optional",
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            },
+            "install": {
+              "full_cmd": [
+                "install"
+              ],
+              "usage": "install",
+              "subcommands": {},
+              "args": [],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "install",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "run",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-name-outranks-other-alias",
+      "doc": "`default_subcommand` names a command by the same rule a typed word selects one, so a command's own name outranks another command's alias here too.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"run\"\ncmd \"alpha\" {\n  alias \"run\"\n  arg \"[a]\"\n}\ncmd \"run\" {\n  arg \"[b]\"\n}\n",
+      "argv": [
+        "build"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [
+            "run"
+          ],
+          "args": {
+            "b": "build"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[SUBCOMMAND]",
+          "subcommands": {
+            "alpha": {
+              "full_cmd": [
+                "alpha"
+              ],
+              "usage": "alpha [a]",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "a",
+                  "usage": "[a]",
+                  "required": false,
+                  "double_dash": "Optional",
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "alpha",
+              "aliases": [
+                "run"
+              ],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            },
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run [b]",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "b",
+                  "usage": "[b]",
+                  "required": false,
+                  "double_dash": "Optional",
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "run",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-word-reexamined",
+      "doc": "The word is examined again against the command it reached, so it can name one of *its* subcommands. mise's mounted task names arrive this way.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"run\"\ncmd \"run\" {\n  cmd \"lint\"\n}\n",
+      "argv": [
+        "lint"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [
+            "run",
+            "lint"
+          ]
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run [SUBCOMMAND]",
+              "subcommands": {
+                "lint": {
+                  "full_cmd": [
+                    "run",
+                    "lint"
+                  ],
+                  "usage": "run lint",
+                  "subcommands": {},
+                  "args": [],
+                  "flags": [],
+                  "mounts": [],
+                  "unknown_flags": null,
+                  "hide": false,
+                  "args_override_self": true,
+                  "name": "lint",
+                  "aliases": [],
+                  "hidden_aliases": [],
+                  "examples": [],
+                  "headings": []
+                }
+              },
+              "args": [],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "run",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-flag-before-the-word",
+      "doc": "Routing happens at the word, so a flag typed before it was addressed to the command the user was at.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"run\"\nflag \"--verbose\"\ncmd \"run\" {\n  arg \"[TASK]\"\n}\n",
+      "argv": [
+        "--verbose",
+        "build"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [
+            "run"
+          ],
+          "args": {
+            "TASK": "build"
+          },
+          "flags": {
+            "verbose": true
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--verbose] [SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run [TASK]",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "TASK",
+                  "usage": "[TASK]",
+                  "required": false,
+                  "double_dash": "Optional",
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [
+            {
+              "name": "verbose",
+              "usage": "--verbose",
+              "short": [],
+              "long": [
+                "verbose"
+              ],
+              "hide": false,
+              "global": false
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "run",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-after-separator",
+      "doc": "Past `--` no subcommand can be selected, so there is no default to reach either: the word is a value of whatever the command declares.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"run\"\narg \"[ROOT_TASK]\"\ncmd \"run\" {\n  arg \"[TASK]\"\n}\n",
+      "argv": [
+        "--",
+        "build"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [],
+          "args": {
+            "ROOT_TASK": "build"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[ROOT_TASK] [SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run [TASK]",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "TASK",
+                  "usage": "[TASK]",
+                  "required": false,
+                  "double_dash": "Optional",
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [
+            {
+              "name": "ROOT_TASK",
+              "usage": "[ROOT_TASK]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "run",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-is-declared-for-the-root",
+      "doc": "`default_subcommand` names one command for the whole program, and only the root can declare one. A nested command that happens to have a subcommand of that name does not thereby acquire a default of its own.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"ls\"\ncmd \"ls\"\ncmd \"config\" {\n  cmd \"ls\" {\n    arg \"[WHAT]\"\n  }\n}\n",
+      "argv": [
+        "config",
+        "zzz"
+      ],
+      "expect": {
+        "error": "unexpected_arg"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[SUBCOMMAND]",
+          "subcommands": {
+            "ls": {
+              "full_cmd": [
+                "ls"
+              ],
+              "usage": "ls",
+              "subcommands": {},
+              "args": [],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "ls",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            },
+            "config": {
+              "full_cmd": [
+                "config"
+              ],
+              "usage": "config [SUBCOMMAND]",
+              "subcommands": {
+                "ls": {
+                  "full_cmd": [
+                    "config",
+                    "ls"
+                  ],
+                  "usage": "config ls [WHAT]",
+                  "subcommands": {},
+                  "args": [
+                    {
+                      "name": "WHAT",
+                      "usage": "[WHAT]",
+                      "required": false,
+                      "double_dash": "Optional",
+                      "hide": false
+                    }
+                  ],
+                  "flags": [],
+                  "mounts": [],
+                  "unknown_flags": null,
+                  "hide": false,
+                  "args_override_self": true,
+                  "name": "ls",
+                  "aliases": [],
+                  "hidden_aliases": [],
+                  "examples": [],
+                  "headings": []
+                }
+              },
+              "args": [],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "config",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "ls",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-not-taken-by-an-unknown-flag",
+      "doc": "A dash-prefixed token naming no flag is a value, and was never a candidate to select a command — so it binds where it was typed rather than in the default subcommand. usage-lib stops looking for subcommands at an unrecognised flag for the same reason.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"run\"\narg \"[ROOT_TASK]\"\ncmd \"run\" {\n  arg \"[TASK]\"\n}\n",
+      "argv": [
+        "--wat"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [],
+          "args": {
+            "ROOT_TASK": "--wat"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[ROOT_TASK] [SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run [TASK]",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "TASK",
+                  "usage": "[TASK]",
+                  "required": false,
+                  "double_dash": "Optional",
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [
+            {
+              "name": "ROOT_TASK",
+              "usage": "[ROOT_TASK]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "run",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-not-taken-by-an-unknown-short",
+      "doc": "The same for a short form, which reaches the positional by a different route through the parser.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"run\"\narg \"[ROOT_TASK]\"\ncmd \"run\" {\n  arg \"[TASK]\"\n}\n",
+      "argv": [
+        "-x"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [],
+          "args": {
+            "ROOT_TASK": "-x"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[ROOT_TASK] [SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run [TASK]",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "TASK",
+                  "usage": "[TASK]",
+                  "required": false,
+                  "double_dash": "Optional",
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [
+            {
+              "name": "ROOT_TASK",
+              "usage": "[ROOT_TASK]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "run",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-takes-an-opted-negative-number",
+      "doc": "A negative number reaches a default command when its first positional explicitly accepts negative numbers. Other dash-prefixed values still remain at the root.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"run\"\narg \"[ROOT_TASK]\"\ncmd \"run\" {\n  arg \"[OFFSET]\" allow_negative_numbers=#true\n}\n",
+      "argv": [
+        "-1.5"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [
+            "run"
+          ],
+          "args": {
+            "OFFSET": "-1.5"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[ROOT_TASK] [SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run [OFFSET]",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "OFFSET",
+                  "usage": "[OFFSET]",
+                  "required": false,
+                  "double_dash": "Optional",
+                  "allow_negative_numbers": true,
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [
+            {
+              "name": "ROOT_TASK",
+              "usage": "[ROOT_TASK]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "run",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-leaves-an-unopted-negative-number",
+      "doc": "A negative number remains at the root unless the default command's first positional opts in; the existence of a default command does not make every number its value.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"run\"\narg \"[ROOT_OFFSET]\" allow_negative_numbers=#true\ncmd \"run\" {\n  arg \"[TASK]\"\n}\n",
+      "argv": [
+        "-1.5"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [],
+          "args": {
+            "ROOT_OFFSET": "-1.5"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[ROOT_OFFSET] [SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run [TASK]",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "TASK",
+                  "usage": "[TASK]",
+                  "required": false,
+                  "double_dash": "Optional",
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [
+            {
+              "name": "ROOT_OFFSET",
+              "usage": "[ROOT_OFFSET]",
+              "required": false,
+              "double_dash": "Optional",
+              "allow_negative_numbers": true,
+              "hide": false
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "run",
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-named-by-an-alias",
+      "doc": "`default_subcommand` may name an alias rather than the canonical name, which usage-lib resolves against names, aliases and hidden aliases alike.",
+      "spec": "name \"ex\"\nbin \"ex\"\ndefault_subcommand \"r\"\ncmd \"run\" {\n  alias \"r\"\n  arg \"[TASK]\"\n}\n",
+      "argv": [
+        "build"
+      ],
+      "expect": {
+        "ok": {
+          "cmd": [
+            "run"
+          ],
+          "args": {
+            "TASK": "build"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[SUBCOMMAND]",
+          "subcommands": {
+            "run": {
+              "full_cmd": [
+                "run"
+              ],
+              "usage": "run [TASK]",
+              "subcommands": {},
+              "args": [
+                {
+                  "name": "TASK",
+                  "usage": "[TASK]",
+                  "required": false,
+                  "double_dash": "Optional",
+                  "hide": false
+                }
+              ],
+              "flags": [],
+              "mounts": [],
+              "unknown_flags": null,
+              "hide": false,
+              "args_override_self": true,
+              "name": "run",
+              "aliases": [
+                "r"
+              ],
+              "hidden_aliases": [],
+              "examples": [],
+              "headings": []
+            }
+          },
+          "args": [],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "default_subcommand": "r",
+        "unknown_flags": null
+      }
+    }
+  ]
+}

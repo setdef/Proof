@@ -1,0 +1,863 @@
+{
+  "section": "env-and-defaults",
+  "about": "Where a value comes from when the command line does not supply one. The command line wins, then the environment, then the declared default. None of these change which tokens bind where — they only fill what argv left empty.",
+  "vectors": [
+    {
+      "id": "env-fills-absent-flag",
+      "doc": "A flag backed by an env var takes its value when the flag is absent.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\" env=\"EX_JOBS\"\n",
+      "argv": [],
+      "env": {
+        "EX_JOBS": "4"
+      },
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": "4"
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "env": "EX_JOBS"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "argv-beats-env",
+      "doc": "An explicit flag wins over the environment.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\" env=\"EX_JOBS\"\n",
+      "argv": [
+        "--jobs",
+        "8"
+      ],
+      "env": {
+        "EX_JOBS": "4"
+      },
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": "8"
+          }
+        }
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "env": "EX_JOBS"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "env-unset-falls-to-default",
+      "doc": "With the env var unset, the declared default applies.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\" env=\"EX_JOBS\" default=\"1\"\n",
+      "argv": [],
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": "1"
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "default": [
+                "1"
+              ],
+              "env": "EX_JOBS"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "env-beats-default",
+      "doc": "The environment wins over the default.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\" env=\"EX_JOBS\" default=\"1\"\n",
+      "argv": [],
+      "env": {
+        "EX_JOBS": "4"
+      },
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": "4"
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "default": [
+                "1"
+              ],
+              "env": "EX_JOBS"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "env-empty-string-counts-as-set",
+      "doc": "An env var set to the empty string is set. Treating empty as unset would make `EX_JOBS=` mean something different from every other empty value in the grammar.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\" env=\"EX_JOBS\" default=\"1\"\n",
+      "argv": [],
+      "env": {
+        "EX_JOBS": ""
+      },
+      "expect": {
+        "ok": {
+          "flags": {
+            "jobs": ""
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "default": [
+                "1"
+              ],
+              "env": "EX_JOBS"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "env-value-is-one-token",
+      "doc": "An environment value is one value, whatever whitespace or commas it contains. It is not a command line and is never split into several.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--include <pattern>\" env=\"EX_INCLUDE\"\n",
+      "argv": [],
+      "env": {
+        "EX_INCLUDE": "a b,c"
+      },
+      "expect": {
+        "ok": {
+          "flags": {
+            "include": "a b,c"
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--include <pattern>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "include",
+              "usage": "--include <pattern>",
+              "short": [],
+              "long": [
+                "include"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "pattern",
+                "usage": "<pattern>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "env": "EX_INCLUDE"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "env-does-not-add-to-a-flag-the-command-line-gave",
+      "doc": "The environment fills what argv left empty; it does not contribute another occurrence to a repeatable flag that was given. A wrapper exporting a default must not silently append it to what the caller typed.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--include <pattern>\" var=#true env=\"EX_INCLUDE\"\n",
+      "argv": [
+        "--include",
+        "a",
+        "--include",
+        "b"
+      ],
+      "env": {
+        "EX_INCLUDE": "z"
+      },
+      "expect": {
+        "ok": {
+          "flags": {
+            "include": [
+              "a",
+              "b"
+            ]
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--include <pattern>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "include",
+              "usage": "--include <pattern>",
+              "short": [],
+              "long": [
+                "include"
+              ],
+              "var": true,
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "pattern",
+                "usage": "<pattern>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "env": "EX_INCLUDE"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "env-sets-a-flag-that-holds-no-value",
+      "doc": "A flag with no argument is set by its env var when the value reads as true.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--verbose\" env=\"EX_VERBOSE\"\n",
+      "argv": [],
+      "env": {
+        "EX_VERBOSE": "1"
+      },
+      "expect": {
+        "ok": {
+          "flags": {
+            "verbose": true
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--verbose]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "verbose",
+              "usage": "--verbose",
+              "short": [],
+              "long": [
+                "verbose"
+              ],
+              "hide": false,
+              "global": false,
+              "env": "EX_VERBOSE"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "env-false-does-not-set-a-flag",
+      "doc": "`EX_VERBOSE=false` leaves the flag false rather than setting it because the variable exists. Presence cannot be the test: a variable exported as `false` by a parent process is the caller saying no.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--verbose\" env=\"EX_VERBOSE\"\n",
+      "argv": [],
+      "env": {
+        "EX_VERBOSE": "false"
+      },
+      "expect": {
+        "ok": {
+          "flags": {
+            "verbose": false
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--verbose]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "verbose",
+              "usage": "--verbose",
+              "short": [],
+              "long": [
+                "verbose"
+              ],
+              "hide": false,
+              "global": false,
+              "env": "EX_VERBOSE"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "env-zero-does-not-set-a-flag",
+      "doc": "`0` is false as well, matching `1` being true. The pair is what a shell script writes.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--verbose\" env=\"EX_VERBOSE\"\n",
+      "argv": [],
+      "env": {
+        "EX_VERBOSE": "0"
+      },
+      "expect": {
+        "ok": {
+          "flags": {
+            "verbose": false
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--verbose]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "verbose",
+              "usage": "--verbose",
+              "short": [],
+              "long": [
+                "verbose"
+              ],
+              "hide": false,
+              "global": false,
+              "env": "EX_VERBOSE"
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-does-not-supply-a-missing-flag-value",
+      "doc": "A default fills a flag that was never given, not one that was given without its value. `ex --jobs` is still a missing value, since the two states differ and only the first is what a default is for.",
+      "spec": "name \"ex\"\nbin \"ex\"\nflag \"--jobs <n>\" default=\"4\"\n",
+      "argv": [
+        "--jobs"
+      ],
+      "expect": {
+        "error": "missing_flag_value"
+      },
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[--jobs <n>]",
+          "subcommands": {},
+          "args": [],
+          "flags": [
+            {
+              "name": "jobs",
+              "usage": "--jobs <n>",
+              "short": [],
+              "long": [
+                "jobs"
+              ],
+              "hide": false,
+              "global": false,
+              "arg": {
+                "name": "n",
+                "usage": "<n>",
+                "required": true,
+                "double_dash": "Optional",
+                "hide": false
+              },
+              "default": [
+                "4"
+              ]
+            }
+          ],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "default-fills-absent-arg",
+      "doc": "Defaults work the same way for positionals.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[file]\" default=\"out.txt\"\n",
+      "argv": [],
+      "expect": {
+        "ok": {
+          "args": {
+            "file": "out.txt"
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false,
+              "default": [
+                "out.txt"
+              ]
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "env-fills-absent-arg",
+      "doc": "An env-backed positional is filled from the environment when no word reaches it.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"[file]\" env=\"EX_FILE\"\n",
+      "argv": [],
+      "env": {
+        "EX_FILE": "from-env.txt"
+      },
+      "expect": {
+        "ok": {
+          "args": {
+            "file": "from-env.txt"
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "[file]",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "[file]",
+              "required": false,
+              "double_dash": "Optional",
+              "hide": false,
+              "env": "EX_FILE"
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    },
+    {
+      "id": "env-does-not-satisfy-required-arg-position",
+      "doc": "An env-backed required positional is satisfied by the environment, so the command line need not supply it.",
+      "spec": "name \"ex\"\nbin \"ex\"\narg \"<file>\" env=\"EX_FILE\"\n",
+      "argv": [],
+      "env": {
+        "EX_FILE": "x.txt"
+      },
+      "expect": {
+        "ok": {
+          "args": {
+            "file": "x.txt"
+          }
+        }
+      },
+      "layer": "post-binding",
+      "spec_json": {
+        "name": "ex",
+        "bin": "ex",
+        "cmd": {
+          "full_cmd": [],
+          "usage": "<file>",
+          "subcommands": {},
+          "args": [
+            {
+              "name": "file",
+              "usage": "<file>",
+              "required": true,
+              "double_dash": "Optional",
+              "hide": false,
+              "env": "EX_FILE"
+            }
+          ],
+          "flags": [],
+          "mounts": [],
+          "unknown_flags": null,
+          "hide": false,
+          "args_override_self": true,
+          "name": "ex",
+          "aliases": [],
+          "hidden_aliases": [],
+          "examples": [],
+          "headings": []
+        },
+        "config": {
+          "props": {},
+          "sources": {},
+          "files": []
+        },
+        "usage": "",
+        "complete": {},
+        "unknown_flags": null
+      }
+    }
+  ]
+}
