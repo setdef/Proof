@@ -53,7 +53,8 @@ module Proof
         before, after = run_words
         return { tasks: Tasks.read(before, after, @command), script_words: [] } unless @line.given?("script")
 
-        # usage 7.4.1 can't say that a task and --script go together never, so Proof's rule is here.
+        # usage 7.4.1 can't say that a task and --script exclude each other once a script takes words after --,
+        # so Proof's rule is here.
         raise(Mistake, Messages.new(@command).task_with_script) unless before.empty?
 
         { tasks: [], script_words: after }
