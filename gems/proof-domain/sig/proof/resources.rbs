@@ -94,8 +94,8 @@ module Proof
     # The memory in megabytes, a whole number from 0.
     attr_reader megabytes: Integer
 
-    def self.new: (cpus: Integer, megabytes: Integer) -> instance
-                | (Integer cpus, Integer megabytes) -> instance
+    def self.new: (cpus: Object?, megabytes: Object?) -> instance
+                | (Object? cpus, Object? megabytes) -> instance
 
     # Builds a request from CPUs and a memory size as a project file writes it.
     # It raises `Proof::InvalidResourcesError` unless `cpus` is an Integer from
@@ -106,17 +106,17 @@ module Proof
     # megabyte. A number, `nil`, `"8"`, `"8G"`, `"1e3MB"`, `"-1GB"`, `".5GB"`,
     # `"8  GB"`, `"8GB "`, a string with a byte that isn't valid text, and a
     # string in an encoding that isn't ASCII-compatible, such as UTF-16, raise
-    # as memory, and `0` raises as `cpus`. The message lists the forms that
-    # work.
+    # as memory, and `0`, `"4"`, and `nil` raise as `cpus`. The message lists
+    # the forms that work.
     #
-    # - `cpus`: Integer, a whole number from 1.
-    # - `memory`: String, such as `"4GB"`.
+    # - `cpus`: Integer, a whole number from 1. Anything else raises.
+    # - `memory`: String, such as `"4GB"`. Anything else raises.
     #
     # ```ruby
     # Proof::Resources.request(cpus: 2, memory: "512MB").megabytes # => 512
     # Proof::Resources.request(cpus: 2, memory: "1.5 tib").megabytes # => 1_572_864
     # ```
-    def self.request: (cpus: Integer, memory: String) -> Resources
+    def self.request: (cpus: Object?, memory: Object?) -> Resources
 
     # Resources with no CPUs and no memory: what a host with nothing free has,
     # and where the most of several resources starts.
@@ -144,16 +144,16 @@ module Proof
 
     # Builds resources from CPUs and megabytes, and raises
     # `Proof::InvalidResourcesError` unless `cpus` and `megabytes` are each an
-    # Integer from 0. Zero CPUs and zero megabytes are a host with nothing free,
-    # or a share that keeps nothing.
+    # Integer from 0, so `"4"`, `1.5`, `-1`, and `nil` raise. Zero CPUs and zero
+    # megabytes are a host with nothing free, or a share that keeps nothing.
     #
-    # - `cpus`: Integer, a whole number from 0.
-    # - `megabytes`: Integer, a whole number from 0.
+    # - `cpus`: Integer, a whole number from 0. Anything else raises.
+    # - `megabytes`: Integer, a whole number from 0. Anything else raises.
     #
     # ```ruby
     # Proof::Resources.new(cpus: 0, megabytes: 0).cpus # => 0
     # ```
-    def initialize: (cpus: Integer, megabytes: Integer) -> void
+    def initialize: (cpus: Object?, megabytes: Object?) -> void
 
     # Whether these resources fit within `available`: no more CPUs and no
     # more memory than it has. Equal amounts fit.

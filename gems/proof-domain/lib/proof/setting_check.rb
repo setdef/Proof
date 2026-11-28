@@ -29,27 +29,14 @@ module Proof
     end
 
     def self.checked(name, value)
+      # Resources holds the rules for CPUs and memory, so a source's CPUs and megabytes are checked by building them.
       case name
-      when :cpus then cpus(value)
-      when :megabytes then megabytes(value)
+      when :cpus then Resources.request(cpus: value, memory: "0MB").cpus
+      when :megabytes then Resources.new(cpus: 1, megabytes: value).megabytes
       when :os, :artifacts, :caches then listed(name, value)
       else single(name, value)
       end
     end
-
-    def self.cpus(value)
-      # Resources holds the rules for CPUs and memory, so a source's CPUs and megabytes are checked by building them,
-      # and Steep is told that the value may be what the signatures refuse.
-      count = value #: Integer
-      Resources.request(cpus: count, memory: "0MB").cpus
-    end
-    private_class_method(:cpus)
-
-    def self.megabytes(value)
-      count = value #: Integer
-      Resources.new(cpus: 1, megabytes: count).megabytes
-    end
-    private_class_method(:megabytes)
 
     def self.single(name, value)
       return value if value.is_a?(KINDS[name])

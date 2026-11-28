@@ -81,8 +81,8 @@ module Proof
     # is a given setting that keeps none.
     attr_reader caches: Set[PathPattern]?
 
-    def self.new: (?os: Array[OS] | Set[OS] | nil, ?labels: LabelSet?, ?cpus: Integer?, ?megabytes: Integer?, ?time_limit: TimeLimit?, ?artifacts: Array[PathPattern] | Set[PathPattern] | nil, ?caches: Array[PathPattern] | Set[PathPattern] | nil) -> instance
-                | (?(Array[OS] | Set[OS] | nil) os, ?LabelSet? labels, ?Integer? cpus, ?Integer? megabytes, ?TimeLimit? time_limit, ?(Array[PathPattern] | Set[PathPattern] | nil) artifacts, ?(Array[PathPattern] | Set[PathPattern] | nil) caches) -> instance
+    def self.new: (?os: Object?, ?labels: Object?, ?cpus: Object?, ?megabytes: Object?, ?time_limit: Object?, ?artifacts: Object?, ?caches: Object?) -> instance
+                | (?Object? os, ?Object? labels, ?Object? cpus, ?Object? megabytes, ?Object? time_limit, ?Object? artifacts, ?Object? caches) -> instance
 
     # A source that gives no setting.
     #
