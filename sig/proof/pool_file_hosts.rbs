@@ -31,7 +31,7 @@ module Proof
     # path = "pool.kdl"
     # text = "host nuc {\n  runner nuc-linux\n  budget \"400GB\"\n}\n"
     # by_name = Proof::KdlParser.parse(text, path:, error: Proof::PoolFileError).group_by { |node| node.name.to_sym }
-    # Proof::PoolFileHosts.new(refusal: Proof::PoolFileRefusal.new(path:)).read(by_name)[:hosts].map(&:name) # => ["nuc"]
+    # Proof::PoolFileHosts.new(refusal: Proof::PoolFileReader.new(path:).file.refusal(Proof::PoolFileRefusal)).read(by_name)[:hosts].map(&:name) # => ["nuc"]
     # ```
     def read: (Hash[Symbol, Array[KdlNode]] by_name) -> Hash[Symbol, Object]
 

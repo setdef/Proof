@@ -16,6 +16,8 @@ module Proof
       new(path:).read_from(project, id)
     end
 
+    attr_reader(:file)
+
     def initialize(path:)
       @path = path
       @file = KdlFile.new(path:, error: ProjectFileError, forms: ProjectFileForms, messages: ProjectFileRefusal::MESSAGES)
@@ -44,5 +46,7 @@ module Proof
     private def tasks_of(nodes)
       TaskReader.new(refusal: @refusal, settings: @settings).read_all(nodes)
     end
+
+    # @dynamic file
   end
 end

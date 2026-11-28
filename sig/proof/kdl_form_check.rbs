@@ -22,7 +22,7 @@ module Proof
   #
   # ```ruby
   # path = "pool.kdl"
-  # check = Proof::KdlFormCheck.new(forms: Proof::PoolFileForms, refusal: Proof::PoolFileRefusal.new(path:))
+  # check = Proof::KdlFormCheck.new(forms: Proof::PoolFileForms, refusal: Proof::PoolFileReader.new(path:).file.refusal(Proof::PoolFileRefusal))
   # check.check(Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n}\n", path:, error: Proof::PoolFileError)).size # => 1
   # ```
   #
@@ -45,7 +45,7 @@ module Proof
     # - `nodes`: Array of `Proof::KdlNode`, the file's nodes.
     #
     # ```ruby
-    # Proof::KdlFormCheck.new(forms: Proof::PoolFileForms, refusal: Proof::PoolFileRefusal.new(path: "pool.kdl")).check([]) # => []
+    # Proof::KdlFormCheck.new(forms: Proof::PoolFileForms, refusal: Proof::PoolFileReader.new(path: "pool.kdl").file.refusal(Proof::PoolFileRefusal)).check([]) # => []
     # ```
     def check: (Array[KdlNode] nodes) -> Array[KdlNode]
 

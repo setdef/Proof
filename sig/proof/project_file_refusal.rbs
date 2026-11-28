@@ -14,7 +14,9 @@ module Proof
   # node doesn't have. It also refuses the mistakes only a project file has: a
   # second task entry with an entry's name, and a blank command.
   #
-  # Use it from the classes that read a project file's nodes.
+  # Build it with `Proof::KdlFile#refusal`, which gives it the file's path,
+  # error, forms, and messages, as `Proof::ProjectFileReader#file` describes
+  # them. Use it from the classes that read a project file's nodes.
   class ProjectFileRefusal < KdlRefusal
     # The messages, by name, for `format` to fill in.
     MESSAGES: Hash[Symbol, String]
@@ -22,17 +24,6 @@ module Proof
     # The message for the arguments of each node that has one of its own, by
     # the node's name. A child has `child_without_arguments`.
     ARGUMENTS: Hash[Symbol, Symbol]
-
-    # Prepares to refuse as the file at `path`.
-    #
-    # - `path`: String, the file's path.
-    # - `error`: the `Proof::FileError` subclass to raise. Defaults to
-    #   `Proof::ProjectFileError`.
-    # - `messages`: Hash from a message's name to its text. Defaults to
-    #   `MESSAGES`.
-    # - `forms`: `Proof::KdlForms`, the forms of the file's nodes. Defaults to
-    #   `Proof::ProjectFileForms`.
-    def initialize: (path: String, ?error: singleton(FileError), ?messages: Hash[Symbol, String], ?forms: KdlForms) -> void
 
     # Refuses a node with a number of arguments its form doesn't take: a
     # `defaults` node with any, a `task` with no name or with more than a name
@@ -42,7 +33,7 @@ module Proof
     # path = ".config/proof.kdl"
     # node = Proof::KdlParser.parse("defaults linux\n", path:, error: Proof::ProjectFileError).first
     # begin
-    #   Proof::ProjectFileRefusal.new(path:).node_arguments(node, 1)
+    #   Proof::ProjectFileReader.new(path:).file.refusal(Proof::ProjectFileRefusal).node_arguments(node, 1)
     # rescue Proof::ProjectFileError => e
     #   e.reason # => "a \"defaults\" node takes properties and children and no arguments, as in defaults cpus=4"
     # end

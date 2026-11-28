@@ -28,10 +28,6 @@ module Proof
     public_constant(:MESSAGES)
     private_constant(:EARLIER)
 
-    def initialize(path:, error: PoolFileError, messages: MESSAGES, forms: PoolFileForms)
-      super
-    end
-
     def repeated_entry(node, first)
       say_of(node, :repeated_entry, **EARLIER.call(first))
     end

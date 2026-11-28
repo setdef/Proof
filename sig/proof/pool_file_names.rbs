@@ -68,7 +68,7 @@ module Proof
     # ```ruby
     # path = "pool.kdl"
     # node = Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n  runner nuc-wsl\n}\n", path:, error: Proof::PoolFileError).first
-    # Proof::PoolFileNames.new(refusal: Proof::PoolFileRefusal.new(path:)).read(node, :runner) # => ["nuc-linux", "nuc-wsl"]
+    # Proof::PoolFileNames.new(refusal: Proof::PoolFileReader.new(path:).file.refusal(Proof::PoolFileRefusal)).read(node, :runner) # => ["nuc-linux", "nuc-wsl"]
     # ```
     #
     # A blank name is refused at the line of its child:
@@ -77,7 +77,7 @@ module Proof
     # path = "pool.kdl"
     # node = Proof::KdlParser.parse("host nuc {\n  runner \" \"\n}\n", path:, error: Proof::PoolFileError).first
     # begin
-    #   Proof::PoolFileNames.new(refusal: Proof::PoolFileRefusal.new(path:)).read(node, :runner)
+    #   Proof::PoolFileNames.new(refusal: Proof::PoolFileReader.new(path:).file.refusal(Proof::PoolFileRefusal)).read(node, :runner)
     # rescue Proof::PoolFileError => e
     #   e.line # => 2
     # end

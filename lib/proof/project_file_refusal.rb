@@ -30,10 +30,6 @@ module Proof
     public_constant(:MESSAGES)
     private_constant(:ARGUMENTS)
 
-    def initialize(path:, error: ProjectFileError, messages: MESSAGES, forms: ProjectFileForms)
-      super
-    end
-
     def node_arguments(node, count)
       # The page writes the arguments of each node its own way: a task's name and command, none for defaults, and
       # one or more for a child.

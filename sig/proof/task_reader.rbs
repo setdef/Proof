@@ -29,7 +29,7 @@ module Proof
     # ```ruby
     # path = ".config/proof.kdl"
     # nodes = Proof::KdlParser.parse("task test\ntask lint\n", path:, error: Proof::ProjectFileError)
-    # refusal = Proof::ProjectFileRefusal.new(path:)
+    # refusal = Proof::ProjectFileReader.new(path:).file.refusal(Proof::ProjectFileRefusal)
     # reader = Proof::TaskReader.new(refusal:, settings: Proof::ProjectFileSettings.new(refusal:))
     # reader.read_all(nodes).map(&:name) # => ["test", "lint"]
     # ```
@@ -43,7 +43,7 @@ module Proof
     # ```ruby
     # path = ".config/proof.kdl"
     # node = Proof::KdlParser.parse("task docs \"make docs\"\n", path:, error: Proof::ProjectFileError).first
-    # refusal = Proof::ProjectFileRefusal.new(path:)
+    # refusal = Proof::ProjectFileReader.new(path:).file.refusal(Proof::ProjectFileRefusal)
     # entry = Proof::TaskReader.new(refusal:, settings: Proof::ProjectFileSettings.new(refusal:)).read(node)
     # [entry.name, entry.command] # => ["docs", "make docs"]
     # ```

@@ -12,6 +12,8 @@ module Proof
   # pool file has: a second entry with an entry's name, and a runner on two
   # hosts.
   #
+  # Build it with `Proof::KdlFile#refusal`, which gives it the file's path,
+  # error, forms, and messages, as `Proof::PoolFileReader#file` describes them.
   # Use it from the classes that read a pool file's nodes.
   class PoolFileRefusal < KdlRefusal
     # The messages, by name, for `format` to fill in.
@@ -19,17 +21,6 @@ module Proof
 
     # What a message says of an earlier entry: its name and its line.
     EARLIER: ^(KdlNode node) -> Hash[Symbol, kdl_value]
-
-    # Prepares to refuse as the file at `path`.
-    #
-    # - `path`: String, the file's path.
-    # - `error`: the `Proof::FileError` subclass to raise. Defaults to
-    #   `Proof::PoolFileError`.
-    # - `messages`: Hash from a message's name to its text. Defaults to
-    #   `MESSAGES`.
-    # - `forms`: `Proof::KdlForms`, the forms of the file's nodes. Defaults to
-    #   `Proof::PoolFileForms`.
-    def initialize: (path: String, ?error: singleton(FileError), ?messages: Hash[Symbol, String], ?forms: KdlForms) -> void
 
     # Refuses a second entry that has the name of an earlier one, such as a
     # second host with a host's name. `first` is the earlier entry.

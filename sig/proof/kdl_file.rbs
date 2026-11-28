@@ -12,12 +12,14 @@ module Proof
   # text into its checked nodes, grouped by name. It reads no value from a
   # node: that is the work of the reader of the kind of file.
   #
-  # Use it from the reader of a kind of KDL file.
+  # The reader of a kind of KDL file names the file's description once, in its
+  # `#file`, and the refusal and the tests of that kind of file take it from
+  # there. Use a value of this class from the reader of a kind of KDL file.
   #
   # ## Examples
   #
   # ```ruby
-  # file = Proof::KdlFile.new(path: "pool.kdl", error: Proof::PoolFileError, forms: Proof::PoolFileForms, messages: Proof::PoolFileRefusal::MESSAGES)
+  # file = Proof::PoolFileReader.new(path: "pool.kdl").file
   # refusal = file.refusal(Proof::PoolFileRefusal)
   # file.nodes_by_name("server port=8443\nlimits\n", refusal:).keys # => [:server, :limits]
   # ```

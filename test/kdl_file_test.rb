@@ -9,7 +9,7 @@ class KdlFileTest < Minitest::Test
   private_constant(:PATH)
 
   def file(messages: Proof::PoolFileRefusal::MESSAGES)
-    Proof::KdlFile.new(path: PATH, error: Proof::PoolFileError, forms: Proof::PoolFileForms, messages:)
+    Proof::PoolFileReader.new(path: PATH).file.with(messages:)
   end
 
   def nodes_by_name(text, file: self.file)

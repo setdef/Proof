@@ -63,6 +63,15 @@ module Proof
     # ```
     def read: (String text) -> PoolFile
 
+    # The pool file's description: its path, its error, its forms, and its
+    # messages, written once, here. The reader refuses with it, and so can a test
+    # or a doc example.
+    #
+    # ```ruby
+    # Proof::PoolFileReader.new(path: "other.kdl").file.refusal(Proof::PoolFileRefusal).class # => Proof::PoolFileRefusal
+    # ```
+    attr_reader file: KdlFile
+
     private
 
     def parts_of: (Hash[Symbol, Array[KdlNode]] by_name) -> Hash[Symbol, Object]

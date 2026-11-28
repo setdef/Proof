@@ -44,7 +44,7 @@ module Proof
     # path = "pool.kdl"
     # nodes = Proof::KdlParser.parse("server port=8443\n", path:, error: Proof::PoolFileError)
     # by_name = nodes.group_by { |node| node.name.to_sym }
-    # Proof::PoolFileProperties.new(refusal: Proof::PoolFileRefusal.new(path:)).read(by_name) # => {port: Proof::Port.new(number: 8443)}
+    # Proof::PoolFileProperties.new(refusal: Proof::PoolFileReader.new(path:).file.refusal(Proof::PoolFileRefusal)).read(by_name) # => {port: Proof::Port.new(number: 8443)}
     # ```
     def read: (Hash[Symbol, Array[KdlNode]] by_name) -> Hash[Symbol, Object]
 
