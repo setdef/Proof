@@ -1,6 +1,6 @@
 {
   "reasons": {
-    "unknown-flags-default": "The corpus's specs leave `unknown_flags` unset, and usage's default is `value`, which binds a word that looks like a flag and names none to an argument, and the rest of a short flag's word to the flag when it takes a value, as in `-j8`. The gem reads a missing key as `error` and refuses the word, as usage does when the spec says `error` (issue #158)."
+    "unknown-flags-default": "The corpus's specs leave `unknown_flags` unset, and usage's default is `value`, which binds a word that looks like a flag and names none to an argument, and the rest of a short flag's word, from the first letter that names no flag, to the flag when it takes a value, as in `-j8`. The gem reads a missing key as `error` and refuses the word, as usage does when the spec says `error` (issue #158)."
   },
   "differences": {
     "long-unknown": "unknown-flags-default",

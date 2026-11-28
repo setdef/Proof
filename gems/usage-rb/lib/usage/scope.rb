@@ -17,6 +17,12 @@ module Usage
       @flags.keys | Flag::HELP.switches
     end
 
+    def named(word)
+      typed = word.delete_prefix("-").chars.map { |letter| "-#{letter}" }
+      typed.take_while { |switch| flag(switch) }
+        .filter_map { |named| (found = flag(named)) && Switch.new(found, named) }
+    end
+
     def letters?(word)
       # usage checks the letters before it reads any, up to one that takes a value: it reads the letters after it one
       # by one.

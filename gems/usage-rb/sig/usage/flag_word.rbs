@@ -11,19 +11,16 @@ module Usage
     # Reads `word` from `line`.
     def initialize: (String word, Line line) -> void
 
-    # Reads each switch of the word, and stops after help.
+    # Reads the word: the one switch of a long flag, or the letters of a short word, as `Usage::Bundle` reads them.
     def read: () -> void
 
     private
 
-    # The switches the word types, or a mistake when one of its letters names no flag.
-    def switches: () -> Array[Switch]
+    # The letters of the word as a bundle, or a mistake when one of them, up to one that takes a value, names no flag.
+    def bundle: () -> Bundle
 
     # The one switch of a long flag, with what follows `=`.
     def long: () -> Switch
-
-    # The switch of each of `letters`, or a mistake at the first that names no flag.
-    def short: (Array[String] letters) -> Array[Switch]
 
     # The flag `typed` names, or a mistake.
     def known: (String typed) -> Flag

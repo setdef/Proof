@@ -1,0 +1,25 @@
+module Usage
+  # The letters of a flag word that take a value, which wait for the next word once every letter of their word is read.
+  class Awaiting
+    @line: Line
+    @switches: Array[Switch]
+
+    # Takes the line the word is read from.
+    def initialize: (Line line) -> void
+
+    # Reads `switch`, unless help has ended the reading, or waits for the next word if its letter takes a value.
+    def reach: (Switch switch) -> void
+
+    # Gives the next word of the line to the last letter that waits, and an empty value to each before it. When help was
+    # read after them, they have no value, which is a mistake.
+    def given: () -> void
+
+    private
+
+    # Refuses the letters that wait, because help was read after them.
+    def lacking: () -> bot
+
+    # Gives the next word to the last letter, and the empty value to each before it.
+    def bind: () -> void
+  end
+end

@@ -13,6 +13,9 @@ module Usage
     # Every switch the command takes here, help's last.
     def switches: () -> Array[String]
 
+    # The switch of each letter of `word`, a word of one dash, up to the first that names no flag.
+    def named: (String word) -> Array[Switch]
+
     # Whether every letter of `word`, a word of one dash, names a flag, up to one that takes a value.
     def letters?: (String word) -> bool
   end

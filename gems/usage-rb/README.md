@@ -65,7 +65,7 @@ parsed = Usage::Parser.new(spec).parse(["add", "Buy milk", "--tag", "home"])
 [parsed.command.path, parsed.words("text"), parsed.values("tag")] # => [["add"], ["Buy milk"], ["home"]]
 ```
 
-It reads a flag only by its whole name, checks every letter of `-qd` before it reads any, and takes no word that looks like a flag as the value after a flag, unless it is a negative number. `-h` or `--help` stops the reading, and `parsed.help?` is then true for the command the words had reached. For a mistake, the parser raises `Usage::CommandLineError`, with the command the mistake was made at:
+It reads a flag only by its whole name, checks the letters of `-qd` before it reads any, up to one that takes a value, then reads the rest one by one, and takes no word that looks like a flag as the value after a flag, unless it is a negative number. `-h` or `--help` stops the reading, and `parsed.help?` is then true for the command the words had reached. For a mistake, the parser raises `Usage::CommandLineError`, with the command the mistake was made at:
 
 ```ruby
 require "usage"

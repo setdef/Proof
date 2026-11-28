@@ -2,14 +2,16 @@
 
 module Usage
   class Bundle
-    def initialize(switches)
+    def initialize(switches, stray)
       @switches = switches
+      @stray = stray
     end
 
-    def switches
-      # usage gives the next word to the last letter that takes a value, and an empty value to those before it.
-      last = @switches.rindex(&:takes_value?)
-      @switches.each_with_index.map { |switch, index| (switch.takes_value? && index != last) ? switch.emptied : switch }
+    def read(line)
+      awaiting = @switches.each_with_object(Awaiting.new(line)) { |switch, waiting| waiting.reach(switch) }
+      # usage reaches a letter that names no flag only if help hasn't ended the reading.
+      @stray&.call unless line.help?
+      awaiting.given
     end
   end
 end

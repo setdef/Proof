@@ -13,28 +13,19 @@ module Usage
     end
 
     def read
-      # usage reads nothing after help.
-      switches.each { |switch| switch.read(@line) unless @line.help? }
+      @word.start_with?("--") ? long.read(@line) : bundle.read(@line)
     end
 
-    private def switches
-      return [long] if @word.start_with?("--")
-
+    private def bundle
       unknown unless @scope.letters?(@word)
-      short(@word.delete_prefix("-").chars)
+      switches = @scope.named(@word)
+      Bundle.new(switches, (-> { unknown } if switches.size < @word.size - 1))
     end
 
     private def long
       typed, value = @word.split("=", 2)
       name = typed.to_s
       Switch.long(known(name), name, value)
-    end
-
-    private def short(letters)
-      # With `unknown_flags "error"`, usage reads each letter after one that takes a value as a flag and refuses one
-      # that names none, so the rest of a word is no value, as in `-j8`. It gives the next word to the last letter that
-      # takes a value, and an empty value to those before it.
-      Bundle.new(letters.map { |letter| Switch.new(known("-#{letter}"), "-#{letter}") }).switches
     end
 
     private def known(typed)

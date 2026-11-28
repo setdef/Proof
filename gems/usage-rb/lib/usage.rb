@@ -3,6 +3,7 @@
 require_relative("usage/after_equals")
 require_relative("usage/arg")
 require_relative("usage/arg_format")
+require_relative("usage/awaiting")
 require_relative("usage/binding")
 require_relative("usage/bundle")
 require_relative("usage/choices")
@@ -54,6 +55,7 @@ module Usage
   private_constant(
     :AfterEquals,
     :ArgFormat,
+    :Awaiting,
     :Binding,
     :Bundle,
     :CommandFormat,

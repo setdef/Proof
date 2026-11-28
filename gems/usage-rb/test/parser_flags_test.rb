@@ -44,15 +44,23 @@ class UsageParserFlagsTest < Minitest::Test
 
   # usage gives an empty value to a letter that takes one when a later letter takes the value.
   def test_the_last_of_two_letters_that_take_a_value_gets_it_and_the_first_gets_an_empty_one
-    pair = read(<<~JSON)
-      {"bin": "pair", "cmd": {"name": "pair", "full_cmd": [], "flags": [
-        {"name": "first", "short": ["a"], "arg": {"name": "x"}},
-        {"name": "second", "short": ["b"], "arg": {"name": "y"}}
-      ]}}
-    JSON
-    parsed = Usage::Parser.new(pair).parse(%w[-ab 8])
+    parsed = Usage::Parser.new(pair_spec).parse(%w[-ab 8])
 
     assert_equal(["", "8"], [parsed.value("first"), parsed.value("second")])
+  end
+
+  # usage reads the letters one by one, so a letter that names no flag after `-h` is never reached: `-hfx` and `-hf-`
+  # ask for help.
+  def test_help_before_a_letter_that_takes_a_value_leaves_the_letters_after_it_unread
+    assert_equal([true, true], [parse("add", "-hfx").help?, parse("add", "-hf-").help?])
+  end
+
+  # usage binds the next word to the last letter that takes a value, and the empty value to the earlier ones after it,
+  # so one flag written twice together keeps the empty value, and a flag that repeats holds the word first.
+  def test_a_flag_written_twice_in_a_word_holds_the_word_and_then_the_empty_value
+    each = Usage::Parser.new(pair_spec)
+
+    assert_equal(["", ["8", ""]], [each.parse(%w[-aa 8]).value("first"), each.parse(%w[-bb 8]).values("second")])
   end
 
   # A flag that repeats keeps every value in order, and one that doesn't keeps the last.
@@ -91,5 +99,14 @@ class UsageParserFlagsTest < Minitest::Test
     parsed = [parse("remote", "add", "u", "-n"), parse("remote", "--dry-run", "remove")]
 
     assert_equal([true, true], parsed.map { |each| each.given?("dry-run") })
+  end
+
+  private def pair_spec
+    read(<<~JSON)
+      {"bin": "pair", "cmd": {"name": "pair", "full_cmd": [], "flags": [
+        {"name": "first", "short": ["a"], "arg": {"name": "x"}},
+        {"name": "second", "short": ["b"], "var": true, "arg": {"name": "y"}}
+      ]}}
+    JSON
   end
 end

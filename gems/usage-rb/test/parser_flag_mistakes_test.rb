@@ -66,9 +66,13 @@ class UsageParserFlagMistakesTest < Minitest::Test
     assert_equal("command add has no flag -f=8", mistake("add", "-f=8"))
   end
 
-  # usage asks the letter that takes a value for it before it reads `-h` after it.
+  # usage reads `-h` after a letter that takes a value before it reads the next word, so the word is no value, and the
+  # letter has none.
   def test_help_after_a_letter_that_takes_a_value_leaves_it_without_one
-    assert_equal("-f of command add needs a value", mistake("add", "-fh"))
+    assert_equal(
+      ["-f of command add needs a value"] * 2,
+      [mistake("add", "-fh"), mistake("add", "-fdh", "notes.txt")]
+    )
   end
 
   # A strict choice takes only its values, whole.

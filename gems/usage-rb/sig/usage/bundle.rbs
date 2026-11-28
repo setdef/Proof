@@ -1,12 +1,15 @@
 module Usage
-  # The switches of the letters written together in one word, such as `-qfd`.
+  # The letters written together in one word, such as `-qfd`.
   class Bundle
     @switches: Array[Switch]
+    @stray: (^() -> bot)?
 
-    # Takes the switches of the letters, in the order typed.
-    def initialize: (Array[Switch] switches) -> void
+    # Takes the switches of the letters that name a flag, in the order typed, and what refuses the word when the next
+    # letter, which names none, is reached, if there is one.
+    def initialize: (Array[Switch] switches, (^() -> bot)? stray) -> void
 
-    # The switches to read: each letter that takes a value, but the last, has an empty value.
-    def switches: () -> Array[Switch]
+    # Reads the letters in order, up to help, then the one that names no flag, then asks `line` for the next word for the
+    # letters that take a value.
+    def read: (Line line) -> void
   end
 end
