@@ -49,9 +49,10 @@ module Proof
 
       private def construct(klass, flags, args)
         attributes = Attributes.new(flags, args, @values).to_h.merge(@values.extras)
-        # Steep says `singleton(Data)` "does not have method `new`", so it can't check that each class takes exactly
-        # the attributes the spec's flags and arguments give it. The commands_test file checks that for every command.
-        # An interface with `new: (**untyped)` in place of `singleton(Data)` fails with "Params are incompatible".
+        # Steep says `singleton(GlobalFlags) | singleton(Data)` "does not have method `new`", so it can't check that
+        # each class takes exactly the attributes the spec's flags and arguments give it. The commands_test file checks
+        # that for every command. An interface with `new: (**untyped)` in place of `singleton(Data)` fails with "Params
+        # are incompatible".
         # steep:ignore:start
         klass.new(**attributes.slice(*klass.members))
         # steep:ignore:end
