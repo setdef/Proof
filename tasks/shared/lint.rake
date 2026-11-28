@@ -1,8 +1,6 @@
 # frozen_string_literal: true
 
 require "inch/rake"
-require "rubycritic/rake_task"
-require_relative("../critic_faults")
 
 # RuboCop runs in a process of its own. Its configuration loader changes the working directory of the process that
 # loads it, so RuboCop::RakeTask, which runs it inside rake, would send a check running beside it in another thread
@@ -17,29 +15,6 @@ namespace :rubocop do
   task :autocorrect do
     sh("bundle exec rubocop --autocorrect")
   end
-end
-
-# The floor for RubyCritic's overall score. It may rise, never fall.
-RUBYCRITIC_MINIMUM_SCORE = 95
-RUBYCRITIC_REPORT_DIR = "tmp/rubycritic"
-
-# RubyCritic runs in a shell so a failing score can't exit the rake process,
-# then the task reads its JSON report: every file must be rated A, with no
-# smell from reek or flay.
-desc "Run RubyCritic: every file rated A, no smells, no duplication, a score of at least #{RUBYCRITIC_MINIMUM_SCORE}"
-task :rubycritic do
-  report = File.join(RUBYCRITIC_REPORT_DIR, "report.json")
-  FileUtils.rm_f(report)
-  score_ok = system(
-    "bundle exec rubycritic --no-browser --format json --path #{RUBYCRITIC_REPORT_DIR} " \
-      "--minimum-score #{RUBYCRITIC_MINIMUM_SCORE} lib sig " \
-      "gems/proof-domain/lib gems/proof-domain/sig gems/usage-rb/lib gems/usage-rb/sig"
-  )
-  abort("RubyCritic wrote no report.") unless File.exist?(report)
-
-  faults = CriticFaults.in_report(File.read(report)).map { |fault| "  #{fault}" }
-  abort("RubyCritic faults:\n#{faults.join("\n")}") unless faults.empty?
-  abort("RubyCritic's score is below #{RUBYCRITIC_MINIMUM_SCORE}.") unless score_ok
 end
 
 Inch::Rake::Suggest.new("doc:suggest", "{lib,gems/*/lib}/**/*.rb", "{sig,gems/*/sig}/**/*.rbs") do |suggest|

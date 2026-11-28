@@ -9,6 +9,7 @@ SimpleCov.start do
   cover("lib/**/*.rb")
   cover("gems/*/lib/**/*.rb")
   cover("tasks/critic_faults.rb")
+  cover("tasks/critic_gem.rb")
   cover("tasks/doc_examples.rb")
   cover("tasks/release_version.rb")
   cover("tasks/steep_loads.rb")

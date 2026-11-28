@@ -612,6 +612,20 @@ Options weighed:
 - `unreferenced!` on each target, so none loads another's signatures: the domain gem's and usage gem's signatures are also in `lib`'s list, and Steep gives a signature file to the first target that lists it, so `lib` would stop seeing them.
 - A check of Steep's output for a target that reports nothing: Steep prints nothing for a target that fails to load and for one with no errors alike.
 
+### RubyCritic
+
+`rake rubycritic` runs RubyCritic once for each gem, over that gem's own files, and each gem has to hold three rules: a score of at least 95, every file rated A, and no smell from reek or flay. The gems are `proof`, which is `lib` and `sig` at the root, the command line included, and each folder of `gems` that has a `lib`: `proof-domain` and `usage-rb` over their own `lib` and `sig`. The gem is the unit that ships and changes on its own. A folder added under `gems` is scored without a change to the task, because the task finds gems by their folders.
+
+RubyCritic's score is 100 minus 6.25 times the average cost of a file, so it is an average over the files it is given. Over the whole repository, a file of one gem moves the score of every other gem, and the average rises with how finely the files are split, even where each file is rated A. Scored alone, the files of one gem can't lift or sink the score of another. The floor of 95 may rise and never falls. A gem under it gets a better design, and no file is split or merged only for the score, because the score is a clue about the design and the per-file rules still hold.
+
+The task runs every gem before it fails, so one run names each gem that falls short, with its score and the floor, and each file or smell under it. RubyCritic writes each gem's report to `tmp/rubycritic/<gem>/report.json`, and `CriticGem` reads the score from it. The score in the report is rounded to two decimals, as RubyCritic rounds it for its own `--minimum-score`, so the task and RubyCritic agree at the floor. RubyCritic itself has no option to fail on one file's rating or on a smell, which is why the task reads the report: `CriticFaults` lists each file rated below A and each smell.
+
+Options weighed:
+
+- One run over every gem: the average rewards how finely files are split across gems that never ship together.
+- One Rake task for each gem: each task would stop at its own failure, so a run would name one gem at a time, and a gem added under `gems` would need a task of its own.
+- RubyCritic's `--minimum-score` for each gem: it fails the run without the gem's score, and the task still has to read the report for the ratings and smells.
+
 ### A release's version
 
 The committed version of Proof is `0.0.0`, in `lib/proof/version.rb` and in `Gemfile.lock`: the version of a build that isn't a release, and Fledge's default. A release gets its version in the checkout that builds it, and no commit is made for it, so a release never waits for a commit to reach a busy trunk and pass CI. The version has to be committed in some form, because Bundler in frozen mode, which the gate and CI use, refuses a gemspec or path gem whose version differs from `Gemfile.lock`, and Fledge refuses a path gem whose version differs from the lockfile too. Fledge also evaluates the gemspec at build time and ships the result, so `Proof::VERSION`, which `proof.gemspec` reads from `lib/proof/version.rb` as text, and the lockfile have to agree in the checkout that Fledge builds.
