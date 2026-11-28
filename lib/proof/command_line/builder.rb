@@ -49,10 +49,9 @@ module Proof
 
       private def construct(klass, flags, args)
         attributes = Attributes.new(flags, args, @values).to_h.merge(@values.extras)
-        # Steep can't check a keyword splat against the members that Data.define made, so it can't see that
-        # each class takes exactly the attributes the spec's flags and arguments give it. The commands_test
-        # file checks that for every command. A signature that gives the classes one `new` with `**untyped` fails,
-        # because Steep finds their required keywords incompatible with it.
+        # Steep says `singleton(Data)` "does not have method `new`", so it can't check that each class takes exactly
+        # the attributes the spec's flags and arguments give it. The commands_test file checks that for every command.
+        # An interface with `new: (**untyped)` in place of `singleton(Data)` fails with "Params are incompatible".
         # steep:ignore:start
         klass.new(**attributes.slice(*klass.members))
         # steep:ignore:end
