@@ -104,16 +104,16 @@ To send a patch, post it on the forum, or email it with `git send-email` to `rep
 
 [CONTRIBUTING.md](CONTRIBUTING.md) holds the working rules for everyone who changes Proof, people and AI agents alike: the values Proof serves, how to commit to `trunk` and run the gate, the commit message format, and the rules for code, documentation, security, and licensing. It doesn't say how to install the tools or how to propose a change. This section does.
 
-To set up a clone, install [mise](https://mise.jdx.dev/) 2026.10.11 or later, then run these in the clone:
+To set up a clone on Linux or macOS, install [mise](https://mise.jdx.dev/) 2026.10.11 or later, then run these in the clone:
 
 ```console
 $ mise install
 $ BUNDLE_PATH=$HOME/.cache/proof-bundle mise exec -- bundle install
 ```
 
-`mise install` installs the tools `mise.toml` pins: Ruby, Python, pre-commit, the REUSE tool, usage, actionlint, and shellcheck. Keep `BUNDLE_PATH` outside the clone, because RuboCop and REUSE read every gem installed inside it. `bin/setup` runs those two commands without a `BUNDLE_PATH`, and then runs `reuse download --all`, `pre-commit install`, and `bundle exec rake rdoc`. `pre-commit install` adds a Git pre-commit hook that runs `bundle exec rake`, and every worktree of a clone shares the clone's hooks.
+`mise install` installs the tools `mise.toml` pins: Ruby, Python, pre-commit, the REUSE tool, usage, actionlint, and shellcheck. Keep `BUNDLE_PATH` outside the clone, because RuboCop and REUSE read every gem installed inside it. `bin/setup` runs those two commands without a `BUNDLE_PATH`, and then runs `reuse download --all`, `pre-commit install`, and `bundle exec rake rdoc`. `pre-commit install` adds a Git pre-commit hook that runs `bundle exec rake`. Every worktree of a clone shares the clone's hooks, so don't run `bin/setup` in a worktree.
 
-Before a push, run the gate, which runs every check CI runs:
+Before you push or send a patch, run the gate. It runs the checks CI runs, on your computer, at a low priority:
 
 ```console
 $ BUNDLE_PATH=$HOME/.cache/proof-bundle bin/ci
