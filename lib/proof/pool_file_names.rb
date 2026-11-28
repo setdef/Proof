@@ -30,7 +30,7 @@ module Proof
 
     private def name_at(child, value, kind)
       # Only text is read as a name here: the domain refuses a value that isn't text, with its own message, at the line
-      # of the entry. Every kind has its words, and Steep is told that a lookup in a Hash finds them.
+      # of the entry. The signature limits a kind to the four that KINDS has, so the lookup finds its words.
       return value unless value.is_a?(String)
 
       what, example = KINDS[kind] #: [String, String]

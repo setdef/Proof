@@ -23,6 +23,10 @@ module Proof
     # works.
     KINDS: Hash[Symbol, Array[String]]
 
+    # A kind of name a node's children give: `:runner`, `:"credentials-file"`,
+    # `:branch`, or `:task`, the keys of `KINDS`.
+    type kind = :runner | :"credentials-file" | :branch | :task
+
     # Whether two names a pool file gives, of hosts, runners, or repositories,
     # are one name. Two texts are one when `Proof::Name.same?` finds them
     # so, which is when they differ only in case, so `"nuc"` and `"NUC"` are
@@ -58,8 +62,8 @@ module Proof
     # of its child.
     #
     # - `node`: `Proof::KdlNode`, the parent.
-    # - `kind`: Symbol, which name each argument is, and the children's name: a
-    #   key of `KINDS`, such as `:runner`.
+    # - `kind`: which name each argument is, and the children's name: a key of
+    #   `KINDS`, such as `:runner`.
     #
     # ```ruby
     # path = "pool.kdl"
@@ -78,11 +82,11 @@ module Proof
     #   e.line # => 2
     # end
     # ```
-    def read: (KdlNode node, Symbol kind) -> Array[kdl_value]
+    def read: (KdlNode node, kind kind) -> Array[kdl_value]
 
     private
 
-    def name_at: (KdlNode child, kdl_value value, Symbol kind) -> kdl_value
+    def name_at: (KdlNode child, kdl_value value, kind kind) -> kdl_value
 
     @refusal: PoolFileRefusal
   end
