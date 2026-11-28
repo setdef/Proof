@@ -121,7 +121,6 @@ module Proof
 
     def tasks_of: (Array[KdlNode] nodes) -> Array[TaskEntry]
 
-    @path: String
     @file: KdlFile
     @refusal: ProjectFileRefusal
     @settings: ProjectFileSettings

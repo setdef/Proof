@@ -19,7 +19,6 @@ module Proof
     attr_reader(:file)
 
     def initialize(path:)
-      @path = path
       @file = KdlFile.new(path:, error: ProjectFileError, forms: ProjectFileForms, messages: ProjectFileRefusal::MESSAGES)
       @refusal = @file.refusal(ProjectFileRefusal)
       @settings = ProjectFileSettings.new(refusal: @refusal)
@@ -31,12 +30,12 @@ module Proof
     end
 
     def read_from(project, id)
-      text = project.file_at(id, @path)
+      text = project.file_at(id, @file.path)
       read(text) if text
     rescue SymbolicLinkError
       # The commit's file at the path is the project file, so a link there is that file's mistake, which a person
       # fixes in the file.
-      raise(ProjectFileError.new(path: @path, line: nil, reason: LINK_REASON))
+      raise(@file.error.new(path: @file.path, line: nil, reason: LINK_REASON))
     end
 
     private def defaults_of(node)
