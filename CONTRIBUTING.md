@@ -121,7 +121,7 @@ Ask the maintainer before you change any of these:
 
 - product scope
 - licensing
-- significant changes to UX/DX (commands, flags, environment variables, file formats, etc).
+- significant changes to UX/DX.
 
 ## Copyright and licenses
 
