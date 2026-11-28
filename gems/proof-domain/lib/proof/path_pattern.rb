@@ -11,7 +11,9 @@ module Proof
     def initialize(path:)
       raise(InvalidPathPatternError, format(MESSAGE, path)) unless PathText.relative?(path)
 
-      super(path: -path)
+      # relative? has found a String, which Steep can't know.
+      text = path #: String
+      super(path: -text)
     end
 
     # @dynamic path

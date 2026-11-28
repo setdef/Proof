@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative("member_check")
-
 module Proof
   class Port < Data.define(:number)
     MESSAGE = "the server's port is a whole number from 1 to 65535, not %p"
@@ -9,7 +7,8 @@ module Proof
     private_constant(:MESSAGE, :LARGEST)
 
     def initialize(number:)
-      raise(InvalidPortError, format(MESSAGE, number)) unless MemberCheck.whole?(number, 1) && number <= LARGEST
+      raise(InvalidPortError, format(MESSAGE, number)) unless
+        number.is_a?(Integer) && number.between?(1, LARGEST)
 
       super
     end

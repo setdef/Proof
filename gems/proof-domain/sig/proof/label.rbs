@@ -54,8 +54,8 @@ module Proof
     # The label's name as written, frozen.
     attr_reader name: String
 
-    def self.new: (name: String) -> instance
-                | (String name) -> instance
+    def self.new: (name: Object?) -> instance
+                | (Object? name) -> instance
 
     # Builds a label, and raises `Proof::InvalidLabelError` unless `name` is 1
     # to 63 ASCII letters, digits, `-`, `_`, and `.`, beginning and ending
@@ -65,12 +65,12 @@ module Proof
     # ASCII-compatible, such as UTF-16, raise. The message lists the rule and
     # forms that work.
     #
-    # - `name`: String, such as `"gpu"` or `"cuda-12.4"`.
+    # - `name`: String, such as `"gpu"` or `"cuda-12.4"`. Anything else raises.
     #
     # ```ruby
     # Proof::Label.new(name: "a" * 63).name.size # => 63
     # ```
-    def initialize: (name: String) -> void
+    def initialize: (name: Object?) -> void
 
     # Whether `other` is a label with the same name, without regard to case.
     # Anything that isn't a label, such as a string, is never equal.

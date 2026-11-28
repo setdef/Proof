@@ -66,12 +66,12 @@ module Proof
     # that isn't ASCII-compatible, such as UTF-16, raise. The message lists the
     # forms that work.
     #
-    # - `text`: String, such as `"30m"`.
+    # - `text`: String, such as `"30m"`. Anything else raises.
     #
     # ```ruby
     # Proof::TimeLimit.read("90s").seconds # => 90
     # ```
-    def self.read: (Object text) -> TimeLimit
+    def self.read: (Object? text) -> TimeLimit
 
     # Builds a time limit from a number of seconds, and raises
     # `Proof::InvalidTimeLimitError` unless `seconds` is an Integer from 1.

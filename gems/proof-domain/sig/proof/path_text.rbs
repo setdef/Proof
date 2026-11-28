@@ -15,6 +15,6 @@ module Proof
     # encoding that isn't ASCII-compatible, such as UTF-16, give `false`.
     #
     # - `text`: Object, such as `"pkg/*.gem"`. Any value is accepted.
-    def self.relative?: (Object text) -> bool
+    def self.relative?: (Object? text) -> bool
   end
 end

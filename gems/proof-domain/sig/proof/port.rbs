@@ -39,19 +39,19 @@ module Proof
     # The port's number, a whole number from 1 to 65535.
     attr_reader number: Integer
 
-    def self.new: (number: Integer) -> instance
-                | (Integer number) -> instance
+    def self.new: (number: Object?) -> instance
+                | (Object? number) -> instance
 
     # Builds a port, and raises `Proof::InvalidPortError` unless `number` is an
     # Integer from 1 to 65535. A decimal, text, `nil`, `0`, and a negative
     # number raise. The message says that the server's port is a whole number
     # from 1 to 65535, and what it got.
     #
-    # - `number`: Integer, a whole number from 1 to 65535.
+    # - `number`: Integer, a whole number from 1 to 65535. Anything else raises.
     #
     # ```ruby
     # Proof::Port.new(number: 80) == Proof::Port.new(number: 80) # => true
     # ```
-    def initialize: (number: Integer) -> void
+    def initialize: (number: Object?) -> void
   end
 end

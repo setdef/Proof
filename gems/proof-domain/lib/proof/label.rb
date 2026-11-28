@@ -12,7 +12,9 @@ module Proof
       raise(InvalidLabelError, format(MESSAGE, name)) unless
         name.is_a?(String) && name.ascii_only? && FORM.match?(name)
 
-      super(name: -name)
+      # The check has found a String, which Steep can't know.
+      text = name #: String
+      super(name: -text)
     end
 
     def ==(other)

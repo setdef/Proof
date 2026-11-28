@@ -38,15 +38,18 @@ module Proof
     def self.new: (labels: Array[Label] | Set[Label]) -> instance
                 | (Array[Label] | Set[Label] labels) -> instance
 
-    # Builds a set of labels from `names`.
+    # Builds a set of labels from `names`, and raises
+    # `Proof::InvalidLabelError` for a name that isn't a label, as
+    # `Proof::Label.new` says. `nil`, a Symbol, a number, and an Array raise.
     #
-    # - `names`: each a String, as `Proof::Label.new` takes it.
+    # - `names`: each a String, as `Proof::Label.new` takes it. Anything else
+    #   raises.
     #
     # ```ruby
     # Proof::LabelSet.of("gpu", "kvm").labels.size # => 2
     # Proof::LabelSet.of.labels.size # => 0
     # ```
-    def self.of: (*String names) -> LabelSet
+    def self.of: (*Object? names) -> LabelSet
 
     # Builds a set, and raises `Proof::InvalidLabelSetError` unless `labels`
     # is an `Array` or `Set` of `Proof::Label` values. A set of strings raises,

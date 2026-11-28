@@ -43,8 +43,8 @@ module Proof
     # The path as written, a frozen string.
     attr_reader path: String
 
-    def self.new: (path: String) -> instance
-                | (String path) -> instance
+    def self.new: (path: Object?) -> instance
+                | (Object? path) -> instance
 
     # Builds a pattern, and raises `Proof::InvalidPathPatternError` unless
     # `path` is a String, with bytes that are valid text in an
@@ -52,11 +52,11 @@ module Proof
     # doesn't start with `/`, and doesn't contain `..`. The message lists what
     # works.
     #
-    # - `path`: String, such as `"pkg/*.gem"`.
+    # - `path`: String, such as `"pkg/*.gem"`. Anything else raises.
     #
     # ```ruby
     # Proof::PathPattern.new(path: "coverage").path # => "coverage"
     # ```
-    def initialize: (path: String) -> void
+    def initialize: (path: Object?) -> void
   end
 end

@@ -39,8 +39,8 @@ module Proof
     # The operating system's name.
     attr_reader name: os_name
 
-    def self.new: (name: Symbol | String) -> instance
-                | (Symbol | String name) -> instance
+    def self.new: (name: Object?) -> instance
+                | (Object? name) -> instance
 
     # All three operating systems, in the order `linux`, `macos`, `windows`.
     #
@@ -53,8 +53,8 @@ module Proof
     # `Proof::InvalidOSError` for any name but `linux`, `macos`, and `windows`.
     # The name is case-sensitive, and `nil` and other types raise.
     #
-    # - `name`: Symbol or String, such as `:linux` or `"windows"`.
-    def initialize: (name: Symbol | String) -> void
+    # - `name`: Symbol or String, such as `:linux` or `"windows"`. Anything else raises.
+    def initialize: (name: Object?) -> void
 
     # The name as a string, such as `"linux"`.
     #
