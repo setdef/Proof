@@ -2,6 +2,7 @@
 # Process.spawn.
 module Open3
   def self.capture2: (*String command, ?chdir: String) -> [String, Process::Status]
+                   | (Hash[String, String?] env, *String command, ?chdir: String) -> [String, Process::Status]
                    | ...
 
   def self.capture2e: (*String command, ?chdir: String) -> [String, Process::Status]

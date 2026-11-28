@@ -1,18 +1,18 @@
 # frozen_string_literal: true
 
 require "fileutils"
-require "open3"
 require "tmpdir"
+require_relative("../git_fixtures")
 
 # Helpers for the tests that run the examples of a project made in a temporary
 # folder.
 module DocExamplesProject
+  include GitFixtures
+
   # Runs the block with a new Git repository in a temporary folder.
   def in_project
     Dir.mktmpdir("doc-examples-test") do |root|
-      _, status = Open3.capture2("git", "init", "--quiet", chdir: root)
-
-      assert_predicate(status, :success?)
+      git(root, "init", "--quiet")
       yield(root)
     end
   end

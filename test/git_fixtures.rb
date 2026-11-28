@@ -47,9 +47,8 @@ module GitFixtures
   # Runs `git` with +arguments+ in +folder+, and returns what it prints. Fails
   # the test when git exits with a status other than 0.
   def git(folder, *arguments, input: "")
-    inherited = ENV.keys.grep(/\AGIT_/).to_h { |name| [name, nil] }
     command = ["git", *IDENTITY, *ALLOW_LOCAL_CLONES, *arguments]
-    output, error, status = Open3.capture3(inherited, *command, chdir: folder, stdin_data: input)
+    output, error, status = Open3.capture3(Proof::Git.cleared_environment, *command, chdir: folder, stdin_data: input)
 
     assert_predicate(status, :success?, "git #{arguments.join(' ')} failed: #{error}")
     output

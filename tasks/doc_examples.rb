@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require "open3"
+require_relative("../lib/proof/git")
 require_relative("doc_examples/report")
 require_relative("doc_examples/runner")
 
@@ -39,7 +40,7 @@ module DocExamples
   # Markdown pages and +.rbs+ files that Git tracks, and those it doesn't
   # ignore, except the generated pages and the files deleted from the folder.
   def self.files(root)
-    listing, = Open3.capture2("git", *LISTING, chdir: root)
+    listing, = Open3.capture2(Proof::Git.cleared_environment, "git", *LISTING, chdir: root)
     paths = listing.split("\0").sort - GENERATED
     paths.select { |path| File.file?(File.join(root, path)) }
   end

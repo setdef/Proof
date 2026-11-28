@@ -33,10 +33,9 @@ class DocExamplesFilesTest < Minitest::Test
   def test_a_file_git_tracks_but_the_folder_no_longer_has_is_not_checked
     in_project do |root|
       write(root, "doc/a.md", page("1 # => 1"))
-      _, status = Open3.capture2("git", "add", "doc/a.md", chdir: root)
+      git(root, "add", "doc/a.md")
       File.delete(File.join(root, "doc/a.md"))
 
-      assert_predicate(status, :success?)
       assert_empty(DocExamples.files(root))
     end
   end
