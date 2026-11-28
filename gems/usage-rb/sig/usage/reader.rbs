@@ -44,8 +44,9 @@ module Usage
     # object is, or an empty list when the key is left out.
     def parts: [T] (Symbol key, _Part[T] kind) -> Array[T]
 
-    # The objects among the values of the object under `key`, in order, or an empty list when it is left out.
-    def members: (Symbol key) -> Array[object]
+    # Each object among the values of the object under `key`, in order, read as a part of the spec by `kind`, its
+    # format, which is told where this object is, or an empty list when the key is left out.
+    def members: [T] (Symbol key, _Part[T] kind) -> Array[T]
 
     private
 

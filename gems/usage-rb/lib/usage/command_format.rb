@@ -19,7 +19,7 @@ module Usage
     )
     private_constant(:KEYS)
 
-    def self.read(object)
+    def self.read(object, _parent)
       reader = Reader.new(object, place(object[:full_cmd]), KEYS)
       command = Command.new(**NamedFormat.name_and_help(reader), **parts(reader))
       # A word after a command with both would be an argument or a subcommand's name, and usage decides by rules the
@@ -42,7 +42,7 @@ module Usage
         flags: reader.parts(:flags, FlagFormat),
         groups: reader.parts(:groups, GroupFormat),
         examples: reader.parts(:examples, ExampleFormat),
-        subcommands: reader.members(:subcommands).map { |child| read(child) },
+        subcommands: reader.members(:subcommands, CommandFormat),
         subcommand_required: reader.boolean(:subcommand_required),
       }
     end

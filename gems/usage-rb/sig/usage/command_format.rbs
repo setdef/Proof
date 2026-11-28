@@ -7,8 +7,9 @@ module Usage
     KEYS: Keys
 
     # Reads a command, and every command under it, from `object`, and raises `Usage::SpecError` for anything the gem
-    # doesn't act on, and when a command has both arguments and subcommands.
-    def self.read: (object object) -> Command
+    # doesn't act on, and when a command has both arguments and subcommands. A command's place in the messages of
+    # errors comes from its own path, so `parent` isn't read.
+    def self.read: (object object, Place parent) -> Command
 
     private def self.place: (json words) -> Place
 

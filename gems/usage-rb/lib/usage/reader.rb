@@ -51,8 +51,10 @@ module Usage
       list(key).map { |item| item.is_a?(Hash) ? kind.read(item, @place) : @place.mistyped(key, "a list of objects") }
     end
 
-    def members(key)
-      object(key).values.map { |item| item.is_a?(Hash) ? item : @place.mistyped(key, "an object of objects") }
+    def members(key, kind)
+      object(key).values.map do |item|
+        item.is_a?(Hash) ? kind.read(item, @place) : @place.mistyped(key, "an object of objects")
+      end
     end
 
     private def list(key)

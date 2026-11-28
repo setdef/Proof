@@ -67,7 +67,7 @@ module Usage
       {
         examples: reader.parts(:examples, ExampleFormat),
         exit_codes: reader.parts(:exit_codes, ExitCodeFormat),
-        commands: CommandTree.new(root: CommandFormat.read(reader.object(:cmd))),
+        commands: CommandTree.new(root: CommandFormat.read(reader.object(:cmd), Place::PROGRAM)),
       }
     end
     private_class_method(:parts)
