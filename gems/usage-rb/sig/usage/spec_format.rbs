@@ -20,7 +20,11 @@ module Usage
 
     private def self.described: (Reader reader) -> { bin: String, about: String, about_long: String?, after_help: String? }
 
-    private def self.parts: (Reader reader) -> { examples: Array[Example], exit_codes: Array[ExitCode], commands: CommandTree }
+    private def self.parts: (Reader reader) -> { examples: Array[Example], commands: CommandTree }
+
+    # The program as a command, with the statuses the spec declares for the whole program, and a refusal for any
+    # declared in its `cmd`, where usage writes none.
+    private def self.program: (Reader reader) -> Command
 
     private def self.environment: (Reader reader) -> { env_prefix: String?, env_allowed: Array[String] }
   end

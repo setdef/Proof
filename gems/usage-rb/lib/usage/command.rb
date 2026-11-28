@@ -11,6 +11,7 @@ module Usage
     :subcommands,
     :groups,
     :examples,
+    :exit_codes,
     :subcommand_required
   )
     def program?
@@ -37,6 +38,7 @@ module Usage
       flags.select(&:global?)
     end
 
-    # @dynamic name, path, help, help_long, args, flags, subcommands, groups, examples, subcommand_required, initialize
+    # @dynamic name, path, help, help_long, args, flags, subcommands, groups, examples, exit_codes
+    # @dynamic subcommand_required, initialize
   end
 end

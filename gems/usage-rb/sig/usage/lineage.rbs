@@ -2,7 +2,8 @@ module Usage
   # A command where it stands in its program: the command, with every command above it.
   #
   # Some of usage's rules apply to a command because of the commands above it. A flag that a command marks global
-  # reaches every command under it, so the flags a command takes depend on its whole path. A command alone holds its
+  # reaches every command under it, and an exit status the program declares applies to every command unless a nearer
+  # command gives it another meaning, so what applies to a command depends on its whole path. A command alone holds its
   # subcommands, not the commands above it, so each program that worked these rules out from a command would walk the
   # tree again, and could read a rule otherwise than the others.
   #
@@ -10,7 +11,7 @@ module Usage
   # `Usage::CommandTree#at` gives it, and the parser and the help ask it too, so all of them follow one reading of
   # each rule.
   #
-  # Use it to learn which flags a command takes, its own and the global ones.
+  # Use it to learn which flags a command takes, its own and the global ones, and which exit statuses apply to it.
   #
   # ## Examples
   #
@@ -82,6 +83,16 @@ module Usage
     # spec.commands.at(["remote"]).flags.map(&:name) # => ["quiet", "dry-run"]
     # ```
     def flags: () -> Array[Flag]
+
+    # The exit statuses that apply to the command, as usage 7.4.1's `effective_exit_codes` folds them: the program's,
+    # in the program's order, with each status the nearest command declares in place of the program's meaning for it,
+    # then each command's new statuses, from the program down. A status that no command in the lineage declares is
+    # absent, so a spec that declares none gives an empty list.
+    #
+    # ```ruby
+    # spec.commands.at(["remote", "add"]).exit_codes # => []
+    # ```
+    def exit_codes: () -> Array[ExitCode]
 
     private
 

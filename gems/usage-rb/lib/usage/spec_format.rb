@@ -66,11 +66,20 @@ module Usage
     def self.parts(reader)
       {
         examples: reader.parts(:examples, ExampleFormat),
-        exit_codes: reader.parts(:exit_codes, ExitCodeFormat),
-        commands: CommandTree.new(root: CommandFormat.read(reader.object(:cmd), Place::PROGRAM)),
+        commands: CommandTree.new(root: program(reader)),
       }
     end
     private_class_method(:parts)
+
+    def self.program(reader)
+      root = CommandFormat.read(reader.object(:cmd), Place::PROGRAM)
+      # usage writes the program's statuses beside its commands, and none in its `cmd`, so a list there would be a
+      # second one that usage never folds.
+      reader.unsupported("has exit_codes in cmd") unless root.exit_codes.empty?
+
+      root.with(exit_codes: reader.parts(:exit_codes, ExitCodeFormat))
+    end
+    private_class_method(:program)
 
     def self.environment(reader)
       env = reader.nested(:unknown_env, ENV_KEYS)

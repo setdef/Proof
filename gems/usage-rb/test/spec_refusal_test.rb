@@ -125,4 +125,12 @@ class UsageSpecRefusalTest < Minitest::Test
     assert_match(/\Aa usage spec is JSON, and this text isn't: /, refusal("{"))
     assert_equal("a usage spec is a JSON object, as usage generate json writes it", refusal("[]"))
   end
+
+  # usage writes the program's statuses beside its commands, so statuses in the program's `cmd` would be a second list.
+  def test_statuses_in_the_programs_command_are_refused
+    assert_equal(
+      "the program has exit_codes in cmd, which usage-rb doesn't support",
+      refusal('{"cmd": {"exit_codes": [{"code": 0, "help": "It worked."}]}}')
+    )
+  end
 end

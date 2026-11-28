@@ -59,11 +59,15 @@ module Usage
     # The command's examples.
     attr_reader examples: Array[Example]
 
+    # The statuses the spec declares under the command, in its order. For the program, they are the statuses the spec
+    # declares for the whole program, which apply to every command under it.
+    attr_reader exit_codes: Array[ExitCode]
+
     # Whether the command can't run without one of its subcommands.
     attr_reader subcommand_required: bool
 
-    def self.new: (name: String, path: Array[String], help: String?, help_long: String?, args: Array[Arg], flags: Array[Flag], subcommands: Array[Command], groups: Array[Group], examples: Array[Example], subcommand_required: bool) -> instance
-                | (String name, Array[String] path, String? help, String? help_long, Array[Arg] args, Array[Flag] flags, Array[Command] subcommands, Array[Group] groups, Array[Example] examples, bool subcommand_required) -> instance
+    def self.new: (name: String, path: Array[String], help: String?, help_long: String?, args: Array[Arg], flags: Array[Flag], subcommands: Array[Command], groups: Array[Group], examples: Array[Example], exit_codes: Array[ExitCode], subcommand_required: bool) -> instance
+                | (String name, Array[String] path, String? help, String? help_long, Array[Arg] args, Array[Flag] flags, Array[Command] subcommands, Array[Group] groups, Array[Example] examples, Array[ExitCode] exit_codes, bool subcommand_required) -> instance
 
     # Builds a command from its parts.
     #
@@ -76,8 +80,9 @@ module Usage
     # - `subcommands`: Array of `Usage::Command`.
     # - `groups`: Array of `Usage::Group`.
     # - `examples`: Array of `Usage::Example`.
+    # - `exit_codes`: Array of `Usage::ExitCode`, the statuses declared under the command.
     # - `subcommand_required`: bool, whether a subcommand must follow.
-    def initialize: (name: String, path: Array[String], help: String?, help_long: String?, args: Array[Arg], flags: Array[Flag], subcommands: Array[Command], groups: Array[Group], examples: Array[Example], subcommand_required: bool) -> void
+    def initialize: (name: String, path: Array[String], help: String?, help_long: String?, args: Array[Arg], flags: Array[Flag], subcommands: Array[Command], groups: Array[Group], examples: Array[Example], exit_codes: Array[ExitCode], subcommand_required: bool) -> void
 
     # Whether the command is the program itself, the one command with no path.
     #

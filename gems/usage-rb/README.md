@@ -38,7 +38,7 @@ end
 ### What it reads
 
 - The program: `bin`, `about`, `long_about`, `after_long_help`, examples, exit codes, and `unknown_env`.
-- Each command: its help and long help, subcommands, `subcommand_required`, arguments (`required` and `var`), groups, and examples.
+- Each command: its help and long help, subcommands, `subcommand_required`, arguments (`required` and `var`), groups, examples, and exit codes.
 - Each flag: its short and long names, help and long help, a value that is required, with `choices` (strict or not), `requires`, `var` with a value, and `global`.
 - `unknown_flags "error"`, with the program treating a flag it doesn't know as a mistake.
 

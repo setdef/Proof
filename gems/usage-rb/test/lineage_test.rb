@@ -37,4 +37,29 @@ class UsageLineageTest < Minitest::Test
     assert_equal(%w[sort json output quiet debug], at("list").flags.map(&:name))
     assert_equal(%w[quiet debug dry-run], at("remote").flags.map(&:name))
   end
+
+  # A spec whose program and commands each declare statuses.
+  STATUSES = <<~JSON
+    {"exit_codes": [{"code": 0, "help": "It worked."}, {"code": 2, "help": "A mistake."}],
+     "cmd": {"subcommands": {"remote": {"name": "remote", "full_cmd": ["remote"],
+       "exit_codes": [{"code": 75, "help": "The remote went away."}, {"code": 2, "help": "A mistake in the remote."}],
+       "subcommands": {"add": {"name": "add", "full_cmd": ["remote", "add"],
+         "exit_codes": [{"code": 0, "help": "Added."}, {"code": 9, "help": "Already there."}]}}}}}}
+  JSON
+  private_constant(:STATUSES)
+
+  # Each status of the lineage at +path+ of the spec above, with its meaning.
+  def statuses(*path)
+    read(STATUSES).commands.at(path).exit_codes.map { |code| [code.status, code.help] }
+  end
+
+  # usage 7.4.1's `effective_exit_codes`: the nearest command's meaning wins for each status, in the program's order,
+  # and a command's new statuses follow.
+  def test_the_exit_statuses_of_a_command_are_the_programs_with_each_nearer_command_folded_in
+    assert_equal(
+      [[0, "Added."], [2, "A mistake in the remote."], [75, "The remote went away."], [9, "Already there."]],
+      statuses("remote", "add")
+    )
+    assert_equal([[0, "It worked."], [2, "A mistake."]], statuses)
+  end
 end

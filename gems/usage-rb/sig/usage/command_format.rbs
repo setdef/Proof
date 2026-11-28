@@ -13,6 +13,6 @@ module Usage
 
     private def self.place: (json words) -> Place
 
-    private def self.parts: (Reader reader) -> { path: Array[String], args: Array[Arg], flags: Array[Flag], groups: Array[Group], examples: Array[Example], subcommands: Array[Command], subcommand_required: bool }
+    private def self.parts: (Reader reader) -> { path: Array[String], args: Array[Arg], flags: Array[Flag], groups: Array[Group], examples: Array[Example], exit_codes: Array[ExitCode], subcommands: Array[Command], subcommand_required: bool }
   end
 end

@@ -48,9 +48,6 @@ module Usage
     # The program's examples, in the spec's order.
     attr_reader examples: Array[Example]
 
-    # The statuses the program exits with, in the spec's order.
-    attr_reader exit_codes: Array[ExitCode]
-
     # The program's commands, as a tree under the program itself.
     attr_reader commands: CommandTree
 
@@ -60,8 +57,8 @@ module Usage
     # The variables with that prefix the program accepts anyway.
     attr_reader env_allowed: Array[String]
 
-    def self.new: (bin: String, about: String, about_long: String?, after_help: String?, examples: Array[Example], exit_codes: Array[ExitCode], commands: CommandTree, env_prefix: String?, env_allowed: Array[String]) -> instance
-                | (String bin, String about, String? about_long, String? after_help, Array[Example] examples, Array[ExitCode] exit_codes, CommandTree commands, String? env_prefix, Array[String] env_allowed) -> instance
+    def self.new: (bin: String, about: String, about_long: String?, after_help: String?, examples: Array[Example], commands: CommandTree, env_prefix: String?, env_allowed: Array[String]) -> instance
+                | (String bin, String about, String? about_long, String? after_help, Array[Example] examples, CommandTree commands, String? env_prefix, Array[String] env_allowed) -> instance
 
     # Builds a spec from its parts.
     #
@@ -70,11 +67,10 @@ module Usage
     # - `about_long`: String or `nil`, the longer description.
     # - `after_help`: String or `nil`, the text for the end of the help.
     # - `examples`: Array of `Usage::Example`, the program's examples.
-    # - `exit_codes`: Array of `Usage::ExitCode`, the statuses.
     # - `commands`: `Usage::CommandTree`, the program's commands.
     # - `env_prefix`: String or `nil`, the prefix of the variables to check.
     # - `env_allowed`: Array of String, the variables with the prefix to accept.
-    def initialize: (bin: String, about: String, about_long: String?, after_help: String?, examples: Array[Example], exit_codes: Array[ExitCode], commands: CommandTree, env_prefix: String?, env_allowed: Array[String]) -> void
+    def initialize: (bin: String, about: String, about_long: String?, after_help: String?, examples: Array[Example], commands: CommandTree, env_prefix: String?, env_allowed: Array[String]) -> void
 
     # Reads a spec from `text`, the JSON `usage generate json` writes, and raises `Usage::SpecError` for a text that
     # isn't such JSON or that uses anything the gem doesn't act on.
@@ -86,5 +82,13 @@ module Usage
     # Usage::Spec.read('{"bin": "todo"}').about # => ""
     # ```
     def self.read: (String text) -> Spec
+
+    # The statuses the spec declares for the whole program, in its order, which are the program command's. They apply
+    # to every command, and `Usage::Lineage#exit_codes` gives those that apply to one command.
+    #
+    # ```ruby
+    # spec.exit_codes.map(&:status) # => [0]
+    # ```
+    def exit_codes: () -> Array[ExitCode]
   end
 end

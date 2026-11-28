@@ -6,7 +6,9 @@ require_relative("named_format")
 module Usage
   module CommandFormat
     KEYS = Keys.new(
-      read: %i[name full_cmd usage help help_long args flags subcommands groups examples subcommand_required effect],
+      read: %i[
+        name full_cmd usage help help_long args flags subcommands groups examples exit_codes subcommand_required effect
+      ],
       defaults: {
         unknown_flags: "error",
         args_override_self: true,
@@ -42,6 +44,7 @@ module Usage
         flags: reader.parts(:flags, FlagFormat),
         groups: reader.parts(:groups, GroupFormat),
         examples: reader.parts(:examples, ExampleFormat),
+        exit_codes: reader.parts(:exit_codes, ExitCodeFormat),
         subcommands: reader.members(:subcommands, CommandFormat),
         subcommand_required: reader.boolean(:subcommand_required),
       }
