@@ -12,7 +12,7 @@ module Proof
   # call.
   module CommandLine
     # Parses the words typed after `proof`, `ARGV` without the program's name,
-    # into the value of the command they name, or into a request for help.
+    # into the value of the command they name, or into a request for help or for the version.
     #
     # Global flags work before or after any subcommand. On `proof run`, the
     # flags work anywhere before `--`, the words after `--` go to the task, and
@@ -35,7 +35,7 @@ module Proof
     # Proof::CommandLine.parse(["cancel", "m3d8q"]).command.runs # => ["m3d8q"]
     # Proof::CommandLine.parse(["run", "-h"]).path # => ["run"]
     # ```
-    def self.parse: (Array[String] argv) -> (Parsed | HelpAsked)
+    def self.parse: (Array[String] argv) -> (Parsed | HelpAsked | VersionAsked)
 
     # The help for the command at `path`, as `proof` prints it to standard
     # output when asked: what the command does, how to use it, its examples,

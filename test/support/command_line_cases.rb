@@ -43,7 +43,8 @@ module CommandLineContract
 
     # Every command line, as the words after `proof`.
     def all
-      (commands.flat_map { |command| for_command(command) } + examples + RUN_WORDS.map { |words| ["run", *words] }).uniq
+      (commands.flat_map { |command| for_command(command) } + [["--version"]] + examples +
+        RUN_WORDS.map { |words| ["run", *words] }).uniq
     end
 
     # The leaf and branch commands, except `proof` itself, whose bare form prints help where usage accepts it.

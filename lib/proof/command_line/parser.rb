@@ -10,7 +10,7 @@ module Proof
 
       def parse(argv)
         line = @usage.parse(argv)
-        HelpAsked.of(line) || Builder.new(@spec, line).parsed
+        VersionAsked.of(line) || HelpAsked.of(line) || Builder.new(@spec, line).parsed
       rescue Usage::CommandLineError => e
         HelpAsked.over(e, argv) || raise(Mistake, e.message)
       end

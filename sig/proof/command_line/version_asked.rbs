@@ -1,0 +1,35 @@
+module Proof
+  module CommandLine
+    # A command line that asks for the version, where no command runs.
+    #
+    # `proof --version` prints the version and runs nothing. Parsed as a command with a flag, there would be no
+    # command to hold it, because `proof` itself runs none.
+    #
+    # This class holds nothing, so nothing runs.
+    #
+    # Use it as the result of parsing `proof --version`, to print `proof VERSION`.
+    #
+    # ## Examples
+    #
+    # ```ruby
+    # Proof::CommandLine.parse(["--version"]) # => Proof::CommandLine::VersionAsked.new
+    # ```
+    class VersionAsked < Data
+      # Builds the result for a request for the version.
+      def initialize: () -> void
+
+      # The request for the version that `line`, a command line as usage-rb read it, makes, or `nil` when it makes
+      # none. A command line asks for it with `--version` given to `proof` itself, where no command runs. A request
+      # for help wins over it, and a command that runs takes `--version` as a global flag.
+      #
+      # - `line`: `Usage::Parsed`, what the command line gave.
+      #
+      # ```ruby
+      # parser = Usage::Parser.new(Proof::CommandLine::Spec.load)
+      # Proof::CommandLine::VersionAsked.of(parser.parse(["--version"])) # => Proof::CommandLine::VersionAsked.new
+      # Proof::CommandLine::VersionAsked.of(parser.parse(["status", "--version"])) # => nil
+      # ```
+      def self.of: (Usage::Parsed line) -> VersionAsked?
+    end
+  end
+end

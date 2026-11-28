@@ -1,6 +1,6 @@
 module Proof
   module CommandLine
-    # Turns the words after `proof` into the value of a command, or a request for help, or raises a Mistake.
+    # Turns the words after `proof` into the value of a command, or a request for help or for the version, or raises a Mistake.
     class Parser
       @spec: Usage::Spec
       @usage: Usage::Parser
@@ -9,7 +9,7 @@ module Proof
       def initialize: (Usage::Spec spec) -> void
 
       # Parses the words after `proof`.
-      def parse: (Array[String] argv) -> (Parsed | HelpAsked)
+      def parse: (Array[String] argv) -> (Parsed | HelpAsked | VersionAsked)
     end
   end
 end

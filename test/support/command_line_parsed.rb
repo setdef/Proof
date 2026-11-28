@@ -13,11 +13,17 @@ module CommandLineContract
     def outcome(argv)
       result = Proof::CommandLine.parse(argv)
       return HELP if result.is_a?(Proof::CommandLine::HelpAsked)
+      return version if result.is_a?(Proof::CommandLine::VersionAsked)
 
       path = words_of(result.command)
       Outcome.new(kind: :accepted, command: path, flags: flags(path, result), args: args(path, result.command))
     rescue Proof::CommandLine::Mistake
       REFUSED
+    end
+
+    # A request for the version is `--version` given to `proof` itself, where no command runs.
+    private def version
+      Outcome.new(kind: :accepted, command: [], flags: { version: [true] }.transform_keys(&:to_s), args: {})
     end
 
     # `RunnerSetupCommand` is the command `runner setup`.

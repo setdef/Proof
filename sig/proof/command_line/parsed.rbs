@@ -8,7 +8,7 @@ module Proof
     #
     # This class holds the two together, so a command line parses into one value.
     #
-    # Use it as the result of parsing every command line but a request for help.
+    # Use it as the result of parsing every command line but a request for help or for the version.
     #
     # ## Examples
     #

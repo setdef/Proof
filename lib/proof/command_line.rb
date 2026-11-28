@@ -36,6 +36,7 @@ require_relative("command_line/suggestions")
 require_relative("command_line/task_words")
 require_relative("command_line/tasks")
 require_relative("command_line/verify_command")
+require_relative("command_line/version_asked")
 require_relative("command_line/watch_command")
 
 # Builder names every command class when it loads, so it loads after them.

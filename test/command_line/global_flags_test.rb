@@ -51,6 +51,22 @@ class CommandLineGlobalFlagsTest < Minitest::Test
     assert_equal([CL::HelpAsked.new(path: []), CL::HelpAsked.new(path: [])], [parse, parse("-q")])
   end
 
+  # proof.usage.kdl: `--version` "Prints `proof VERSION` ... and exits with 0", on `proof` itself, where no command
+  # runs.
+  def test_version_given_to_proof_alone_asks_for_the_version
+    assert_equal([CL::VersionAsked.new] * 2, [parse("--version"), parse("-q", "--version")])
+  end
+
+  # proof.usage.kdl: a global flag works after a command too, which runs.
+  def test_version_given_to_a_command_that_runs_is_a_global_flag
+    assert(global("status", "--version").version)
+  end
+
+  # clig.dev: "-h and --help ... Ignore any other flags and arguments that are passed".
+  def test_help_wins_over_version
+    assert_equal(CL::HelpAsked.new(path: []), parse("--version", "-h"))
+  end
+
   # A cluster that holds h asks for help too.
   def test_help_in_a_cluster_asks_for_help
     assert_equal(CL::HelpAsked.new(path: ["status"]), parse("status", "-qh"))
