@@ -78,11 +78,12 @@ class RubycriticTaskTest < Minitest::Test
     [status, output]
   end
 
-  def test_the_task_passes_when_every_gem_holds_the_gate
+  def test_the_task_passes_when_every_gem_holds_the_gate_and_says_which_gem_each_score_is
     in_probe_repository(tidy_gem: TIDY) do |root|
       status, output = run_task(root)
 
       assert_predicate(status, :success?, output)
+      assert_match(/^RubyCritic on proof:$.*^Score: [\d.]+$.*^RubyCritic on tidy_gem:$.*^Score: [\d.]+$/m, output)
     end
   end
 
