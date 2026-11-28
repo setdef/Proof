@@ -16,10 +16,10 @@ module Proof
   # Use it from `Proof::PoolFileReader`.
   class PoolFileProperties
     # The builder of a `retention` property's value, from the property's name.
-    DAYS: ^(String) -> Proc
+    DAYS: ^(String) -> ^(KdlNode) -> Object
 
     # The builder of a `limits` property's value, from the property's name.
-    SIZE: ^(String) -> Proc
+    SIZE: ^(String) -> ^(KdlNode) -> Object
 
     # The member that each property sets and the builder of its value, by the
     # node's name and the property's name. A builder takes the node that has

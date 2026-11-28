@@ -22,10 +22,12 @@ module Proof
   # `Proof::PoolFileProperties`.
   class KdlMembers
     # A member of a domain value, and the lambda that builds its value from the
-    # node that gives it. The lambda is a `Proc` with no signature of its own,
-    # because a node's arguments and properties hold any KDL value, and the
-    # domain refuses the ones it can't use.
-    type entry = [Symbol, Proc]
+    # node that gives it. The lambda takes a `Proof::KdlNode` and gives the
+    # value as an `Object`, whichever domain class builds it. A node's
+    # arguments and properties hold any KDL value, and the domain's builders
+    # take any value and refuse the ones they can't use, so Steep has nothing
+    # more to check in the lambda.
+    type entry = [Symbol, ^(KdlNode) -> Object]
 
     # Prepares to build the members that `table` lists.
     #

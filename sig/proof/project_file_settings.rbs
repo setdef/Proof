@@ -52,7 +52,7 @@ module Proof
     TABLE: Hash[Symbol, KdlMembers::entry]
 
     # The builder of the value of an `artifact` or a `cache` child.
-    PATHS: Proc
+    PATHS: ^(KdlNode) -> Object
 
     private
 
