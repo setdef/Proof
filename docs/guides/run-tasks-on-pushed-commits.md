@@ -4,7 +4,7 @@ Use your pool in place of hosted CI: the server watches a repository's branches,
 
 ## List the repository
 
-On the server's computer, as the account Proof runs as, add a `repository` entry to the [pool file](../reference/pool-file.md#repository), `~/.config/proof/pool.kdl`, or `$XDG_CONFIG_HOME/proof/pool.kdl` when the account's environment sets `XDG_CONFIG_HOME`:
+On the server's computer, as the account Proof runs as, add a `repository` entry to the [pool file](../reference/pool-file.md#repository), `~/.config/proof/pool.kdl`, or `$XDG_CONFIG_HOME/proof/pool.kdl` when `XDG_CONFIG_HOME` is set to an absolute path in the account's environment:
 
 ```kdl
 repository invoices url="https://github.com/example/invoices.git" {
