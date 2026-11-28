@@ -1,0 +1,76 @@
+module Proof
+  # Builds the members of a domain value from the properties and the children
+  # of a KDL node.
+  #
+  # A file's page gives each property and child of a node a name, and the
+  # domain's value has a member for it. The domain owns what makes each value
+  # valid, so a value is built with the domain's classes and refused with the
+  # domain's message. Each reader that builds a value from a node's properties
+  # or children would repeat the lookup of the member and the refusal at the
+  # node's line.
+  #
+  # This class holds a table from a name to the member it fills and the lambda
+  # that builds its value, and the file's refusal. It builds the value of each
+  # property or child the table lists, inside `refusal.checking`, so a value the
+  # domain refuses is a refusal at the line of the node that gave it. A name the
+  # table lacks gives no member, because `Proof::KdlFormCheck` has refused what
+  # the page doesn't list before a value is built. A table is data about a
+  # value's members, so it stays apart from `Proof::KdlForm`, which lists a
+  # node's grammar and builds nothing.
+  #
+  # Use it from `Proof::ProjectFileSettings`, `Proof::PoolFileHost`, and
+  # `Proof::PoolFileProperties`.
+  class KdlMembers
+    # A member of a domain value, and the lambda that builds its value from the
+    # node that gives it. The lambda is a `Proc` with no signature of its own,
+    # because a node's arguments and properties hold any KDL value, and the
+    # domain refuses the ones it can't use.
+    type entry = [Symbol, Proc]
+
+    # Prepares to build the members that `table` lists.
+    #
+    # - `table`: Hash from the name of a property or child, as a symbol, to the
+    #   member it fills, as a symbol, and the lambda that builds the member's
+    #   value. A property's lambda takes the node that has the property, and a
+    #   child's takes the child.
+    # - `refusal`: `Proof::FileRefusal`, the file's refusal.
+    def initialize: (Hash[Symbol, entry] table, refusal: FileRefusal) -> void
+
+    # The members that the properties of `node` give, in the order the node
+    # writes them, as a Hash from the member to its value. A node with no
+    # property that the table lists gives an empty Hash. A value the domain
+    # refuses raises the file's error at the line of `node`.
+    #
+    # - `node`: `Proof::KdlNode`.
+    #
+    # ```ruby
+    # path = "pool.kdl"
+    # node = Proof::KdlParser.parse("server port=8443\n", path:, error: Proof::PoolFileError).first
+    # table = { port: [:port, -> (given) { Proof::Port.new(number: given.properties["port"]) }] }
+    # Proof::KdlMembers.new(table, refusal: Proof::PoolFileRefusal.new(path:)).of_properties(node) # => {port: Proof::Port.new(number: 8443)}
+    # ```
+    def of_properties: (KdlNode node) -> Hash[Symbol, Object]
+
+    # The members that the children of `node` give, in the order the node
+    # writes them, as a Hash from the member to its value. A node with no child
+    # that the table lists gives an empty Hash. A value the domain refuses
+    # raises the file's error at the line of the child that gave it.
+    #
+    # - `node`: `Proof::KdlNode`.
+    #
+    # ```ruby
+    # path = "pool.kdl"
+    # node = Proof::KdlParser.parse("host nuc {\n  withhold gpu\n}\n", path:, error: Proof::PoolFileError).first
+    # table = { withhold: [:withheld, -> (child) { Proof::LabelSet.of(*child.arguments) }] }
+    # Proof::KdlMembers.new(table, refusal: Proof::PoolFileRefusal.new(path:)).of_children(node)[:withheld].labels.map(&:to_s) # => ["gpu"]
+    # ```
+    def of_children: (KdlNode node) -> Hash[Symbol, Object]
+
+    private
+
+    def pair: (String name, KdlNode giver) -> [Symbol, Object]?
+
+    @table: Hash[Symbol, entry]
+    @refusal: FileRefusal
+  end
+end

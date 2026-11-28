@@ -15,8 +15,16 @@ module Proof
   #
   # Use it from `Proof::PoolFileReader`.
   class PoolFileProperties
-    # The builder of each property, by the node's name and the property's name.
-    BUILDERS: Hash[Symbol, Hash[Symbol, ^(kdl_value) -> Object]]
+    # The builder of a `retention` property's value, from the property's name.
+    DAYS: ^(String) -> Proc
+
+    # The builder of a `limits` property's value, from the property's name.
+    SIZE: ^(String) -> Proc
+
+    # The member that each property sets and the builder of its value, by the
+    # node's name and the property's name. A builder takes the node that has
+    # the property.
+    TABLES: Hash[Symbol, Hash[Symbol, KdlMembers::entry]]
 
     # What each node sets in the file, from the values of its properties.
     PARTS: Hash[Symbol, ^(Hash[Symbol, Object]) -> Hash[Symbol, Object]]
@@ -42,10 +50,8 @@ module Proof
 
     private
 
-    def values_of: (KdlNode node) -> Hash[Symbol, Object]
+    def part_of: (Symbol name, ^(Hash[Symbol, Object]) -> Hash[Symbol, Object] part, KdlNode? node) -> Hash[Symbol, Object]?
 
-    def pair: (KdlNode node, Symbol key, kdl_value value) -> [Symbol, Object]
-
-    @refusal: PoolFileRefusal
+    @members: Hash[Symbol, KdlMembers]
   end
 end

@@ -16,11 +16,9 @@ module Proof
   #
   # Use it from `Proof::PoolFileHosts`.
   class PoolFileHost
-    # The member of `Proof::HostSettings` that each child sets.
-    MEMBERS: Hash[Symbol, Symbol]
-
-    # The builder of each child's value.
-    BUILDERS: Hash[Symbol, ^(KdlNode) -> Object]
+    # The member of `Proof::HostSettings` that each child sets, by the child's
+    # name, with the builder of its value.
+    TABLE: Hash[Symbol, KdlMembers::entry]
 
     # Prepares to build the settings or the entry of `node`.
     #
@@ -55,10 +53,8 @@ module Proof
 
     private
 
-    def pair: (KdlNode child) -> [Symbol, Object]?
-
     @node: KdlNode
-    @refusal: PoolFileRefusal
+    @members: KdlMembers
     @names: PoolFileNames
   end
 end

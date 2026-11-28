@@ -46,23 +46,16 @@ module Proof
     # ```
     def read: (KdlNode node) -> TaskSettings
 
+    # The member of the settings that each property and child gives, by its
+    # name, with the builder of its value. A property's builder takes the node
+    # that has the property, and a child's takes the child.
+    TABLE: Hash[Symbol, KdlMembers::entry]
+
+    # The builder of the value of an `artifact` or a `cache` child.
+    PATHS: Proc
+
     private
 
-    def properties_of: (KdlNode node) -> Hash[Symbol, Object]
-
-    def children_of: (Array[KdlNode] children) -> Hash[Symbol, Object]
-
-    def pair: (String name, KdlNode giver) -> [Symbol, Object]
-
-    # The member of the settings that each property and child gives, by its
-    # name.
-    MEMBERS: Hash[Symbol, Symbol]
-
-    # The builder of each value, by the name of the property or child that
-    # gives it. A property's builder takes the node that has the property, and
-    # a child's takes the child.
-    BUILDERS: Hash[Symbol, ^(KdlNode) -> Object]
-
-    @refusal: ProjectFileRefusal
+    @members: KdlMembers
   end
 end
