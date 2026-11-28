@@ -36,7 +36,7 @@ Words for the task follow `--`, as with `cargo run` and `npm run`: `proof run te
 
 | Status | Meaning | What you do |
 | --- | --- | --- |
-| 0 | Passed. | Continue. |
+| 0 | Passed, or `--detach` started the run, which hasn't finished. | Continue. |
 | 2 | Proof refused and sent nothing: a mistake in your command line or the project file, or a request no host can meet. | Read the message, fix the mistake, run again. For a request no host can meet, the message says which host fits the most of it and lists every resource that host lacks. |
 | 75 | The pool failed, not the task: a host went away or the server couldn't be reached. | Run the same command once more. If it fails with 75 again, stop and tell the human, quoting the output. |
 | 78 | Failed because of the artifacts: the command passed but Proof couldn't keep them, because a pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never ran. | Fix the pattern or the build, or keep fewer files. When the message says the server is short of space, tell the human, who has to free it. |

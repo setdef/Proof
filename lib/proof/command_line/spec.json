@@ -426,7 +426,7 @@
         "exit_codes": [
           {
             "code": 0,
-            "help": "The run succeeded."
+            "help": "The run succeeded, or `--detach` started it."
           },
           {
             "code": 2,

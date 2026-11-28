@@ -112,7 +112,7 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
   example "proof run build --os linux --keep 'pkg/*.gem' --download" header="Build on Linux and download what it built"
   example "proof run --script - --os macos" header="Run a script from standard input"
   example "proof run --script bench.sh -- --quick" header="Give a script its words" help="The words after -- go to the script as its arguments."
-  exit_code 0 "The run succeeded."
+  exit_code 0 "The run succeeded, or `--detach` started it."
   exit_code 2 "Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests."
   exit_code 75 "A runner or its host went away, or Proof couldn't reach the server. Run the same command again."
   exit_code 78 "The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started."

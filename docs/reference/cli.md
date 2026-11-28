@@ -119,7 +119,7 @@ Press Ctrl-C to cancel the run. To start a run without waiting for it, use --det
 
 | Code | Meaning |
 | ---- | ------- |
-| `0` | The run succeeded. |
+| `0` | The run succeeded, or `--detach` started it. |
 | `2` | Proof refused the run before sending anything: the command line or the project file has a mistake, or no host has the resources the run requests. |
 | `75` | A runner or its host went away, or Proof couldn't reach the server. Run the same command again. |
 | `78` | The run failed because of its artifacts: its command exited with 0 but Proof couldn't keep them, because a --keep or artifact pattern matched no file or they exceeded the pool's limit; or the server was short of space, and the command never started. |
