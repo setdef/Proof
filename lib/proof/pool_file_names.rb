@@ -2,12 +2,14 @@
 
 module Proof
   class PoolFileNames
-    KINDS = {
+    # @type var kinds: Hash[kind, [String, String]]
+    kinds = {
       runner: ["a runner's name", "nuc-linux"],
       "credentials-file": ["a credentials file's path", "~/.config/proof/credentials/lota"],
       branch: ["a branch's name", "trunk"],
       task: ["a task's name", "test"],
-    }.freeze
+    }
+    KINDS = kinds.freeze
     private_constant(:KINDS)
 
     def self.same?(one, other)

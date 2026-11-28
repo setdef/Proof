@@ -21,7 +21,7 @@ module Proof
   class PoolFileNames
     # For each kind of name, whose name it is for the message, and a name that
     # works.
-    KINDS: Hash[Symbol, Array[String]]
+    KINDS: Hash[kind, [String, String]]
 
     # A kind of name a node's children give: `:runner`, `:"credentials-file"`,
     # `:branch`, or `:task`, the keys of `KINDS`.
