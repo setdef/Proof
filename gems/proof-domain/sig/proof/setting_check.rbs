@@ -35,6 +35,10 @@ module Proof
     # - `value`: Object, what the source gave. Never `nil`.
     def self.checked: (Symbol name, Object value) -> Object
 
+    private def self.cpus: (Object value) -> Integer
+
+    private def self.megabytes: (Object value) -> Integer
+
     private def self.single: (Symbol name, Object value) -> Object
 
     private def self.listed: (Symbol name, Object values) -> Set[Object]
