@@ -19,10 +19,10 @@ require_relative("doc_examples/runner")
 # === Examples
 #
 #   DocExamples.check(Dir.pwd).failures
-#   # => ["doc/guides/a.md:12: expected 3, but got 2"]
+#   # => ["docs/guides/a.md:12: expected 3, but got 2"]
 module DocExamples
   # The pages Git tracks that a tool generates, which no one edits by hand.
-  GENERATED = %w[doc/reference/cli.md skills/proof/references/cli.md].freeze
+  GENERATED = %w[docs/reference/cli.md skills/proof/references/cli.md].freeze
   # What Git lists: tracked files, and untracked files it doesn't ignore.
   LISTING = %w[ls-files -z --cached --others --exclude-standard -- *.md *.rbs].freeze
   private_constant(:GENERATED, :LISTING)

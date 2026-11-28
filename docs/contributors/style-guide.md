@@ -1,6 +1,6 @@
 # Documentation style guide
 
-The conventions Proof's documentation follows that general writing guidance doesn't settle. They apply to the README, everything under `doc/`, Proof's Agent Skill, and the text Proof itself prints.
+The conventions Proof's documentation follows that general writing guidance doesn't settle. They apply to the README, everything under `docs/`, Proof's Agent Skill, and the text Proof itself prints.
 
 ## Words
 
@@ -8,7 +8,7 @@ The conventions Proof's documentation follows that general writing guidance does
 
 Two terms differ by audience:
 
-| Idea | In the README and `doc/` | In the Agent Skill |
+| Idea | In the README and `docs/` | In the Agent Skill |
 | --- | --- | --- |
 | Someone at a host's keyboard, mouse, or screen | person | human |
 
@@ -63,10 +63,10 @@ Examples of real use come from a real project. Any public repository under [gith
 
 ## Generated pages
 
-`doc/reference/cli.md`, and its copy in the Agent Skill, `skills/proof/references/cli.md`, are generated from [`proof.usage.kdl`](../../proof.usage.kdl). Change the spec, then regenerate both:
+`docs/reference/cli.md`, and its copy in the Agent Skill, `skills/proof/references/cli.md`, are generated from [`proof.usage.kdl`](../../proof.usage.kdl). Change the spec, then regenerate both:
 
 ```console
-$ usage generate markdown --file proof.usage.kdl --out-file doc/reference/cli.md
+$ usage generate markdown --file proof.usage.kdl --out-file docs/reference/cli.md
 $ usage generate markdown --file proof.usage.kdl --out-file skills/proof/references/cli.md
 ```
 

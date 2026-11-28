@@ -37,7 +37,7 @@ proof: exit=0 run=20261125-0336-m3d8q task=package runner=nuc-linux queued=0s ra
 proof: exit=0 run=20261125-0336-p9x2k task=package runner=pc-windows queued=0s ran=0s artifacts=1
 ```
 
-Lines that start with `proof:` are Proof's, written to standard error. The task's output goes to standard output, each line marked with the runner it came from when more than one run is going. Each run ends with one result line, with its exit status and its full ID, for an agent to read. Here every run succeeded, so `proof` exits with 0. When runs fail, it exits with one status chosen in [a fixed order](doc/guides/several-operating-systems.md#exit-status-with-several-runs). Anywhere Proof asks for a run's ID, its last five characters are enough: `proof logs m3d8q`. A script that needs more than the result lines can pass `--json`, and Proof then prints one JSON object per run in their place.
+Lines that start with `proof:` are Proof's, written to standard error. The task's output goes to standard output, each line marked with the runner it came from when more than one run is going. Each run ends with one result line, with its exit status and its full ID, for an agent to read. Here every run succeeded, so `proof` exits with 0. When runs fail, it exits with one status chosen in [a fixed order](docs/guides/several-operating-systems.md#exit-status-with-several-runs). Anywhere Proof asks for a run's ID, its last five characters are enough: `proof logs m3d8q`. A script that needs more than the result lines can pass `--json`, and Proof then prints one JSON object per run in their place.
 
 ## Compatibility
 
@@ -80,17 +80,17 @@ To uninstall Proof from a computer, run `proof runner uninstall` or `proof serve
 7. **Run tasks on every pushed commit** by listing a repository, its branches, and its tasks in the server's pool file.
 8. **Upgrade** by running `proof server upgrade` on the server. The runners upgrade themselves to match.
 
-[Getting started](doc/getting-started.md) covers steps 1 to 4 with one Linux runner.
+[Getting started](docs/getting-started.md) covers steps 1 to 4 with one Linux runner.
 
 ## Documentation
 
 - In the terminal: `proof help` lists every command with examples, and `proof help run` explains one command.
-- [Getting started](doc/getting-started.md): set up a server and one Linux runner, and run a first task.
-- [Guides](doc/guides/index.md): adding a Mac or a Windows PC, GPUs and desktops, teaching your agents to use Proof, the pre-push hook, artifacts, caches, running tasks on pushed commits, sharing a host with the person who uses it, containers and emulators, upgrading, and troubleshooting.
-- [How Proof works](doc/how-proof-works.md): the server, the runners, how your code reaches them, and why Proof is built that way.
-- [Command reference](doc/reference/cli.md): every command, flag, and exit status.
-- [Project file reference](doc/reference/project-file.md) and [pool file reference](doc/reference/pool-file.md): every setting in `.config/proof.kdl` and in the server's pool file.
-- [Glossary](doc/glossary.md): the word Proof uses for each idea, and the words it avoids.
+- [Getting started](docs/getting-started.md): set up a server and one Linux runner, and run a first task.
+- [Guides](docs/guides/index.md): adding a Mac or a Windows PC, GPUs and desktops, teaching your agents to use Proof, the pre-push hook, artifacts, caches, running tasks on pushed commits, sharing a host with the person who uses it, containers and emulators, upgrading, and troubleshooting.
+- [How Proof works](docs/how-proof-works.md): the server, the runners, how your code reaches them, and why Proof is built that way.
+- [Command reference](docs/reference/cli.md): every command, flag, and exit status.
+- [Project file reference](docs/reference/project-file.md) and [pool file reference](docs/reference/pool-file.md): every setting in `.config/proof.kdl` and in the server's pool file.
+- [Glossary](docs/glossary.md): the word Proof uses for each idea, and the words it avoids.
 
 ## Reporting problems
 

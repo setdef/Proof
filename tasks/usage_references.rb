@@ -12,12 +12,12 @@ require "open3"
 #
 # === Examples
 #
-#   UsageReferences.stale  # => ["doc/reference/cli.md"]
+#   UsageReferences.stale  # => ["docs/reference/cli.md"]
 class UsageReferences
   SPEC = "proof.usage.kdl"
   # Each generated file, with the +usage generate+ format that makes it.
   GENERATED = [
-    ["doc/reference/cli.md", "markdown"],
+    ["docs/reference/cli.md", "markdown"],
     ["skills/proof/references/cli.md", "markdown"],
     ["lib/proof/command_line/spec.json", "json"],
   ].freeze

@@ -55,7 +55,7 @@ class DomainDependencyTest < Minitest::Test
   end
 
   # "a test fails if the gem loads anything outside itself"
-  # (doc/contributors/architecture.md, "The domain gem and the code around it").
+  # (docs/contributors/design/architecture.md, "The domain gem and the code around it").
   def test_the_gem_loads_nothing_outside_itself_and_the_standard_library
     assert_empty(loaded_outside(GEM_LIB))
   end

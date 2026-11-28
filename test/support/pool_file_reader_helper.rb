@@ -8,7 +8,7 @@ module PoolFileReaderHelper
   include PoolFileHelper
 
   PATH = "pool.kdl"
-  PAGE = File.expand_path("../../doc/reference/pool-file.md", __dir__)
+  PAGE = File.expand_path("../../docs/reference/pool-file.md", __dir__)
   public_constant(:PATH, :PAGE)
 
   # The pool file that this text reads as.

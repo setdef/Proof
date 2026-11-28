@@ -12,7 +12,7 @@ class DocExamplesFilesTest < Minitest::Test
 
   def test_the_generated_references_are_not_checked
     in_project do |root|
-      write(root, "doc/reference/cli.md", page("raise 'no'"))
+      write(root, "docs/reference/cli.md", page("raise 'no'"))
       write(root, "skills/proof/references/cli.md", page("raise 'no'"))
       write(root, "skills/proof/references/other.md", page("1 # => 1"))
 

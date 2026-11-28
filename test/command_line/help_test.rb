@@ -28,7 +28,7 @@ class CommandLineHelpTest < Minitest::Test
   def test_the_programs_help_ends_with_where_to_read_and_report
     assert_equal(
       [
-        "Documentation: https://github.com/setdef/Proof/tree/trunk/doc",
+        "Documentation: https://github.com/setdef/Proof/tree/trunk/docs",
         "Report a problem: https://forum.setdef.com/c/proof",
       ],
       help.last(2)

@@ -8,7 +8,7 @@ module ProjectFileReaderHelper
   include ProjectFileHelper
 
   PATH = ".config/proof.kdl"
-  PAGE = File.expand_path("../../doc/reference/project-file.md", __dir__)
+  PAGE = File.expand_path("../../docs/reference/project-file.md", __dir__)
   public_constant(:PATH, :PAGE)
 
   # The project file that this text reads as.

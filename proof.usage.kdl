@@ -19,7 +19,7 @@ The task's output goes to standard output. The lines Proof prints go to standard
 each begins with "proof:".
 """#
 after_long_help #"""
-Documentation: https://github.com/setdef/Proof/tree/trunk/doc
+Documentation: https://github.com/setdef/Proof/tree/trunk/docs
 Report a problem: https://forum.setdef.com/c/proof
 """#
 

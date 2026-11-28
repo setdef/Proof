@@ -9,7 +9,7 @@ module Proof
   # has 40 bits, few enough to try every one against a fast hash.
   #
   # This class computes the three tags of the first-trust check in
-  # `doc/contributors/architecture.md`, "Certificates", at a cost of about a
+  # `docs/contributors/design/architecture.md`, "Certificates", at a cost of about a
   # third of a second and 128 MiB each, so trying every code against one
   # tag takes thousands of years on one processor:
   #

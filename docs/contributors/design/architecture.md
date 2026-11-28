@@ -1,14 +1,14 @@
 # Architecture
 
-How Proof is built: the libraries, the layout of the code, and how the parts fit. It is the design document of each part that is built: how the part works and why. What Proof must do is in the user documentation, such as [How Proof works](../how-proof-works.md), which is written ahead of the code, and [the decision records](decisions/README.md) hold the architectural decisions, such as Ruby, placement without an external scheduler, Git as the transport, connections out to the server, and no root. Choices of tool and library never reach the bar for a record, so they are here.
+How Proof is built: the libraries, the layout of the code, and how the parts fit. It is the design document of each part that is built: how the part works and why. What Proof must do is in the user documentation, such as [How Proof works](../../how-proof-works.md), which is written ahead of the code, and [the decision records](../decisions/README.md) hold the architectural decisions, such as Ruby, placement without an external scheduler, Git as the transport, connections out to the server, and no root. Choices of tool and library never reach the bar for a record, so they are here.
 
-Each section states how Proof is built, then lists the options weighed and why each lost. A measurement is stated with its numbers. The words are [the glossary's](../glossary.md).
+Each section states how Proof is built, then lists the options weighed and why each lost. A measurement is stated with its numbers. The words are [the glossary's](../../glossary.md).
 
 ## Layout and model
 
 ### One model for the command, the server, and the runner
 
-Proof has one bounded context. It has a shared kernel, which holds the ideas all three roles use (runs, tasks, resources, labels, the run states), and one module each for the command, the server, and the runner. The three always run one version and share one glossary, so the kernel's words mean the same in every module. The modules show which rule needs which guarantee. The server's modules need a store that can refuse a second decision. The runner's need a workspace lease that a prune can't race ([How Proof works](../how-proof-works.md#what-a-runner-gives-each-run)) and one prune at a time across a host's runners ([#77](https://github.com/setdef/Proof/issues/77)).
+Proof has one bounded context. It has a shared kernel, which holds the ideas all three roles use (runs, tasks, resources, labels, the run states), and one module each for the command, the server, and the runner. The three always run one version and share one glossary, so the kernel's words mean the same in every module. The modules show which rule needs which guarantee. The server's modules need a store that can refuse a second decision. The runner's need a workspace lease that a prune can't race ([How Proof works](../../how-proof-works.md#what-a-runner-gives-each-run)) and one prune at a time across a host's runners ([#77](https://github.com/setdef/Proof/issues/77)).
 
 Options weighed:
 
@@ -54,11 +54,11 @@ Options weighed:
 
 ### A run as a consistency boundary
 
-A run is stored as an append-only list of facts, each with the server's time. The run's constructor checks every rule about a run, including when the run is rebuilt from storage. A record changed behind Proof's back therefore fails to load, instead of reporting a pass. The list also shows afterwards how a run reached `succeeded`. Which states a run can pass through, and what each ending needs, are in [the glossary](../glossary.md#run-states) and [How Proof works](../how-proof-works.md#how-a-run-ends), and the facts record them.
+A run is stored as an append-only list of facts, each with the server's time. The run's constructor checks every rule about a run, including when the run is rebuilt from storage. A record changed behind Proof's back therefore fails to load, instead of reporting a pass. The list also shows afterwards how a run reached `succeeded`. Which states a run can pass through, and what each ending needs, are in [the glossary](../../glossary.md#run-states) and [How Proof works](../../how-proof-works.md#how-a-run-ends), and the facts record them.
 
 Options weighed:
 
-- A record of plain fields with a version number: it meets every requirement in [What the server keeps of a run](../how-proof-works.md#what-the-server-keeps-of-a-run), but it can't show afterwards how a run reached `succeeded`, and nothing in it fails when a field is edited by hand.
+- A record of plain fields with a version number: it meets every requirement in [What the server keeps of a run](../../how-proof-works.md#what-the-server-keeps-of-a-run), but it can't show afterwards how a run reached `succeeded`, and nothing in it fails when a field is edited by hand.
 
 #### The facts and the store of runs
 
@@ -77,7 +77,7 @@ Options weighed:
 | `Succeeded`, `Failed`, `TimedOut`, `OutOfMemory`, `Canceled`, `Lost` | Nothing more | Once, as the final state |
 | `ProcessesEnded` | Nothing more | Once, after `Lost`, the only fact a final state can be followed by |
 
-Each final state is allowed only after the facts it needs: `Succeeded` after a command that exited with 0, the whole output, and kept artifacts; `Failed` after the whole output and a status other than 0 or unkept artifacts, or after artifacts left unkept for space; `TimedOut` and `OutOfMemory` after the command started; `Canceled` after a cancel was asked for; `Lost` after the run was placed. A run holds its host's CPUs and memory while it is `running`, and while it is `lost` until its processes end. `Canceled` needs no placement, because the glossary's `canceled` covers a run that is still `queued` and ends with no runner. Such a run holds nothing, and placement never places it: `place_next` and `wait_reasons` skip a queued run whose cancel was asked for. A run that has a runner is `canceled` when its runner ends it. [How Proof works](../how-proof-works.md#how-a-run-ends) says what `proof` exits with for a run that someone else canceled.
+Each final state is allowed only after the facts it needs: `Succeeded` after a command that exited with 0, the whole output, and kept artifacts; `Failed` after the whole output and a status other than 0 or unkept artifacts, or after artifacts left unkept for space; `TimedOut` and `OutOfMemory` after the command started; `Canceled` after a cancel was asked for; `Lost` after the run was placed. A run holds its host's CPUs and memory while it is `running`, and while it is `lost` until its processes end. `Canceled` needs no placement, because the glossary's `canceled` covers a run that is still `queued` and ends with no runner. Such a run holds nothing, and placement never places it: `place_next` and `wait_reasons` skip a queued run whose cancel was asked for. A run that has a runner is `canceled` when its runner ends it. [How Proof works](../../how-proof-works.md#how-a-run-ends) says what `proof` exits with for a run that someone else canceled.
 
 The store of runs is the port `Proof::_Runs`. It adds a fact only at the version the caller read, the run's number of facts, refuses a second placement whatever the version, refuses a second run at one queue position, and rebuilds each run from its facts on every read. `Proof::InMemory::Runs` keeps the facts in a `Hash` behind a mutex. `Proof::Testing::RunsContract` is the Minitest module every store passes, with two tests that run two threads at once and one that reopens the store over the same storage. One thread's call usually ends before the other's starts, so a store passes those two even with no lock. A store's test can define `build_runs_pausing_after_reads`, which the two tests call in place of `build_runs`: it builds a store that sleeps after each read, so the other thread's call comes between a call's read and its write, and a store with no lock fails them. `InMemoryRunsTest` defines it with a `Hash` that sleeps after each lookup.
 
@@ -97,7 +97,7 @@ Choosing a run's runner is a domain service. It checks the rules that span runs 
 - The server's unit of work serializes placement decisions.
 - A host's resources in use are computed from its runs, and never stored on the host, so there is no second copy to disagree with the runs.
 
-What placement must do is in [How Proof works](../how-proof-works.md#how-the-server-places-a-run).
+What placement must do is in [How Proof works](../../how-proof-works.md#how-the-server-places-a-run).
 
 Options weighed:
 
@@ -152,7 +152,7 @@ Options weighed:
 
 ### Command line
 
-The command uses Ruby's OptionParser with `require_exact`, which refuses an abbreviation of a flag's name, and finds the command by hand: it follows the words down the commands of the spec, and a table maps a command's words to the class that holds its flags and arguments. OptionParser takes its flags from `lib/proof/command_line/spec.json`, which `usage generate json` writes from [`proof.usage.kdl`](../../proof.usage.kdl), so a flag added to the spec reaches the parser and the help together. The help is written from the same file, with no KDL read at run time and no `kdl` gem, so the command starts on Ruby's standard library alone. For a flag it doesn't know, OptionParser raises an error that gives the flag (`invalid option: --oss`, with `--oss` in the error's `args`). Ruby's did_you_mean gives the suggestion: `DidYouMean::SpellChecker`, given the command's flags, answers `--os`. A flag written with one dash, or several short flags written together, gets no suggestion, because the letters of short flags are near each other. The command prints both and exits 2, the status [`proof.usage.kdl`](../../proof.usage.kdl) gives to a mistake on the command line.
+The command uses Ruby's OptionParser with `require_exact`, which refuses an abbreviation of a flag's name, and finds the command by hand: it follows the words down the commands of the spec, and a table maps a command's words to the class that holds its flags and arguments. OptionParser takes its flags from `lib/proof/command_line/spec.json`, which `usage generate json` writes from [`proof.usage.kdl`](../../../proof.usage.kdl), so a flag added to the spec reaches the parser and the help together. The help is written from the same file, with no KDL read at run time and no `kdl` gem, so the command starts on Ruby's standard library alone. For a flag it doesn't know, OptionParser raises an error that gives the flag (`invalid option: --oss`, with `--oss` in the error's `args`). Ruby's did_you_mean gives the suggestion: `DidYouMean::SpellChecker`, given the command's flags, answers `--os`. A flag written with one dash, or several short flags written together, gets no suggestion, because the letters of short flags are near each other. The command prints both and exits 2, the status [`proof.usage.kdl`](../../../proof.usage.kdl) gives to a mistake on the command line.
 
 `proof run` takes Proof's flags anywhere before `--`. The words for the task follow `--`, as for `cargo run` and `npm run` ([issue #18](https://github.com/setdef/Proof/issues/18)). A plain word before `--`, as in `proof run test foo`, goes to the task, as `proof.usage.kdl` reads it: `usage` can mark a word after the task as a mistake only by requiring `--`, which would also refuse `proof run lint ::: test`. The parser is tested against the spec, so it does the same. Only a flag before `--` is refused, which is where typos of Proof's own flags happen. `:::` starts the next task, before or after `--`. After `--`, words go to the current task until a `:::`, the word after `:::` is the next task's name, and that task's words again follow `--`. OptionParser stops reading flags at the first `--`, so the command splits what follows by hand: the first `--` after a task's name separates its words from Proof's flags, and a later `--` is one of the task's words. The tests compare the parser with `usage explain --format json` for command lines made from the spec, and a difference in whether a line is accepted or in what a word binds to fails the test. They include the front of each flag, command, and choice, which usage refuses and which OptionParser takes for a flag unless `require_exact` is set. What usage can't say, such as the nearest flag in a mistake and where `:::` has no task before it or no name after it, has its own tests.
 
@@ -223,13 +223,13 @@ Proof runs the `git` program as a subprocess, with every inherited `GIT_*` varia
 
 Options weighed:
 
-- Rugged: builds libgit2 from source, its certificate check can't see the certificate, and it has no check that a commit is complete, which [the decision on code](decisions/0003-code-travels-as-git-commits-through-the-server.md) needs.
+- Rugged: builds libgit2 from source, its certificate check can't see the certificate, and it has no check that a commit is complete, which [the decision on code](../decisions/0003-code-travels-as-git-commits-through-the-server.md) needs.
 - The `git` gem: wraps the same program, and pulls in ActiveSupport.
 - Reading a file at a commit in a module that `Proof::GitProject` includes: the module would call the project's methods without a type to say so, to keep one class short.
 
 #### A submodule in a working-tree commit
 
-A working-tree commit records each submodule at the commit its checkout is at, as `git add -A` records it. A submodule the developer has moved to another commit goes at that commit, even when the project hasn't committed the move. Changes to files inside a submodule are not sent, as [How Proof works](../how-proof-works.md#how-your-code-reaches-a-runner) says. A run of `--commit REV` uses the tree of that commit, so it sends the submodule commits that tree records.
+A working-tree commit records each submodule at the commit its checkout is at, as `git add -A` records it. A submodule the developer has moved to another commit goes at that commit, even when the project hasn't committed the move. Changes to files inside a submodule are not sent, as [How Proof works](../../how-proof-works.md#how-your-code-reaches-a-runner) says. A run of `--commit REV` uses the tree of that commit, so it sends the submodule commits that tree records.
 
 Options weighed:
 
@@ -427,14 +427,14 @@ Native calls go through Fiddle on every system. Fledge's runtimes ship Fiddle as
 Options weighed:
 
 - `Kernel#syscall` on Linux with Fiddle elsewhere: two ways to do one thing.
-- A helper program in another language for each native call: a second language, which [the decision for Ruby](decisions/0001-proof-is-ruby-shipped-as-a-fledge-app.md) rules out without a reason only it can meet.
+- A helper program in another language for each native call: a second language, which [the decision for Ruby](../decisions/0001-proof-is-ruby-shipped-as-a-fledge-app.md) rules out without a reason only it can meet.
 
 ### Ending a Linux run's processes and holding its memory
 
 The Linux runner ends what a run started with a subreaper and a process group, and holds the run to its memory with a systemd scope:
 
 - The runner makes itself the child subreaper by calling `prctl(PR_SET_CHILD_SUBREAPER, 1)` through Fiddle, with a plain, non-variadic signature, as [Native calls](#native-calls) says native calls go. An orphaned descendant is then reparented to the runner and stays a zombie, which `kill -0` still answers, until the runner reaps it with `Process.wait`.
-- The runner starts the command with `Process.spawn(..., pgroup: true)` and ends the group with `Process.kill` on the negative group ID: `TERM`, then `CONT` for a stopped process, then `KILL`, as [How Proof works](../how-proof-works.md#how-a-run-ends) says a run ends.
+- The runner starts the command with `Process.spawn(..., pgroup: true)` and ends the group with `Process.kill` on the negative group ID: `TERM`, then `CONT` for a stopped process, then `KILL`, as [How Proof works](../../how-proof-works.md#how-a-run-ends) says a run ends.
 - A process that leaves the group with `setsid` survives those signals. When its parent exits, it is an orphan and comes back to the runner, which holds it as a child to signal and reap.
 - The runner starts the command in `systemd-run --user --scope -p MemoryMax=… -p MemorySwapMax=0`, with `MemoryMax` set to the run's memory request and `MemorySwapMax` set to zero.
 - The runner reads a run's memory from `/proc/PID/smaps_rollup`, which has `Pss` and `SwapPss`, and which an account can read for its own processes, including those inside such a scope. The scope's `memory.current` and `memory.peak` are readable by the account too. Another account's processes aren't readable.
@@ -454,7 +454,7 @@ Options weighed:
 
 ### Run IDs and codes
 
-Crockford Base32 is written in the domain gem. The domain has no dependencies, and [the glossary](../glossary.md#run) says Proof reads a typed `o` as `0` and an `i` or `l` as `1`, so the decoder is part of the domain's rules.
+Crockford Base32 is written in the domain gem. The domain has no dependencies, and [the glossary](../../glossary.md#run) says Proof reads a typed `o` as `0` and an `i` or `l` as `1`, so the decoder is part of the domain's rules.
 
 Options weighed:
 
