@@ -5,26 +5,31 @@ module Usage
     EXAMPLE_WIDTH = 70
     private_constant(:EXAMPLE_WIDTH)
 
-    def self.examples(list)
+    def self.examples(title, list)
       lines = list.flat_map { |example| example_lines(example) }
-      ["Examples:", *lines].join("\n") unless lines.empty?
+      [title, *lines].join("\n") unless lines.empty?
     end
 
     def self.commands(title, list)
-      Layout.table(title, list.map { |command| [command.name, command.help.to_s] })
+      described(title, list, &:name)
     end
 
-    def self.arguments(list)
-      Layout.table("Arguments:", list.map { |arg| [arg.to_s, arg.help.to_s] })
+    def self.arguments(title, list)
+      described(title, list, &:to_s)
     end
 
     def self.flags(title, list)
       Layout.table(title, list.map { |flag| [label(flag), text(flag)] })
     end
 
-    def self.exit_statuses(codes)
-      Layout.table("Exit statuses:", codes.map { |code| [code.status.to_s, code.help] })
+    def self.exit_statuses(title, codes)
+      described(title, codes) { |code| code.status.to_s }
     end
+
+    def self.described(title, list)
+      Layout.table(title, list.map { |part| [yield(part), part.help.to_s] })
+    end
+    private_class_method(:described)
 
     def self.example_lines(example)
       header = example.header

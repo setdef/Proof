@@ -15,7 +15,7 @@ module Usage
         title,
         Layout.paragraphs(description, WIDTH),
         UsageLine.new(words:, command:).to_s,
-        Lists.examples(examples),
+        Lists.examples("Examples:", examples),
         *tables,
         *ending,
       ]
@@ -36,7 +36,7 @@ module Usage
     private def tables
       [
         Lists.commands(commands_title, command.subcommands),
-        Lists.arguments(command.args),
+        Lists.arguments("Arguments:", command.args),
         Lists.flags("Flags:", command.own_flags),
         Lists.flags("Global flags:", lineage.global_flags),
       ]

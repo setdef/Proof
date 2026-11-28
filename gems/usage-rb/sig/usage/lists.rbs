@@ -1,24 +1,29 @@
 module Usage
   # Writes each list of the help that holds parts of the spec: the examples, and the tables of commands, arguments,
-  # flags, and exit statuses. Each is `nil` when it has nothing in it.
+  # flags, and exit statuses, each under the title its page gives. Each is `nil` when it has nothing in it.
   module Lists
     # The widest line of an example's explanation.
     EXAMPLE_WIDTH: Integer
 
-    # The examples under their title.
-    def self.examples: (Array[Example] list) -> String?
+    # The examples under `title`.
+    def self.examples: (String title, Array[Example] list) -> String?
 
     # A table of commands under `title`, each with its name and its one-line description.
     def self.commands: (String title, Array[Command] list) -> String?
 
-    # The table of a command's arguments, each as the usage line writes it, with its one-line description.
-    def self.arguments: (Array[Arg] list) -> String?
+    # A table of a command's arguments under `title`, each as the usage line writes it, with its one-line description.
+    def self.arguments: (String title, Array[Arg] list) -> String?
 
     # A table of flags under `title`, each with its switches, its value, its description, and its choices.
     def self.flags: (String title, Array[Flag] list) -> String?
 
-    # The table of the program's exit statuses.
-    def self.exit_statuses: (Array[ExitCode] codes) -> String?
+    # A table of exit statuses under `title`, each with what it means.
+    def self.exit_statuses: (String title, Array[ExitCode] codes) -> String?
+
+    # A table of `list` under `title`, each part with the label the block gives it and its one-line description.
+    private def self.described: (String title, Array[Command] list) { (Command part) -> String } -> String?
+                              | (String title, Array[Arg] list) { (Arg part) -> String } -> String?
+                              | (String title, Array[ExitCode] list) { (ExitCode part) -> String } -> String?
 
     private def self.example_lines: (Example example) -> Array[String]
 
