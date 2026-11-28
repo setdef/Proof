@@ -65,8 +65,8 @@ module Proof
     def self.new: [R < KdlRefusal] (path: String, error: singleton(FileError), forms: KdlForms, refusal_class: _RefusalClass[R]) -> KdlFile[R]
                 | [R < KdlRefusal] (String path, singleton(FileError) error, KdlForms forms, _RefusalClass[R] refusal_class) -> KdlFile[R]
 
-    # Gives the refusal of this file: a `refusal_class` that has the file's
-    # path, error, messages, and forms.
+    # Gives a refusal for this file: an instance of the file's `refusal_class`
+    # that has the file's path, error, messages, and forms.
     def refusal: () -> R
 
     # Reads `text` and gives its nodes, checked against the file's forms and
