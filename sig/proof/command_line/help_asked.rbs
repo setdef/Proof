@@ -18,6 +18,9 @@ module Proof
     # Proof::CommandLine::HelpAsked.new(path: ["runner", "setup"]).path # => ["runner", "setup"]
     # ```
     class HelpAsked < Data
+      # The words that ask for help: `-h` and `--help`.
+      WORDS: Array[String]
+
       # The words that name the command, such as `["runner", "setup"]`. Empty for `proof` itself.
       attr_reader path: Array[String]
 
@@ -28,6 +31,39 @@ module Proof
       #
       # - `path`: Array of String, the words that name the command.
       def initialize: (path: Array[String]) -> void
+
+      # The help that `line`, a command line as usage-rb read it, asks for, or `nil` when it asks for none. A
+      # command line asks for help with `-h` or `--help`, and so does a command with subcommands given none, such as
+      # `proof` alone.
+      #
+      # - `line`: `Usage::Parsed`, what the command line gave.
+      #
+      # ```ruby
+      # parser = Usage::Parser.new(Proof::CommandLine::Spec.load)
+      # Proof::CommandLine::HelpAsked.of(parser.parse(["-q"]))&.path # => []
+      # Proof::CommandLine::HelpAsked.of(parser.parse(["status", "-h"]))&.path # => ["status"]
+      # Proof::CommandLine::HelpAsked.of(parser.parse(["status"])) # => nil
+      # ```
+      def self.of: (Usage::Parsed line) -> HelpAsked?
+
+      # The help a mistaken command line asks for, or `nil` when the mistake stands. On `-h` or `--help` before the
+      # first `--`, clig.dev says to ignore any other flags and arguments, so a mistake in them gives way to the help
+      # of the command they were given to. A mistake made before the words name a command that runs stands.
+      #
+      # - `error`: `Usage::CommandLineError`, the mistake usage-rb's parser found.
+      # - `argv`: Array of String, the words after `proof`.
+      #
+      # ```ruby
+      # parser = Usage::Parser.new(Proof::CommandLine::Spec.load)
+      # error = begin
+      #   parser.parse(["status", "--nope", "-h"])
+      # rescue Usage::CommandLineError => e
+      #   e
+      # end
+      # Proof::CommandLine::HelpAsked.over(error, ["status", "--nope", "-h"])&.path # => ["status"]
+      # Proof::CommandLine::HelpAsked.over(error, ["status", "--nope", "--", "-h"]) # => nil
+      # ```
+      def self.over: (Usage::CommandLineError error, Array[String] argv) -> HelpAsked?
     end
   end
 end

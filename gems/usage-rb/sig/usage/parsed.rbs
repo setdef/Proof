@@ -18,9 +18,9 @@ module Usage
   #                      {"name": "sort", "long": ["sort"], "arg": {"name": "key"}}],
   #            "args": [{"name": "item", "var": true}]}}
   # JSON
-  # parsed = Usage::Parser.new(spec).parse(["--sort", "due", "--sort", "added", "3", "4"])
+  # parsed = Usage::Parser.new(spec).parse(["--sort", "due", "--sort", "added", "3", "--", "--json"])
   # [parsed.given?("json"), parsed.value("sort"), parsed.values("sort")] # => [false, "added", ["due", "added"]]
-  # parsed.words("item") # => ["3", "4"]
+  # [parsed.words("item"), parsed.separated] # => [["3", "--json"], ["--json"]]
   # ```
   class Parsed < Data
     # The command the words named, or the program's for none, and for help the command they had reached.
@@ -32,19 +32,24 @@ module Usage
     # The words of each argument, by the argument's name, and none for help.
     attr_reader args: Hash[String, Array[String]]
 
+    # The words after the first `--`, as typed, which are the last of the arguments' words too: for a program that
+    # hands them on, as `cargo run` does.
+    attr_reader separated: Array[String]
+
     # Whether the command line asks for the help of `command`.
     attr_reader help: bool
 
-    def self.new: (command: Command, flags: Hash[String, Array[String]], args: Hash[String, Array[String]], help: bool) -> instance
-                | (Command command, Hash[String, Array[String]] flags, Hash[String, Array[String]] args, bool help) -> instance
+    def self.new: (command: Command, flags: Hash[String, Array[String]], args: Hash[String, Array[String]], separated: Array[String], help: bool) -> instance
+                | (Command command, Hash[String, Array[String]] flags, Hash[String, Array[String]] args, Array[String] separated, bool help) -> instance
 
     # Holds what a command line gave.
     #
     # - `command`: `Usage::Command`, the command named.
     # - `flags`: Hash of String to Array of String, each flag's values by its name.
     # - `args`: Hash of String to Array of String, each argument's words by its name.
+    # - `separated`: Array of String, the words after the first `--`.
     # - `help`: bool, whether help was asked for.
-    def initialize: (command: Command, flags: Hash[String, Array[String]], args: Hash[String, Array[String]], help: bool) -> void
+    def initialize: (command: Command, flags: Hash[String, Array[String]], args: Hash[String, Array[String]], separated: Array[String], help: bool) -> void
 
     # Whether the command line asks for the help of `command`.
     #

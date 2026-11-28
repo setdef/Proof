@@ -3,6 +3,7 @@ module Usage
   # arguments, and whether help was asked for.
   class Values
     @flags: Hash[Flag, Array[String]]
+    @separated: Array[String]
     @help: bool
 
     # The words for the arguments, in order.
@@ -16,6 +17,9 @@ module Usage
 
     # Adds `words` to the words for the arguments.
     def argue: (Array[String] words) -> void
+
+    # Records `words`, the words after the first `--`, and adds them to the words for the arguments.
+    def separate: (Array[String] words) -> void
 
     # Whether help was asked for.
     def help?: () -> bool

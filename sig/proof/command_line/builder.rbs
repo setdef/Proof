@@ -3,13 +3,13 @@ module Proof
     # Builds the value of a command, from the class that stands for it and what its flags and arguments gave.
     class Builder
       @spec: Usage::Spec
+      @line: Usage::Parsed
       @command: Usage::Command
-      @values: Values
 
       CLASSES: Hash[Array[String], singleton(Data)]
 
-      # Takes the spec, the command, and the values its flags and arguments gave.
-      def initialize: (Usage::Spec spec, Usage::Command command, Values values) -> void
+      # Takes the spec, and the command line as the spec read it.
+      def initialize: (Usage::Spec spec, Usage::Parsed line) -> void
 
       # The command's value with the global flags.
       def parsed: () -> Parsed
@@ -18,10 +18,14 @@ module Proof
 
       def global: () -> GlobalFlags
 
-      def command: () -> command
+      def value: () -> command
 
-      def construct: (singleton(GlobalFlags) klass, Array[Usage::Flag] flags, Array[Usage::Arg] args) -> GlobalFlags
-                   | (singleton(Data) klass, Array[Usage::Flag] flags, Array[Usage::Arg] args) -> command
+      # The tasks of `proof run`, from the words of its arguments before and after the first `--`, or none for
+      # another command.
+      def tasks: () -> Hash[Symbol, Array[TaskWords]]
+
+      # The words of the arguments of `proof run` before the first `--`, and those after it.
+      def run_words: () -> [Array[String], Array[String]]
     end
   end
 end

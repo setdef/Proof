@@ -3,13 +3,17 @@ module Proof
     # What a command's members hold, by member name, read from the flags and arguments of its spec.
     class Attributes
       @slots: Array[FlagSlot | ArgSlot]
-      @values: Values
+      @line: Usage::Parsed
 
-      # Takes the flags and arguments whose values the command holds, and the values the command line gave.
-      def initialize: (Array[Usage::Flag] flags, Array[Usage::Arg] args, Values values) -> void
+      # Takes the flags and arguments whose values the command holds, and the command line as the spec read it.
+      def initialize: (Array[Usage::Flag] flags, Array[Usage::Arg] args, Usage::Parsed line) -> void
 
       # The command's members by name, each with what the command line gave.
       def to_h: () -> Hash[Symbol, CommandLine::attribute]
+
+      # The value of `klass` that holds the members, with `extras`, the members that come from no flag or argument.
+      def build: (singleton(GlobalFlags) klass, Hash[Symbol, Array[TaskWords]] extras) -> GlobalFlags
+               | (singleton(Data) klass, Hash[Symbol, Array[TaskWords]] extras) -> command
     end
   end
 end

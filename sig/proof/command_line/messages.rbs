@@ -1,24 +1,51 @@
 module Proof
   module CommandLine
-    # The text of each mistake in the flags of one command's command line.
+    # The line for each mistake in one command's command line, as `proof` prints it after `proof:`. usage-rb's
+    # parser asks for each mistake it finds, and `Proof::CommandLine::Tasks` for a mistake with `:::`.
     class Messages < Phrases
-      # The line for a flag the command doesn't have.
-      def unknown_flag: (String switch, Array[String] suggestions) -> String
+      @subcommands: Array[String]
+
+      # Takes the command the mistake was made at.
+      def initialize: (Usage::Command command) -> void
+
+      # The line for a flag the command doesn't have, typed as `word`, with the nearest of `switches`.
+      def unknown_flag: (String word, Array[String] switches) -> String
 
       # The line for a flag given no value.
       def missing_value: (String switch) -> String
 
       # The line for a flag whose value looks like another flag.
-      def flag_for_value: (String switch, String value) -> String
+      def flag_for_value: (Usage::Flag flag, String value) -> String
 
       # The line for a yes-or-no flag given a value.
       def needless_value: (String switch) -> String
 
       # The line for a value outside the flag's choices.
-      def bad_choice: (String switch, String value, Array[String] choices) -> String
+      def bad_choice: (Usage::Flag flag, String value) -> String
 
       # The line for a flag given without the flag it requires.
-      def missing_requirement: (String switch, String required) -> String
+      def missing_requirement: (Usage::Flag flag, String required) -> String
+
+      # The line for a word that names no command, with the nearest subcommands.
+      def unknown_command: (String word) -> String
+
+      # The line for a command that can't run without a subcommand.
+      def missing_subcommand: () -> String
+
+      # The line for a command given none of a group's members.
+      def missing_member: (Usage::Group group) -> String
+
+      # The line for an argument the command can't run without.
+      def missing_argument: (Usage::Arg arg) -> String
+
+      # The line for a word the command doesn't take.
+      def extra_word: (String word) -> String
+
+      # The line for `:::` with no task before it.
+      def leading_tasks_marker: () -> String
+
+      # The line for `:::` with no task name after it.
+      def dangling_tasks_marker: () -> String
     end
   end
 end

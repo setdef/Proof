@@ -13,7 +13,6 @@ libraries = %w[
   minitest
   open3
   openssl
-  optparse
   pathname
   securerandom
   socket

@@ -29,33 +29,38 @@ module Proof
       }.freeze
       private_constant(:CLASSES)
 
-      def initialize(spec, command, values)
+      def initialize(spec, line)
         @spec = spec
-        @command = command
-        @values = values
+        @line = line
+        @command = line.command
       end
 
       def parsed
-        Parsed.new(global:, command:)
+        Parsed.new(global:, command: value)
       end
 
       private def global
-        construct(GlobalFlags, @spec.commands.root.global_flags, [])
+        Attributes.new(@spec.commands.global_flags(@command.path), [], @line).build(GlobalFlags, {})
       end
 
-      private def command
-        construct(CLASSES[@command.path], @command.own_flags, @command.args)
+      private def value
+        Attributes.new(@command.own_flags, @command.args, @line).build(CLASSES[@command.path], tasks)
       end
 
-      private def construct(klass, flags, args)
-        attributes = Attributes.new(flags, args, @values).to_h.merge(@values.extras)
-        # Steep says `singleton(GlobalFlags) | singleton(Data)` "does not have method `new`", so it can't check that
-        # each class takes exactly the attributes the spec's flags and arguments give it. The commands_test file checks
-        # that for every command. An interface with `new: (**untyped)` in place of `singleton(Data)` fails with "Params
-        # are incompatible".
-        # steep:ignore:start
-        klass.new(**attributes.slice(*klass.members))
-        # steep:ignore:end
+      private def tasks
+        # @type var tasks: Hash[Symbol, Array[TaskWords]]
+        tasks = {}
+        return tasks unless @command.path == ["run"]
+
+        before, after = run_words
+        tasks.merge(tasks: Tasks.read(before, after, @command))
+      end
+
+      private def run_words
+        words = @command.args.flat_map { |arg| @line.words(arg.name) }
+        after = @line.separated
+        # Every word after the first `--` is an argument's, so the arguments' words before it are the others.
+        [words.first(words.size - after.size), after]
       end
     end
   end

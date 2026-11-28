@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Usage
-  class Parsed < Data.define(:command, :flags, :args, :help)
+  class Parsed < Data.define(:command, :flags, :args, :separated, :help)
     def help?
       help
     end
@@ -22,6 +22,6 @@ module Usage
       args.fetch(name, [])
     end
 
-    # @dynamic command, flags, args, help, initialize
+    # @dynamic command, flags, args, separated, help, initialize
   end
 end

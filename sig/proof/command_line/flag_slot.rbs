@@ -8,13 +8,13 @@ module Proof
       def initialize: (Usage::Flag item) -> void
 
       # The member's name, and what the command line gave it.
-      def entry: (Values values) -> [Symbol, CommandLine::attribute]
+      def entry: (Usage::Parsed line) -> [Symbol, CommandLine::attribute]
 
       private
 
       def member: () -> Symbol
 
-      def read: (Values values) -> CommandLine::attribute
+      def read: (Usage::Parsed line) -> CommandLine::attribute
     end
   end
 end

@@ -7,6 +7,7 @@ module Usage
     def initialize
       @flags = {}
       @arguments = []
+      @separated = []
       @help = false
     end
 
@@ -21,6 +22,11 @@ module Usage
       @arguments.concat(words)
     end
 
+    def separate(words)
+      @separated = words
+      argue(words)
+    end
+
     def help?
       @help
     end
@@ -30,7 +36,7 @@ module Usage
     end
 
     def parsed(command, args)
-      Parsed.new(command:, flags: @flags.transform_keys(&:name), args:, help: @help)
+      Parsed.new(command:, flags: @flags.transform_keys(&:name), args:, separated: @separated, help: @help)
     end
 
     # @dynamic arguments

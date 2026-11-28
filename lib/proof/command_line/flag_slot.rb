@@ -7,19 +7,19 @@ module Proof
         @item = item
       end
 
-      def entry(values)
-        [member, read(values)]
+      def entry(line)
+        [member, read(line)]
       end
 
       private def member
         @item.name.tr("-", "_").to_sym
       end
 
-      private def read(values)
+      private def read(line)
         name = @item.name
-        return values.flag?(name) unless @item.takes_value?
+        return line.given?(name) unless @item.takes_value?
 
-        @item.repeatable? ? values.list(name) : values.text(name)
+        @item.repeatable? ? line.values(name) : line.value(name)
       end
     end
   end

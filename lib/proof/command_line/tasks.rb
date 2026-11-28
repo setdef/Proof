@@ -3,12 +3,12 @@
 module Proof
   module CommandLine
     class Tasks
-      def self.read(before, after, path)
-        new(path).read(before, after)
+      def self.read(before, after, command)
+        new(command).read(before, after)
       end
 
-      def initialize(path)
-        @messages = WordMessages.new(path)
+      def initialize(command)
+        @messages = Messages.new(command)
         @tasks = []
         @naming = false
         @separated = false

@@ -34,6 +34,11 @@ class UsageParserWordsTest < Minitest::Test
     assert_equal(%w[1 -q -- 2], parse("done", "1", "--", "-q", "--", "2").words("item"))
   end
 
+  # The words after `--` are kept apart too, for a program that hands them on as they are.
+  def test_the_words_after_the_dashes_are_kept_apart
+    assert_equal([%w[-q -- 2], []], [parse("done", "1", "--", "-q", "--", "2"), parse("done", "1")].map(&:separated))
+  end
+
   # A single dash is a word, as usage reads it.
   def test_a_single_dash_is_a_word
     assert_equal(["-"], parse("add", "-").words("text"))

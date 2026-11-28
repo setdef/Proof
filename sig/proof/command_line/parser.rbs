@@ -3,11 +3,7 @@ module Proof
     # Turns the words after `proof` into the value of a command, or a request for help, or raises a Mistake.
     class Parser
       @spec: Usage::Spec
-
-      HELP: Array[String]
-
-      # The words before the first `--`, and the words after it.
-      def self.split: (Array[String] argv) -> [Array[String], Array[String]]
+      @usage: Usage::Parser
 
       # Takes the spec to parse against.
       def initialize: (Usage::Spec spec) -> void

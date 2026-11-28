@@ -2,16 +2,16 @@ module Proof
   module CommandLine
     # Splits the words of `proof run` into tasks: the words before `--`, then the words after it, with `:::` starting each next task.
     class Tasks
-      @messages: WordMessages
+      @messages: Messages
       @tasks: Array[TaskWords]
       @naming: bool
       @separated: bool
 
-      # Splits the words of `proof run` into tasks.
-      def self.read: (Array[String] before, Array[String] after, Array[String] path) -> Array[TaskWords]
+      # Splits the words of `proof run` into tasks, given the command.
+      def self.read: (Array[String] before, Array[String] after, Usage::Command command) -> Array[TaskWords]
 
-      # Takes the words that name the command.
-      def initialize: (Array[String] path) -> void
+      # Takes the command.
+      def initialize: (Usage::Command command) -> void
 
       # Splits the words before and after `--` into tasks.
       def read: (Array[String] before, Array[String] after) -> Array[TaskWords]

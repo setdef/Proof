@@ -1,0 +1,18 @@
+module Proof
+  module CommandLine
+    # The name of a flag that Proof refused, as a person needs to see it to fix the command line.
+    module FlagName
+      # What the first flag Proof lacks can be, when the word is named as typed.
+      LETTERLESS: Array[String?]
+
+      # The name of `word`, a flag the command doesn't take, among the `switches` it does. A long flag is named
+      # without its value: `--os=linux` is `--os`. Short flags written together are named by the first letter Proof
+      # lacks, so `-qx` is `-x`, and as typed when Proof has every letter before an `=`, as in `-q=1`, or when the
+      # first it lacks is a dash, as in `-q-`.
+      def self.typed: (String word, Array[String] switches) -> String
+
+      # The switches `name` types: each letter of short flags written together, or `name` itself.
+      private def self.letters: (String name) -> Array[String]
+    end
+  end
+end

@@ -10,12 +10,17 @@ module Proof
         "#{names.first(count - 1).join(', ')}#{',' if count > 2} or #{names.last}"
       end
 
-      def self.did_you_mean(suggestions)
+      def self.did_you_mean(word, names)
+        suggestions = Suggestions.for(word, names)
         suggestions.empty? ? "" : " Did you mean #{alternatives(suggestions)}?"
       end
 
       def self.member(name)
         name.start_with?("-") ? name : "a #{name}"
+      end
+
+      def self.flag(flag)
+        flag.switches.last.to_s
       end
 
       def initialize(path)

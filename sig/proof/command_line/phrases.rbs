@@ -7,11 +7,14 @@ module Proof
       # The names as one list for a sentence: `a`, `a or b`, or `a, b, or c`.
       def self.alternatives: (Array[String] names) -> String
 
-      # The words that offer the nearest names.
-      def self.did_you_mean: (Array[String] suggestions) -> String
+      # The words that offer the names nearest `word` among `names`, or none when no name is near.
+      def self.did_you_mean: (String word, Array[String] names) -> String
 
       # A member of a group as a person reads it.
       def self.member: (String name) -> String
+
+      # A flag as a person reads it: its last switch, such as `--project` for `-C --project`.
+      def self.flag: (Usage::Flag flag) -> String
 
       # Takes the words that name the command.
       def initialize: (Array[String] path) -> void

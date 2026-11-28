@@ -62,7 +62,7 @@ class CommandLineGlobalFlagsTest < Minitest::Test
     assert_equal([task("test", "-h")], command("run", "test", "--", "-h").tasks)
   end
 
-  # OptionParser reads -q=1 as -q, -=, and -1, so after the command the word typed is named. Before it, the same.
+  # usage refuses -q=1 whole, since "=" is no letter of a flag, so the word typed is named, before the command as after.
   def test_a_short_global_flag_with_an_equals_sign_before_the_command_is_named_as_typed
     words = %w[-q=1 -qd=1 -h=1 -q= -= -=1]
 

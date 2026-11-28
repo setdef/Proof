@@ -46,7 +46,7 @@ module Usage
 
     private def read(word)
       # usage reads every word after the first `--` as an argument, a later `--` too.
-      return @values.argue(@words.shift(@words.size)) if word == "--"
+      return @values.separate(@words.shift(@words.size)) if word == "--"
       return FlagWord.new(word, self).read if FlagWord.flag?(word)
       return @position = @position.descend(word) if @position.branch?
 

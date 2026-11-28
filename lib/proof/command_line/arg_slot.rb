@@ -7,8 +7,8 @@ module Proof
         @item = item
       end
 
-      def entry(values)
-        [member, read(values)]
+      def entry(line)
+        [member, read(line)]
       end
 
       private def member
@@ -16,9 +16,9 @@ module Proof
         @item.repeatable? ? :"#{name}s" : name.to_sym
       end
 
-      private def read(values)
-        name = @item.name
-        @item.repeatable? ? values.list(name) : values.first(name)
+      private def read(line)
+        words = line.words(@item.name)
+        @item.repeatable? ? words : words.first
       end
     end
   end
