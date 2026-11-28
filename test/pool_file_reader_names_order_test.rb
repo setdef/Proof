@@ -24,6 +24,17 @@ class PoolFileReaderNamesOrderTest < Minitest::Test
     )
   end
 
+  # A runner twice on one host is that host entry's mistake, so it is not a runner on two hosts: the refusal names the
+  # later host that lists the runner, at that host's runner, and not the host that lists it twice.
+  def test_a_runner_twice_on_one_host_does_not_hide_a_runner_on_two_hosts
+    assert_refused(
+      "#{DEFAULTS}host nuc {\n  runner a a\n}\nhost pc {\n  runner A\n}\n",
+      8,
+      "the runner \"A\" is also on the host \"nuc\", whose entry starts on line 4. " \
+        "A runner is one operating system on one host, so list it on one"
+    )
+  end
+
   # Names that are not text compare as KDL reads them, so text before a number with its digits is not a repeat, and
   # the number is refused as a name that is not text, at its own line.
   def test_text_before_a_name_that_is_not_text_is_not_a_repeat

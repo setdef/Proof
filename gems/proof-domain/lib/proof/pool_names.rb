@@ -14,37 +14,34 @@ module Proof
     end
 
     def self.refuse_repeated(entries, plural, singular)
-      name = earlier_repeated(entries.map(&:name))
-      return unless name
+      names = entries.map(&:name)
+      repeat = Name.first_repeat(names)
+      return unless repeat
 
-      raise(InvalidPoolFileError, format(REPEATED, plural:, name:, singular:))
+      # The pair is named by its earlier name, as that entry wrote it.
+      raise(InvalidPoolFileError, format(REPEATED, plural:, name: names[repeat.first], singular:))
     end
     private_class_method(:refuse_repeated)
 
-    def self.earlier_repeated(names)
-      # Names compare with Name.same?, without regard to case. The pair is named by its earlier name, as that entry
-      # wrote it.
-      names.each_with_index.filter_map { |name, index| same_name(name, names.take(index)) }
-        .first
-    end
-    private_class_method(:earlier_repeated)
-
-    def self.same_name(name, names)
-      names.find { |other| Name.same?(other, name) }
-    end
-    private_class_method(:same_name)
-
     def self.refuse_shared_runners(hosts)
-      runner = earlier_repeated(hosts.flat_map(&:runners))
-      refuse_shared(runner, hosts) if runner
+      runners = hosts.flat_map(&:runners)
+      repeat = Name.first_repeat(runners)
+      refuse_shared(runners, hosts, repeat) if repeat
     end
     private_class_method(:refuse_shared_runners)
 
-    def self.refuse_shared(runner, hosts)
-      first, second = hosts.filter_map { |host| host.name if same_name(runner, host.runners) }
-      raise(InvalidPoolFileError, format(SHARED, runner:, first:, second:))
+    def self.refuse_shared(runners, hosts, repeat)
+      earlier, later = repeat
+      first, second = hosts_of(hosts).values_at(earlier, later)
+      raise(InvalidPoolFileError, format(SHARED, runner: runners[earlier], first:, second:))
     end
     private_class_method(:refuse_shared)
+
+    def self.hosts_of(hosts)
+      # The host of each runner, in the order of the runners that refuse_shared_runners lists.
+      hosts.flat_map { |host| host.runners.map { host.name } }
+    end
+    private_class_method(:hosts_of)
   end
   private_constant(:PoolNames)
 end

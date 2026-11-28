@@ -109,6 +109,28 @@ class NameTest < Minitest::Test
     [[], %w[a a], ["a", 1], Set["a"], "a", nil].each { |value| refute(Proof::Name.distinct_list?(value), value.inspect) }
   end
 
+  # Glossary, "name": names compare without regard to case, so the first name that repeats an earlier one is found
+  # wherever the two are in the list, and the earlier one is the first that it repeats.
+  def test_the_first_repeat_is_the_first_name_that_an_earlier_name_repeats
+    assert_equal([1, 3], Proof::Name.first_repeat(%w[a b c B a]))
+    assert_equal([0, 2], Proof::Name.first_repeat(%w[Nuc pc nuc NUC]))
+    assert_equal([0, 1], Proof::Name.first_repeat(%w[Ünal ünal]))
+  end
+
+  # A list in which no name repeats an earlier one has no first repeat.
+  def test_a_list_of_names_that_differ_has_no_repeat
+    assert_nil(Proof::Name.first_repeat(%w[nuc pc nuc-linux]))
+    assert_nil(Proof::Name.first_repeat([]))
+  end
+
+  # A value that isn't text, which the domain refuses elsewhere, is one name only with an equal value, so `5` and `"5"`
+  # are two.
+  def test_a_value_that_is_not_text_repeats_only_an_equal_value
+    assert_nil(Proof::Name.first_repeat(["5", 5, :nuc, "nuc"]))
+    assert_equal([1, 2], Proof::Name.first_repeat(["5", 5, 5]))
+    assert_equal([0, 1], Proof::Name.first_repeat([nil, nil]))
+  end
+
   # Every error the domain raises is a Proof::Error.
   def test_the_error_is_a_proof_error
     assert_operator(Proof::InvalidNameError, :<, Proof::Error)

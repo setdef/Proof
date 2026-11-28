@@ -18,10 +18,6 @@ module Proof
       named(name).flat_map { |child| child.arguments.product([child]) }
     end
 
-    def arguments_named(name)
-      named(name).flat_map(&:arguments)
-    end
-
     def self.first_named(name, nodes)
       nodes.find { |node| node.name == name }
     end

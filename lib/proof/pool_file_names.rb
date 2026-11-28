@@ -12,16 +12,6 @@ module Proof
     KINDS = kinds.freeze
     private_constant(:KINDS)
 
-    def self.same?(one, other)
-      # Text compares by the domain's rule, Name.same?. A name that isn't text, which the domain refuses later, compares
-      # as KDL read it.
-      (one.is_a?(String) && other.is_a?(String)) ? Name.same?(one, other) : one == other
-    end
-
-    def self.among?(names, name)
-      names.any? { |other| same?(other, name) }
-    end
-
     def initialize(refusal:)
       @refusal = refusal
     end

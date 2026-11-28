@@ -16,8 +16,7 @@ module Proof
   # name. It gives a value that isn't text as KDL read it, which the domain
   # refuses with its own message.
   #
-  # Use it from `Proof::PoolFileHost` and `Proof::PoolFileRepository`, and
-  # compare names with `same?`.
+  # Use it from `Proof::PoolFileHost` and `Proof::PoolFileRepository`.
   class PoolFileNames
     # For each kind of name, whose name it is for the message, and a name that
     # works.
@@ -26,31 +25,6 @@ module Proof
     # A kind of name a node's children give: `:runner`, `:"credentials-file"`,
     # `:branch`, or `:task`, the keys of `KINDS`.
     type kind = :runner | :"credentials-file" | :branch | :task
-
-    # Whether two names a pool file gives, of hosts, runners, or repositories,
-    # are one name. Two texts are one when `Proof::Name.same?` finds them
-    # so, which is when they differ only in case, so `"nuc"` and `"NUC"` are
-    # one name. A value that isn't text, which the domain refuses later, is one
-    # name only with an equal value, so `5` and `"5"` are two.
-    #
-    # - `one`, `other`: each a value as KDL read it.
-    #
-    # ```ruby
-    # Proof::PoolFileNames.same?("nuc", "NUC") # => true
-    # Proof::PoolFileNames.same?(5, "5") # => false
-    # ```
-    def self.same?: (kdl_value one, kdl_value other) -> bool
-
-    # Whether `name` is one of `names`, as `same?` compares them.
-    #
-    # - `names`: Array of the values KDL read, such as a host's runners.
-    # - `name`: a value as KDL read it.
-    #
-    # ```ruby
-    # Proof::PoolFileNames.among?(["nuc-linux", "nuc-wsl"], "NUC-WSL") # => true
-    # Proof::PoolFileNames.among?(["nuc-linux"], "pc-wsl") # => false
-    # ```
-    def self.among?: (Array[kdl_value] names, kdl_value name) -> bool
 
     # Prepares to read with `refusal`.
     #
