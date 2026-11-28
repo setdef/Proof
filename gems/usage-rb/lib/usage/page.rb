@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Usage
-  # steep:ignore:start
   class Page
-    # steep:ignore:end
     WIDTH = 100
     private_constant(:WIDTH)
 
@@ -43,5 +41,7 @@ module Usage
     private def words
       [spec.bin, *command.path]
     end
+
+    # @dynamic spec, command, about, description, examples, commands_title, ending
   end
 end
