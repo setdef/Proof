@@ -127,8 +127,7 @@ module Usage
     # A flag with no value after it, at the end of the line or before `--`. `switch` is as typed.
     def missing_value: (String switch) -> String
 
-    # A flag whose value, `word`, looks like a flag: a word that starts with `-`, or the letter after the flag's own
-    # among letters written together, such as `-d` in `-Cdir`.
+    # A flag whose value, `word`, looks like a flag: a word that starts with `-`.
     def flag_for_value: (Flag flag, String word) -> String
 
     # A flag that takes no value, given one after `=`. `switch` is as typed before the `=`.

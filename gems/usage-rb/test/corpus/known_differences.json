@@ -1,17 +1,16 @@
 {
   "reasons": {
-    "unknown-flags-default": "The corpus's specs leave `unknown_flags` unset, and usage's default is `value`, which binds a word that looks like a flag and names none to an argument. The gem reads a missing key as `error` and refuses the word (issue #158).",
-    "short-attached-value": "The gem reads the letter after a short flag that takes a value as a flag of its own, and refuses `-j8`, `-j=8`, and the like. usage's program binds the value as the corpus says, and reads the letter as a flag only when it names one, as in issue #124."
+    "unknown-flags-default": "The corpus's specs leave `unknown_flags` unset, and usage's default is `value`, which binds a word that looks like a flag and names none to an argument, and the rest of a short flag's word to the flag when it takes a value, as in `-j8`. The gem reads a missing key as `error` and refuses the word, as usage does when the spec says `error` (issue #158)."
   },
   "differences": {
     "long-unknown": "unknown-flags-default",
     "long-many-dashes-names-nothing": "unknown-flags-default",
-    "short-value-attached": "short-attached-value",
-    "short-value-attached-path": "short-attached-value",
-    "short-value-equals": "short-attached-value",
-    "short-value-equals-leading-equals": "short-attached-value",
-    "short-value-equals-empty": "short-attached-value",
-    "short-bundle-then-value": "short-attached-value",
+    "short-value-attached": "unknown-flags-default",
+    "short-value-attached-path": "unknown-flags-default",
+    "short-value-equals": "unknown-flags-default",
+    "short-value-equals-leading-equals": "unknown-flags-default",
+    "short-value-equals-empty": "unknown-flags-default",
+    "short-bundle-then-value": "unknown-flags-default",
     "short-bundle-unknown-letter-applies-nothing": "unknown-flags-default",
     "short-boolean-with-attached-value-is-not-a-bundle": "unknown-flags-default",
     "short-unknown": "unknown-flags-default"

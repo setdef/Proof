@@ -47,9 +47,28 @@ class UsageParserFlagMistakesTest < Minitest::Test
     assert_equal("--file of command add needs a value, and -q looks like a flag", mistake("add", "-f", "-q"))
   end
 
-  # usage reads `-fq` as `-f -q`, so a letter after one that takes a value is no value either.
-  def test_a_letter_after_one_that_takes_a_value_is_no_value
-    assert_equal("--file of command add needs a value, and -d looks like a flag", mistake("add", "-fdir"))
+  # usage reads each letter after one that takes a value as a flag, so `-fq` is `-f -q`, which leaves `-f` no value.
+  def test_letters_after_one_that_takes_a_value_leave_it_without_one
+    assert_equal("-f of command add needs a value", mistake("add", "-fq"))
+  end
+
+  # A spec with `unknown_flags "error"` has usage refuse the word at the first letter that names no flag, so the rest
+  # of it is no value.
+  def test_a_letter_after_one_that_takes_a_value_must_name_a_flag
+    assert_equal(
+      ["command add has no flag -fdir", "command add has no flag -f8", "command add has no flag -qf8"],
+      [mistake("add", "-fdir"), mistake("add", "-f8"), mistake("add", "-qf8")]
+    )
+  end
+
+  # usage reads `=` after a letter as a letter that names no flag, as it reads any other.
+  def test_an_equals_sign_after_a_letter_that_takes_a_value_is_refused
+    assert_equal("command add has no flag -f=8", mistake("add", "-f=8"))
+  end
+
+  # usage asks the letter that takes a value for it before it reads `-h` after it.
+  def test_help_after_a_letter_that_takes_a_value_leaves_it_without_one
+    assert_equal("-f of command add needs a value", mistake("add", "-fh"))
   end
 
   # A strict choice takes only its values, whole.

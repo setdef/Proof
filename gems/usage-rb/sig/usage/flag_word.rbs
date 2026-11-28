@@ -22,11 +22,8 @@ module Usage
     # The one switch of a long flag, with what follows `=`.
     def long: () -> Switch
 
-    # The switches of `letters`, up to one that takes a value.
+    # The switch of each of `letters`, or a mistake at the first that names no flag.
     def short: (Array[String] letters) -> Array[Switch]
-
-    # The switch of the letter typed `typed`, with the letter after it when its flag takes a value.
-    def letter_switch: (String typed, String? following) -> Switch
 
     # The flag `typed` names, or a mistake.
     def known: (String typed) -> Flag

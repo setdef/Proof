@@ -1,8 +1,8 @@
 module Usage
-  # One switch of a flag word, as typed, with what its word gives after it: the value after `=`, or the letter that
-  # follows a letter that takes a value.
+  # One switch of a flag word, as typed, with what its word gives it: the value after `=` of a long flag, or the empty
+  # value of a letter that takes one before another that does.
   class Switch
-    @attached: (AfterEquals | LetterAfter)?
+    @attached: (AfterEquals | EmptyValue)?
 
     # The flag the switch names.
     attr_reader flag: Flag
@@ -13,14 +13,14 @@ module Usage
     # The switch of the long flag `flag`, typed `typed`, with the `value` that follows `=` in its word, if any.
     def self.long: (Flag flag, String typed, String? value) -> Switch
 
-    # The switch of a letter, with the letter `following` it, which is no value when the flag takes one.
-    def self.letter: (Flag flag, String typed, String? following) -> Switch
-
     # Takes the flag, the switch as typed, and what its word gives after it.
-    def initialize: (Flag flag, String typed, ?(AfterEquals | LetterAfter)? attached) -> void
+    def initialize: (Flag flag, String typed, ?(AfterEquals | EmptyValue)? attached) -> void
 
     # Whether the switch's flag takes a value.
     def takes_value?: () -> bool
+
+    # The same switch, given an empty value in place of the next word.
+    def emptied: () -> Switch
 
     # Gives the flag to `line`, with its value from its word or the next word, or by the line's rules gives or refuses
     # what `=` attached to a flag that takes none.

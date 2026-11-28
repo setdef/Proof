@@ -1,0 +1,12 @@
+module Usage
+  # The switches of the letters written together in one word, such as `-qfd`.
+  class Bundle
+    @switches: Array[Switch]
+
+    # Takes the switches of the letters, in the order typed.
+    def initialize: (Array[Switch] switches) -> void
+
+    # The switches to read: each letter that takes a value, but the last, has an empty value.
+    def switches: () -> Array[Switch]
+  end
+end

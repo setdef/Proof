@@ -44,9 +44,9 @@ class UsageParserValuesTest < Minitest::Test
     )
   end
 
-  # A letter after one that takes a value is a flag of its own, so `-f5` is not `-f` with the number `-5`.
+  # A letter after one that takes a value is a flag of its own or a mistake, so `-f5` is not `-f` with the number `-5`.
   def test_a_letter_after_one_that_takes_a_value_is_no_number
-    assert_equal("--file of command add needs a value, and -5 looks like a flag", mistake("add", "-f5"))
+    assert_equal("command add has no flag -f5", mistake("add", "-f5"))
   end
 
   # A word that looks like a flag stays no value when it follows the flag.

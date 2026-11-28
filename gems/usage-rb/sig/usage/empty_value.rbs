@@ -1,0 +1,16 @@
+module Usage
+  # The empty value that usage gives a letter that takes a value when a later letter written with it takes the value.
+  class EmptyValue < Data
+    # The text, which is empty.
+    attr_reader text: String
+
+    def self.new: (text: String) -> instance
+                | (String text) -> instance
+
+    # Takes the text.
+    def initialize: (text: String) -> void
+
+    # Never: an empty value looks like no flag.
+    def refused_by?: (_ValueRules _rules) -> bool
+  end
+end

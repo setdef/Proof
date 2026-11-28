@@ -31,14 +31,10 @@ module Usage
     end
 
     private def short(letters)
-      letter, following = letters
-      switch = letter_switch("-#{letter}", following)
-      (following && !switch.takes_value?) ? [switch, *short(letters.drop(1))] : [switch]
-    end
-
-    private def letter_switch(typed, following)
-      flag = known(typed)
-      Switch.letter(flag, typed, following)
+      # With `unknown_flags "error"`, usage reads each letter after one that takes a value as a flag and refuses one
+      # that names none, so the rest of a word is no value, as in `-j8`. It gives the next word to the last letter that
+      # takes a value, and an empty value to those before it.
+      Bundle.new(letters.map { |letter| Switch.new(known("-#{letter}"), "-#{letter}") }).switches
     end
 
     private def known(typed)

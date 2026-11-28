@@ -18,7 +18,8 @@ module Usage
     end
 
     def letters?(word)
-      # usage checks the letters before it reads any, up to one that takes a value: the letters after it are no flags.
+      # usage checks the letters before it reads any, up to one that takes a value: it reads the letters after it one
+      # by one.
       word.delete_prefix("-").each_char.all? do |letter|
         switch = "-#{letter}"
         break true if @valued.include?(switch)

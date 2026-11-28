@@ -111,7 +111,17 @@ module CommandLineContract
 
       other = flag.choices.values[1] || "w"
       [[*base, switch, value], before, ahead, [*base, switch, value, switch, other], [*base, "#{switch}=#{value}"]] +
-        [[*base, switch], [*base, switch, "-x"], [*base, switch, "bogus"]]
+        [[*base, switch], [*base, switch, "-x"], [*base, switch, "bogus"]] + attached_cases(base, switch, value)
+    end
+
+    # With `unknown_flags "error"`, usage reads each letter after a short flag that takes a value as a flag, and refuses
+    # a letter that names none, so `-Cdir` is refused at `i`, `-C/tmp/x` at `/`, and `-Cd path` is `-C -d path`.
+    private def attached_cases(base, switch, value)
+      return [] unless switch.match?(/\A-[^-]\z/)
+
+      refused = [value, "=#{value}", "==#{value}", "=", "/tmp/x", "d#{value}", "q#{value}", "h", "dh"]
+      refused.map { |rest| [*base, "#{switch}#{rest}"] } + [[*base, "-d#{switch.delete_prefix('-')}#{value}"]] +
+        %w[d dd dq qd].map { |letters| [*base, "#{switch}#{letters}", value] }
     end
 
     private def globals(command, base)

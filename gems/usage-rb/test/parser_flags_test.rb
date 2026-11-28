@@ -34,6 +34,27 @@ class UsageParserFlagsTest < Minitest::Test
     assert_equal("a.txt", parse("add", "-f", "a.txt").value("file"))
   end
 
+  # usage reads each letter after one that takes a value as a flag, and the next word is the value of the last letter
+  # that takes one: `-fd notes.txt` is `-f -d notes.txt`.
+  def test_letters_after_one_that_takes_a_value_are_flags_and_leave_it_the_next_word
+    parsed = parse("add", "-fd", "notes.txt")
+
+    assert_equal(["notes.txt", true], [parsed.value("file"), parsed.given?("debug")])
+  end
+
+  # usage gives an empty value to a letter that takes one when a later letter takes the value.
+  def test_the_last_of_two_letters_that_take_a_value_gets_it_and_the_first_gets_an_empty_one
+    pair = read(<<~JSON)
+      {"bin": "pair", "cmd": {"name": "pair", "full_cmd": [], "flags": [
+        {"name": "first", "short": ["a"], "arg": {"name": "x"}},
+        {"name": "second", "short": ["b"], "arg": {"name": "y"}}
+      ]}}
+    JSON
+    parsed = Usage::Parser.new(pair).parse(%w[-ab 8])
+
+    assert_equal(["", "8"], [parsed.value("first"), parsed.value("second")])
+  end
+
   # A flag that repeats keeps every value in order, and one that doesn't keeps the last.
   def test_a_repeated_flag_keeps_every_value_and_another_keeps_the_last
     assert_equal(%w[home work], parse("add", "x", "--tag", "home", "--tag=work").values("tag"))

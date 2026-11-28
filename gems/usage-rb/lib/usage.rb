@@ -4,6 +4,7 @@ require_relative("usage/after_equals")
 require_relative("usage/arg")
 require_relative("usage/arg_format")
 require_relative("usage/binding")
+require_relative("usage/bundle")
 require_relative("usage/choices")
 require_relative("usage/command")
 require_relative("usage/command_format")
@@ -11,6 +12,7 @@ require_relative("usage/command_line_error")
 require_relative("usage/command_needs")
 require_relative("usage/command_page")
 require_relative("usage/command_tree")
+require_relative("usage/empty_value")
 require_relative("usage/example")
 require_relative("usage/example_format")
 require_relative("usage/exit_code")
@@ -24,7 +26,6 @@ require_relative("usage/group_format")
 require_relative("usage/help")
 require_relative("usage/keys")
 require_relative("usage/layout")
-require_relative("usage/letter_after")
 require_relative("usage/line")
 require_relative("usage/lineage")
 require_relative("usage/lists")
@@ -54,9 +55,11 @@ module Usage
     :AfterEquals,
     :ArgFormat,
     :Binding,
+    :Bundle,
     :CommandFormat,
     :CommandNeeds,
     :CommandPage,
+    :EmptyValue,
     :ExampleFormat,
     :ExitCodeFormat,
     :FlagFormat,
@@ -65,7 +68,6 @@ module Usage
     :GroupFormat,
     :Keys,
     :Layout,
-    :LetterAfter,
     :Line,
     :Lists,
     :NamedFormat,

@@ -25,12 +25,17 @@ class CommandLineFlagMistakesTest < Minitest::Test
     )
   end
 
-  # usage refuses `-Cdir`, which it reads as `-C -d -i -r`.
+  # proof.usage.kdl: usage refuses `-Cdir`, which it reads as `-C -d` and then a letter that names no flag.
   def test_a_short_flag_with_its_value_attached_is_refused
     assert_equal(
-      "proof: --project needs a value, and -d looks like a flag. To see its usage, run: proof run --help",
+      "proof: -i isn't a flag of proof run. To list the flags, run: proof run --help",
       mistake("run", "test", "-Cdir")
     )
+  end
+
+  # usage reads `-Cd` as `-C -d`, which leaves `-C` the next word, and none follows.
+  def test_a_short_flag_followed_by_flags_at_the_end_has_no_value
+    assert_equal("proof: -C needs a value. To see its usage, run: proof run --help", mistake("run", "test", "-Cd"))
   end
 
   # proof.usage.kdl: `flag "--empty"` is yes or no.

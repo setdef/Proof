@@ -8,11 +8,6 @@ module Usage
       new(flag, typed, (AfterEquals.new(value) if value))
     end
 
-    def self.letter(flag, typed, following)
-      # usage reads the letter after one that takes a value as a flag of its own, so it is no value of that flag.
-      new(flag, typed, (LetterAfter.new("-#{following}") if following && flag.takes_value?))
-    end
-
     def initialize(flag, typed, attached = nil)
       @flag = flag
       @typed = typed
@@ -21,6 +16,10 @@ module Usage
 
     def takes_value?
       flag.takes_value?
+    end
+
+    def emptied
+      Switch.new(flag, typed, EmptyValue.new(""))
     end
 
     def read(line)

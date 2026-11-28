@@ -43,6 +43,12 @@ class CommandLineRunFlagsTest < Minitest::Test
     )
   end
 
+  # proof.usage.kdl: usage reads each letter after `-C` as a flag, so `-Cd folder` is `-C -d folder`.
+  def test_a_short_flag_that_takes_a_value_leaves_it_the_next_word_after_the_flags_written_with_it
+    assert_equal(run_command([task("test")], project: "folder"), command("run", "test", "-Cd", "folder"))
+    assert(global("run", "test", "-Cd", "folder").debug)
+  end
+
   # proof.usage.kdl: `--empty`, `--download`, `--detach`, and `--json` are yes-or-no flags.
   def test_the_yes_or_no_flags_are_true_when_given
     assert_equal(
