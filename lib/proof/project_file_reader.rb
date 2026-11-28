@@ -30,12 +30,16 @@ module Proof
     end
 
     def read_from(project, id)
-      text = project.file_at(id, @file.path)
+      read_at(project, id, @file.path)
+    end
+
+    private def read_at(project, id, path)
+      text = project.file_at(id, path)
       read(text) if text
     rescue SymbolicLinkError
       # The commit's file at the path is the project file, so a link there is that file's mistake, which a person
       # fixes in the file.
-      raise(@file.error.new(path: @file.path, line: nil, reason: LINK_REASON))
+      raise(@file.error.new(path:, line: nil, reason: LINK_REASON))
     end
 
     private def defaults_of(node)

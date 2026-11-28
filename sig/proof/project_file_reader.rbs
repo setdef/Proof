@@ -117,6 +117,8 @@ module Proof
 
     private
 
+    def read_at: (GitProject project, String id, String path) -> ProjectFile?
+
     def defaults_of: (KdlNode? node) -> TaskSettings
 
     def tasks_of: (Array[KdlNode] nodes) -> Array[TaskEntry]
