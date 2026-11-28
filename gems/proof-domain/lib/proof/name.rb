@@ -12,6 +12,20 @@ module Proof
       value.is_a?(String) && value.valid_encoding? && value.encoding.ascii_compatible? && !BLANK.match?(value)
     end
 
+    def self.list?(value)
+      value.is_a?(Array) && !value.empty? && value.all? { |name| valid?(name) } && value.uniq.size == value.size
+    end
+
+    def self.distinct?(value)
+      # Two names that differ only in case are one name, as same? finds. list? has found an Array of names, which Steep
+      # can't know. Steep also reads each member of a pair from combination as possibly nil, and a pair has two names.
+      return false unless list?(value)
+
+      names = value #: Array[String]
+      pairs = names.combination(2) #: Enumerator[[String, String], Array[String]]
+      pairs.none? { |one, other| same?(one, other) }
+    end
+
     def self.message(what, example)
       "#{what} is #{TEXT}, such as #{example}, not %p"
     end

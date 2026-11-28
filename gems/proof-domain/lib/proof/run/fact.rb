@@ -10,9 +10,9 @@ module Proof
       end
 
       def self.name_of(value, message)
-        # named? has found a String, which Steep can't know.
+        # valid? has found a String, which Steep can't know.
         text = value #: String
-        frozen = -text if MemberCheck.named?(value)
+        frozen = -text if Name.valid?(value)
         return frozen if frozen
 
         raise(InvalidFactError, format(message, value))

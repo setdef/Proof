@@ -10,7 +10,7 @@ module Proof
   class Host < Data.define(:name, :share, :person_active, :runners)
     # @type var rules: Hash[Symbol, [String, MemberCheck::rule]]
     rules = {
-      name: [Name.message("a host's name", "nuc"), MemberCheck.method(:named?)],
+      name: [Name.message("a host's name", "nuc"), Name.method(:valid?)],
       share: ["a host's share is resources, not %p", Resources.method(:===)],
       person_active: ["whether a person is active is true or false, not %p", MemberCheck.method(:flag?)],
       runners: ["a host's runners are a list of runners with different names, not %p", Runner.method(:listed?)],

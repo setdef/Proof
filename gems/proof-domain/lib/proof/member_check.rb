@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative("name")
-
 module Proof
   module MemberCheck
     def self.problem(rules, members)
@@ -10,25 +8,6 @@ module Proof
         return format(message, value) unless rule.call(value)
       end
       nil
-    end
-
-    def self.named?(value)
-      Name.valid?(value)
-    end
-
-    def self.names?(value)
-      value.is_a?(Array) && !value.empty? && value.all? { |name| named?(name) } && value.uniq.size == value.size
-    end
-
-    def self.distinct_names?(value)
-      # Two names that differ only in case are one name, as Name.same? finds. names? has found an Array of names,
-      # which Steep can't know. Steep also reads each member of a pair from combination as possibly nil, and a pair has
-      # two names.
-      return false unless names?(value)
-
-      names = value #: Array[String]
-      pairs = names.combination(2) #: Enumerator[[String, String], Array[String]]
-      pairs.none? { |one, other| Name.same?(one, other) }
     end
 
     def self.whole?(value, minimum)

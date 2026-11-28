@@ -22,17 +22,6 @@ module Proof
     # - `members`: a `Hash` from member to its value.
     def self.problem: (Hash[Symbol, [String, rule]] rules, Hash[Symbol, Object?] members) -> String?
 
-    # Whether `value` is a name, as `Proof::Name` says.
-    def self.named?: (Object? value) -> bool
-
-    # Whether `value` is an `Array` of one or more names, as `Proof::Name`
-    # says, with no name twice.
-    def self.names?: (Object? value) -> bool
-
-    # Whether `value` is an `Array` of one or more names, as `Proof::Name`
-    # says, with no two that `Proof::Name.same?` finds to be one name.
-    def self.distinct_names?: (Object? value) -> bool
-
     # Whether `value` is an Integer of at least `minimum`.
     #
     # - `value`: the value to check.

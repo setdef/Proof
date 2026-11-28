@@ -7,7 +7,7 @@ module Proof
   class Runner < Data.define(:name, :os, :labels, :capacity, :connected)
     # @type var rules: Hash[Symbol, [String, MemberCheck::rule]]
     rules = {
-      name: [Name.message("a runner's name", "nuc-linux"), MemberCheck.method(:named?)],
+      name: [Name.message("a runner's name", "nuc-linux"), Name.method(:valid?)],
       os: ["a runner's OS is a Proof::OS, not %p", OS.method(:===)],
       labels: ["a runner's labels are a set of labels, not %p", LabelSet.method(:===)],
       capacity: ["a runner's capacity is resources, not %p", Resources.method(:===)],

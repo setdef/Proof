@@ -6,12 +6,12 @@ require_relative("name")
 
 module Proof
   class RepositoryEntry < Data.define(:name, :url, :credentials_file, :branches, :tasks, :poll)
-    PATH_OR_NOTHING = -> (value) { value.nil? || MemberCheck.named?(value) }
-    NAMES = MemberCheck.method(:names?)
+    PATH_OR_NOTHING = -> (value) { value.nil? || Name.valid?(value) }
+    NAMES = Name.method(:list?)
     # @type var rules: Hash[Symbol, [String, MemberCheck::rule]]
     rules = {
-      name: [Name.message("a repository's name", "lota"), MemberCheck.method(:named?)],
-      url: [Name.message("a repository's url", "https://github.com/setdef/Lota.git"), MemberCheck.method(:named?)],
+      name: [Name.message("a repository's name", "lota"), Name.method(:valid?)],
+      url: [Name.message("a repository's url", "https://github.com/setdef/Lota.git"), Name.method(:valid?)],
       credentials_file: [
         "a repository's credentials file is #{Name::TEXT}, such as ~/.config/proof/credentials/lota, or nothing, " \
           "not %p",

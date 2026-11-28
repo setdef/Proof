@@ -10,11 +10,11 @@ module Proof
   class HostEntry < Data.define(:name, :runners, :settings)
     # @type var rules: Hash[Symbol, [String, MemberCheck::rule]]
     rules = {
-      name: [Name.message("a host's name", "nuc"), MemberCheck.method(:named?)],
+      name: [Name.message("a host's name", "nuc"), Name.method(:valid?)],
       runners: [
         "a host entry's runners are one or more runner names that differ without regard to case, " \
           "each #{Name::TEXT}, such as [\"nuc-linux\"], not %p",
-        MemberCheck.method(:distinct_names?),
+        Name.method(:distinct?),
       ],
       settings: ["a host entry's settings are host settings, not %p", HostSettings.method(:===)],
     }
