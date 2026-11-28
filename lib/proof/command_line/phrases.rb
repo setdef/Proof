@@ -2,7 +2,7 @@
 
 module Proof
   module CommandLine
-    class Phrases
+    module Phrases
       def self.alternatives(names)
         count = names.size
         return names.first.to_s if count == 1
@@ -21,10 +21,6 @@ module Proof
 
       def self.flag(flag)
         flag.switches.last.to_s
-      end
-
-      def initialize(path)
-        @path = path
       end
 
       def command

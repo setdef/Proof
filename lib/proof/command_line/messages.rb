@@ -1,12 +1,16 @@
 # frozen_string_literal: true
 
+require "usage"
 require_relative("phrases")
 
 module Proof
   module CommandLine
-    class Messages < Phrases
+    class Messages < Usage::Messages
+      include Phrases
+
       def initialize(command)
-        super(command.path)
+        super
+        @path = command.path
         @subcommands = command.subcommand_names
       end
 

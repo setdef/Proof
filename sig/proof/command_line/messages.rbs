@@ -2,7 +2,9 @@ module Proof
   module CommandLine
     # The line for each mistake in one command's command line, as `proof` prints it after `proof:`. usage-rb's
     # parser asks for each mistake it finds, and `Proof::CommandLine::Tasks` for a mistake with `:::`.
-    class Messages < Phrases
+    class Messages < Usage::Messages
+      include Phrases
+
       @subcommands: Array[String]
 
       # Takes the command the mistake was made at.

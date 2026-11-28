@@ -1,7 +1,7 @@
 module Proof
   module CommandLine
     # The words the lines for mistakes are made of: each ends with the command to run next.
-    class Phrases
+    module Phrases
       @path: Array[String]
 
       # The names as one list for a sentence: `a`, `a or b`, or `a, b, or c`.
@@ -15,9 +15,6 @@ module Proof
 
       # A flag as a person reads it: its last switch, such as `--project` for `-C --project`.
       def self.flag: (Usage::Flag flag) -> String
-
-      # Takes the words that name the command.
-      def initialize: (Array[String] path) -> void
 
       # The command as typed, such as `proof run`.
       def command: () -> String
