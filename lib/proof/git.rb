@@ -4,6 +4,10 @@ require "open3"
 
 module Proof
   class Git
+    def self.cleared_environment
+      ENV.keys.grep(/\AGIT_/).to_h { |name| [name, nil] }
+    end
+
     def initialize(folder:, program: "git")
       @folder = folder
       @program = program
@@ -17,8 +21,8 @@ module Proof
     end
 
     private def capture(arguments, env, input)
-      cleared = ENV.keys.grep(/\AGIT_/).to_h { |name| [name, nil] }
-      Open3.capture3(cleared.merge(env.transform_keys(&:to_s)), @program, *arguments, chdir: @folder, stdin_data: input)
+      environment = Git.cleared_environment.merge(env.transform_keys(&:to_s))
+      Open3.capture3(environment, @program, *arguments, chdir: @folder, stdin_data: input)
     rescue Errno::ENOENT
       # A missing folder raises the same error as a missing program, so only a folder that exists means no git.
       raise unless File.directory?(@folder)

@@ -26,6 +26,11 @@ module Proof
   # Proof::Git.new(folder: Dir.pwd).run("--version").start_with?("git version") # => true
   # ```
   class Git
+    # The variables to hand to `Open3` or `Process.spawn` so that the program it starts inherits no `GIT_*` variable:
+    # each `GIT_*` variable of this process, named by a String, with `nil` as its value. Merge the variables a run
+    # needs into it, as `Proof::Git#run` does. Use it wherever a test or a task starts git itself.
+    def self.cleared_environment: () -> Hash[String, nil]
+
     # Prepares to run git in `folder`.
     #
     # - `folder`: String, the working folder of each run.
