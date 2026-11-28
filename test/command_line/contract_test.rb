@@ -44,9 +44,9 @@ class CommandLineContractTest < Minitest::Test
     outcome.command == ["run"] && outcome.flags.key?("script") && outcome.args.key?("task")
   end
 
-  # Proof reads two rules stricter than usage's, through usage-rb's `strict_values:`, so these lines are accepted by
-  # usage and refused by the parser: a value given with `=` to a flag that takes none, a value that looks like a flag
-  # after `=`, and a negative number as the value that a flag requires.
+  # Proof reads two rules stricter than usage's, through usage-rb's `Usage::StrictValueRules`, so these lines are
+  # accepted by usage and refused by the parser: a value given with `=` to a flag that takes none, a value that looks
+  # like a flag after `=`, and a negative number as the value that a flag requires.
   def test_the_parser_refuses_what_usage_accepts_by_the_two_stricter_rules
     lines = [%w[run test --empty=1], %w[run test --label=--x], %w[run test --project=-5], %w[run test --project -5]]
     usage = CommandLineContract::Usage.new(SPEC)

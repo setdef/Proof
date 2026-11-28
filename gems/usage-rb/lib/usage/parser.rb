@@ -5,13 +5,10 @@ require_relative("usage_value_rules")
 
 module Usage
   class Parser
-    RULES = { true => StrictValueRules, false => UsageValueRules }.freeze
-    private_constant(:RULES)
-
-    def initialize(spec, messages: Messages, strict_values: false)
+    def initialize(spec, messages: Messages, value_rules: UsageValueRules)
       @commands = spec.commands
       @messages = messages
-      @rules = RULES[strict_values]
+      @rules = value_rules
     end
 
     def parse(words)

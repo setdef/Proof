@@ -5,7 +5,7 @@ module Proof
     class Parser
       def initialize(spec)
         @spec = spec
-        @usage = Usage::Parser.new(spec, messages: Messages, strict_values: true)
+        @usage = Usage::Parser.new(spec, messages: Messages, value_rules: Usage::StrictValueRules)
       end
 
       def parse(argv)

@@ -7,7 +7,7 @@ module Usage
   #
   # This class reads the words of a command line by usage's rules: the command they name, each flag with its value,
   # and the words of each argument. It refuses a mistake with `Usage::CommandLineError`, worded by the messages it is
-  # given, and stops at `-h` or `--help`. It reads by usage 7.4.1's rules unless it is given `strict_values: true`.
+  # given, and stops at `-h` or `--help`. It reads by usage 7.4.1's rules unless it is given `value_rules: Usage::StrictValueRules`.
   #
   # Use it to read a program's command line by the spec its help and its reference come from.
   #
@@ -38,8 +38,6 @@ module Usage
   # end
   # ```
   class Parser
-    RULES: Hash[bool, _ValueRules]
-
     @commands: CommandTree
     @messages: _MessagesClass
     @rules: _ValueRules
@@ -49,22 +47,23 @@ module Usage
     # - `spec`: `Usage::Spec`, the program's spec.
     # - `messages`: a class whose `new` takes the `Usage::Command` a mistake was made at and gives the
     #   `Usage::_Messages` that word it, `Usage::Messages` unless a program words mistakes its own way.
-    # - `strict_values`: `false` unless given. Whether to read by two rules stricter than usage's, so that nothing
-    #   typed is dropped and every value meets one rule. A value given with `=` to a flag that takes none, such as
-    #   `--json=1`, is then a mistake, where usage drops it. A value that looks like a flag is then a mistake after
-    #   `=` too, and so is a negative number, after `=` or after the flag, where usage takes `--file=-x`, and takes
-    #   `-5` as the value that a flag requires. Without it, a program reads what usage 7.4.1 reads.
+    # - `value_rules`: `Usage::UsageValueRules` unless given, which reads a value as usage 7.4.1 does. Give
+    #   `Usage::StrictValueRules` to read by two rules stricter than usage's, so that nothing typed is dropped and every
+    #   value meets one rule. A value given with `=` to a flag that takes none, such as `--json=1`, is then a mistake,
+    #   where usage drops it. A value that looks like a flag is then a mistake after `=` too, and so is a negative
+    #   number, after `=` or after the flag, where usage takes `--file=-x`, and takes `-5` as the value that a flag
+    #   requires. Any object that answers `Usage::_ValueRules` may be given.
     #
     # ```ruby
     # words = ["add", "x", "--tag=-q"]
     # Usage::Parser.new(spec).parse(words).value("tag") # => "-q"
     # begin
-    #   Usage::Parser.new(spec, strict_values: true).parse(words)
+    #   Usage::Parser.new(spec, value_rules: Usage::StrictValueRules).parse(words)
     # rescue Usage::CommandLineError => e
     #   e.message # => "--tag of command add needs a value, and -q looks like a flag"
     # end
     # ```
-    def initialize: (Spec spec, ?messages: _MessagesClass, ?strict_values: bool) -> void
+    def initialize: (Spec spec, ?messages: _MessagesClass, ?value_rules: _ValueRules) -> void
 
     # What `words`, the words after the program's name, give: the command, its flags, and its arguments, or that
     # they ask for help. Raises `Usage::CommandLineError` for a mistake, the first one in the words.

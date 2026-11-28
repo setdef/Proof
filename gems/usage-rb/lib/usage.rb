@@ -77,10 +77,8 @@ module Usage
     :Reader,
     :Scope,
     :SpecFormat,
-    :StrictValueRules,
     :Switch,
     :UsageLine,
-    :UsageValueRules,
     :Values
   )
 end

@@ -1,6 +1,23 @@
 module Usage
   # The stricter rules: a word that looks like a flag is no value, a negative number included, whether it follows the
   # flag or `=`, and a value given with `=` to a flag that takes none is a mistake.
+  #
+  # Give it to `Usage::Parser` as `value_rules:` when nothing typed may be dropped and every value must meet one rule.
+  #
+  # ```ruby
+  # require "usage"
+  # spec = Usage::Spec.read(<<~JSON)
+  #   {"bin": "todo",
+  #    "cmd": {"subcommands": {"add": {"name": "add", "full_cmd": ["add"],
+  #      "args": [{"name": "text", "required": true}],
+  #      "flags": [{"name": "tag", "long": ["tag"], "var": true, "arg": {"name": "tag"}}]}}}}
+  # JSON
+  # begin
+  #   Usage::Parser.new(spec, value_rules: Usage::StrictValueRules).parse(["add", "x", "--tag=-q"])
+  # rescue Usage::CommandLineError => e
+  #   e.message # => "--tag of command add needs a value, and -q looks like a flag"
+  # end
+  # ```
   module StrictValueRules
     # Whether `value` looks like a flag.
     def self.refuses_next?: (String value) -> bool

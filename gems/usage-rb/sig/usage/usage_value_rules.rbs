@@ -2,6 +2,20 @@ module Usage
   # The rules of usage 7.4.1: a word that looks like a flag is no value after the flag that takes it, unless it is a
   # negative number, and it is a value after `=`, whatever it looks like. A value given with `=` to a flag that takes
   # none is dropped, and only `--help` itself asks for help, so `--help=1` is a flag the command doesn't take.
+  #
+  # `Usage::Parser` reads by these rules unless it is given `Usage::StrictValueRules`, so a program that reads what
+  # usage reads need not name them.
+  #
+  # ```ruby
+  # require "usage"
+  # spec = Usage::Spec.read(<<~JSON)
+  #   {"bin": "todo",
+  #    "cmd": {"subcommands": {"add": {"name": "add", "full_cmd": ["add"],
+  #      "args": [{"name": "text", "required": true}],
+  #      "flags": [{"name": "tag", "long": ["tag"], "var": true, "arg": {"name": "tag"}}]}}}}
+  # JSON
+  # Usage::Parser.new(spec, value_rules: Usage::UsageValueRules).parse(["add", "x", "--tag=-q"]).value("tag") # => "-q"
+  # ```
   module UsageValueRules
     NUMBER: Regexp
 
