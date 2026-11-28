@@ -7,7 +7,7 @@ module Usage
   # This class names the members of such a set, says whether one is required, and says whether more than one may
   # come together.
   #
-  # Use it to check that a command line gave the members it has to.
+  # Use it to list the members a command line has to give.
   #
   # ## Examples
   #
@@ -57,28 +57,5 @@ module Usage
     # source.multiple? # => false
     # ```
     def multiple?: () -> bool
-
-    # Whether the group is required and `given` gives none of its members.
-    #
-    # - `given`: what a command line gave, which answers whether it gives a member, named as the group names it.
-    #
-    # ```ruby
-    # words = Struct.new(:names) do
-    #   def gives?(member)
-    #     names.include?(member)
-    #   end
-    # end
-    # source.missing?(words.new([])) # => true
-    # source.missing?(words.new(["--file"])) # => false
-    # source.with(required: false).missing?(words.new([])) # => false
-    # ```
-    def missing?: (_Given given) -> bool
-  end
-
-  # What a command line gave a command, as a group or a flag's `requires` asks about it.
-  interface _Given
-    # Whether the command line gives `member`: a flag, named by one of its switches such as `"--file"`, or an
-    # argument, named by its name such as `"text"`.
-    def gives?: (String member) -> bool
   end
 end

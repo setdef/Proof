@@ -19,6 +19,9 @@ module Usage
     # Whether `member`, a switch or an argument's name, was given.
     def gives?: (String member) -> bool
 
+    # Whether any of `members`, switches and arguments' names, was given.
+    def gives_any?: (Array[String] members) -> bool
+
     # The first switch that `flag` requires and that wasn't given, when `flag` was, or `nil`.
     def unmet: (Flag flag) -> String?
   end

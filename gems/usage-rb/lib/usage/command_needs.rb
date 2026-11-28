@@ -31,7 +31,7 @@ module Usage
     end
 
     private def groups(given)
-      group = command.groups.find { |each| each.missing?(given) }
+      group = command.groups.find { |each| each.required? && !given.gives_any?(each.names) }
       @position.refuse { |said| said.missing_member(group) } if group
     end
 
