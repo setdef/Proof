@@ -58,7 +58,7 @@ module Usage
         bin: reader.text(:bin).to_s,
         about: reader.text(:about).to_s,
         about_long: reader.text(:about_long),
-        after_help: reader.text(:after_help_long),
+        after_help_long: reader.text(:after_help_long),
       }
     end
     private_class_method(:described)

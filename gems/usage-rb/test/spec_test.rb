@@ -12,7 +12,7 @@ class UsageSpecTest < Minitest::Test
 
     assert_equal(["todo", "Keep a list of things to do"], [spec.bin, spec.about])
     assert_equal("Keeps the list in a file of its own.\n\nEach item has a number.", spec.about_long)
-    assert_equal("Report a problem: https://example.com/todo/issues", spec.after_help)
+    assert_equal("Report a problem: https://example.com/todo/issues", spec.after_help_long)
   end
 
   # `examples` and `exit_codes` keep the spec's order.
@@ -77,7 +77,7 @@ class UsageSpecTest < Minitest::Test
   def test_a_document_with_no_keys_reads_as_an_empty_program
     spec = read("{}")
 
-    assert_equal(["", "", nil, nil], [spec.bin, spec.about, spec.about_long, spec.after_help])
+    assert_equal(["", "", nil, nil], [spec.bin, spec.about, spec.about_long, spec.after_help_long])
     assert_equal([[], [], [], nil], [spec.commands.root.subcommands, spec.examples, spec.exit_codes, spec.env_prefix])
   end
 

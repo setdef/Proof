@@ -21,7 +21,7 @@ module Usage
     end
 
     private def ending
-      [spec.after_help]
+      [spec.after_help_long]
     end
   end
 end

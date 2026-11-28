@@ -42,8 +42,8 @@ module Usage
     # The longer description, or `nil`.
     attr_reader about_long: String?
 
-    # The text for the end of the program's help, from `after_long_help`, or `nil`.
-    attr_reader after_help: String?
+    # The text for the end of the program's help, from the spec's `after_help_long`, or `nil`.
+    attr_reader after_help_long: String?
 
     # The program's examples, in the spec's order.
     attr_reader examples: Array[Example]
@@ -57,20 +57,20 @@ module Usage
     # The variables with that prefix the program accepts anyway.
     attr_reader env_allowed: Array[String]
 
-    def self.new: (bin: String, about: String, about_long: String?, after_help: String?, examples: Array[Example], commands: CommandTree, env_prefix: String?, env_allowed: Array[String]) -> instance
-                | (String bin, String about, String? about_long, String? after_help, Array[Example] examples, CommandTree commands, String? env_prefix, Array[String] env_allowed) -> instance
+    def self.new: (bin: String, about: String, about_long: String?, after_help_long: String?, examples: Array[Example], commands: CommandTree, env_prefix: String?, env_allowed: Array[String]) -> instance
+                | (String bin, String about, String? about_long, String? after_help_long, Array[Example] examples, CommandTree commands, String? env_prefix, Array[String] env_allowed) -> instance
 
     # Builds a spec from its parts.
     #
     # - `bin`: String, the program's name as typed.
     # - `about`: String, the one-line description.
     # - `about_long`: String or `nil`, the longer description.
-    # - `after_help`: String or `nil`, the text for the end of the help.
+    # - `after_help_long`: String or `nil`, the text for the end of the help.
     # - `examples`: Array of `Usage::Example`, the program's examples.
     # - `commands`: `Usage::CommandTree`, the program's commands.
     # - `env_prefix`: String or `nil`, the prefix of the variables to check.
     # - `env_allowed`: Array of String, the variables with the prefix to accept.
-    def initialize: (bin: String, about: String, about_long: String?, after_help: String?, examples: Array[Example], commands: CommandTree, env_prefix: String?, env_allowed: Array[String]) -> void
+    def initialize: (bin: String, about: String, about_long: String?, after_help_long: String?, examples: Array[Example], commands: CommandTree, env_prefix: String?, env_allowed: Array[String]) -> void
 
     # Reads a spec from `text`, the JSON `usage generate json` writes, and raises `Usage::SpecError` for a text that
     # isn't such JSON or that uses anything the gem doesn't act on.
