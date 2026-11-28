@@ -206,6 +206,7 @@ Options weighed:
 - Remembering each path's lineage in the tree: `Usage::CommandTree` is a frozen `Data`, so it would need a mutable member, and the parser goes down a lineage without asking the tree again.
 - `at` giving `nil` for a path that names no command, as `find` does: every caller with a path from the parser would check for a `nil` that can't come, and the help, the one caller with a path that may leave the tree, goes down the program's lineage with `Usage::Lineage#descendant`, which gives `nil` there.
 - `Usage::EffectiveCommand`, after usage's `effective_exit_codes`: the name says what the value answers, where `Lineage` says what it holds, from which every answer follows.
+- Folding a list of exit statuses in the program's `cmd` too: usage writes none there and never applies one, so the gem would answer by a rule usage doesn't have. It refuses the list.
 
 ### KDL
 
