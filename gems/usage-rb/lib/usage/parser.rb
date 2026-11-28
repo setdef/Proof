@@ -15,7 +15,7 @@ module Usage
     end
 
     def parse(words)
-      start = Position.new(commands: @commands, command: @commands.root, messages: @messages)
+      start = Position.new(lineage: @commands.at([]), messages: @messages)
       Line.new(start, words, @rules).parsed
     end
   end

@@ -1,13 +1,14 @@
 module Usage
-  # A program's commands, as a tree under the program, and the rules that follow from a command's place in it.
+  # A program's commands, as a tree under the program, and each command where it stands in it.
   #
-  # A command is named by the words of its path, such as `remote add`, and a flag that a command marks global applies
-  # to every command under it. A command alone knows neither: it knows its subcommands, not the commands above it.
+  # A command is named by the words of its path, such as `remote add`, and some of usage's rules apply to a command
+  # because of the commands above it: a flag that a command marks global applies to every command under it. A command
+  # alone holds its subcommands, not the commands above it.
   #
-  # This class finds the command that a path names, and gives the global flags a command takes from itself and from
-  # every command above it. Parsing and help both ask it, so the two follow one rule.
+  # This class finds the command that a path names, and gives its `Usage::Lineage`, which answers each of those rules
+  # for it. The parser and the help ask it too, so all of them follow one reading of each rule.
   #
-  # Use it to look a command up by its path, and to list every flag a command takes.
+  # Use it to look a command up by its path, and to learn what applies to it there.
   #
   # ## Examples
   #
@@ -21,8 +22,8 @@ module Usage
   # JSON
   # tree = spec.commands
   # tree.find(["remote", "add"])&.name # => "add"
-  # tree.global_flags(["remote", "add"]).map(&:name) # => ["quiet", "dry-run"]
-  # tree.global_flags([]).map(&:name) # => ["quiet"]
+  # tree.at(["remote", "add"]).global_flags.map(&:name) # => ["quiet", "dry-run"]
+  # tree.at([]).global_flags.map(&:name) # => ["quiet"]
   # ```
   class CommandTree < Data
     # The program itself, as a command with no path, whose subcommands are the program's commands.
@@ -36,6 +37,17 @@ module Usage
     # - `root`: `Usage::Command`, the program as a command.
     def initialize: (root: Command) -> void
 
+    # The lineage of the command that the words in `path` name: that command where it stands, with every command above
+    # it. An empty `path` stands at the program. Raises `KeyError` when no command has that path; `find` answers
+    # whether one does.
+    #
+    # - `path`: Array of String, such as `["remote", "add"]`.
+    #
+    # ```ruby
+    # tree.at(["remote"]).commands.map(&:name) # => ["", "remote"]
+    # ```
+    def at: (Array[String] path) -> Lineage
+
     # The command that the words in `path` name, or `nil` when no command has that path. An empty `path` names the
     # program itself.
     #
@@ -47,21 +59,9 @@ module Usage
     # ```
     def find: (Array[String] path) -> Command?
 
-    # The global flags of the program and of each command on `path`, from the program down: every global flag that
-    # the command at `path` takes. A path that leaves the tree gives those of the commands it names before it leaves.
-    #
-    # - `path`: Array of String, the words that name a command.
-    #
-    # ```ruby
-    # tree.global_flags(["remote"]).map(&:name) # => ["quiet", "dry-run"]
-    # tree.global_flags(["status"]).map(&:name) # => ["quiet"]
-    # ```
-    def global_flags: (Array[String] path) -> Array[Flag]
-
     private
 
-    # `command`, then each command under it that a word of `path` leads to, down to the first word that names no
-    # subcommand.
-    def lineage: (Array[String] path, ?Command command) -> Array[Command]
+    # The lineage of the program itself, where every path starts.
+    def program: () -> Lineage
   end
 end

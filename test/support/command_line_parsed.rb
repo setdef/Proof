@@ -32,9 +32,9 @@ module CommandLineContract
     end
 
     private def flags(path, result)
-      commands = @spec.commands
-      own = values(commands.find(path).own_flags, result.command)
-      without_empty(own.merge(values(commands.global_flags(path), result.global)))
+      lineage = @spec.commands.at(path)
+      own = values(lineage.command.own_flags, result.command)
+      without_empty(own.merge(values(lineage.global_flags, result.global)))
     end
 
     # Each of +flags+ by its name, with what +parsed+ holds for it.

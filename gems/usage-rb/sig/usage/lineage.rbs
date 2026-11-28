@@ -1,0 +1,91 @@
+module Usage
+  # A command where it stands in its program: the command, with every command above it.
+  #
+  # Some of usage's rules apply to a command because of the commands above it. A flag that a command marks global
+  # reaches every command under it, so the flags a command takes depend on its whole path. A command alone holds its
+  # subcommands, not the commands above it, so each program that worked these rules out from a command would walk the
+  # tree again, and could read a rule otherwise than the others.
+  #
+  # This class holds the program and each command down to one command, and answers each such rule for that command.
+  # `Usage::CommandTree#at` gives it, and the parser and the help ask it too, so all of them follow one reading of
+  # each rule.
+  #
+  # Use it to learn which flags a command takes, its own and the global ones.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # spec = Usage::Spec.read(<<~JSON)
+  #   {"cmd": {"flags": [{"name": "quiet", "long": ["quiet"], "global": true}],
+  #            "subcommands": {"remote": {"name": "remote", "full_cmd": ["remote"],
+  #              "flags": [{"name": "dry-run", "long": ["dry-run"], "global": true}],
+  #              "subcommands": {"add": {"name": "add", "full_cmd": ["remote", "add"],
+  #                "flags": [{"name": "force", "long": ["force"]}]}}}}}}
+  # JSON
+  # add = spec.commands.at(["remote", "add"])
+  # add.command.name # => "add"
+  # add.commands.map(&:path) # => [[], ["remote"], ["remote", "add"]]
+  # add.global_flags.map(&:name) # => ["quiet", "dry-run"]
+  # add.flags.map(&:name) # => ["force", "quiet", "dry-run"]
+  # ```
+  class Lineage < Data
+    # The program, then each command above `command`, in order down the path. Empty for the program itself.
+    attr_reader above: Array[Command]
+
+    # The command this lineage is of.
+    attr_reader command: Command
+
+    def self.new: (above: Array[Command], command: Command) -> instance
+                | (Array[Command] above, Command command) -> instance
+
+    # Holds `command` and the commands above it.
+    #
+    # - `above`: Array of `Usage::Command`, the program first, each command a subcommand of the one before it.
+    # - `command`: `Usage::Command`, a subcommand of the last of `above`, or the program when `above` is empty.
+    def initialize: (above: Array[Command], command: Command) -> void
+
+    # A copy with the members given changed.
+    def with: (?above: Array[Command], ?command: Command) -> Lineage
+
+    # The program, then each command down the path to `command`, which is last.
+    #
+    # ```ruby
+    # spec.commands.at([]).commands == [spec.commands.root] # => true
+    # ```
+    def commands: () -> Array[Command]
+
+    # The lineage of the command that the words in `path` name under this one, longer by a command for each word, or
+    # `nil` when a word names no subcommand of the command before it. An empty `path` gives this lineage.
+    #
+    # - `path`: Array of String, subcommands' names as typed.
+    #
+    # ```ruby
+    # spec.commands.at([]).descendant(["remote", "add"]) == add # => true
+    # spec.commands.at(["remote"]).descendant([]) == spec.commands.at(["remote"]) # => true
+    # add.descendant(["add"]) # => nil
+    # ```
+    def descendant: (Array[String] path) -> Lineage?
+
+    # The global flags of the program and of each command down to this one, from the program down: every global flag
+    # in effect at the command.
+    #
+    # ```ruby
+    # spec.commands.at([]).global_flags.map(&:name) # => ["quiet"]
+    # ```
+    def global_flags: () -> Array[Flag]
+
+    # Every flag the command takes: its own, then the global flags in effect at it. The help that usage gives every
+    # command, `Usage::Flag::HELP`, isn't among them.
+    #
+    # ```ruby
+    # spec.commands.at(["remote"]).flags.map(&:name) # => ["quiet", "dry-run"]
+    # ```
+    def flags: () -> Array[Flag]
+
+    private
+
+    # The lineage of the subcommand named `word`, or `nil` when the command has none by that name.
+    def child: (String word) -> Lineage?
+  end
+end

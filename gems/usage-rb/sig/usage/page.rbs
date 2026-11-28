@@ -3,13 +3,13 @@ module Usage
   # the texts that open it, its examples, the title of its table of commands, and the sections that end it.
   class Page
     @spec: Spec
-    @command: Command
+    @lineage: Lineage
 
     # The widest line of the title and the descriptions.
     WIDTH: Integer
 
-    # Takes the spec and the command whose help to write.
-    def initialize: (Spec spec, Command command) -> void
+    # Takes the spec and the lineage of the command whose help to write.
+    def initialize: (Spec spec, Lineage lineage) -> void
 
     # Each section of the help, or `nil` for one with nothing in it.
     def sections: () -> Array[String?]
@@ -18,7 +18,9 @@ module Usage
 
     attr_reader spec: Spec
 
-    attr_reader command: Command
+    attr_reader lineage: Lineage
+
+    def command: () -> Command
 
     def title: () -> String?
 

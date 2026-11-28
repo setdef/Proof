@@ -30,9 +30,9 @@ module Proof
       private_constant(:CLASSES)
 
       def initialize(spec, line)
-        @spec = spec
+        @lineage = spec.commands.at(line.command.path)
         @line = line
-        @command = line.command
+        @command = @lineage.command
       end
 
       def parsed
@@ -40,7 +40,7 @@ module Proof
       end
 
       private def global
-        Attributes.new(@spec.commands.global_flags(@command.path), [], @line).build(GlobalFlags, {})
+        Attributes.new(@lineage.global_flags, [], @line).build(GlobalFlags, {})
       end
 
       private def value

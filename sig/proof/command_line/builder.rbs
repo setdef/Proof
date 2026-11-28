@@ -2,7 +2,7 @@ module Proof
   module CommandLine
     # Builds the value of a command, from the class that stands for it and what its flags and arguments gave.
     class Builder
-      @spec: Usage::Spec
+      @lineage: Usage::Lineage
       @line: Usage::Parsed
       @command: Usage::Command
 

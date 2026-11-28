@@ -5,9 +5,9 @@ module Usage
     WIDTH = 100
     private_constant(:WIDTH)
 
-    def initialize(spec, command)
+    def initialize(spec, lineage)
       @spec = spec
-      @command = command
+      @lineage = lineage
     end
 
     def sections
@@ -23,7 +23,11 @@ module Usage
 
     # Each kind of page reads the spec and the command through these readers, and gives its own about, description,
     # examples, title for the table of commands, and ending.
-    private(attr_reader(:spec, :command))
+    private(attr_reader(:spec, :lineage))
+
+    private def command
+      lineage.command
+    end
 
     private def title
       Layout.paragraphs("#{words.join(' ')} - #{about}", WIDTH)
@@ -34,7 +38,7 @@ module Usage
         Lists.commands(commands_title, command.subcommands),
         Lists.arguments(command.args),
         Lists.flags("Flags:", command.own_flags),
-        Lists.flags("Global flags:", spec.commands.global_flags(command.path)),
+        Lists.flags("Global flags:", lineage.global_flags),
       ]
     end
 
@@ -42,6 +46,6 @@ module Usage
       [spec.bin, *command.path]
     end
 
-    # @dynamic spec, command, about, description, examples, commands_title, ending
+    # @dynamic spec, lineage, about, description, examples, commands_title, ending
   end
 end

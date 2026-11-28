@@ -1,26 +1,26 @@
 module Usage
-  # Where the reading of a command line stands: the command its words have reached, in its tree, with the messages
+  # Where the reading of a command line stands: the lineage of the command its words have reached, with the messages
   # that word a mistake made there.
   class Position < Data
-    # The program's commands.
-    attr_reader commands: CommandTree
-
-    # The command the words have reached.
-    attr_reader command: Command
+    # The command the words have reached, where it stands in its tree.
+    attr_reader lineage: Lineage
 
     # The class of the messages that word a mistake.
     attr_reader messages: _MessagesClass
 
-    def self.new: (commands: CommandTree, command: Command, messages: _MessagesClass) -> instance
-                | (CommandTree commands, Command command, _MessagesClass messages) -> instance
+    def self.new: (lineage: Lineage, messages: _MessagesClass) -> instance
+                | (Lineage lineage, _MessagesClass messages) -> instance
 
-    # Stands at `command`.
-    def initialize: (commands: CommandTree, command: Command, messages: _MessagesClass) -> void
+    # Stands at the command of `lineage`.
+    def initialize: (lineage: Lineage, messages: _MessagesClass) -> void
 
     # A copy with the members given changed.
-    def with: (?commands: CommandTree, ?command: Command, ?messages: _MessagesClass) -> Position
+    def with: (?lineage: Lineage, ?messages: _MessagesClass) -> Position
 
-    # The flags the command takes here: its own, then the global flags of the commands on its path.
+    # The command the words have reached.
+    def command: () -> Command
+
+    # The flags the command takes here: its own, then the global flags in effect at it.
     def flags: () -> Array[Flag]
 
     # The flags the command takes here, by switch.

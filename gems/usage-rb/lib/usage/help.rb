@@ -7,11 +7,17 @@ module Usage
     end
 
     def text(path)
-      commands = @spec.commands
+      "#{page(lineage(path)).sections.compact.join("\n\n")}\n"
+    end
+
+    private def lineage(path)
+      program = @spec.commands.at([])
       # Asking for help never fails, so a path that names no command gives the program's help.
-      command = commands.find(path) || commands.root
-      page = command.program? ? ProgramPage.new(@spec, command) : CommandPage.new(@spec, command)
-      "#{page.sections.compact.join("\n\n")}\n"
+      program.descendant(path) || program
+    end
+
+    private def page(lineage)
+      lineage.command.program? ? ProgramPage.new(@spec, lineage) : CommandPage.new(@spec, lineage)
     end
   end
 end

@@ -1,9 +1,13 @@
 # frozen_string_literal: true
 
 module Usage
-  class Position < Data.define(:commands, :command, :messages)
+  class Position < Data.define(:lineage, :messages)
+    def command
+      lineage.command
+    end
+
     def flags
-      command.own_flags + commands.global_flags(command.path)
+      lineage.flags
     end
 
     def scope
@@ -15,13 +19,13 @@ module Usage
     end
 
     def descend(word)
-      with(command: command.subcommand(word) || refuse { |said| said.unknown_command(word) })
+      with(lineage: lineage.descendant([word]) || refuse { |said| said.unknown_command(word) })
     end
 
     def refuse
       raise(CommandLineError.new(command, yield(messages.new(command))))
     end
 
-    # @dynamic commands, command, messages, initialize, with
+    # @dynamic lineage, messages, initialize, with
   end
 end

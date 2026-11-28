@@ -2,7 +2,7 @@
 
 require_relative("test_helper")
 
-# Checks how a spec's commands are found by their paths, and which global flags each command takes.
+# Checks how a spec's commands are found by their paths, and which global flags each command takes there.
 class UsageCommandTreeTest < Minitest::Test
   include UsageTestHelper
 
@@ -18,9 +18,14 @@ class UsageCommandTreeTest < Minitest::Test
   JSON
   private_constant(:TREE)
 
-  # The names of the global flags that the command at +path+ takes.
+  # The tree of the spec above.
+  def tree
+    read(TREE).commands
+  end
+
+  # The names of the global flags in effect at the command at +path+.
   def globals(path)
-    read(TREE).commands.global_flags(path).map(&:name)
+    tree.at(path).global_flags.map(&:name)
   end
 
   # A command takes the global flags of the program and of every command above it, its own last.
@@ -35,9 +40,17 @@ class UsageCommandTreeTest < Minitest::Test
     assert_equal(["quiet"], globals([]))
   end
 
-  # A path that leaves the tree gives the global flags of the commands it names before it leaves.
-  def test_a_path_that_names_no_command_gives_the_flags_of_the_commands_it_does_name
-    assert_equal(%w[quiet dry-run], globals(%w[remote rm]))
-    assert_equal(["quiet"], globals(%w[undo add]))
+  # The empty path stands at the program, and a path stands at the command it names.
+  def test_a_path_gives_the_lineage_of_the_command_it_names
+    assert_equal([tree.root], tree.at([]).commands)
+    assert_equal(%w[remote add], tree.at(%w[remote add]).command.path)
+  end
+
+  # A path that leaves the tree names no command, so it has no lineage to give.
+  def test_a_path_that_names_no_command_is_a_key_error
+    error = assert_raises(KeyError) { tree.at(%w[remote rm]) }
+
+    assert_equal('no command has the path ["remote", "rm"]', error.message)
+    assert_nil(tree.find(%w[undo add]))
   end
 end

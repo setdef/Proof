@@ -27,8 +27,8 @@ class CorpusReading
 
   # Every flag that a word could have set: those of each command on the path, and the global flags of the path.
   private def in_reach
-    commands = (0..(command.path.size)).map { |size| @spec.commands.find(command.path.first(size)) }
-    (commands.flat_map(&:own_flags) + @spec.commands.global_flags(command.path)).uniq
+    lineage = @spec.commands.at(command.path)
+    (lineage.commands.flat_map(&:own_flags) + lineage.global_flags).uniq
   end
 
   # `true` for a flag that takes no value, the values of one that repeats, and the last value otherwise.

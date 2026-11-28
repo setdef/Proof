@@ -48,5 +48,13 @@ module Usage
     # help.text([]).include?("Commands:\n  done  Mark items done") # => true
     # ```
     def text: (Array[String] path) -> String
+
+    private
+
+    # The lineage of the command at `path`, or the program's when `path` names no command.
+    def lineage: (Array[String] path) -> Lineage
+
+    # The page of help for the command of `lineage`.
+    def page: (Lineage lineage) -> Page
   end
 end
