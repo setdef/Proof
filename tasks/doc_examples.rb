@@ -39,7 +39,8 @@ module DocExamples
   # The paths, relative to +root+, of the files whose examples run: the
   # Markdown pages and +.rbs+ files that Git tracks, and those it doesn't
   # ignore, except the generated pages and the files deleted from the folder.
-  # Raises +Proof::GitFailedError+ when Git can't list them, so that a check
+  # Raises +Proof::GitFailedError+ when Git fails to list them, and
+  # +Proof::GitNotFoundError+ when the computer has no Git, so that a check
   # which found no pages can't pass.
   def self.files(root)
     listing = Proof::Git.new(folder: root).run(*LISTING)

@@ -217,7 +217,7 @@ Options weighed:
 
 ### Git
 
-Proof runs the `git` program as a subprocess, with every inherited `GIT_*` variable removed so that a hook or a parent Git process can't redirect it. `Proof::Git.cleared_environment` holds that rule, so that a test fixture or a Rake task that starts `git` itself takes the rule from it instead of writing it a second time. The rule matters to tests because `git rebase --exec` runs its command with `GIT_DIR` set, and a test that inherited it would act on the clone it runs in.
+Proof runs the `git` program as a subprocess, with every inherited `GIT_*` variable removed so that a hook or a parent Git process can't redirect it. `Proof::Git.cleared_environment` holds that rule, so that a test fixture that starts `git` itself takes the rule from it instead of writing it a second time. The rule matters to tests because `git rebase --exec` runs its command with `GIT_DIR` set, and a test that inherited it would act on the clone it runs in.
 
 `Proof::Git` runs the program in a folder and raises `Proof::GitFailedError` when it fails. `Proof::GitProject` finds the project from a folder, refuses a partial clone, turns a revision into a commit ID, and gives the text of a file at a commit, which `Proof::CommittedFile` reads from the commit's tree. `Proof::WorkingTreeCommit` makes the working-tree commit, with the commit `HEAD` names as its parent, or none in a project with no commit yet.
 
