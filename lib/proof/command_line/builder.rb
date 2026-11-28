@@ -51,7 +51,8 @@ module Proof
         attributes = Attributes.new(flags, args, @values).to_h.merge(@values.extras)
         # Steep can't check a keyword splat against the members that Data.define made, so it can't see that
         # each class takes exactly the attributes the spec's flags and arguments give it. The commands_test
-        # file checks that for every command.
+        # file checks that for every command. A signature that gives the classes one `new` with `**untyped` fails,
+        # because Steep finds their required keywords incompatible with it.
         # steep:ignore:start
         klass.new(**attributes.slice(*klass.members))
         # steep:ignore:end
