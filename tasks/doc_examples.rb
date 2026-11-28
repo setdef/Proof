@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
-require_relative("../gems/proof-domain/lib/proof/errors")
-require_relative("../lib/proof/git")
+require "proof/errors"
+require "proof/git"
 require_relative("doc_examples/report")
 require_relative("doc_examples/runner")
 
