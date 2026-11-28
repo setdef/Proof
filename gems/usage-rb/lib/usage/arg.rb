@@ -10,10 +10,6 @@ module Usage
       repeatable
     end
 
-    def take(words)
-      repeatable ? words : words.first(1)
-    end
-
     def to_s
       label = repeatable ? "#{name}..." : name
       required ? "<#{label}>" : "[#{label}]"

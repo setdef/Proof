@@ -19,12 +19,8 @@ module Usage
     end
 
     private def bound_words
-      left = @words
-      args.to_h do |arg|
-        taken = arg.take(left)
-        left = left.drop(taken.size)
-        [arg.name, taken]
-      end
+      left = @words.dup
+      args.to_h { |arg| [arg.name, left.shift(arg.repeatable? ? left.size : 1)] }
     end
 
     private def missing(bound)

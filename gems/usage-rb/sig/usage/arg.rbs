@@ -6,7 +6,7 @@ module Usage
   #
   # This class holds an argument's name, whether it is required, and whether it takes more than one word.
   #
-  # Use it to write a command's usage line and to give each word to its argument.
+  # Use it to write a command's usage line and to tell which arguments a command needs.
   #
   # ## Examples
   #
@@ -58,18 +58,6 @@ module Usage
     # items.repeatable? # => true
     # ```
     def repeatable?: () -> bool
-
-    # The words it takes from `words`, the words left for it in order: every one when it repeats, and the first
-    # when it doesn't. A required argument that takes none is a mistake the parser finds.
-    #
-    # - `words`: Array of String, the words not yet taken by the arguments before it.
-    #
-    # ```ruby
-    # items.take(["1", "2"]) # => ["1", "2"]
-    # items.with(repeatable: false).take(["1", "2"]) # => ["1"]
-    # items.take([]) # => []
-    # ```
-    def take: (Array[String] words) -> Array[String]
 
     # The argument as a usage line writes it: `<name>` when required, `[name]` when not, with `...` after the name
     # when it repeats.
