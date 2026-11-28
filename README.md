@@ -102,7 +102,24 @@ To send a patch, post it on the forum, or email it with `git send-email` to `rep
 
 ## Contributing
 
-[CONTRIBUTING.md](CONTRIBUTING.md) says how to build Proof, run its tests, and propose a change.
+[CONTRIBUTING.md](CONTRIBUTING.md) holds the working rules for everyone who changes Proof, people and AI agents alike: the values Proof serves, how to commit to `trunk` and run the gate, the commit message format, and the rules for code, documentation, security, and licensing. It doesn't say how to install the tools or how to propose a change. This section does.
+
+To set up a clone, install [mise](https://mise.jdx.dev/) 2026.10.11 or later, then run these in the clone:
+
+```console
+$ mise install
+$ BUNDLE_PATH=$HOME/.cache/proof-bundle mise exec -- bundle install
+```
+
+`mise install` installs the tools `mise.toml` pins: Ruby, Python, pre-commit, the REUSE tool, usage, actionlint, and shellcheck. Keep `BUNDLE_PATH` outside the clone, because RuboCop and REUSE read every gem installed inside it. `bin/setup` runs those two commands without a `BUNDLE_PATH`, and then runs `reuse download --all`, `pre-commit install`, and `bundle exec rake rdoc`. `pre-commit install` adds a Git pre-commit hook that runs `bundle exec rake`, and every worktree of a clone shares the clone's hooks.
+
+Before a push, run the gate, which runs every check CI runs:
+
+```console
+$ BUNDLE_PATH=$HOME/.cache/proof-bundle bin/ci
+```
+
+To propose a change, send a patch as [Reporting problems](#reporting-problems) says. Pull requests and GitHub Discussions are off, and GitHub Issues are open to collaborators only.
 
 ## License
 
