@@ -65,7 +65,7 @@ parsed = Usage::Parser.new(spec).parse(["add", "Buy milk", "--tag", "home"])
 [parsed.command.path, parsed.words("text"), parsed.values("tag")] # => [["add"], ["Buy milk"], ["home"]]
 ```
 
-It reads a flag only by its whole name, checks every letter of `-qd` before it reads any, and takes no word that looks like a flag as a value. `-h` or `--help` stops the reading, and `parsed.help?` is then true for the command the words had reached. For a mistake, the parser raises `Usage::CommandLineError`, with the command the mistake was made at:
+It reads a flag only by its whole name, checks every letter of `-qd` before it reads any, and takes no word that looks like a flag as the value after a flag, unless it is a negative number. `-h` or `--help` stops the reading, and `parsed.help?` is then true for the command the words had reached. For a mistake, the parser raises `Usage::CommandLineError`, with the command the mistake was made at:
 
 ```ruby
 require "usage"
@@ -80,7 +80,33 @@ end
 
 To word mistakes your own way, pass `messages:` a class whose `new` takes the command and whose instances answer each method of `Usage::_Messages`. A subclass of `Usage::Messages` can change a few.
 
-Two rules are stricter than usage's: a value given with `=` to a flag that takes none is a mistake, where usage drops it, and so is a value that looks like a flag, a negative number among them, where usage takes it after `=` or as a number.
+### Stricter rules
+
+`Usage::Parser.new(spec)` reads as usage 7.4.1 does, including three readings a program may find too loose:
+
+- A value given with `=` to a flag that takes none, such as `--json=1`, is dropped, and the flag is set.
+- A value that looks like a flag is taken after `=`, so `--file=-q` gives `--file` the value `-q`.
+- A negative number, such as `-5`, is taken as the value that a flag requires.
+
+`Usage::Parser.new(spec, strict_values: true)` turns on two rules that make each of them a mistake, so that nothing typed is dropped and every value meets one rule: a value given with `=` to a flag that takes none is a mistake, and so is a value that looks like a flag, a negative number among them, after `=` or after the flag.
+
+```ruby
+require "usage"
+
+spec = Usage::Spec.read(<<~JSON)
+  {"bin": "todo",
+   "cmd": {"subcommands": {"add": {"name": "add", "full_cmd": ["add"],
+                                   "flags": [{"name": "file", "long": ["file"], "arg": {"name": "path"}},
+                                             {"name": "json", "long": ["json"]}]}}}}
+JSON
+words = ["add", "--file=-q"]
+Usage::Parser.new(spec).parse(words).value("file") # => "-q"
+begin
+  Usage::Parser.new(spec, strict_values: true).parse(words)
+rescue Usage::CommandLineError => e
+  e.message # => "--file of command add needs a value, and -q looks like a flag"
+end
+```
 
 ## Printing help
 

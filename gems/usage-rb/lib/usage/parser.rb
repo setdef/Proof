@@ -8,7 +8,7 @@ module Usage
     RULES = { true => StrictValueRules, false => UsageValueRules }.freeze
     private_constant(:RULES)
 
-    def initialize(spec, messages: Messages, strict_values: true)
+    def initialize(spec, messages: Messages, strict_values: false)
       @commands = spec.commands
       @messages = messages
       @rules = RULES[strict_values]
