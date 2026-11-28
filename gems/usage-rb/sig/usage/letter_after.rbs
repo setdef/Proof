@@ -1,0 +1,17 @@
+module Usage
+  # The letter after one that takes a value, as a switch, which usage reads as a flag of its own and never as the
+  # value.
+  class LetterAfter < Data
+    # The letter as a switch, such as `-d`.
+    attr_reader text: String
+
+    def self.new: (text: String) -> instance
+                | (String text) -> instance
+
+    # Takes the letter as a switch.
+    def initialize: (text: String) -> void
+
+    # Always: the letter is a flag of its own.
+    def refused_by?: (_ValueRules _rules) -> bool
+  end
+end

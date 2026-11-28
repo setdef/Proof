@@ -1,15 +1,22 @@
 # frozen_string_literal: true
 
+require_relative("strict_value_rules")
+require_relative("usage_value_rules")
+
 module Usage
   class Parser
-    def initialize(spec, messages: Messages)
+    RULES = { true => StrictValueRules, false => UsageValueRules }.freeze
+    private_constant(:RULES)
+
+    def initialize(spec, messages: Messages, strict_values: true)
       @commands = spec.commands
       @messages = messages
+      @rules = RULES[strict_values]
     end
 
     def parse(words)
       start = Position.new(commands: @commands, command: @commands.root, messages: @messages)
-      Line.new(start, words).parsed
+      Line.new(start, words, @rules).parsed
     end
   end
 end

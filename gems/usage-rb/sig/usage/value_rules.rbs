@@ -1,0 +1,24 @@
+module Usage
+  # What a value a flag is given may look like, and what becomes of a value given with `=` to a flag that takes none:
+  # one set of rules for the words as usage reads them, and one that is stricter, so that nothing typed is dropped and
+  # every value meets one rule.
+  interface _ValueRules
+    # Whether `value`, the word after a flag that takes a value, is no value because it looks like a flag.
+    def refuses_next?: (String value) -> bool
+
+    # Whether `value`, what follows `=` after a flag that takes a value, is no value because it looks like a flag.
+    def refuses_equals?: (String value) -> bool
+
+    # Gives `switch`, a flag that takes no value, the `value` that `=` attached to it, or refuses it, at `line`.
+    def drop: (Line line, Switch switch, String value) -> void
+  end
+
+  # A value a flag is given, with where it came from, which settles whether it can be a value.
+  interface _Candidate
+    # The value.
+    def text: () -> String
+
+    # Whether `rules` refuse the value for looking like a flag, as a value from where it came from.
+    def refused_by?: (_ValueRules rules) -> bool
+  end
+end

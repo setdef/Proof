@@ -3,10 +3,14 @@ module Usage
   class Line
     @position: Position
     @words: Array[String]
+    @rules: _ValueRules
     @values: Values
 
-    # Starts at `position` with every word to read.
-    def initialize: (Position position, Array[String] words) -> void
+    # What a value may look like, and what becomes of one given to a flag that takes none.
+    attr_reader rules: _ValueRules
+
+    # Starts at `position` with every word to read, by `rules`.
+    def initialize: (Position position, Array[String] words, _ValueRules rules) -> void
 
     # Reads every word, or up to help, and gives what the command line gave once the command has what it needs.
     def parsed: () -> Parsed
@@ -20,8 +24,9 @@ module Usage
     # The next word, as the value of the flag typed `typed`, or a mistake when there is none before `--`.
     def value_for: (String typed) -> String
 
-    # Gives `flag` its `value`, or refuses a value that looks like a flag or isn't one of its strict choices.
-    def take: (Flag flag, String value) -> void
+    # Gives `flag` the `value` a `candidate` holds, or refuses one that looks like a flag, by the line's rules, or that
+    # isn't one of its strict choices.
+    def take: (Flag flag, _Candidate candidate) -> void
 
     # Records that `flag` was given, with `value` when it takes one.
     def give: (Flag flag, ?String? value) -> void
@@ -30,6 +35,9 @@ module Usage
     def help?: () -> bool
 
     private
+
+    # Gives `flag` its `value` when it is one of its choices, or refuses it.
+    def choose: (Flag flag, String value) -> void
 
     # Reads `word`: `--`, a flag, a subcommand's name, or an argument's word.
     def read: (String word) -> void

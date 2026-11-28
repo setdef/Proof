@@ -1,0 +1,14 @@
+module Usage
+  # The stricter rules: a word that looks like a flag is no value, a negative number included, whether it follows the
+  # flag or `=`, and a value given with `=` to a flag that takes none is a mistake.
+  module StrictValueRules
+    # Whether `value` looks like a flag.
+    def self.refuses_next?: (String value) -> bool
+
+    # Whether `value` looks like a flag.
+    def self.refuses_equals?: (String value) -> bool
+
+    # Refuses the value that `=` attached to `switch`, a flag that takes none.
+    def self.drop: (Line line, Switch switch, String value) -> void
+  end
+end

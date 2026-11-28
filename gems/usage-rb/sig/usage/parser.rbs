@@ -38,15 +38,20 @@ module Usage
   # end
   # ```
   class Parser
+    RULES: Hash[bool, _ValueRules]
+
     @commands: CommandTree
     @messages: _MessagesClass
+    @rules: _ValueRules
 
     # Prepares to read command lines against `spec`.
     #
     # - `spec`: `Usage::Spec`, the program's spec.
     # - `messages`: a class whose `new` takes the `Usage::Command` a mistake was made at and gives the
     #   `Usage::_Messages` that word it, `Usage::Messages` unless a program words mistakes its own way.
-    def initialize: (Spec spec, ?messages: _MessagesClass) -> void
+    # - `strict_values`: whether to read by two rules stricter than usage's, so that a value given with `=` to a flag
+    #   that takes none is a mistake, and so is a value that looks like a flag after `=` or a negative number.
+    def initialize: (Spec spec, ?messages: _MessagesClass, ?strict_values: bool) -> void
 
     # What `words`, the words after the program's name, give: the command, its flags, and its arguments, or that
     # they ask for help. Raises `Usage::CommandLineError` for a mistake, the first one in the words.

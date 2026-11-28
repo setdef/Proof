@@ -1,0 +1,16 @@
+module Usage
+  # The word after a flag that takes a value, as the value it is given.
+  class NextWord < Data
+    # The word.
+    attr_reader text: String
+
+    def self.new: (text: String) -> instance
+                | (String text) -> instance
+
+    # Takes the word.
+    def initialize: (text: String) -> void
+
+    # Whether `rules` refuse the word after a flag.
+    def refused_by?: (_ValueRules rules) -> bool
+  end
+end

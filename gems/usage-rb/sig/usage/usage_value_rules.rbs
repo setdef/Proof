@@ -1,0 +1,17 @@
+module Usage
+  # The rules of usage 7.4.1: a word that looks like a flag is no value after the flag that takes it, unless it is a
+  # negative number, and it is a value after `=`, whatever it looks like. A value given with `=` to a flag that takes
+  # none is dropped, and only `--help` itself asks for help, so `--help=1` is a flag the command doesn't take.
+  module UsageValueRules
+    NUMBER: Regexp
+
+    # Whether `value` looks like a flag and isn't a negative number.
+    def self.refuses_next?: (String value) -> bool
+
+    # Never: what follows `=` belongs to the flag.
+    def self.refuses_equals?: (String value) -> bool
+
+    # Sets the flag of `switch` and drops its value, or refuses `--help` given one as a flag the command doesn't take.
+    def self.drop: (Line line, Switch switch, String value) -> void
+  end
+end

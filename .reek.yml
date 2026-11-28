@@ -18,3 +18,9 @@ detectors:
     # the module they all include, which calls Data's initialize.
     exclude:
       - Proof::Run::Fact
+  BooleanParameter:
+    # `strict_values:` of Usage::Parser is the keyword the gem's callers use to
+    # turn on its stricter rules, so a caller says what it reads by at the one
+    # place it builds the parser.
+    exclude:
+      - Usage::Parser#initialize

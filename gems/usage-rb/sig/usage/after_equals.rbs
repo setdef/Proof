@@ -1,0 +1,16 @@
+module Usage
+  # The text after `=` in a long flag's word, as the value the flag is given.
+  class AfterEquals < Data
+    # The text, which may be empty.
+    attr_reader text: String
+
+    def self.new: (text: String) -> instance
+                | (String text) -> instance
+
+    # Takes the text.
+    def initialize: (text: String) -> void
+
+    # Whether `rules` refuse the text after `=`.
+    def refused_by?: (_ValueRules rules) -> bool
+  end
+end

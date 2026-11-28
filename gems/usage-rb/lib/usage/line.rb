@@ -2,9 +2,12 @@
 
 module Usage
   class Line
-    def initialize(position, words)
+    attr_reader :rules
+
+    def initialize(position, words, rules)
       @position = position
       @words = words.dup
+      @rules = rules
       @values = Values.new
     end
 
@@ -28,12 +31,11 @@ module Usage
       (value && value != "--") ? value : refuse { |said| said.missing_value(typed) }
     end
 
-    def take(flag, value)
-      # usage takes no word that looks like a flag as a value, and only one of a flag's choices when they are strict.
-      flag_like = FlagWord.flag?(value)
-      return give(flag, value) unless flag_like || !flag.accepts?(value)
+    def take(flag, candidate)
+      value = candidate.text
+      return refuse { |said| said.flag_for_value(flag, value) } if candidate.refused_by?(@rules)
 
-      refuse { |said| flag_like ? said.flag_for_value(flag, value) : said.bad_choice(flag, value) }
+      choose(flag, value)
     end
 
     def give(flag, value = nil)
@@ -44,6 +46,13 @@ module Usage
       @values.help?
     end
 
+    private def choose(flag, value)
+      # A flag takes only one of its choices when they are strict.
+      return give(flag, value) if flag.accepts?(value)
+
+      refuse { |said| said.bad_choice(flag, value) }
+    end
+
     private def read(word)
       # usage reads every word after the first `--` as an argument, a later `--` too.
       return @values.separate(@words.shift(@words.size)) if word == "--"
@@ -52,5 +61,7 @@ module Usage
 
       @values.argue([word])
     end
+
+    # @dynamic rules
   end
 end

@@ -85,14 +85,14 @@ module UsageTestHelper
     read(TODO)
   end
 
-  # What the `todo` spec reads +words+, the words after `todo`, as.
-  def parse(*words)
-    Usage::Parser.new(todo).parse(words)
+  # What the `todo` spec reads +words+, the words after `todo`, as, by the stricter rules when +strict_values+.
+  def parse(*words, strict_values: true)
+    Usage::Parser.new(todo, strict_values:).parse(words)
   end
 
   # The message of the mistake that the `todo` spec finds in +words+.
-  def mistake(*words)
-    assert_raises(Usage::CommandLineError) { parse(*words) }
+  def mistake(*words, strict_values: true)
+    assert_raises(Usage::CommandLineError) { parse(*words, strict_values:) }
       .message
   end
 

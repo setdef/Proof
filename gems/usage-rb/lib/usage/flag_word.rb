@@ -27,7 +27,7 @@ module Usage
     private def long
       typed, value = @word.split("=", 2)
       name = typed.to_s
-      Switch.new(known(name), name, value)
+      Switch.long(known(name), name, value)
     end
 
     private def short(letters)
@@ -38,8 +38,7 @@ module Usage
 
     private def letter_switch(typed, following)
       flag = known(typed)
-      # usage reads the letter after one that takes a value as a flag of its own, which can't be the value.
-      Switch.new(flag, typed, ("-#{following}" if following && flag.takes_value?))
+      Switch.letter(flag, typed, following)
     end
 
     private def known(typed)

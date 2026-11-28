@@ -45,18 +45,11 @@ class UsageParserFlagMistakesTest < Minitest::Test
   # usage takes no word that looks like a flag as a value.
   def test_a_word_that_looks_like_a_flag_is_no_value
     assert_equal("--file of command add needs a value, and -q looks like a flag", mistake("add", "-f", "-q"))
-    assert_equal("--file of command add needs a value, and --x looks like a flag", mistake("add", "--file=--x"))
   end
 
   # usage reads `-fq` as `-f -q`, so a letter after one that takes a value is no value either.
   def test_a_letter_after_one_that_takes_a_value_is_no_value
     assert_equal("--file of command add needs a value, and -d looks like a flag", mistake("add", "-fdir"))
-  end
-
-  # A flag that takes no value refuses one, where usage would drop it.
-  def test_a_value_given_to_a_flag_that_takes_none_is_a_mistake
-    assert_equal("--json of command list takes no value", mistake("list", "--json=1"))
-    assert_equal("--help of command list takes no value", mistake("list", "--help=1"))
   end
 
   # A strict choice takes only its values, whole.

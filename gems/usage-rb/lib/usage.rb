@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require_relative("usage/after_equals")
 require_relative("usage/arg")
 require_relative("usage/arg_format")
 require_relative("usage/binding")
@@ -23,10 +24,12 @@ require_relative("usage/group_format")
 require_relative("usage/help")
 require_relative("usage/keys")
 require_relative("usage/layout")
+require_relative("usage/letter_after")
 require_relative("usage/line")
 require_relative("usage/lists")
 require_relative("usage/messages")
 require_relative("usage/named_format")
+require_relative("usage/next_word")
 require_relative("usage/page")
 require_relative("usage/parsed")
 require_relative("usage/parser")
@@ -38,13 +41,16 @@ require_relative("usage/scope")
 require_relative("usage/spec")
 require_relative("usage/spec_error")
 require_relative("usage/spec_format")
+require_relative("usage/strict_value_rules")
 require_relative("usage/switch")
 require_relative("usage/usage_line")
+require_relative("usage/usage_value_rules")
 require_relative("usage/values")
 require_relative("usage/version")
 
 module Usage
   private_constant(
+    :AfterEquals,
     :ArgFormat,
     :Binding,
     :CommandFormat,
@@ -58,9 +64,11 @@ module Usage
     :GroupFormat,
     :Keys,
     :Layout,
+    :LetterAfter,
     :Line,
     :Lists,
     :NamedFormat,
+    :NextWord,
     :Page,
     :Place,
     :Position,
@@ -68,8 +76,10 @@ module Usage
     :Reader,
     :Scope,
     :SpecFormat,
+    :StrictValueRules,
     :Switch,
     :UsageLine,
+    :UsageValueRules,
     :Values
   )
 end
