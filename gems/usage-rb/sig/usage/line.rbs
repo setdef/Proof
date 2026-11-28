@@ -19,7 +19,7 @@ module Usage
     def scope: () -> Scope
 
     # Raises the mistake the block words, at the command the words have reached.
-    def refuse: () { (_Messages said) -> String } -> bot
+    def refuse: () { (Messages said) -> String } -> bot
 
     # The next word, as the value of the flag typed `typed`, or a mistake when there is none before `--`.
     def value_for: (String typed) -> String

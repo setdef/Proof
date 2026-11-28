@@ -38,15 +38,18 @@ module Usage
   # end
   # ```
   class Parser
+    MESSAGES_REFUSED: String
+
     @commands: CommandTree
-    @messages: _MessagesClass
+    @messages: singleton(Messages)
     @rules: _ValueRules
 
     # Prepares to read command lines against `spec`.
     #
     # - `spec`: `Usage::Spec`, the program's spec.
-    # - `messages`: a class whose `new` takes the `Usage::Command` a mistake was made at and gives the
-    #   `Usage::_Messages` that word it, `Usage::Messages` unless a program words mistakes its own way.
+    # - `messages`: `Usage::Messages`, or a subclass of it, whose instances word the mistakes made at a command. A
+    #   program words mistakes its own way with a subclass, which keeps the gem's words for each kind of mistake that
+    #   it doesn't word, including a kind the gem learns later. Any other class raises `ArgumentError`.
     # - `value_rules`: `Usage::UsageValueRules` unless given, which reads a value as usage 7.4.1 does. Give
     #   `Usage::StrictValueRules` to read by two rules stricter than usage's, so that nothing typed is dropped and every
     #   value meets one rule. A value given with `=` to a flag that takes none, such as `--json=1`, is then a mistake,
@@ -63,7 +66,7 @@ module Usage
     #   e.message # => "--tag of command add needs a value, and -q looks like a flag"
     # end
     # ```
-    def initialize: (Spec spec, ?messages: _MessagesClass, ?value_rules: _ValueRules) -> void
+    def initialize: (Spec spec, ?messages: singleton(Messages), ?value_rules: _ValueRules) -> void
 
     # What `words`, the words after the program's name, give: the command, its flags, and its arguments, or that
     # they ask for help. Raises `Usage::CommandLineError` for a mistake, the first one in the words.

@@ -6,16 +6,16 @@ module Usage
     attr_reader lineage: Lineage
 
     # The class of the messages that word a mistake.
-    attr_reader messages: _MessagesClass
+    attr_reader messages: singleton(Messages)
 
-    def self.new: (lineage: Lineage, messages: _MessagesClass) -> instance
-                | (Lineage lineage, _MessagesClass messages) -> instance
+    def self.new: (lineage: Lineage, messages: singleton(Messages)) -> instance
+                | (Lineage lineage, singleton(Messages) messages) -> instance
 
     # Stands at the command of `lineage`.
-    def initialize: (lineage: Lineage, messages: _MessagesClass) -> void
+    def initialize: (lineage: Lineage, messages: singleton(Messages)) -> void
 
     # A copy with the members given changed.
-    def with: (?lineage: Lineage, ?messages: _MessagesClass) -> Position
+    def with: (?lineage: Lineage, ?messages: singleton(Messages)) -> Position
 
     # The command the words have reached.
     def command: () -> Command
@@ -33,6 +33,6 @@ module Usage
     def descend: (String word) -> Position
 
     # Raises `Usage::CommandLineError` at the command, with the message the block words with the messages here.
-    def refuse: () { (_Messages said) -> String } -> bot
+    def refuse: () { (Messages said) -> String } -> bot
   end
 end

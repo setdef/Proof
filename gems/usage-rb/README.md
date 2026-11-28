@@ -78,7 +78,7 @@ rescue Usage::CommandLineError => e
 end
 ```
 
-To word mistakes your own way, pass `messages:` a class whose `new` takes the command and whose instances answer each method of `Usage::_Messages`. A subclass of `Usage::Messages` can change a few.
+To word mistakes your own way, pass `messages:` a subclass of `Usage::Messages` that words the mistakes you change. Each kind of mistake you leave out keeps the gem's words, including a kind the gem learns later. The parser refuses any other class with an `ArgumentError`.
 
 ### Stricter rules
 

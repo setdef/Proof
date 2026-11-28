@@ -62,4 +62,12 @@ class UsageParserWordMistakesTest < Minitest::Test
 
     assert_equal("no undo here", error.message)
   end
+
+  # A class that isn't a subclass of `Usage::Messages` wouldn't word a kind of mistake that the gem learns later, so
+  # the parser refuses it when it is built, not when a mistake is made.
+  def test_the_parser_refuses_messages_that_do_not_subclass_the_gems
+    error = assert_raises(ArgumentError) { Usage::Parser.new(todo, messages: Class.new) }
+
+    assert_equal("messages must be Usage::Messages or a subclass of it", error.message)
+  end
 end
