@@ -1,0 +1,29 @@
+module Usage
+  # What the words of a command line gave as they are read: each flag with its values, the words for the
+  # arguments, and whether help was asked for.
+  class Values
+    @flags: Hash[Flag, Array[String]]
+    @help: bool
+
+    # The words for the arguments, in order.
+    attr_reader arguments: Array[String]
+
+    # Starts with nothing given.
+    def initialize: () -> void
+
+    # Records `flag` as given, with `value` when there is one, or help when it is help.
+    def give: (Flag flag, String? value) -> void
+
+    # Adds `words` to the words for the arguments.
+    def argue: (Array[String] words) -> void
+
+    # Whether help was asked for.
+    def help?: () -> bool
+
+    # Whether `flag` was given.
+    def given?: (Flag? flag) -> bool
+
+    # What the command line gave at `command`, with `args`, each argument's words.
+    def parsed: (Command command, Hash[String, Array[String]] args) -> Parsed
+  end
+end

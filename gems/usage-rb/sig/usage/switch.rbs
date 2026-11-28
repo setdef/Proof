@@ -1,0 +1,18 @@
+module Usage
+  # One switch of a flag word, as typed, with what its word gives after it: the value after `=`, or the letter that
+  # follows a letter that takes a value.
+  class Switch
+    @flag: Flag
+    @typed: String
+    @attached: String?
+
+    # Takes the flag, the switch as typed, and what its word gives after it.
+    def initialize: (Flag flag, String typed, String? attached) -> void
+
+    # Whether the switch's flag takes a value.
+    def takes_value?: () -> bool
+
+    # Gives the flag to `line`, with its value from the word or the next word, or refuses a value it can't take.
+    def read: (Line line) -> void
+  end
+end

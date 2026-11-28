@@ -1,0 +1,35 @@
+module Usage
+  # Raised when a command line breaks a rule of its spec, such as a flag the command doesn't take or an argument
+  # with no word.
+  #
+  # A program that acts on part of a mistaken command line does what nobody asked for. A mistake has to stop it
+  # before it acts, and say what to fix.
+  #
+  # The message is the program's own: `Usage::Parser` words it with the messages it was given. The error also holds
+  # the command the mistake was made at, so the program can point to that command's help.
+  #
+  # Rescue it where the program reads its command line, print the message, and exit with the status the spec gives
+  # a mistake.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # spec = Usage::Spec.read('{"cmd": {"subcommands": {"list": {"name": "list", "full_cmd": ["list"]}}}}')
+  # begin
+  #   Usage::Parser.new(spec).parse(["list", "--sort"])
+  # rescue Usage::CommandLineError => e
+  #   [e.message, e.command.path] # => ["command list has no flag --sort", ["list"]]
+  # end
+  # ```
+  class CommandLineError < StandardError
+    # The command the words had reached when the mistake was made.
+    attr_reader command: Command
+
+    # Takes the command the mistake was made at, and the message that words it.
+    #
+    # - `command`: `Usage::Command`, where the words were.
+    # - `message`: String, the mistake in the program's words.
+    def initialize: (Command command, String message) -> void
+  end
+end

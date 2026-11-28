@@ -1,0 +1,25 @@
+module Usage
+  # What a command line gave a command, as its groups and its flags' `requires` ask about it.
+  class Given < Data
+    # The flags the command takes.
+    attr_reader scope: Scope
+
+    # The flags given.
+    attr_reader values: Values
+
+    # Each argument's words, by its name.
+    attr_reader args: Hash[String, Array[String]]
+
+    def self.new: (scope: Scope, values: Values, args: Hash[String, Array[String]]) -> instance
+                | (Scope scope, Values values, Hash[String, Array[String]] args) -> instance
+
+    # Holds what was given.
+    def initialize: (scope: Scope, values: Values, args: Hash[String, Array[String]]) -> void
+
+    # Whether `member`, a switch or an argument's name, was given.
+    def gives?: (String member) -> bool
+
+    # The first switch that `flag` requires and that wasn't given, when `flag` was, or `nil`.
+    def unmet: (Flag flag) -> String?
+  end
+end

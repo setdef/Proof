@@ -1,0 +1,61 @@
+module Usage
+  # Reads a command line by the rules of usage, against a spec.
+  #
+  # A program that reads its spec for help still has to read its command line, and a parser written for another
+  # library's rules reads some lines otherwise than usage does: it takes the front of a flag's name for the flag, or
+  # `-Cdir` for `-C dir`, so the program accepts what its own spec refuses.
+  #
+  # This class reads the words of a command line by usage's rules: the command they name, each flag with its value,
+  # and the words of each argument. It refuses a mistake with `Usage::CommandLineError`, worded by the messages it is
+  # given, and stops at `-h` or `--help`.
+  #
+  # Use it to read a program's command line by the spec its help and its reference come from.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # spec = Usage::Spec.read(<<~JSON)
+  #   {"bin": "todo",
+  #    "cmd": {"flags": [{"name": "quiet", "short": ["q"], "long": ["quiet"], "global": true}],
+  #            "subcommands": {"add": {"name": "add", "full_cmd": ["add"],
+  #              "args": [{"name": "text", "required": true}],
+  #              "flags": [{"name": "tag", "long": ["tag"], "var": true, "arg": {"name": "tag"}}]}}}}
+  # JSON
+  # parsed = Usage::Parser.new(spec).parse(["add", "Buy milk", "--tag", "home", "-q"])
+  # parsed.command.path # => ["add"]
+  # parsed.words("text") # => ["Buy milk"]
+  # [parsed.values("tag"), parsed.given?("quiet")] # => [["home"], true]
+  # ```
+  #
+  # A mistake raises `Usage::CommandLineError`:
+  #
+  # ```ruby
+  # begin
+  #   Usage::Parser.new(spec).parse(["add"])
+  # rescue Usage::CommandLineError => e
+  #   e.message # => "command add needs <text>"
+  # end
+  # ```
+  class Parser
+    @commands: CommandTree
+    @messages: _MessagesClass
+
+    # Prepares to read command lines against `spec`.
+    #
+    # - `spec`: `Usage::Spec`, the program's spec.
+    # - `messages`: a class whose `new` takes the `Usage::Command` a mistake was made at and gives the
+    #   `Usage::_Messages` that word it, `Usage::Messages` unless a program words mistakes its own way.
+    def initialize: (Spec spec, ?messages: _MessagesClass) -> void
+
+    # What `words`, the words after the program's name, give: the command, its flags, and its arguments, or that
+    # they ask for help. Raises `Usage::CommandLineError` for a mistake, the first one in the words.
+    #
+    # - `words`: Array of String, as the shell gives them.
+    #
+    # ```ruby
+    # Usage::Parser.new(spec).parse(["-h", "add"]).help? # => true
+    # ```
+    def parse: (Array[String] words) -> Parsed
+  end
+end

@@ -1,0 +1,92 @@
+module Usage
+  # What a command line gave, as `Usage::Parser` read it: the command, the values of its flags, and the words of its
+  # arguments, or that it asked for help.
+  #
+  # A program acts on a command line once it is read, and asks the same few questions of it: which command, whether a
+  # flag was given, which value, which words. Asked of the words themselves, each question would read them again.
+  #
+  # This class holds the answers, each flag by its name in the spec and each argument by its name.
+  #
+  # Use it to build what the program runs from a command line.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # spec = Usage::Spec.read(<<~JSON)
+  #   {"cmd": {"flags": [{"name": "json", "long": ["json"]},
+  #                      {"name": "sort", "long": ["sort"], "arg": {"name": "key"}}],
+  #            "args": [{"name": "item", "var": true}]}}
+  # JSON
+  # parsed = Usage::Parser.new(spec).parse(["--sort", "due", "--sort", "added", "3", "4"])
+  # [parsed.given?("json"), parsed.value("sort"), parsed.values("sort")] # => [false, "added", ["due", "added"]]
+  # parsed.words("item") # => ["3", "4"]
+  # ```
+  class Parsed < Data
+    # The command the words named, or the program's for none, and for help the command they had reached.
+    attr_reader command: Command
+
+    # The values of each flag given, by the flag's name, in the order given: none for a flag that takes no value.
+    attr_reader flags: Hash[String, Array[String]]
+
+    # The words of each argument, by the argument's name, and none for help.
+    attr_reader args: Hash[String, Array[String]]
+
+    # Whether the command line asks for the help of `command`.
+    attr_reader help: bool
+
+    def self.new: (command: Command, flags: Hash[String, Array[String]], args: Hash[String, Array[String]], help: bool) -> instance
+                | (Command command, Hash[String, Array[String]] flags, Hash[String, Array[String]] args, bool help) -> instance
+
+    # Holds what a command line gave.
+    #
+    # - `command`: `Usage::Command`, the command named.
+    # - `flags`: Hash of String to Array of String, each flag's values by its name.
+    # - `args`: Hash of String to Array of String, each argument's words by its name.
+    # - `help`: bool, whether help was asked for.
+    def initialize: (command: Command, flags: Hash[String, Array[String]], args: Hash[String, Array[String]], help: bool) -> void
+
+    # Whether the command line asks for the help of `command`.
+    #
+    # ```ruby
+    # parsed.help? # => false
+    # ```
+    def help?: () -> bool
+
+    # Whether the flag called `name` was given.
+    #
+    # - `name`: String, the flag's name in the spec, such as `"dry-run"`.
+    #
+    # ```ruby
+    # parsed.given?("sort") # => true
+    # ```
+    def given?: (String name) -> bool
+
+    # The last value given to the flag called `name`, or `nil` when it got none.
+    #
+    # - `name`: String, the flag's name in the spec.
+    #
+    # ```ruby
+    # parsed.value("json") # => nil
+    # ```
+    def value: (String name) -> String?
+
+    # Every value given to the flag called `name`, in order, or none.
+    #
+    # - `name`: String, the flag's name in the spec.
+    #
+    # ```ruby
+    # parsed.values("json") # => []
+    # ```
+    def values: (String name) -> Array[String]
+
+    # The words of the argument called `name`, in order, or none.
+    #
+    # - `name`: String, the argument's name in the spec.
+    #
+    # ```ruby
+    # parsed.words("text") # => []
+    # ```
+    def words: (String name) -> Array[String]
+  end
+end

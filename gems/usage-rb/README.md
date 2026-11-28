@@ -1,6 +1,6 @@
 # usage-rb
 
-Read the [usage](https://usage.jdx.dev) spec that describes a Ruby program's command line, and print its help from it.
+Read the [usage](https://usage.jdx.dev) spec that describes a Ruby program's command line, parse command lines by it, and print its help from it.
 
 A usage spec describes a program's commands, flags, and arguments once, in KDL, and usage generates the program's reference, man pages, and shell completions from it. usage-rb reads the JSON that `usage generate json` writes from the spec, with no dependencies beyond Ruby's standard library.
 
@@ -47,6 +47,40 @@ It accepts and ignores `name`, `version`, `author`, `license`, and `repository` 
 ### What it refuses
 
 A spec that uses any other part of usage's spec is refused, naming the part. Among them are command aliases, hidden commands, flags, and arguments, `default`, `env`, `negate`, `count`, `required`, and `deprecated` of a flag, `default`, `env`, and `choices` of an argument, a flag value that may be left out, `var` on a flag with no value, configuration files, completions, `mount`, `restart_token`, `default_subcommand`, any `unknown_flags` but `"error"`, a `min_usage_version` newer than usage 7.4.1, whose specs it reads, and a command with both arguments and subcommands.
+
+## Parsing a command line
+
+`Usage::Parser#parse` reads the words after the program's name by usage's rules, and gives the command they name, the values of its flags, and the words of its arguments:
+
+```ruby
+require "usage"
+
+spec = Usage::Spec.read(<<~JSON)
+  {"bin": "todo", "about": "Keep a list of things to do",
+   "cmd": {"subcommands": {"add": {"name": "add", "full_cmd": ["add"], "help": "Add an item",
+                                   "args": [{"name": "text", "required": true}],
+                                   "flags": [{"name": "tag", "long": ["tag"], "var": true, "arg": {"name": "tag"}}]}}}}
+JSON
+parsed = Usage::Parser.new(spec).parse(["add", "Buy milk", "--tag", "home"])
+[parsed.command.path, parsed.words("text"), parsed.values("tag")] # => [["add"], ["Buy milk"], ["home"]]
+```
+
+It reads a flag only by its whole name, checks every letter of `-qd` before it reads any, and takes no word that looks like a flag as a value. `-h` or `--help` stops the reading, and `parsed.help?` is then true for the command the words had reached. For a mistake, the parser raises `Usage::CommandLineError`, with the command the mistake was made at:
+
+```ruby
+require "usage"
+
+spec = Usage::Spec.read('{"cmd": {"subcommands": {"add": {"name": "add", "full_cmd": ["add"]}}}}')
+begin
+  Usage::Parser.new(spec).parse(["add", "--tag"])
+rescue Usage::CommandLineError => e
+  [e.message, e.command.path] # => ["command add has no flag --tag", ["add"]]
+end
+```
+
+To word mistakes your own way, pass `messages:` a class whose `new` takes the command and whose instances answer each method of `Usage::_Messages`. A subclass of `Usage::Messages` can change a few.
+
+Two rules are stricter than usage's: a value given with `=` to a flag that takes none is a mistake, where usage drops it, and so is a value that looks like a flag, a negative number among them, where usage takes it after `=` or as a number.
 
 ## Printing help
 

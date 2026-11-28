@@ -1,0 +1,27 @@
+module Usage
+  # The words of a command line given to the arguments of the command they named, in order.
+  class Binding
+    @position: Position
+    @words: Array[String]
+
+    # Takes where the words reached, and the words for the arguments.
+    def initialize: (Position position, Array[String] words) -> void
+
+    # Each argument's words, by its name, or a mistake when a required one has none or a word is left.
+    def to_h: () -> Hash[String, Array[String]]
+
+    private
+
+    # The arguments of the command.
+    def args: () -> Array[Arg]
+
+    # Each argument's words, by its name, each taking from the words the ones before it left.
+    def bound_words: () -> Hash[String, Array[String]]
+
+    # Refuses the first required argument with no words in `bound`.
+    def missing: (Hash[String, Array[String]] bound) -> void
+
+    # Refuses the first of `words`, which no argument took.
+    def extra: (Array[String] words) -> void
+  end
+end

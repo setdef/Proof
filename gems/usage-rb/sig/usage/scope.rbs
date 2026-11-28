@@ -1,0 +1,19 @@
+module Usage
+  # The flags a command takes where it stands, found by the switches they are typed by, with the help usage gives.
+  class Scope
+    @flags: Hash[String, Flag]
+    @valued: Array[String]
+
+    # Takes the command's flags.
+    def initialize: (Array[Flag] flags) -> void
+
+    # The flag that `switch`, such as `"-q"` or `"--quiet"`, names, or `nil`.
+    def flag: (String switch) -> Flag?
+
+    # Every switch the command takes here, help's last.
+    def switches: () -> Array[String]
+
+    # Whether every letter of `word`, a word of one dash, names a flag, up to one that takes a value.
+    def letters?: (String word) -> bool
+  end
+end

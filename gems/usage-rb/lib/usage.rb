@@ -2,9 +2,12 @@
 
 require_relative("usage/arg")
 require_relative("usage/arg_format")
+require_relative("usage/binding")
 require_relative("usage/choices")
 require_relative("usage/command")
 require_relative("usage/command_format")
+require_relative("usage/command_line_error")
+require_relative("usage/command_needs")
 require_relative("usage/command_page")
 require_relative("usage/command_tree")
 require_relative("usage/example")
@@ -13,41 +16,60 @@ require_relative("usage/exit_code")
 require_relative("usage/exit_code_format")
 require_relative("usage/flag")
 require_relative("usage/flag_format")
+require_relative("usage/flag_word")
+require_relative("usage/given")
 require_relative("usage/group")
 require_relative("usage/group_format")
 require_relative("usage/help")
 require_relative("usage/keys")
 require_relative("usage/layout")
+require_relative("usage/line")
 require_relative("usage/lists")
+require_relative("usage/messages")
 require_relative("usage/named_format")
 require_relative("usage/page")
+require_relative("usage/parsed")
+require_relative("usage/parser")
 require_relative("usage/place")
+require_relative("usage/position")
 require_relative("usage/program_page")
 require_relative("usage/reader")
+require_relative("usage/scope")
 require_relative("usage/spec")
 require_relative("usage/spec_error")
 require_relative("usage/spec_format")
+require_relative("usage/switch")
 require_relative("usage/usage_line")
+require_relative("usage/values")
 require_relative("usage/version")
 
 module Usage
   private_constant(
     :ArgFormat,
+    :Binding,
     :CommandFormat,
+    :CommandNeeds,
     :CommandPage,
     :ExampleFormat,
     :ExitCodeFormat,
     :FlagFormat,
+    :FlagWord,
+    :Given,
     :GroupFormat,
     :Keys,
     :Layout,
+    :Line,
     :Lists,
     :NamedFormat,
     :Page,
     :Place,
+    :Position,
     :ProgramPage,
     :Reader,
+    :Scope,
     :SpecFormat,
-    :UsageLine
+    :Switch,
+    :UsageLine,
+    :Values
   )
 end

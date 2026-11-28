@@ -31,6 +31,15 @@ module Usage
   # [tag.choices.values, tag.choices.strict?, tag.repeatable?] # => [["home", "work"], false, true]
   # ```
   class Flag < Data
+    # The flag usage gives every command, `-h` and `--help`, which asks for the command's help. A switch of it that a
+    # flag of the spec has is that flag's.
+    #
+    # ```ruby
+    # Usage::Flag::HELP.switches # => ["-h", "--help"]
+    # Usage::Flag::HELP.takes_value? # => false
+    # ```
+    HELP: Flag
+
     # The flag's name in the spec, such as `"dry-run"`.
     attr_reader name: String
 

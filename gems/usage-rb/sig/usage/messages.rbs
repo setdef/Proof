@@ -1,0 +1,164 @@
+module Usage
+  # The words of each mistake a command line can have, at one command, as usage-rb words them.
+  #
+  # A mistake on a command line is read by the person who typed it, in the program's voice. The parser knows what
+  # went wrong and where, and the program knows how to say it.
+  #
+  # This class says each mistake plainly, naming the command it was made at. `Usage::Parser` words a mistake with it
+  # unless it is given messages of the program's own, any class whose instances answer `Usage::_Messages`.
+  #
+  # Use it as the messages of a program that has none of its own, or as a superclass for one that changes a few.
+  #
+  # ## Examples
+  #
+  # ```ruby
+  # require "usage"
+  # spec = Usage::Spec.read('{"cmd": {"subcommands": {"list": {"name": "list", "full_cmd": ["list"]}}}}')
+  # messages = Usage::Messages.new(spec.commands.find(["list"]) || raise)
+  # messages.extra_word("x") # => "command list takes no word x"
+  # Usage::Messages.new(spec.commands.root).unknown_command("lsit") # => "the program has no subcommand lsit"
+  # ```
+  class Messages
+    @command: Command
+    @place: String
+
+    # Words the mistakes made at `command`.
+    #
+    # - `command`: `Usage::Command`, where the words were.
+    def initialize: (Command command) -> void
+
+    # A flag the command doesn't take, named by `word` as typed.
+    #
+    # ```ruby
+    # messages.unknown_flag("--nope", ["-h", "--help"]) # => "command list has no flag --nope"
+    # ```
+    def unknown_flag: (String word, Array[String] _switches) -> String
+
+    # A flag with no value after it, named by `switch` as typed.
+    #
+    # ```ruby
+    # messages.missing_value("-o") # => "-o of command list needs a value"
+    # ```
+    def missing_value: (String switch) -> String
+
+    # A flag whose value, `word`, looks like a flag.
+    #
+    # ```ruby
+    # sort = Usage::Spec.read('{"cmd": {"flags": [{"name": "sort", "long": ["sort"], "arg": {"name": "key"}}]}}')
+    #   .commands.root.flags.first || raise
+    # messages.flag_for_value(sort, "-q") # => "--sort of command list needs a value, and -q looks like a flag"
+    # ```
+    def flag_for_value: (Flag flag, String word) -> String
+
+    # A flag that takes no value, given one, named by `switch` as typed before the `=`.
+    #
+    # ```ruby
+    # messages.needless_value("--json") # => "--json of command list takes no value"
+    # ```
+    def needless_value: (String switch) -> String
+
+    # A value that isn't one of the flag's strict choices.
+    #
+    # ```ruby
+    # messages.bad_choice(sort.with(choices: Usage::Choices.new(values: ["due"], strict: true)), "size")
+    # # => "--sort of command list takes one of due, not size"
+    # ```
+    def bad_choice: (Flag flag, String value) -> String
+
+    # A flag given without the flag it requires, named by `required` as the spec names it.
+    #
+    # ```ruby
+    # messages.missing_requirement(sort, "--json") # => "--sort of command list needs --json"
+    # ```
+    def missing_requirement: (Flag flag, String required) -> String
+
+    # A word that names no subcommand of the command.
+    #
+    # ```ruby
+    # messages.unknown_command("all") # => "command list has no subcommand all"
+    # ```
+    def unknown_command: (String word) -> String
+
+    # A command that needs a subcommand, given none.
+    #
+    # ```ruby
+    # Usage::Messages.new(spec.commands.root).missing_subcommand # => "the program needs a subcommand: list"
+    # ```
+    def missing_subcommand: () -> String
+
+    # A required group with none of its members given.
+    #
+    # ```ruby
+    # source = Usage::Group.new(name: "source", names: ["text", "--file"], required: true, multiple: false)
+    # messages.missing_member(source) # => "command list needs one of text, --file"
+    # ```
+    def missing_member: (Group group) -> String
+
+    # A required argument with no word.
+    #
+    # ```ruby
+    # text = Usage::Arg.new(name: "text", help: nil, help_long: nil, required: true, repeatable: false)
+    # messages.missing_argument(text) # => "command list needs <text>"
+    # ```
+    def missing_argument: (Arg arg) -> String
+
+    # A word that no argument takes.
+    #
+    # ```ruby
+    # messages.extra_word("x") # => "command list takes no word x"
+    # ```
+    def extra_word: (String word) -> String
+
+    private
+
+    # The flag's last switch, of the command.
+    def named: (Flag flag) -> String
+  end
+
+  # The words of each mistake a command line can have, at the command the messages were made for. `Usage::Parser`
+  # asks for the words of a mistake when it finds one, and raises them in a `Usage::CommandLineError`.
+  #
+  # Each method gives the whole message. A flag is given as the spec describes it, and a word as typed.
+  interface _Messages
+    # A flag the command doesn't take. `word` is as typed, with any value after `=` and any letters written with it,
+    # and `switches` lists every switch the command takes there, `-h` and `--help` among them.
+    def unknown_flag: (String word, Array[String] switches) -> String
+
+    # A flag with no value after it, at the end of the line or before `--`. `switch` is as typed.
+    def missing_value: (String switch) -> String
+
+    # A flag whose value, `word`, looks like a flag: a word that starts with `-`, or the letter after the flag's own
+    # among letters written together, such as `-d` in `-Cdir`.
+    def flag_for_value: (Flag flag, String word) -> String
+
+    # A flag that takes no value, given one after `=`. `switch` is as typed before the `=`.
+    def needless_value: (String switch) -> String
+
+    # A value that isn't one of the flag's strict choices.
+    def bad_choice: (Flag flag, String value) -> String
+
+    # A flag given without the flag it requires. `required` is as the spec's `requires` names it.
+    def missing_requirement: (Flag flag, String required) -> String
+
+    # A word, at a command with subcommands, that names none of them.
+    def unknown_command: (String word) -> String
+
+    # A command that needs a subcommand, given none.
+    def missing_subcommand: () -> String
+
+    # A required group with none of its members given.
+    def missing_member: (Group group) -> String
+
+    # A required argument with no word.
+    def missing_argument: (Arg arg) -> String
+
+    # A word that no argument takes.
+    def extra_word: (String word) -> String
+  end
+
+  # What `Usage::Parser` takes as its messages: a class whose `new` takes the command a mistake was made at.
+  interface _MessagesClass
+    # The messages for mistakes made at `command`.
+    def new: (Command command) -> _Messages
+  end
+end

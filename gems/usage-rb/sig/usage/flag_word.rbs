@@ -1,0 +1,37 @@
+module Usage
+  # A word that starts with `-`: a long flag, with its value after `=`, or one or more letters, each a flag.
+  class FlagWord
+    @word: String
+    @line: Line
+    @scope: Scope
+
+    # Whether `word` looks like a flag: it starts with `-` and is more than a single dash.
+    def self.flag?: (String word) -> bool
+
+    # Reads `word` from `line`.
+    def initialize: (String word, Line line) -> void
+
+    # Reads each switch of the word, and stops after help.
+    def read: () -> void
+
+    private
+
+    # The switches the word types, or a mistake when one of its letters names no flag.
+    def switches: () -> Array[Switch]
+
+    # The one switch of a long flag, with what follows `=`.
+    def long: () -> Switch
+
+    # The switches of `letters`, up to one that takes a value.
+    def short: (Array[String] letters) -> Array[Switch]
+
+    # The switch of the letter typed `typed`, with the letter after it when its flag takes a value.
+    def letter_switch: (String typed, String? following) -> Switch
+
+    # The flag `typed` names, or a mistake.
+    def known: (String typed) -> Flag
+
+    # Raises the mistake of a flag the command doesn't take.
+    def unknown: () -> bot
+  end
+end

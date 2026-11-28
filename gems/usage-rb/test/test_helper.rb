@@ -61,6 +61,9 @@ module UsageTestHelper
             "full_cmd": ["remote"],
             "help": "Share the list",
             "subcommand_required": true,
+            "flags": [
+              {"name": "dry-run", "short": ["n"], "long": ["dry-run"], "global": true, "help": "Change nothing"}
+            ],
             "subcommands": {
               "add": {"name": "add", "full_cmd": ["remote", "add"], "args": [{"name": "url", "required": true}]},
               "remove": {"name": "remove", "full_cmd": ["remote", "remove"]}
@@ -80,6 +83,17 @@ module UsageTestHelper
   # The `todo` spec.
   def todo
     read(TODO)
+  end
+
+  # What the `todo` spec reads +words+, the words after `todo`, as.
+  def parse(*words)
+    Usage::Parser.new(todo).parse(words)
+  end
+
+  # The message of the mistake that the `todo` spec finds in +words+.
+  def mistake(*words)
+    assert_raises(Usage::CommandLineError) { parse(*words) }
+      .message
   end
 
   # The message of the error that reading +text+ raises.

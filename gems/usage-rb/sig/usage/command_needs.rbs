@@ -1,0 +1,31 @@
+module Usage
+  # What a command needs from its command line once every word is read: its arguments' words, a subcommand when it
+  # requires one, a member of each required group, and the flags each given flag requires.
+  class CommandNeeds
+    @position: Position
+    @values: Values
+
+    # Takes where the words reached, and what they gave.
+    def initialize: (Position position, Values values) -> void
+
+    # What the command line gave, or the first thing the command needs and lacks, as a mistake.
+    def parsed: () -> Parsed
+
+    private
+
+    # The command the words named.
+    def command: () -> Command
+
+    # Refuses a command that requires a subcommand.
+    def subcommand: () -> void
+
+    # Refuses what `given` lacks for the command's groups and requirements.
+    def met: (Given given) -> void
+
+    # Refuses the first required group that `given` has no member of.
+    def groups: (Given given) -> void
+
+    # Refuses the first given flag whose requirement `given` lacks.
+    def requirements: (Given given) -> void
+  end
+end

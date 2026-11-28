@@ -1,0 +1,37 @@
+module Usage
+  # One command line as the parser reads it: the words still to read, where they have reached, and what they gave.
+  class Line
+    @position: Position
+    @words: Array[String]
+    @values: Values
+
+    # Starts at `position` with every word to read.
+    def initialize: (Position position, Array[String] words) -> void
+
+    # Reads every word, or up to help, and gives what the command line gave once the command has what it needs.
+    def parsed: () -> Parsed
+
+    # The flags the command takes where the words have reached.
+    def scope: () -> Scope
+
+    # Raises the mistake the block words, at the command the words have reached.
+    def refuse: () { (_Messages said) -> String } -> bot
+
+    # The next word, as the value of the flag typed `typed`, or a mistake when there is none before `--`.
+    def value_for: (String typed) -> String
+
+    # Gives `flag` its `value`, or refuses a value that looks like a flag or isn't one of its strict choices.
+    def take: (Flag flag, String value) -> void
+
+    # Records that `flag` was given, with `value` when it takes one.
+    def give: (Flag flag, ?String? value) -> void
+
+    # Whether the words have asked for help.
+    def help?: () -> bool
+
+    private
+
+    # Reads `word`: `--`, a flag, a subcommand's name, or an argument's word.
+    def read: (String word) -> void
+  end
+end

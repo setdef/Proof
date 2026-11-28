@@ -10,6 +10,10 @@ module Usage
       multiple
     end
 
+    def missing?(given)
+      required && names.none? { |name| given.gives?(name) }
+    end
+
     # @dynamic name, names, required, multiple, initialize
   end
 end
