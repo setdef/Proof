@@ -30,7 +30,7 @@ class CommandLineMessageStyleTest < Minitest::Test
     assert(lines.all? { |line| line.start_with?("proof: ") && line.ascii_only? })
   end
 
-  # command.md, "Output and exit status": errors "end with the command to run next", and `AGENTS.md` wants one line.
+  # docs/how-proof-works.md#when-an-agent-runs-proof: a mistake's message "ends with the command to run next".
   def test_each_line_is_one_line_that_ends_with_the_command_to_run_next
     lines = LINES.map { |words| mistake(*words) }
 

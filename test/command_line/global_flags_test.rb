@@ -56,7 +56,8 @@ class CommandLineGlobalFlagsTest < Minitest::Test
     assert_equal(CL::HelpAsked.new(path: ["status"]), parse("status", "-qh"))
   end
 
-  # command.md, "The interface": the words after `--` aren't flags, so `-h` there goes to the task.
+  # docs/contributors/design/architecture.md#command-line: the words after `--` aren't flags,
+  # so `-h` there goes to the task.
   def test_help_after_the_dashes_goes_to_the_task
     assert_equal([task("test", "-h")], command("run", "test", "--", "-h").tasks)
   end

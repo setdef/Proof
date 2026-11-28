@@ -40,7 +40,8 @@ class CommandLineRunWordsTest < Minitest::Test
     assert_equal([task("lint"), task("test", "x")], command("run", "lint", ":::", "test", "--", "x").tasks)
   end
 
-  # command.md, tasks after `:::`: a second `--` after a name is a separator, and a later one is a word.
+  # docs/contributors/design/architecture.md#command-line: the first `--` after a task's name is a separator,
+  # and a later one is a word.
   def test_a_dashes_after_a_name_separates_and_a_later_one_is_a_word
     assert_equal(
       [task("lint", "a"), task("test", "b", "--", "c")],
