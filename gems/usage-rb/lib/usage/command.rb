@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 module Usage
-  # steep:ignore:start
   class Command < Data.define(
     :name,
     :path,
@@ -14,7 +13,6 @@ module Usage
     :examples,
     :subcommand_required
   )
-    # steep:ignore:end
     def program?
       path.empty?
     end
@@ -38,5 +36,7 @@ module Usage
     def global_flags
       flags.select(&:global?)
     end
+
+    # @dynamic name, path, help, help_long, args, flags, subcommands, groups, examples, subcommand_required, initialize
   end
 end

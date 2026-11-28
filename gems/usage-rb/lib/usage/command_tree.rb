@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Usage
-  # steep:ignore:start
   class CommandTree < Data.define(:root)
-    # steep:ignore:end
     def find(path)
       # The program comes first, so the command the whole path names is the one after a command for each word.
       lineage(path)[path.size]
@@ -20,5 +18,7 @@ module Usage
       child = command.subcommand(word) if word
       [command, *(child ? lineage(rest, child) : [])]
     end
+
+    # @dynamic root, initialize
   end
 end

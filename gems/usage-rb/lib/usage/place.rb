@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Usage
-  # steep:ignore:start
   class Place < Data.define(:name)
-    # steep:ignore:end
     PROGRAM = new(name: "the program")
     public_constant(:PROGRAM)
 
@@ -26,5 +24,7 @@ module Usage
     def mistyped(key, form)
       raise(SpecError, "#{name} has #{key} that isn't #{form}")
     end
+
+    # @dynamic name, initialize
   end
 end

@@ -3,9 +3,7 @@
 require "json"
 
 module Usage
-  # steep:ignore:start
   class Keys < Data.define(:read, :defaults)
-    # steep:ignore:end
     def initialize(read:, defaults: {})
       super
     end
@@ -25,5 +23,7 @@ module Usage
 
       "sets #{key} to #{JSON.generate(value)}" unless defaults[key] == value
     end
+
+    # @dynamic read, defaults
   end
 end

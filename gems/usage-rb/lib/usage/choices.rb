@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Usage
-  # steep:ignore:start
   class Choices < Data.define(:values, :strict)
-    # steep:ignore:end
     def strict?
       strict
     end
@@ -12,5 +10,7 @@ module Usage
       # With no values there is nothing to check a word against, so any word is accepted.
       values.empty? || !strict || values.include?(word)
     end
+
+    # @dynamic values, strict, initialize
   end
 end

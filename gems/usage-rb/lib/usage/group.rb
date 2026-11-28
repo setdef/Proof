@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Usage
-  # steep:ignore:start
   class Group < Data.define(:name, :names, :required, :multiple)
-    # steep:ignore:end
     def required?
       required
     end
@@ -11,5 +9,7 @@ module Usage
     def multiple?
       multiple
     end
+
+    # @dynamic name, names, required, multiple, initialize
   end
 end

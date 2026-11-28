@@ -3,9 +3,7 @@
 require_relative("token_cipher")
 
 module Proof
-  # steep:ignore:start
   class EncryptedToken < Data.define(:ephemeral_key, :nonce, :ciphertext, :auth_tag)
-    # steep:ignore:end
     NONCE_LENGTH = 12
     TAG_LENGTH = 16
     public_constant(:NONCE_LENGTH, :TAG_LENGTH)
@@ -18,5 +16,7 @@ module Proof
         auth_tag: TokenCipher.field(auth_tag, TAG_LENGTH..TAG_LENGTH, "tag is #{TAG_LENGTH} bytes")
       )
     end
+
+    # @dynamic ephemeral_key, nonce, ciphertext, auth_tag
   end
 end

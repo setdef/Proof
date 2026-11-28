@@ -4,9 +4,7 @@ require_relative("size")
 require_relative("size_text")
 
 module Proof
-  # steep:ignore:start
   class Resources < Data.define(:cpus, :megabytes)
-    # steep:ignore:end
     MEMORY_MESSAGE = "memory is a size: a number, whole or decimal, an optional space, and MB, GB, TB, " \
       "MiB, GiB, or TiB in any case, such as \"512MB\", \"8 GB\", \"1.5gib\", or \"0.5TB\", not %p"
     # @type var rules: Hash[Symbol, [String, MemberCheck::rule]]
@@ -65,5 +63,7 @@ module Proof
     private def combine(other)
       Resources.new(cpus: yield(cpus, other.cpus), megabytes: yield(megabytes, other.megabytes))
     end
+
+    # @dynamic cpus, megabytes
   end
 end

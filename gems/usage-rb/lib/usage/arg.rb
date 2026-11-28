@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Usage
-  # steep:ignore:start
   class Arg < Data.define(:name, :help, :help_long, :required, :repeatable)
-    # steep:ignore:end
     def required?
       required
     end
@@ -16,5 +14,7 @@ module Usage
       label = repeatable ? "#{name}..." : name
       required ? "<#{label}>" : "[#{label}]"
     end
+
+    # @dynamic name, help, help_long, required, repeatable, initialize
   end
 end

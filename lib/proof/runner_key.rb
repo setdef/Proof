@@ -6,9 +6,7 @@ require_relative("runner_key_errors")
 require_relative("token_cipher")
 
 module Proof
-  # steep:ignore:start
   class RunnerKey < Data.define(:key)
-    # steep:ignore:end
     CURVE = "prime256v1"
     public_constant(:CURVE)
 
@@ -79,5 +77,7 @@ module Proof
       # rescued here as the cause, and print its message after this one.
       raise(TokenDecryptionError, "the token doesn't decrypt with this runner's key", cause: nil)
     end
+
+    # @dynamic key
   end
 end

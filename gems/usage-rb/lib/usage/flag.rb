@@ -1,9 +1,7 @@
 # frozen_string_literal: true
 
 module Usage
-  # steep:ignore:start
   class Flag < Data.define(:name, :short, :long, :value, :help, :help_long, :choices, :requires, :repeatable, :global)
-    # steep:ignore:end
     def repeatable?
       repeatable
     end
@@ -23,5 +21,7 @@ module Usage
     def switches
       short.map { |letter| "-#{letter}" } + long.map { |word| "--#{word}" }
     end
+
+    # @dynamic name, short, long, value, help, help_long, choices, requires, repeatable, global, initialize
   end
 end
