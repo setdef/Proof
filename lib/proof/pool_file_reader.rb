@@ -12,8 +12,8 @@ module Proof
     attr_reader(:file)
 
     def initialize(path:)
-      @file = KdlFile.new(path:, error: PoolFileError, forms: PoolFileForms, messages: PoolFileRefusal::MESSAGES)
-      @refusal = @file.refusal(PoolFileRefusal)
+      @file = KdlFile.new(path:, error: PoolFileError, forms: PoolFileForms, refusal_class: PoolFileRefusal)
+      @refusal = @file.refusal
       @readers = [PoolFileProperties, PoolFileHosts, PoolFileRepositories].map { |kind| kind.new(refusal: @refusal) }
     end
 

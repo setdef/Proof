@@ -17,6 +17,9 @@ module Proof
   # Use it from the classes that read a pool file's nodes.
   class PoolFileRefusal < KdlRefusal
     # The messages, by name, for `format` to fill in.
+    def self.messages: () -> Hash[Symbol, String]
+
+    # The messages, by name.
     MESSAGES: Hash[Symbol, String]
 
     # What a message says of an earlier entry: its name and its line.

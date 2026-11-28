@@ -64,13 +64,13 @@ module Proof
     def read: (String text) -> PoolFile
 
     # The pool file's description: its path, its error, its forms, and its
-    # messages, written once, here. The reader refuses with it, and so can a test
-    # or a doc example.
+    # refusal class, written once, here. The reader refuses with it, and so can a
+    # test or a doc example.
     #
     # ```ruby
-    # Proof::PoolFileReader.new(path: "other.kdl").file.refusal(Proof::PoolFileRefusal).class # => Proof::PoolFileRefusal
+    # Proof::PoolFileReader.new(path: "other.kdl").file.refusal.class # => Proof::PoolFileRefusal
     # ```
-    attr_reader file: KdlFile
+    attr_reader file: KdlFile[PoolFileRefusal]
 
     private
 
@@ -78,7 +78,7 @@ module Proof
 
     def refuse_shared_names: (Hash[Symbol, Array[KdlNode]] by_name) -> void
 
-    @file: KdlFile
+    @file: KdlFile[PoolFileRefusal]
     @refusal: PoolFileRefusal
     @readers: Array[PoolFileProperties | PoolFileHosts | PoolFileRepositories]
   end

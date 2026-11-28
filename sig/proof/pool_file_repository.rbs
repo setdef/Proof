@@ -33,7 +33,7 @@ module Proof
     # path = "pool.kdl"
     # text = "repository lota url=\"https://example.com/lota.git\" {\n  branch trunk\n  task test\n}\n"
     # node = Proof::KdlParser.parse(text, path:, error: Proof::PoolFileError).first
-    # refusal = Proof::PoolFileReader.new(path:).file.refusal(Proof::PoolFileRefusal)
+    # refusal = Proof::PoolFileReader.new(path:).file.refusal
     # Proof::PoolFileRepository.new(node:, refusal:, names: Proof::PoolFileNames.new(refusal:)).entry.tasks # => ["test"]
     # ```
     def entry: () -> RepositoryEntry

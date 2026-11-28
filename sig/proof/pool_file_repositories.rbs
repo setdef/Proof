@@ -25,7 +25,7 @@ module Proof
     # path = "pool.kdl"
     # text = "repository lota url=\"https://example.com/lota.git\" {\n  branch trunk\n  task test\n}\n"
     # by_name = Proof::KdlParser.parse(text, path:, error: Proof::PoolFileError).group_by { |node| node.name.to_sym }
-    # Proof::PoolFileRepositories.new(refusal: Proof::PoolFileReader.new(path:).file.refusal(Proof::PoolFileRefusal)).read(by_name)[:repositories].map(&:name) # => ["lota"]
+    # Proof::PoolFileRepositories.new(refusal: Proof::PoolFileReader.new(path:).file.refusal).read(by_name)[:repositories].map(&:name) # => ["lota"]
     # ```
     def read: (Hash[Symbol, Array[KdlNode]] by_name) -> Hash[Symbol, Object]
 

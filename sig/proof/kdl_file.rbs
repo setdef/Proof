@@ -1,12 +1,13 @@
 module Proof
   # One of Proof's KDL files, described by its path, its error, its forms, and
-  # its messages.
+  # its refusal class.
   #
   # The project file and the pool file are each KDL that a person writes, and
   # each is read the same way: the text is parsed into nodes, every node is
   # checked against its form, and a mistake is refused in the file's words, with
   # the file's path and error. Those four facts describe one file, and each step
-  # of the reading needs some of them, so they travel together.
+  # of the reading needs some of them, so they travel together. The refusal class
+  # has the file's messages, so a file's refusal can't have another file's.
   #
   # This class holds them. It builds the file's refusal, and reads the file's
   # text into its checked nodes, grouped by name. It reads no value from a
@@ -20,7 +21,7 @@ module Proof
   #
   # ```ruby
   # file = Proof::PoolFileReader.new(path: "pool.kdl").file
-  # refusal = file.refusal(Proof::PoolFileRefusal)
+  # refusal = file.refusal
   # file.nodes_by_name("server port=8443\nlimits\n", refusal:).keys # => [:server, :limits]
   # ```
   #
@@ -30,11 +31,15 @@ module Proof
   # # Wrong: raises Proof::PoolFileError
   # file.nodes_by_name("cluster\n", refusal:)
   # ```
-  class KdlFile < Data
-    # What a `kind` of refusal is built from: the file's four facts.
-    interface _Refused[R]
-      # Builds a refusal of the kind, as `Proof::KdlRefusal.new` does.
+  class KdlFile[R < KdlRefusal] < Data
+    # What a file's refusal class is: it builds the refusal from the file's
+    # facts, and has the messages of its kind of file.
+    interface _RefusalClass[R]
+      # Builds a refusal, as `Proof::KdlRefusal.new` does.
       def new: (path: String, error: singleton(FileError), messages: Hash[Symbol, String], forms: KdlForms) -> R
+
+      # The messages of the kind of file, by name, for `format` to fill in.
+      def messages: () -> Hash[Symbol, String]
     end
 
     # The file's path, for its errors.
@@ -46,24 +51,23 @@ module Proof
     # The forms of the file's nodes.
     attr_reader forms: KdlForms
 
-    # The file's messages, by name, for `format` to fill in.
-    attr_reader messages: Hash[Symbol, String]
+    # The class of the file's refusals, such as `Proof::PoolFileRefusal`, which
+    # has the file's messages and the refusals only that kind of file has.
+    attr_reader refusal_class: _RefusalClass[R]
 
     # Describes a KDL file.
     #
     # - `path`: String, the file's path.
     # - `error`: the `Proof::FileError` subclass to raise.
     # - `forms`: `Proof::KdlForms`, the forms of the file's nodes.
-    # - `messages`: Hash from a message's name to its text.
-    def self.new: (path: String, error: singleton(FileError), forms: KdlForms, messages: Hash[Symbol, String]) -> instance
-                | (String path, singleton(FileError) error, KdlForms forms, Hash[Symbol, String] messages) -> instance
+    # - `refusal_class`: the `Proof::KdlRefusal` subclass for the kind of file,
+    #   such as `Proof::PoolFileRefusal`.
+    def self.new: [R < KdlRefusal] (path: String, error: singleton(FileError), forms: KdlForms, refusal_class: _RefusalClass[R]) -> KdlFile[R]
+                | [R < KdlRefusal] (String path, singleton(FileError) error, KdlForms forms, _RefusalClass[R] refusal_class) -> KdlFile[R]
 
-    # Gives the refusal of this file: a `kind` that has the file's path, error,
-    # messages, and forms.
-    #
-    # - `kind`: the `Proof::KdlRefusal` subclass for the kind of file, such as
-    #   `Proof::PoolFileRefusal`, which has the refusals only that kind has.
-    def refusal: [R < KdlRefusal] (_Refused[R] kind) -> R
+    # Gives the refusal of this file: a `refusal_class` that has the file's
+    # path, error, messages, and forms.
+    def refusal: () -> R
 
     # Reads `text` and gives its nodes, checked against the file's forms and
     # grouped by name, with each group in the order the file has it. A name the

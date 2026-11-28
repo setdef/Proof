@@ -32,7 +32,7 @@ module Proof
     # - `node`: `Proof::KdlNode`, the node the block builds from.
     #
     # ```ruby
-    # refusal = Proof::ProjectFileReader.new(path: ".config/proof.kdl").file.refusal(Proof::ProjectFileRefusal)
+    # refusal = Proof::ProjectFileReader.new(path: ".config/proof.kdl").file.refusal
     # node = Proof::KdlParser.parse("task test\n", path: ".config/proof.kdl", error: Proof::ProjectFileError).first
     # refusal.checking(node) { Proof::Label.new(name: "gpu").name } # => "gpu"
     # ```

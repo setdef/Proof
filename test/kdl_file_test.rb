@@ -8,12 +8,12 @@ class KdlFileTest < Minitest::Test
   PATH = "other/pool.kdl"
   private_constant(:PATH)
 
-  def file(messages: Proof::PoolFileRefusal::MESSAGES)
-    Proof::PoolFileReader.new(path: PATH).file.with(messages:)
+  def file(refusal_class: Proof::PoolFileRefusal)
+    Proof::PoolFileReader.new(path: PATH).file.with(refusal_class:)
   end
 
   def nodes_by_name(text, file: self.file)
-    file.nodes_by_name(text, refusal: file.refusal(Proof::PoolFileRefusal))
+    file.nodes_by_name(text, refusal: file.refusal)
   end
 
   def refused(text, file: self.file)
@@ -23,24 +23,28 @@ class KdlFileTest < Minitest::Test
 
   # Pool file reference, "Mistakes Proof catches": the refusal says the file's path.
   def test_a_refusal_built_from_the_file_names_its_path
-    refusal = file.refusal(Proof::PoolFileRefusal)
+    refusal = file.refusal
     node = Proof::KdlParser.parse("cluster\n", path: PATH, error: Proof::PoolFileError).first
     error = assert_raises(Proof::PoolFileError) { refusal.unknown_node(node) }
 
     assert_equal([PATH, 1], [error.path, error.line])
   end
 
-  # The refusal is of the kind it is asked for, so that it has the refusals only that kind of file has.
-  def test_a_refusal_is_of_the_kind_it_is_asked_for
-    assert_instance_of(Proof::PoolFileRefusal, file.refusal(Proof::PoolFileRefusal))
-    assert_instance_of(Proof::KdlRefusal, file.refusal(Proof::KdlRefusal))
+  # The refusal is of the file's refusal class, so that it has the refusals only that kind of file has.
+  def test_a_refusal_is_of_the_files_refusal_class
+    assert_instance_of(Proof::PoolFileRefusal, file.refusal)
+    assert_instance_of(Proof::ProjectFileRefusal, Proof::ProjectFileReader.new(path: PATH).file.refusal)
   end
 
-  # The refusal says the file's messages, whatever kind of refusal it is.
-  def test_a_refusal_says_the_files_messages
-    messages = Proof::PoolFileRefusal::MESSAGES.merge(unknown_node: "no node %<name>p here")
+  # The refusal says the messages of the file's refusal class, whatever kind of refusal it is.
+  def test_a_refusal_says_the_messages_of_the_refusal_class
+    refusal_class = Class.new(Proof::PoolFileRefusal) do
+      def self.messages
+        super.merge(unknown_node: "no node %<name>p here")
+      end
+    end
 
-    assert_equal([PATH, 1, "no node \"cluster\" here"], refused("cluster\n", file: file(messages:)))
+    assert_equal([PATH, 1, "no node \"cluster\" here"], refused("cluster\n", file: file(refusal_class:)))
   end
 
   # The same page: the nodes are the file's, grouped by their names in the order the file has them, so a reader asks for

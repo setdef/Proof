@@ -107,13 +107,13 @@ module Proof
     def read_from: (GitProject project, String id) -> ProjectFile?
 
     # The project file's description: its path, its error, its forms, and its
-    # messages, written once, here. The reader refuses with it, and so can a test
-    # or a doc example.
+    # refusal class, written once, here. The reader refuses with it, and so can a
+    # test or a doc example.
     #
     # ```ruby
-    # Proof::ProjectFileReader.new(path: "other.kdl").file.refusal(Proof::ProjectFileRefusal).class # => Proof::ProjectFileRefusal
+    # Proof::ProjectFileReader.new(path: "other.kdl").file.refusal.class # => Proof::ProjectFileRefusal
     # ```
-    attr_reader file: KdlFile
+    attr_reader file: KdlFile[ProjectFileRefusal]
 
     private
 
@@ -123,7 +123,7 @@ module Proof
 
     def tasks_of: (Array[KdlNode] nodes) -> Array[TaskEntry]
 
-    @file: KdlFile
+    @file: KdlFile[ProjectFileRefusal]
     @refusal: ProjectFileRefusal
     @settings: ProjectFileSettings
 

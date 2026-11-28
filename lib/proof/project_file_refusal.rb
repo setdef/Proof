@@ -27,8 +27,11 @@ module Proof
         "Leave the command out to run the mise task of the same name",
     }.freeze
     ARGUMENTS = { defaults: :defaults_arguments, task: :task_arguments }.freeze
-    public_constant(:MESSAGES)
-    private_constant(:ARGUMENTS)
+    private_constant(:MESSAGES, :ARGUMENTS)
+
+    def self.messages
+      MESSAGES
+    end
 
     def node_arguments(node, count)
       # The page writes the arguments of each node its own way: a task's name and command, none for defaults, and

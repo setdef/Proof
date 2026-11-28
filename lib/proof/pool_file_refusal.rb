@@ -25,8 +25,11 @@ module Proof
       missing: "a %<name>p node needs the %<kind>s %<missing>p, as in %<usage>s",
     }.freeze
     EARLIER = -> (node) { { entry: node.arguments.first, line: node.line } }
-    public_constant(:MESSAGES)
-    private_constant(:EARLIER)
+    private_constant(:MESSAGES, :EARLIER)
+
+    def self.messages
+      MESSAGES
+    end
 
     def repeated_entry(node, first)
       say_of(node, :repeated_entry, **EARLIER.call(first))

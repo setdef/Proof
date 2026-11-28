@@ -21,7 +21,7 @@ module Proof
   # path = "pool.kdl"
   # hosts = Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n}\nhost pc {\n  runner NUC-linux\n}\n", path:, error: Proof::PoolFileError)
   # begin
-  #   Proof::PoolFileSharedRunners.new(hosts, refusal: Proof::PoolFileReader.new(path:).file.refusal(Proof::PoolFileRefusal)).check
+  #   Proof::PoolFileSharedRunners.new(hosts, refusal: Proof::PoolFileReader.new(path:).file.refusal).check
   # rescue Proof::PoolFileError => e
   #   e.line # => 5
   # end
@@ -40,7 +40,7 @@ module Proof
     # ```ruby
     # path = "pool.kdl"
     # hosts = Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n}\nhost pc {\n  runner pc-wsl\n}\n", path:, error: Proof::PoolFileError)
-    # Proof::PoolFileSharedRunners.new(hosts, refusal: Proof::PoolFileReader.new(path:).file.refusal(Proof::PoolFileRefusal)).check # refuses nothing
+    # Proof::PoolFileSharedRunners.new(hosts, refusal: Proof::PoolFileReader.new(path:).file.refusal).check # refuses nothing
     # ```
     def check: () -> void
 

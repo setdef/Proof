@@ -21,7 +21,7 @@ module Proof
   # path = "pool.kdl"
   # hosts = Proof::KdlParser.parse("host nuc\nhost pc\nhost NUC\n", path:, error: Proof::PoolFileError)
   # begin
-  #   Proof::PoolFileRepeatedEntries.new(hosts, refusal: Proof::PoolFileReader.new(path:).file.refusal(Proof::PoolFileRefusal)).check
+  #   Proof::PoolFileRepeatedEntries.new(hosts, refusal: Proof::PoolFileReader.new(path:).file.refusal).check
   # rescue Proof::PoolFileError => e
   #   e.line # => 3
   # end
@@ -41,7 +41,7 @@ module Proof
     # ```ruby
     # path = "pool.kdl"
     # repositories = Proof::KdlParser.parse("repository lota url=\"u\"\nrepository proof url=\"v\"\n", path:, error: Proof::PoolFileError)
-    # Proof::PoolFileRepeatedEntries.new(repositories, refusal: Proof::PoolFileReader.new(path:).file.refusal(Proof::PoolFileRefusal)).check # refuses nothing
+    # Proof::PoolFileRepeatedEntries.new(repositories, refusal: Proof::PoolFileReader.new(path:).file.refusal).check # refuses nothing
     # ```
     def check: () -> void
 

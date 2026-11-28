@@ -19,8 +19,8 @@ module Proof
     attr_reader(:file)
 
     def initialize(path:)
-      @file = KdlFile.new(path:, error: ProjectFileError, forms: ProjectFileForms, messages: ProjectFileRefusal::MESSAGES)
-      @refusal = @file.refusal(ProjectFileRefusal)
+      @file = KdlFile.new(path:, error: ProjectFileError, forms: ProjectFileForms, refusal_class: ProjectFileRefusal)
+      @refusal = @file.refusal
       @settings = ProjectFileSettings.new(refusal: @refusal)
     end
 

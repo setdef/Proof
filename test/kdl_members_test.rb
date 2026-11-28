@@ -14,7 +14,7 @@ class KdlMembersTest < Minitest::Test
   private_constant(:TABLE)
 
   def members
-    Proof::KdlMembers.new(TABLE, refusal: Proof::PoolFileReader.new(path: "pool.kdl").file.refusal(Proof::PoolFileRefusal))
+    Proof::KdlMembers.new(TABLE, refusal: Proof::PoolFileReader.new(path: "pool.kdl").file.refusal)
   end
 
   def parse(text)

@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
 module Proof
-  class KdlFile < Data.define(:path, :error, :forms, :messages)
-    def refusal(kind)
-      kind.new(path:, error:, messages:, forms:)
+  class KdlFile < Data.define(:path, :error, :forms, :refusal_class)
+    def refusal
+      refusal_class.new(path:, error:, messages: refusal_class.messages, forms:)
     end
 
     def nodes_by_name(text, refusal:)
@@ -11,6 +11,6 @@ module Proof
       KdlFormCheck.new(forms:, refusal:).check(nodes).group_by { |node| node.name.to_sym }
     end
 
-    # @dynamic path, error, forms, messages
+    # @dynamic path, error, forms, refusal_class
   end
 end

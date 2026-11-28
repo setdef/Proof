@@ -34,7 +34,7 @@ module Proof
     # ```ruby
     # path = "pool.kdl"
     # node = Proof::KdlParser.parse("defaults {\n  budget \"100GB\"\n}\n", path:, error: Proof::PoolFileError).first
-    # refusal = Proof::PoolFileReader.new(path:).file.refusal(Proof::PoolFileRefusal)
+    # refusal = Proof::PoolFileReader.new(path:).file.refusal
     # Proof::PoolFileHost.new(node:, refusal:, names: Proof::PoolFileNames.new(refusal:)).settings.budget.megabytes # => 102_400
     # ```
     def settings: () -> HostSettings
@@ -46,7 +46,7 @@ module Proof
     # ```ruby
     # path = "pool.kdl"
     # node = Proof::KdlParser.parse("host nuc {\n  runner nuc-linux\n}\n", path:, error: Proof::PoolFileError).first
-    # refusal = Proof::PoolFileReader.new(path:).file.refusal(Proof::PoolFileRefusal)
+    # refusal = Proof::PoolFileReader.new(path:).file.refusal
     # Proof::PoolFileHost.new(node:, refusal:, names: Proof::PoolFileNames.new(refusal:)).entry.runners # => ["nuc-linux"]
     # ```
     def entry: () -> HostEntry

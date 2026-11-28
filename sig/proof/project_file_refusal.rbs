@@ -19,6 +19,9 @@ module Proof
   # them. Use it from the classes that read a project file's nodes.
   class ProjectFileRefusal < KdlRefusal
     # The messages, by name, for `format` to fill in.
+    def self.messages: () -> Hash[Symbol, String]
+
+    # The messages, by name.
     MESSAGES: Hash[Symbol, String]
 
     # The message for the arguments of each node that has one of its own, by
@@ -33,7 +36,7 @@ module Proof
     # path = ".config/proof.kdl"
     # node = Proof::KdlParser.parse("defaults linux\n", path:, error: Proof::ProjectFileError).first
     # begin
-    #   Proof::ProjectFileReader.new(path:).file.refusal(Proof::ProjectFileRefusal).node_arguments(node, 1)
+    #   Proof::ProjectFileReader.new(path:).file.refusal.node_arguments(node, 1)
     # rescue Proof::ProjectFileError => e
     #   e.reason # => "a \"defaults\" node takes properties and children and no arguments, as in defaults cpus=4"
     # end
