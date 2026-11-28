@@ -133,14 +133,14 @@ module Proof
     # nothing free, so `cpus` can be 0. The messages say that the setting is the
     # share's: `share memory`, and `share cpus`.
     #
-    # - `cpus`: Integer, a whole number from 0.
-    # - `memory`: String, such as `"4GB"`.
+    # - `cpus`: Integer, a whole number from 0. Anything else raises.
+    # - `memory`: String, such as `"4GB"`. Anything else raises.
     #
     # ```ruby
     # Proof::Resources.share(cpus: 0, memory: "0GB").to_h # => {cpus: 0, megabytes: 0}
     # Proof::Resources.share(cpus: 2, memory: "4GB").to_h # => {cpus: 2, megabytes: 4096}
     # ```
-    def self.share: (cpus: Integer, memory: String) -> Resources
+    def self.share: (cpus: Object?, memory: Object?) -> Resources
 
     # Builds resources from CPUs and megabytes, and raises
     # `Proof::InvalidResourcesError` unless `cpus` and `megabytes` are each an
