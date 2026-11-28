@@ -626,6 +626,19 @@ Options weighed:
 - One Rake task for each gem: each task would stop at its own failure, so a run would name one gem at a time, and a gem added under `gems` would need a task of its own.
 - RubyCritic's `--minimum-score` for each gem: it fails the run without the gem's score, and the task still has to read the report for the ratings and smells.
 
+### RuboCop
+
+RuboCop's project root is the topmost `Gemfile` or `gems.rb` above the working directory, not the nearest. In a checkout below a folder that has a `Gemfile`, the root is that folder, and a cop that compares a path with the root never matches. `Packaging/RequireRelativeHardcodingLib` looks for `<root>/lib`, so the gate passed a `require_relative("../lib/proof/git")` that CI refused. RuboCop has no option, environment variable, or setting for the root (rubocop/rubocop#11011, open), and it doesn't report the root it used, so the gate reported a pass that hadn't happened.
+
+`.rubocop.yml` loads `tasks/rubocop_project_root.rb` with `require:`, and that file assigns the repository to `RuboCop::ConfigFinder.project_root`. The report in rubocop/rubocop#15108, a duplicate of #11011, gives this as a workaround. Every way RuboCop runs here reads `.rubocop.yml`, so each one gets the repository as its root: `bundle exec rubocop`, `rake rubocop`, the pre-commit hook, which runs `bundle exec rake`, and an editor's RuboCop server, which loads the configuration in its own process. `test/rubocop_project_root_test.rb` runs RuboCop's root search in a checkout below a `Gemfile`, to show that the helper changes the root from that folder to the checkout, and checks that `.rubocop.yml` requires the helper.
+
+Options weighed:
+
+- Assigning the repository to `FileFinder.root_level`, where RuboCop's search for a `Gemfile` stops: RuboCop marks `FileFinder` as `@api private`, and `project_root=` is the writer that issue #15108 gives.
+- A check in `bin/ci` or the Rake task that stops the gate when RuboCop's root isn't the repository: it covers only those two entry points, so `bundle exec rubocop` and an editor still check against the other folder, and it makes each contributor fix by hand what one line can fix.
+- A wrapper script, such as `bin/rubocop`, that sets the root: the editor's server and a plain `bundle exec rubocop` don't run it.
+- A `.rubocop.yml` or `Gemfile` in each folder above a checkout: it asks every contributor to change folders that aren't in the repository.
+
 ### A release's version
 
 The committed version of Proof is `0.0.0`, in `lib/proof/version.rb` and in `Gemfile.lock`: the version of a build that isn't a release, and Fledge's default. A release gets its version in the checkout that builds it, and no commit is made for it, so a release never waits for a commit to reach a busy trunk and pass CI. The version has to be committed in some form, because Bundler in frozen mode, which the gate and CI use, refuses a gemspec or path gem whose version differs from `Gemfile.lock`, and Fledge refuses a path gem whose version differs from the lockfile too. Fledge also evaluates the gemspec at build time and ships the result, so `Proof::VERSION`, which `proof.gemspec` reads from `lib/proof/version.rb` as text, and the lockfile have to agree in the checkout that Fledge builds.

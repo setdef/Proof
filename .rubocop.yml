@@ -5,6 +5,10 @@
 inherit_from:
   - https://raw.githubusercontent.com/Kerrick/ruby_quality/main/config/rubocop.yml
 
+# Makes this repository RuboCop's project root, wherever the checkout sits.
+require:
+  - ./tasks/rubocop_project_root.rb
+
 plugins:
   - rubocop-performance
   - rubocop-minitest
