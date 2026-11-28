@@ -41,6 +41,15 @@ class CommandLineWordMistakesTest < Minitest::Test
     assert_equal("proof: proof run needs a task or --script. To see its usage, run: proof run --help", mistake("run"))
   end
 
+  # proof.usage.kdl: the group `what` takes a task or `--script`, and usage 7.4.1 can't say so once a script takes
+  # words after `--`, so Proof's command line refuses both. The line and the message are those before commit cb89262.
+  def test_a_task_with_a_script_is_refused
+    message = "proof: a task and --script can't go together; give one. To see its usage, run: proof run --help"
+    lines = [%w[test --script f], %w[--script f test], %w[--script f test -- a], %w[--script f ::: test]]
+
+    assert_equal([message] * 4, lines.map { |words| mistake("run", *words) })
+  end
+
   # proof.usage.kdl: `arg "<run>"` is required.
   def test_a_command_without_a_required_argument_is_refused
     assert_equal("proof: proof watch needs <run>. To see its usage, run: proof watch --help", mistake("watch"))

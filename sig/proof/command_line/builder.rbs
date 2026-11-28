@@ -20,9 +20,9 @@ module Proof
 
       def value: () -> command
 
-      # The tasks of `proof run`, from the words of its arguments before and after the first `--`, or none for
-      # another command.
-      def tasks: () -> Hash[Symbol, Array[TaskWords]]
+      # The tasks and the script's words of `proof run`, from the words of its arguments before and after the first
+      # `--`, or none for another command. A task given with `--script` is a mistake.
+      def tasks: () -> Hash[Symbol, Array[TaskWords] | Array[String]]
 
       # The words of the arguments of `proof run` before the first `--`, and those after it.
       def run_words: () -> [Array[String], Array[String]]

@@ -45,15 +45,20 @@ module CommandLineContract
       without_empty(given)
     end
 
-    # `proof run` holds its task and the words after it as tasks, where the spec has a task and its args. A
-    # `--` that is a word of a task stays in the words, so a `--` taken as a separator, or the reverse, is a
-    # disagreement.
+    # `proof run` holds its task and the words after it as tasks, where the spec has a task and its args, and a
+    # script's words as their own, which usage binds to the task and args. A `--` that is a word of a task stays in
+    # the words, so a `--` taken as a separator, or the reverse, is a disagreement.
     private def run_args(command)
-      first, *others = command.tasks
+      first, *others = command.script_words.empty? ? command.tasks : script_tasks(command)
       return {} unless first
 
       later = others.flat_map { |task| [":::", task.name, *task.words] }
       without_empty([["task", [first.name]], ["args", first.words + later]].to_h)
+    end
+
+    private def script_tasks(command)
+      name, *words = command.script_words
+      [Proof::CommandLine::TaskWords.new(name:, words:)]
     end
 
     private def read(holder, name)

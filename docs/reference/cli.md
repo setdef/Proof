@@ -98,7 +98,8 @@ has, and exits 2 without sending anything.
 is that task's name, and its words again follow `--`.
 
 The words for a script follow `--` too, as in `proof run --script bench.sh -- --quick`, and go to
-the script as its arguments, as `bash FILE ARGS` would pass them.
+the script as its arguments, as `bash FILE ARGS` would pass them. A task and `--script` can't go
+together: Proof refuses the line and exits 2.
 
 Press Ctrl-C to cancel the run. To start a run without waiting for it, use --detach.
 

@@ -35,6 +35,9 @@ module Proof
       # The line for a command given none of a group's members.
       def missing_member: (Usage::Group group) -> String
 
+      # The line for a task given with `--script`.
+      def task_with_script: () -> String
+
       # The line for an argument the command can't run without.
       def missing_argument: (Usage::Arg arg) -> String
 

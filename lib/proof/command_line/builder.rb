@@ -48,12 +48,15 @@ module Proof
       end
 
       private def tasks
-        # @type var tasks: Hash[Symbol, Array[TaskWords]]
-        tasks = {}
-        return tasks unless @command.path == ["run"]
+        return {} unless @command.path == ["run"]
 
         before, after = run_words
-        tasks.merge(tasks: Tasks.read(before, after, @command))
+        return { tasks: Tasks.read(before, after, @command), script_words: [] } unless @line.given?("script")
+
+        # usage 7.4.1 can't say that a task and --script go together never, so Proof's rule is here.
+        raise(Mistake, Messages.new(@command).task_with_script) unless before.empty?
+
+        { tasks: [], script_words: after }
       end
 
       private def run_words

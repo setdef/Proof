@@ -69,11 +69,20 @@ class CommandLineRunWordsTest < Minitest::Test
     assert_empty(command("run", "--script", "f").tasks)
   end
 
-  # issue #51: "a script's words follow `--`". usage binds them to `task` and `args`, as it binds a task's, so
-  # until a script's words have a member of their own they are held as the first task's name and words.
+  # proof.usage.kdl: "The words for a script follow `--` too", and go to the script as its arguments.
   def test_the_words_after_the_dashes_go_to_a_script
     run = command("run", "--script", "f", "--", "--quick", "x")
 
-    assert_equal(["f", [task("--quick", "x")]], [run.script, run.tasks])
+    assert_equal(["f", [], %w[--quick x]], [run.script, run.tasks, run.script_words])
+  end
+
+  # proof.usage.kdl: a script's words are the words after `--` as they are, so `:::` is one of them.
+  def test_a_script_keeps_each_word_after_the_dashes_as_it_is
+    assert_equal(%w[a ::: -- b], command("run", "--script", "f", "--", "a", ":::", "--", "b").script_words)
+  end
+
+  # proof.usage.kdl: a task has no script words.
+  def test_a_task_has_no_script_words
+    assert_empty(command("run", "test", "--", "a").script_words)
   end
 end

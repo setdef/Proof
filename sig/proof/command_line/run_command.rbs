@@ -12,7 +12,7 @@ module Proof
     # ## Examples
     #
     # ```ruby
-    # command = Proof::CommandLine::RunCommand.new(tasks: [Proof::CommandLine::TaskWords.new(name: "test", words: [])], script: nil, os: ["linux"], label: [], commit: nil, project: nil, cpus: nil, memory: nil, timeout: nil, empty: false, keep: [], input: [], input_file: [], download: false, output: nil, detach: false, json: false)
+    # command = Proof::CommandLine::RunCommand.new(tasks: [Proof::CommandLine::TaskWords.new(name: "test", words: [])], script: nil, script_words: [], os: ["linux"], label: [], commit: nil, project: nil, cpus: nil, memory: nil, timeout: nil, empty: false, keep: [], input: [], input_file: [], download: false, output: nil, detach: false, json: false)
     # command.tasks # => [Proof::CommandLine::TaskWords.new(name: "test", words: [])]
     # ```
     class RunCommand < Data
@@ -21,6 +21,9 @@ module Proof
 
       # The script file to run in place of a task, or `-` for standard input, or `nil` when a task is given.
       attr_reader script: String?
+
+      # The words after `--` that go to the script as its arguments. Empty when a task is given.
+      attr_reader script_words: Array[String]
 
       # The operating systems to run on, one run for each, as `--os` gave them.
       attr_reader os: Array[String]
@@ -67,13 +70,14 @@ module Proof
       # Whether to print one JSON object for each run in place of the result lines.
       attr_reader json: bool
 
-      def self.new: (tasks: Array[TaskWords], script: String?, os: Array[String], label: Array[String], commit: String?, project: String?, cpus: String?, memory: String?, timeout: String?, empty: bool, keep: Array[String], input: Array[String], input_file: Array[String], download: bool, output: String?, detach: bool, json: bool) -> instance
-                  | (Array[TaskWords] tasks, String? script, Array[String] os, Array[String] label, String? commit, String? project, String? cpus, String? memory, String? timeout, bool empty, Array[String] keep, Array[String] input, Array[String] input_file, bool download, String? output, bool detach, bool json) -> instance
+      def self.new: (tasks: Array[TaskWords], script: String?, script_words: Array[String], os: Array[String], label: Array[String], commit: String?, project: String?, cpus: String?, memory: String?, timeout: String?, empty: bool, keep: Array[String], input: Array[String], input_file: Array[String], download: bool, output: String?, detach: bool, json: bool) -> instance
+                  | (Array[TaskWords] tasks, String? script, Array[String] script_words, Array[String] os, Array[String] label, String? commit, String? project, String? cpus, String? memory, String? timeout, bool empty, Array[String] keep, Array[String] input, Array[String] input_file, bool download, String? output, bool detach, bool json) -> instance
 
       # Builds the value of a `proof run` command line from what the words and flags gave.
       #
       # - `tasks`: Array[TaskWords], the tasks to run, each with its words, in the order given. Empty when `script` is given.
       # - `script`: String?, the script file to run in place of a task, or `-` for standard input, or `nil` when a task is given.
+      # - `script_words`: Array[String], the words after `--` that go to the script as its arguments. Empty when a task is given.
       # - `os`: Array[String], the operating systems to run on, one run for each, as `--os` gave them.
       # - `label`: Array[String], the labels a runner must have, as `--label` gave them.
       # - `commit`: String?, the commit to send in place of the working tree, or `nil`.

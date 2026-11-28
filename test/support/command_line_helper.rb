@@ -7,6 +7,7 @@ module CommandLineHelper
   CL = Proof::CommandLine
   NO_FLAGS = {
     script: nil,
+    script_words: [],
     os: [],
     label: [],
     commit: nil,

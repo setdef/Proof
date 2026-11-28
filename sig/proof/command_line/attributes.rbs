@@ -12,8 +12,8 @@ module Proof
       def to_h: () -> Hash[Symbol, CommandLine::attribute]
 
       # The value of `klass` that holds the members, with `extras`, the members that come from no flag or argument.
-      def build: (singleton(GlobalFlags) klass, Hash[Symbol, Array[TaskWords]] extras) -> GlobalFlags
-               | (singleton(Data) klass, Hash[Symbol, Array[TaskWords]] extras) -> command
+      def build: (singleton(GlobalFlags) klass, Hash[Symbol, Array[TaskWords] | Array[String]] extras) -> GlobalFlags
+               | (singleton(Data) klass, Hash[Symbol, Array[TaskWords] | Array[String]] extras) -> command
     end
   end
 end

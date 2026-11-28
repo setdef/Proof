@@ -49,6 +49,10 @@ module Proof
         "#{command} needs #{Phrases.alternatives(group.names.map { |name| Phrases.member(name) })}. #{usage}"
       end
 
+      def task_with_script
+        "#{Phrases.member('task')} and #{Phrases.member('--script')} can't go together; give one. #{usage}"
+      end
+
       def missing_argument(arg)
         "#{command} needs #{arg}. #{usage}"
       end

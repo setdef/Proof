@@ -18,9 +18,9 @@ class CommandLineCommandsTest < Minitest::Test
   end
 
   # The names of the members that the spec's arguments give +command+. `proof run` holds its task and the words
-  # after it as tasks, and an argument that takes many words is plural.
+  # after it as tasks, a script's words as script_words, and an argument that takes many words is plural.
   def argument_members(command)
-    return [:tasks] if command.path == ["run"]
+    return %i[tasks script_words] if command.path == ["run"]
 
     command.args.map { |arg| arg.repeatable? ? :"#{arg.name}s" : arg.name.to_sym }
   end

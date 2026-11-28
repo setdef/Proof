@@ -10,10 +10,10 @@ require_relative("../test_helper")
 # separates the task's words from the flags left out. The lines include the front of every flag, command, and choice,
 # which usage refuses, and each flag before its command, which usage refuses too.
 #
-# usage can't say four things the parser does, so the unit tests check them alone: the nearest flag in the line for an
-# unknown flag (flag_names_test.rb), the words of every other line (word_mistakes_test.rb), `:::` with no task
-# before it or no name after it (word_mistakes_test.rb), and the help that `proof` alone prints
-# (global_flags_test.rb), where usage accepts it as a command line with nothing in it.
+# usage can't say five things the parser does, so the unit tests check them alone: a task given with `--script`
+# (word_mistakes_test.rb), the nearest flag in the line for an unknown flag (flag_names_test.rb), the words of every
+# other line (word_mistakes_test.rb), `:::` with no task before it or no name after it (word_mistakes_test.rb), and the
+# help that `proof` alone prints (global_flags_test.rb), where usage accepts it as a command line with nothing in it.
 class CommandLineContractTest < Minitest::Test
   SPEC = Proof::CommandLine::Spec.load
   CASES = CommandLineContract::Cases.new(SPEC).all
@@ -24,13 +24,24 @@ class CommandLineContractTest < Minitest::Test
   def test_the_parser_and_usage_agree_on_every_command_line_the_spec_defines
     usage = CommandLineContract::Usage.new(SPEC)
     parsed = CommandLineContract::Parsed.new(SPEC)
-    disagreements = CASES.reject { |argv| usage.outcome(argv) == parsed.outcome(argv) }
+    disagreements = CASES.reject { |argv| agree?(usage.outcome(argv), parsed.outcome(argv), argv) }
 
     assert_empty(
       disagreements.map do |argv|
         "proof #{argv.join(' ')}: usage #{usage.outcome(argv).kind}, parser #{parsed.outcome(argv).kind}"
       end
     )
+  end
+
+  # Whether the two outcomes are one, or the line is a task with `--script`, which usage accepts and Proof refuses.
+  def agree?(from_usage, from_parser, argv)
+    return true if from_usage == from_parser
+
+    from_parser == CommandLineContract::REFUSED && !argv.include?("--") && task_and_script?(from_usage)
+  end
+
+  def task_and_script?(outcome)
+    outcome.command == ["run"] && outcome.flags.key?("script") && outcome.args.key?("task")
   end
 
   # The contract names every switch the spec gives a flag, in each of the spec's commands.
