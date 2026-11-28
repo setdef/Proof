@@ -11,7 +11,7 @@ require_relative("../test_helper")
 # which usage refuses, and each flag before its command, which usage refuses too.
 #
 # usage can't say four things the parser does, so the unit tests check them alone: the nearest flag in the line for an
-# unknown flag (flag_mistakes_test.rb), the words of every other line (word_mistakes_test.rb), `:::` with no task
+# unknown flag (flag_names_test.rb), the words of every other line (word_mistakes_test.rb), `:::` with no task
 # before it or no name after it (word_mistakes_test.rb), and the help that `proof` alone prints
 # (global_flags_test.rb), where usage accepts it as a command line with nothing in it.
 class CommandLineContractTest < Minitest::Test
